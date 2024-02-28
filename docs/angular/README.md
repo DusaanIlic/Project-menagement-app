@@ -1,12 +1,70 @@
 # Uputstva vezana za Angular
 
-## Build-ovanje Angular aplikacije(Linux i Windows)
+## Instalacija
 
-1.  Neophodno je da instalirate Node.js i npm(Node Package Manager). Možete da ih preuzmete sa zvaničnog sajta Node.js-a.
+- Instalacija Node.js i npm-a:
+  - Prvo morate instalirati Node.js i npm (Node Package Manager) ako već nisu instalirani na vašem računaru.
+  - Možete ih preuzeti sa zvaničnog sajta Node.js-a (https://nodejs.org).
+  - Pratite uputstva za instalaciju koja odgovaraju vašem operativnom sistemu.
+- Instalacija Angular CLI (Command Line Interface):
+  - Nakon što imate Node.js i npm instalirane, možete instalirati Angular CLI globalno putem npm komande u terminalu ili komandnom prozoru: 
+    ```sh
+    npm install -g @angular/cli
+    ```
+    Ovo će instalirati Angular CLI na vaš sistem, što vam omogućava da kreirate i upravljate Angular projektima putem komandne linije.
 
-2.  Kada ste instalirali Angular CLI, možete da kreirate aplikaciju koristeći komandu "ng new ime-aplikacije". Da bi pokrenuli aplikaciju, potrebno je da se komandom "cd ime-aplikacije" navigirate do direktorijuma gde je aplikacija smeštena. Nakon toga izvršite komandu "ng serve" koja Vam omogućava da pokrenete Vašu aplikaciju.
+- Provera Instalacije za Angular CLI:
+  - Nakon instalacije, možete proveriti da li je Angular CLI uspešno instaliran tako što ćete u terminalu ili komandnom prozoru ukucati:
+    ```sh
+    ng version 
+    ```
+    Ova komanda će prikazati instaliranu verziju Angular CLI-ja.
 
-3.  Kada ste završili sa razvojem aplikacije, potrebno je da istu build-ujete koristeći komandu "ng build --prod". Ova komanda će kreirati izlazne fajlove za Vašu aplikaciju koje možete deploy-ovati na neki hosting server.
+## Kreiranje novog Angular projekta
+
+  - Koristite Angular CLI da biste kreirali novi projekat. Ovo se radi komandom ng new:
+    ```sh
+    ng new ime-aplikacije 
+    ```
+    `ime-aplikacije` predstavlja ime vaše nove aplikacije.
+
+
+## Build aplikacije
+
+- Navigacija do projektnog direktorijuma:
+  - Koristite terminal ili komandni prozor da biste se navigirali do direktorijuma vaše Angular aplikacije.
+     ```sh
+    cd putanja/do/direktorijuma/vashe-aplikacije
+    ```
+- Izvršavanje Build-a:
+  - Koristite Angular CLI da biste izgradili vašu aplikaciju. Ovo se radi komandom ng build:
+    ```sh
+    ng build 
+    ```
+    Ova komanda će kompilirati vaš TypeScript kod, optimizovati ga i pakovati u datoteke spremne za distribuciju.
+
+- Opcioni parametri za Build:
+  - Možete koristiti razne opcije prilikom izgradnje, na primer, --prod za proizvodni build:
+    ```sh
+    ng build --prod
+    ```
+Nakon završetka procesa izgradnje, Angular CLI će generisati direktorijum dist/ u vašem projektu koji sadrži sve potrebne datoteke za izvršavanje vaše aplikacije.
+
+## RUN - Pokretanje Angular Aplikacije:
+
+- Pokretanje razvojnog servera: `ng serve` pokreće lokalni razvojni server koji hostuje vašu Angular aplikaciju. Ovaj server prati izmene u vašem kodu i osvežava aplikaciju u web pregledaču automatski kada primeti promene.
+
+- Otvaranje aplikaciju u pregledaču: `--open` je dodatak komandi koji će automatski otvoriti vašu aplikaciju u web pregledaču nakon što se razvojni server uspešno pokrene.
+
+Izvršavanje `ng serve --open` u terminalu u direktorijumu vaše Angular aplikacije će pokrenuti razvojni server i otvoriti vašu aplikaciju u podrazumevanom web pregledaču. 
+
+```sh
+ng serve --open
+```
+
+Nakon izvršenja ovih koraka, vaša Angular aplikacija će biti izgrađena i pokrenuta lokalno, spremna za testiranje i dalji razvoj.
+
+
 
 ## Veza između Angular-a i .NET Core-a
 
