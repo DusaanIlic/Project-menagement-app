@@ -1,0 +1,18 @@
+<div *ngIf="igrac">
+    <h2>{{ igrac.ime }}</h2>
+    <div>
+        Ime:
+        <input [(ngModel)]="igrac.ime" placeholder="Ime"/>
+    </div>
+    <div>
+        Prezime:
+        <input [(ngModel)]="igrac.prezime" placeholder="Prezime"/>
+    </div>
+    <div>
+        Klub:
+        <input [(ngModel)]="igrac.klub" placeholder="Klub"/>
+    </div>
+    <button (click)="updateIgrac(igrac)" *ngIf="igrac.id">Save</button>
+    <button (click)="deleteIgrac(igrac)" *ngIf="igrac.id">Delete</button>
+    <button (click)="createIgrac(igrac)" *ngIf="!igrac.id">Create</button>
+</div>

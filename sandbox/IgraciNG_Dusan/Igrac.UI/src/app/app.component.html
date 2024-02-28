@@ -1,0 +1,19 @@
+<button (click)="initNewIgrac()">Create New Igrac</button>
+
+<table>
+  <thead>
+    <th>Ime</th>
+    <th>Prezime</th>
+    <th>Klub</th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let igrac of igraci">
+      <td>{{ igrac.ime }}</td>
+      <td>{{ igrac.prezime }}</td>
+      <td>{{ igrac.klub }}</td>
+      <td><button (click)="editIgrac(igrac)">Edit</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<app-edit-igrac [igrac]="igracToEdit" (igraciUpdated)="updateIgracList($event)"></app-edit-igrac>
