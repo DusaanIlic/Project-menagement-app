@@ -18,9 +18,14 @@
 3. Unesite ime projekta i izaberite folder u kojem će biti smešten.
 4. Izaberite verziju .NET framework-a.
 
+### Linux varijanta
+
+1. U terminalu unesite ``dotnet new webapi -n <naziv projekta>``
+
 ## Konekcija sa bazom, modeli i migracije
 
-1. U NuGet Package Manager-u, instalirajte sledeće pakete: Microsoft.EntityFrameworkCore.Sqlite, Microsoft.EntityFrameworkCore, kao i Microsoft.EntityFrameworkCore.Tools ili preko terminala  ``dotnet add package Microsoft.EntityFrameworkCore.Sqlite``, ``dotnet add package Microsoft.EntityFrameworkCore``, ``dotnet add package Microsoft.EntityFrameworkCore.Tools ``.
+1. U NuGet Package Manager-u, instalirajte sledeće pakete: ``Microsoft.EntityFrameworkCore.Sqlite``, ``Microsoft.EntityFrameworkCore``, kao i ``Microsoft.EntityFrameworkCore.Tools``
+ili preko terminala  ``dotnet add package Microsoft.EntityFrameworkCore.Sqlite``, ``dotnet add package Microsoft.EntityFrameworkCore``, ``dotnet add package Microsoft.EntityFrameworkCore.Tools ``.
 2. U fajlu appsettings.json postavite konekcionu string: `"ConnectionStrings": { "DefaultConnection": "Data Source=nazivBaze.db"}`.
 3. Napravite folder "models" u kojem ćete definisati entitete koji predstavljaju tabele u bazi podataka.
 
