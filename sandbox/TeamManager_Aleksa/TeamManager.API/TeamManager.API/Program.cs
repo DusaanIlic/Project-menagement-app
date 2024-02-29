@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TeamManager.API.Models;
 
 namespace TeamManager.API;
@@ -14,6 +15,11 @@ public class Program
             opt.UseInMemoryDatabase("TeamManager"));
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowOrigin",
+                builder => builder.WithOrigins("http://localhost:4200"));
+        });
 
         var app = builder.Build();
 
@@ -23,8 +29,11 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
         app.UseAuthorization();
+        app.UseHttpsRedirection();
+        app.UseCors(options => {
+            options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+        });
         app.MapControllers();
         
         app.Run();
