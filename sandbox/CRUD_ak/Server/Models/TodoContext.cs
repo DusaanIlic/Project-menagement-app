@@ -10,4 +10,11 @@ public class TodoContext : DbContext
     }
 
     public DbSet<TodoItem> TodoItems { get; set; } = null!;
+
+    public async Task EnsureCreatedAsync()
+    {
+        await Database.EnsureCreatedAsync();
+    }
+
 }
+
