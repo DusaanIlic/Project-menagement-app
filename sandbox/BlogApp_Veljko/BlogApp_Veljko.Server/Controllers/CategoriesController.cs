@@ -1,7 +1,10 @@
 ﻿using BlogApp_Veljko.Server.Models.Domain;
 using BlogApp_Veljko.Server.Models.DTO;
 using BlogApp_Veljko.Server.Repositories.Interface;
+using CRUDApp.API.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace CRUDApp.API.Controllers
 {
@@ -10,37 +13,57 @@ namespace CRUDApp.API.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
-
-        public CategoriesController(ICategoryRepository categoryRepository)
+       private readonly ApplicationDbContext _dbContext;
+        public CategoriesController(ApplicationDbContext dbContext)
         {
-            this.categoryRepository = categoryRepository;
+            _dbContext = dbContext;
         }
 
         //
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
+        public async Task<ActionResult<Category>> CreateCategory(Category category)
         {
-            //Map DTO to Domain Model
-            var category = new Category
+            _dbContext.Add(category);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(category);
+            
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Category>>> GetAllCategories()
+        {
+            return Ok(await _dbContext.Categories.ToListAsync());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Category>> GetCategoryByName(int id)
+        {
+            var category = await _dbContext.Categories.FindAsync(id);
+            if(category == null)
             {
-                Name = request.Name,
-                UrlHandle = request.UrlHandle
-            };
-
-            await categoryRepository.CreateAsync(category);
-
-
-            //Map Domain Model to DTO
-
-            var response = new CategoryDto
+                return BadRequest("Category does not exist!");
+            }
+            else
             {
-                Id = category.Id,
-                Name = request.Name,
-                UrlHandle = request.UrlHandle
-            };
+                return Ok(category);
+            }
+        }
 
-            return Ok(response);
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Category>> DeleteCategoryByName(int id)
+        {
+            var category = await _dbContext.Categories.FindAsync(id);
+
+            if(category == null)
+            {
+                return NotFound();
+            }
+            
+            _dbContext.Remove(category);
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
