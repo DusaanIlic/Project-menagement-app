@@ -51,7 +51,18 @@ namespace TeamManager.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(member).State = EntityState.Modified;
+            var existingMember = await _context.Members.FindAsync(id);
+
+            if (existingMember == null)
+            {
+                return NotFound();
+            }
+
+            // Update the properties of the existing member with the values from the parameter
+            existingMember.FirstName = member.FirstName;
+            existingMember.LastName = member.LastName;
+            existingMember.JobDescription = member.JobDescription;
+            existingMember.Salary = member.Salary;
 
             try
             {
