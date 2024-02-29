@@ -1,0 +1,39 @@
+.member-list-card {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.member-details {
+  flex: 1;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.description {
+  color: #555;
+}
+
+.salary-actions {
+  display: flex;
+  align-items: center;
+}
+
+.salary {
+  margin-right: 10px;
+}

@@ -1,0 +1,30 @@
+<mat-card class="update-member-card">
+  <mat-card-header>
+    <mat-card-title>Add Member</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form-container">
+      <mat-list class="update-member-form">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="First Name" type="text" id="firstName" name="firstName" [(ngModel)]="member.firstName">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Last Name" type="text" id="lastName" name="lastName" [(ngModel)]="member.lastName">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Job Description" type="text" id="jobDescription" name="jobDescription" [(ngModel)]="member.jobDescription">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Salary" type="number" id="salary" name="salary" [(ngModel)]="member.salary">
+        </mat-form-field>
+
+        <div>
+          <button mat-raised-button color="primary" (click)="addMember()">Add Member</button>
+        </div>
+      </mat-list>
+    </form>
+  </mat-card-content>
+</mat-card>

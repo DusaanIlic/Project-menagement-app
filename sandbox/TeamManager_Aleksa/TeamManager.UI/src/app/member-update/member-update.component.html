@@ -1,0 +1,30 @@
+<mat-card class="update-member-card">
+  <mat-card-header>
+    <mat-card-title>Update Member</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="member" class="form-container">
+      <form class="update-member-form">
+        <mat-form-field class="full-width">
+          <input matInput [value]="member.firstName" type="text" id="firstName" name="firstName" [(ngModel)]="member.firstName">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput [value]="member.lastName" type="text" id="lastName" name="lastName" [(ngModel)]="member.lastName">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput [value]="member.jobDescription" type="text" id="jobDescription" name="jobDescription" [(ngModel)]="member.jobDescription">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput [placeholder]="(member?.salary | currency) || 'Salary'" type="number" id="salary"  name="salary" [(ngModel)]="member.salary">
+        </mat-form-field>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" (click)="updateMember()">Update Member</button>
+        </div>
+        <div class="button-container">
+          <button mat-button color="primary" (click)="goBack()">Go Back</button>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>
