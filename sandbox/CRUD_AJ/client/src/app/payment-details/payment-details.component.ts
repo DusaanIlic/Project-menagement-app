@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PaymentDetailService } from '../shared/payment-detail.service';
+import { PaymentDetail } from '../shared/payment-detail.model';
 
 @Component({
   selector: 'app-payment-details',
@@ -12,5 +13,8 @@ export class PaymentDetailsComponent implements OnInit{
   }
   ngOnInit(): void {
     this.service.refreshList();
+  }
+  populateForm(selectedRecord: PaymentDetail) {
+    this.service.formData = Object.assign({}, selectedRecord);
   }
 }
