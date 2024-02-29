@@ -21,46 +21,46 @@ namespace CRUDApp.API.Controllers
 
         //
         [HttpPost]
-        public async Task<ActionResult<Category>> CreateCategory(Category category)
+        public async Task<ActionResult<BlogPost>> CreateCategory(BlogPost bp)
         {
-            _dbContext.Add(category);
+            _dbContext.Add(bp);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(category);
+            return Ok(bp);
             
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Category>>> GetAllCategories()
+        public async Task<ActionResult<List<BlogPost>>> GetAllCategories()
         {
-            return Ok(await _dbContext.Categories.ToListAsync());
+            return Ok(await _dbContext.BlogPosts.ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategoryByName(int id)
+        public async Task<ActionResult<BlogPost>> GetBlogPostById(int id)
         {
-            var category = await _dbContext.Categories.FindAsync(id);
-            if(category == null)
+            var bp = await _dbContext.BlogPosts.FindAsync(id);
+            if(bp == null)
             {
-                return BadRequest("Category does not exist!");
+                return BadRequest("BlogPost does not exist!");
             }
             else
             {
-                return Ok(category);
+                return Ok(bp);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> DeleteCategoryByName(int id)
+        public async Task<ActionResult<BlogPost>> DeleteBlogPostById(int id)
         {
-            var category = await _dbContext.Categories.FindAsync(id);
+            var bp = await _dbContext.BlogPosts.FindAsync(id);
 
-            if(category == null)
+            if(bp == null)
             {
                 return NotFound();
             }
             
-            _dbContext.Remove(category);
+            _dbContext.Remove(bp);
             await _dbContext.SaveChangesAsync();
 
             return NoContent();
