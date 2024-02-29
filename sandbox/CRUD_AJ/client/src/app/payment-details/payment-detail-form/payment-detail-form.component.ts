@@ -14,6 +14,8 @@ export class PaymentDetailFormComponent {
   }
 
   onSubmit(form: NgForm){
+    this.service.formSubmitted = true
+    if(form.valid){
     this.service.postPaymentDetail()
     .subscribe({
       next : res => {
@@ -22,6 +24,7 @@ export class PaymentDetailFormComponent {
       },
       error: err => {console.log(err)}
     })
+    }
   }
 
 }
