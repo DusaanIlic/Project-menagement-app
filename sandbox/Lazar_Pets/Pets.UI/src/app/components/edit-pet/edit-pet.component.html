@@ -1,0 +1,32 @@
+<div *ngIf="pet" class="max-w-300 p-16">
+  <h2>{{ pet.name }}</h2>
+  <div class="input-div">
+    Name: 
+    <input [(ngModel)]="pet.name"  placeholder="Name"/>
+  </div>
+  <div class="input-div">
+    Animal: 
+    <select [(ngModel)]="pet.animalId">
+      <option value=1>Dog</option>
+      <option value=2>Cat</option>
+      <option value=3>Turtle</option>
+    </select>
+  </div>
+  <div class="input-div">
+    Breed: 
+    <input [(ngModel)]="pet.breed"  placeholder="Breed"/>
+  </div>
+  <div class="input-div">
+    Age: 
+    <input [(ngModel)]="pet.age" type="number"  placeholder="Age"/>
+  </div>
+  <div class="input-div">
+    Adoption Date: 
+    <input [(ngModel)]="pet.adoptionDate" type="date"  placeholder="Adoption Date"/>
+  </div>
+  <div class="items-between margins-top-bottom">
+    <button (click)="updatePet(pet)" *ngIf="pet.id">Save</button>
+    <button (click)="createPet(pet)" *ngIf="!pet.id">Create</button>
+    <button (click)="deletePet(pet)" *ngIf="pet.id">Delete</button>
+  </div>
+</div>

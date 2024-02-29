@@ -1,0 +1,24 @@
+<table>
+  <thead>
+    <th>Name</th>
+    <th>Animal</th>
+    <th>Breed</th>
+    <th>Age</th>
+    <th>AdoptionDate</th>
+    <th></th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let pet of pets">
+      <td>{{ pet.name }}</td>
+      <td>{{ pet.animal }}</td>
+      <td>{{ pet.breed }}</td>
+      <td>{{ pet.age }}</td>
+      <td>{{ pet.adoptionDate }}</td>
+      <td class="items-center"><button (click)="editPet(pet)">Edit Pet</button></td>
+    </tr>
+  </tbody>
+</table>
+<button (click)="initNewPet()" class="margins-top-bottom">Create New Pet</button>
+<div class="items-center">
+  <app-edit-pet [pet]="petToEdit" (petsUpdated)="updatePetList($event)"></app-edit-pet>
+</div>
