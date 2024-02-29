@@ -1,0 +1,20 @@
+.update-member-card {
+  max-width: 400px;
+  margin: auto;
+}
+
+.form-container {
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+button {
+  margin-top: 10px;
+}
+
+button.goBack {
+  margin-top: 20px;
+}

@@ -1,0 +1,25 @@
+<mat-card class="member-list-card">
+  <mat-card-header>
+    <mat-card-title>Member List</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="member-list">
+      <div *ngFor="let member of members" class="member-item">
+        <div class="member-details">
+          <p class="name">{{ member.firstName }} {{ member.lastName }}</p>
+        </div>
+        <div class="actions">
+          <button mat-icon-button color="primary" (click)="navigateToDetails(member.id)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="navigateToEdit(member.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteMember(member.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

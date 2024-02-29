@@ -1,0 +1,29 @@
+<mat-card class="update-member-card">
+  <mat-card-header>
+    <mat-card-title>Member Details</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="member" class="form-container">
+      <mat-list class="update-member-form">
+        <mat-list-item class="full-width">
+          <p mat-line><strong>ID:</strong> {{ member.id }}</p>
+        </mat-list-item>
+        <mat-list-item class="full-width">
+          <p mat-line><strong>First Name:</strong> {{ member.firstName }}</p>
+        </mat-list-item>
+        <mat-list-item class="full-width">
+          <p mat-line><strong>Last Name:</strong> {{ member.lastName }}</p>
+        </mat-list-item>
+        <mat-list-item class="full-width">
+          <p mat-line><strong>Job Description:</strong> {{ member.jobDescription }}</p>
+        </mat-list-item>
+        <mat-list-item class="full-width">
+          <p mat-line><strong>Salary:</strong> {{ member.salary | currency }}</p>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="button-container">
+      <button mat-raised-button color="primary" (click)="goBack()">Go Back</button>
+    </div>
+  </mat-card-content>
+</mat-card>
