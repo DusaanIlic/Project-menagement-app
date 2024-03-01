@@ -1,1 +1,5 @@
-<p>todo-item works!</p>
+<article class="todo">
+    <span class="id">{{todo.id}}</span>
+    <span class="content">{{todo.content}}</span>
+    <span class="complete" *ngIf="todo.complete">Completed</span>
+</article>

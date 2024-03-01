@@ -1,0 +1,33 @@
+.todo {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.id {
+  font-weight: bold;
+  color: #333;
+  margin-right: 1rem;
+}
+
+.content {
+  flex-grow: 1;
+  color: #666;
+}
+
+.complete {
+  color: #4caf50;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+  .todo {
+    flex-direction: column;
+  }
+}

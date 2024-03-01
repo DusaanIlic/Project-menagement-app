@@ -1,7 +1,10 @@
-<div class="todo-list">
-    <div *ngFor="let todo of todos; let i = index;" class="todo-item {{(todo.complete ? 'done' : '')}}" >
-        <div class="id">{{i}}</div>
-        <div class="content">{{todo.content}}</div>
-        <button class="delete">Delete</button>
-    </div>
-</div>
+<section class="todo-list">
+    <h1>Todo List</h1>
+    <ul>
+        <li *ngFor="let todo of todos" class="todo-item {{todo.complete ? 'done' : ''}}">
+            <app-todo-item [todo]="todo"></app-todo-item>
+            <button (click)="deleteTodo(todo)">Delete</button>
+            <button (click)="toggleTodoComplete(todo)">Toggle Complete</button>
+        </li>
+    </ul>
+</section>

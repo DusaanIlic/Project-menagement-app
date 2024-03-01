@@ -4,7 +4,7 @@ using Server.Models;
 
 namespace TodoApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/todos")]
 [ApiController]
 public class TodoItemsController : ControllerBase
 {
@@ -57,8 +57,8 @@ public class TodoItemsController : ControllerBase
             return NotFound();
         }
 
-        todoItem.Name = todoDTO.Name;
-        todoItem.IsComplete = todoDTO.IsComplete;
+        todoItem.Content = todoDTO.Content;
+        todoItem.Complete = todoDTO.Complete;
 
         try
         {
@@ -81,8 +81,8 @@ public class TodoItemsController : ControllerBase
     {
         var todoItem = new TodoItem
         {
-            IsComplete = todoDTO.IsComplete,
-            Name = todoDTO.Name
+            Content = todoDTO.Content,
+            Complete = todoDTO.Complete,
         };
 
         _context.TodoItems.Add(todoItem);
@@ -120,7 +120,7 @@ public class TodoItemsController : ControllerBase
        new TodoItemDTO
        {
            Id = todoItem.Id,
-           Name = todoItem.Name,
-           IsComplete = todoItem.IsComplete
+           Content = todoItem.Content,
+           Complete = todoItem.Complete,
        };
 }
