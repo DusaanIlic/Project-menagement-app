@@ -1,0 +1,16 @@
+.login-container {
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap; }
+  .login-container .login-item {
+    flex-basis: 50%;
+    flex-grow: 0; }
+  .login-container .image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #a9edf6 radial-gradient(circle, #a9edf6 50%, #6dafb8 100%); }
+
+/*# sourceMappingURL=login.component.css.map */
