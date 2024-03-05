@@ -31,7 +31,8 @@ namespace Server.Controllers
             {
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
-                ProjectDescription = p.ProjectDescription
+                ProjectDescription = p.ProjectDescription,
+                DeadLine = p.DeadLine
             }).ToList();
             return Ok(projectDTOs);
         }
@@ -42,7 +43,8 @@ namespace Server.Controllers
             var project = new Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
-                ProjectDescription = addProjectRequest.ProjectDescription
+                ProjectDescription = addProjectRequest.ProjectDescription,
+                DeadLine = addProjectRequest.DeadLine
             };
 
             dbContext.Projects.Add(project);
@@ -52,7 +54,8 @@ namespace Server.Controllers
             {
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription
+                ProjectDescription = project.ProjectDescription,
+                DeadLine = project.DeadLine 
             };
 
             return Ok(projectDTO);
@@ -73,7 +76,8 @@ namespace Server.Controllers
             {
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription
+                ProjectDescription = project.ProjectDescription,
+                DeadLine = project.DeadLine
             };
 
             return Ok(projectDTO);
@@ -92,6 +96,7 @@ namespace Server.Controllers
 
             project.ProjectName = updateProjectRequest.ProjectName;
             project.ProjectDescription = updateProjectRequest.ProjectDescription;
+            project.DeadLine = updateProjectRequest.DeadLine;
             
             await dbContext.SaveChangesAsync();
 
@@ -99,7 +104,8 @@ namespace Server.Controllers
             {
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription
+                ProjectDescription = project.ProjectDescription,
+                DeadLine = project.DeadLine
             };
 
             return Ok(projectDTO);
@@ -124,7 +130,8 @@ namespace Server.Controllers
             {
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription
+                ProjectDescription = project.ProjectDescription,
+                DeadLine = project.DeadLine
             };
 
             return Ok(projectDTO);

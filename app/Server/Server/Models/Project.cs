@@ -12,5 +12,7 @@ namespace Server.Models
         public string ProjectName { get; set; } = string.Empty;
 
         public string ProjectDescription { get; set; } = string.Empty;
+
+        public DateTime DeadLine { get; set; }
     }
 }
