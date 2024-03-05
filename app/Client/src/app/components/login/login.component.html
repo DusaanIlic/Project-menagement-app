@@ -1,0 +1,26 @@
+<div class="login-container">
+  <div class="login-item image-container">
+    <img ngSrc="/assets/logo.png" alt="Logic Tenacity Logo" height="394" width="633">
+  </div>
+
+  <div class="login-item">
+    <h1>Welcome, please sign in</h1>
+
+    <div class="form-container">
+      <form>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required
+          [(ngModel)]="email">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required
+          [(ngModel)]="password">
+      </form>
+
+      <button type="button" (click)="onSubmit()">Sign in</button>
+
+      <div class="errors" *ngIf="errorMessage">
+        <p>{{errorMessage}}</p>
+      </div>
+    </div>
+  </div>
+</div>
