@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AddMemberComponent } from "./add-member/add-member.component";
+import { AddMemberComponent } from "./components/add-member/add-member.component";
 
 @Component({
     selector: 'app-root',
