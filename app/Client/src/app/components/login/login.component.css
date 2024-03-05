@@ -44,5 +44,27 @@
       border-radius: 20px;
       border: none;
       font-weight: bold; }
+    .login-container .form-container button:hover {
+      text-decoration: underline 3px;
+      text-underline-offset: 5px; }
+    .login-container .form-container .errors {
+      flex-basis: 100%;
+      background-color: lightcoral;
+      border-radius: 20px;
+      padding: 10px;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px; }
+      .login-container .form-container .errors p {
+        flex-basis: 100%;
+        color: darkred;
+        font-size: 12px;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        justify-content: center; }
 
 /*# sourceMappingURL=login.component.css.map */

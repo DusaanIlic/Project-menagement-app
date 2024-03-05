@@ -59,5 +59,33 @@
       border: none;
       font-weight: bold;
     }
+
+    button:hover {
+      text-decoration: underline 3px;
+      text-underline-offset: 5px;
+    }
+
+    .errors {
+      flex-basis: 100%;
+      background-color: lightcoral;
+      border-radius: 20px;
+      padding: 10px;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      p {
+        flex-basis: 100%;
+        color: darkred;
+        font-size: 12px;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   }
 }
