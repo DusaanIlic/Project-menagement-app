@@ -9,12 +9,14 @@
     <div class="form-container">
       <form>
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" required>
+        <input type="email" name="email" id="email" required
+          [(ngModel)]="email">
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
+        <input type="password" name="password" id="password" required
+          [(ngModel)]="password">
       </form>
 
-      <button type="submit">Sign in</button>
+      <button type="button" (click)="onSubmit()">Sign in</button>
 
       <div class="errors" *ngIf="errorMessage">
         <p>{{errorMessage}}</p>
