@@ -12,9 +12,20 @@ import { FormsModule } from '@angular/forms';
 })
 export class AddMemberComponent {
     //@Input()
-    name: string = "Dusan";
+    name: string = "";
+    lname: string = "";
+    email: string = "";
+    phone: string = "";
+    date: string = "";
+    info: string = "";
+
     public onClick(){
         console.log(this.name);
+        console.log(this.lname);
+        console.log(this.email);
+        console.log(this.phone);
+        console.log(this.date);
+        console.log(this.info);
     }
 
 }
