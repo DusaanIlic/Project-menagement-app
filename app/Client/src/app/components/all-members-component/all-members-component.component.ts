@@ -9,5 +9,5 @@ import { MemberComponent } from "../../models/member/member.component";
     imports: [MemberComponent]
 })
 export class AllMembersComponentComponent {
-
+    isListView: boolean = false;
 }
