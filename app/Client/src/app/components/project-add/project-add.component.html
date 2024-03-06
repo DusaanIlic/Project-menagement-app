@@ -1,14 +1,20 @@
 <section class="">
   <form action="">
     <label for="name">Project Name</label>
-    <input type="text" name="name" id="name" />
+    <input type="text" id="name" [formControl]="name" />
 
     <label for="date">Due Date</label>
-    <input type="date" name="date" id="date" />
+    <input type="date" [formControl]="date" id="date" />
 
     <label for="description">Description</label>
-    <input type="text" name="description" id="description" />
+    <input type="text" [formControl]="description" id="description" />
 
-    <button type="button" (click)="onClick()">Create Project</button>
+    <button type="button">Create Project</button>
   </form>
 </section>
+
+<p>Name: {{ name.value }}</p>
+
+<p>Date: {{ date.value }}</p>
+
+<p>Description: {{ description.value }}</p>
