@@ -1,0 +1,40 @@
+#rightDiv
+{
+    float: right;
+}
+
+#listView
+{
+    display: table;
+}
+
+#heading
+{
+    margin-bottom: 10px;
+}
+
+#heading > div
+{
+    display: inline;   
+    margin-right: 220px;
+}
+
+#heading > div > h2
+{
+    display: inline;
+    
+}
+
+#heading > div > div
+{
+    display: inline;
+}
+
+.triangle
+{
+    width: 0;
+	height: 0;
+	border-left: 7.5px solid transparent;
+	border-right: 7.5px solid transparent;
+	border-top: 15px solid #555;
+}

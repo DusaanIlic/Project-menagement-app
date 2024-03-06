@@ -8,6 +8,7 @@ import { Member } from '../../member';
   templateUrl: './member.component.html',
   styleUrl: './member.component.scss'
 })
+
 export class MemberComponent {
   member: Member = {
     id: 1,
