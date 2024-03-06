@@ -1,20 +1,14 @@
 <section class="">
-  <form action="">
+  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
     <label for="name">Project Name</label>
-    <input type="text" id="name" [formControl]="name" />
+    <input type="text" id="name" formControlName="name" />
 
     <label for="date">Due Date</label>
-    <input type="date" [formControl]="date" id="date" />
+    <input type="date" formControlName="date" id="date" />
 
     <label for="description">Description</label>
-    <input type="text" [formControl]="description" id="description" />
+    <input type="text" formControlName="description" id="description" />
 
-    <button type="button">Create Project</button>
+    <button type="submit">Create Project</button>
   </form>
 </section>
-
-<p>Name: {{ name.value }}</p>
-
-<p>Date: {{ date.value }}</p>
-
-<p>Description: {{ description.value }}</p>

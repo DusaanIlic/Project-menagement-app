@@ -1,19 +1,34 @@
-import { Component, Input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ProjectService } from '../../services/project.service';
+import { Project } from '../../models/project';
 
 @Component({
   selector: 'app-project-add',
   standalone: true,
-  imports: [ReactiveFormsModule],
   templateUrl: './project-add.component.html',
-  styleUrl: './project-add.component.scss'
+  styleUrls: ['./project-add.component.scss'],
+  imports: [ReactiveFormsModule],
 })
 export class ProjectAddComponent {
-  name = new FormControl('');
-  date = new FormControl('');
-  description = new FormControl('');
+  projectForm = new FormGroup({
+    name: new FormControl(''),
+    date: new FormControl(''),
+    description: new FormControl(''),
+  });
 
-  public onClick(){
-    console.log
+  private project?: Project;
+
+  constructor(private projectService: ProjectService) {}
+
+  public onSubmit() {
+    this.project = {
+      id: 0,
+      name: this.projectForm.get('name')?.value || '',
+      date: new Date(this.projectForm.get('date')?.value || ''),
+      description: this.projectForm.get('description')?.value || '',
+    };
+    alert('kreiran projekat');
+    console.log(this.project);
   }
 }
