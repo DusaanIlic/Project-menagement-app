@@ -10,5 +10,14 @@ namespace Server.Data
         }
 
         public  DbSet<Project> Projects { get; set; }
+        public DbSet<Member> Members { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Member>()
+                .HasIndex(m => m.Email)
+                .IsUnique();
+        }
+
     }
 }
