@@ -1,9 +1,19 @@
+#content{
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+}
+
 .dugme{
     height: 50px;
     width: 130px;
     background-color: rgb(1, 1, 153);
     color: white;
     border-radius: 10px;
+    position: absolute;
+    right: -50px;
+    bottom: -50px;
 }
 
 .inputi{
@@ -26,6 +36,11 @@
 
 .naslov{
     margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.naslov1{
+    margin-bottom: 10px;
 }
 
 #role{
@@ -33,11 +48,4 @@
     border: 2px solid black;
     height: 25px;
     width: 200px;
-}
-
-#form{
-    position: absolute;
-    top: 50%;
-    left: 30%;
-    transform: translate(-50%, -50%);
 }
