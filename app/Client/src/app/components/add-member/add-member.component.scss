@@ -1,0 +1,43 @@
+.dugme{
+    height: 50px;
+    width: 130px;
+    background-color: rgb(1, 1, 153);
+    color: white;
+    border-radius: 10px;
+}
+
+.inputi{
+    border-radius: 10px;
+    border: 2px solid black;
+    height: 20px;
+    width: 200px;
+}
+
+#inputi2{
+    border-radius: 10px;
+    border: 2px solid black;
+}
+
+.div{
+    display: inline-block;
+    margin-right: 50px;
+    margin-bottom: 10px;
+}
+
+.naslov{
+    margin-bottom: 10px;
+}
+
+#role{
+    border-radius: 10px;
+    border: 2px solid black;
+    height: 25px;
+    width: 200px;
+}
+
+#form{
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+}
