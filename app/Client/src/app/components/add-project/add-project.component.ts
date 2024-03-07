@@ -4,13 +4,13 @@ import { ProjectService } from '../../services/project.service';
 import { Project } from '../../models/project';
 
 @Component({
-  selector: 'app-project-add',
+  selector: 'app-add-project',
   standalone: true,
-  templateUrl: './project-add.component.html',
-  styleUrls: ['./project-add.component.scss'],
+  templateUrl: './add-project.component.html',
+  styleUrls: ['./add-project.component.scss'],
   imports: [ReactiveFormsModule],
 })
-export class ProjectAddComponent {
+export class AddProjectComponent {
   projectForm = new FormGroup({
     name: new FormControl(''),
     date: new FormControl(''),

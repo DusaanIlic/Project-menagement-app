@@ -4,14 +4,14 @@ import { CommonModule } from '@angular/common';
 import { Member } from '../../member';
 
 @Component({
-    selector: 'app-all-members-component',
+    selector: 'app-all-members',
     standalone: true,
-    templateUrl: './all-members-component.component.html',
-    styleUrl: './all-members-component.component.scss',
+    templateUrl: './all-members.component.html',
+    styleUrl: './all-members.component.scss',
     imports: [MemberComponent, CommonModule]
 })
-export class AllMembersComponentComponent implements OnInit{
-    
+export class AllMembersComponent implements OnInit{
+
 
     members : Member[] = [];
     member1? : Member;
