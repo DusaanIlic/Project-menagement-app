@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { Member } from '../../member';
 import { CommonModule } from '@angular/common';
 
@@ -19,5 +19,4 @@ export class MemberComponent {
     phone: '066/123456',
     role: 'Project Menager'
   };
- @Input() isListView: boolean = false;
 }

@@ -17,7 +17,7 @@
                 </tr>
                 <tr *ngFor="let member of members">
                     <td><button id="picture"></button></td>
-                    <td colspan="5"><div class="tdRow">{{member.name}} {{member.lastName}}</div> <div class="tdRow">{{member.role}}</div> <div class="tdRow">{{member.email}}</div> <div class="tdRow">{{member.phone}}</div> <div class="tdRow"><button>1</button><button>2</button><button>3</button></div></td>
+                    <td colspan="5"><div class="tdRow">{{member.name}} {{member.lastName}}</div> <div class="tdRow">{{member.role}}</div> <div class="tdRow">{{member.email}}</div> <div class="tdRow">{{member.phone}}</div> <div class="tdRow" id="tdRowBtns"><button id="details"></button> <button id="edit"></button> <button id="delete"></button></div></td>
                     <td id="buttons"></td>
                 </tr>
             </tbody>

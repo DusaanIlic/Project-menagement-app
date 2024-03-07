@@ -94,3 +94,32 @@ h2
 {
     color: #0E2954;
 }
+
+#details
+{
+    background-image: url(../../../assets/icons/details_36_jpg.jpg);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-size: 100%;
+    margin-right: 15px;
+}
+
+#edit
+{
+    background-image: url(../../../assets/icons/edit_36_jpg.jpg);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-size: 100%;
+    margin-right: 15px;
+}
+
+#delete
+{
+    background-image: url(../../../assets/icons/delete_36_jpg.jpg);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-size: 95%;
+}
