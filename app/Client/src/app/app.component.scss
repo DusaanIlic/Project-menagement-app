@@ -1,0 +1,14 @@
+#app-container {
+  display: flex;
+  min-height: 100vh;
+
+  #left {
+    flex-basis: 5%;
+    flex-grow: 1;
+  }
+
+  #right {
+    flex-basis: 95%;
+    flex-grow: 1;
+  }
+}
