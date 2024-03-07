@@ -4,11 +4,13 @@ import { AddMemberComponent } from "./components/add-member/add-member.component
 import { AllMembersComponent } from "./components/all-members/all-members.component";
 import { AllProjectsComponent } from "./components/all-projects/all-projects.component";
 import { AddProjectComponent } from './components/add-project/add-project.component';
+import { AllRolesComponent } from "./components/all-roles/all-roles.component";
 
 export const routes: Routes = [
-    { path: "login", component: LoginComponent },
-    { path: "members/add", component: AddMemberComponent },
-    { path: "members/all", component: AllMembersComponent },
-    { path: "projects/all", component: AllProjectsComponent },
-    { path: "projects/add", component: AddProjectComponent  }
+  { path: "login", component: LoginComponent },
+  { path: "members/add", component: AddMemberComponent },
+  { path: "members/all", component: AllMembersComponent },
+  { path: "projects/all", component: AllProjectsComponent },
+  { path: "projects/add", component: AddProjectComponent },
+  { path: "roles/all", component: AllRolesComponent }
 ]
