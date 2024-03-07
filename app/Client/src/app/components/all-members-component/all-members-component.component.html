@@ -1,12 +1,18 @@
 <div id="rightDiv">
     <h1>Staff overview</h1>
-<div id="listView">
-    <div id="heading">
-        <div><h2>Name</h2><div class="triangle"></div></div>
-        <div><h2>Role</h2><div class="triangle"></div></div>
-        <div><h2>Number of tasks</h2><div class="triangle"></div></div>
-        <div><h2>Workload</h2><div class="triangle"></div></div>
-        <div><h2>Actions</h2></div>
-    </div>
-</div>
+<table id="allMembersTable">
+    <thead>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Date of employment</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="5" ><button id="addNewBtn" (click)="addNewMember()"><h2>Add new</h2></button></td>
+        </tr>
+        <app-member [isListView]="true"></app-member>
+    </tbody>
+</table>
 </div>

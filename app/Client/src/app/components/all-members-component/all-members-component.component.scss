@@ -1,35 +1,3 @@
-#rightDiv
-{
-    float: right;
-}
-
-#listView
-{
-    display: table;
-}
-
-#heading
-{
-    margin-bottom: 10px;
-}
-
-#heading > div
-{
-    display: inline;   
-    margin-right: 220px;
-}
-
-#heading > div > h2
-{
-    display: inline;
-    
-}
-
-#heading > div > div
-{
-    display: inline;
-}
-
 .triangle
 {
     width: 0;
@@ -37,4 +5,25 @@
 	border-left: 7.5px solid transparent;
 	border-right: 7.5px solid transparent;
 	border-top: 15px solid #555;
+}
+
+#addNewBtn
+{
+    width: 100%;
+    background-color: transparent;
+    border: dashed 1px black;
+    border-radius: 15px;
+    height: 40px;
+}
+
+#addNewBtn:hover
+{
+    cursor: pointer;
+}
+
+th
+{
+    padding: 100px;
+    padding-bottom: 5px;
+    padding-top: 5px;
 }
