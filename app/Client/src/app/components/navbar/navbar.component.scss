@@ -1,0 +1,38 @@
+nav {
+  background-color: var(--basic-color);
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+
+  .app-pages {
+    flex-basis: 100%;
+    margin-top: 40px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+
+      p {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+    }
+  }
+
+  li:hover {
+    background-color: black;
+  }
+}
