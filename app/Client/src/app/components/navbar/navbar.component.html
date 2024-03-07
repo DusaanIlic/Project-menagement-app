@@ -1,13 +1,13 @@
 <nav>
   <ul class="app-pages">
-    <li>
-      <a>
+    <li  routerLinkActive="active">
+      <a routerLink="/projects/all" >
         <img ngSrc="/assets/navbar/projects.png" height="64" width="64" alt="Projects page">
         <p>Projects</p>
       </a>
     </li>
-    <li>
-      <a>
+    <li routerLinkActive="active">
+      <a routerLink="/members/all">
         <img ngSrc="/assets/navbar/members.png" height="64" width="64" alt="Projects page">
         <p>Members</p>
       </a>
@@ -15,6 +15,11 @@
   </ul>
 
   <ul class="user-pages">
-
+    <li>
+      <a routerLink="/login">
+        <img ngSrc="/assets/navbar/logout.png" height="64" width="64" alt="Projects page">
+        <p>Log out</p>
+      </a>
+    </li>
   </ul>
 </nav>
