@@ -21,9 +21,28 @@
     cursor: pointer;
 }
 
+td
+{
+    text-align: center;
+    background-color: rebeccapurple;   
+}
+
+#picture
+{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
 th
 {
-    padding: 100px;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    width: 300px;
+}
+
+#addNewBtnPic
+{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: dashed 1px;
 }

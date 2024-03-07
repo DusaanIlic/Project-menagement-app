@@ -2,6 +2,7 @@
     <h1>Staff overview</h1>
 <table id="allMembersTable">
     <thead>
+        <th></th>
         <th>Name</th>
         <th>Role</th>
         <th>Email</th>
@@ -10,9 +11,17 @@
     </thead>
     <tbody>
         <tr>
+            <td><button id="addNewBtnPic"></button></td>
             <td colspan="5" ><button id="addNewBtn" (click)="addNewMember()"><h2>Add new</h2></button></td>
         </tr>
-        <app-member [isListView]="true"></app-member>
+        <tr *ngFor="let member of members">
+            <td><button id="picture"></button></td>
+            <td>{{member.name}} {{member.lastName}}</td>
+            <td>{{member.role}}</td>
+            <td>{{member.email}}</td>
+            <td>{{member.phone}}</td> <!-- Treba zameniti sa date of employment kada se doda -->
+            <td id="buttons"><button>1</button><button>2</button><button>3</button></td>
+        </tr>
     </tbody>
 </table>
 </div>
