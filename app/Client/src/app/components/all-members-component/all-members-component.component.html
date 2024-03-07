@@ -1,27 +1,28 @@
-<div id="rightDiv">
-    <h1>Staff overview</h1>
-<table id="allMembersTable">
-    <thead>
-        <th></th>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Email</th>
-        <th>Date of employment</th>
-        <th>Actions</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td><button id="addNewBtnPic"></button></td>
-            <td colspan="5" ><button id="addNewBtn" (click)="addNewMember()"><h2>Add new</h2></button></td>
-        </tr>
-        <tr *ngFor="let member of members">
-            <td><button id="picture"></button></td>
-            <td>{{member.name}} {{member.lastName}}</td>
-            <td>{{member.role}}</td>
-            <td>{{member.email}}</td>
-            <td>{{member.phone}}</td> <!-- Treba zameniti sa date of employment kada se doda -->
-            <td id="buttons"><button>1</button><button>2</button><button>3</button></td>
-        </tr>
-    </tbody>
-</table>
+<div>
+    <div id="header"><div id="title"><h1>Staff overview</h1></div>  <div id="memberProfile">{{members[0].name}} {{members[0].lastName}} <button id="picture"></button></div></div>
+    <div id="tableDiv">
+        <table id="allMembersTable">
+            <thead>
+                <th id="pictureTh"></th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Date of employment</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="pictureTd"><button id="addNewBtnPic"></button></td>
+                    <td colspan="5" ><button id="addNewBtn" (click)="addNewMember()"><h2>Add new</h2></button></td>
+                </tr>
+                <tr *ngFor="let member of members">
+                    <td><button id="picture"></button></td>
+                    <td colspan="5"><div class="tdRow">{{member.name}} {{member.lastName}}</div> <div class="tdRow">{{member.role}}</div> <div class="tdRow">{{member.email}}</div> <div class="tdRow">{{member.phone}}</div> <div class="tdRow"><button>1</button><button>2</button><button>3</button></div></td>
+                    <td id="buttons"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
 </div>

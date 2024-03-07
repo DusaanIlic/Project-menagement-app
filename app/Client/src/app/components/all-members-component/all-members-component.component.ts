@@ -28,7 +28,7 @@ export class AllMembersComponentComponent implements OnInit{
             name: 'Pera',
             lastName: 'Peric',
             email: 'peraperic@gmail.com',
-            phone: '066/123456',
+            phone: '1.1.2024.',
             role: 'Project Menager'
           };
 
