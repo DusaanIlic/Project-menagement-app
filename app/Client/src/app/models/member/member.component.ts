@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Member } from '../../member';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-member',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './member.component.html',
   styleUrl: './member.component.scss'
 })
@@ -18,4 +19,5 @@ export class MemberComponent {
     phone: '066/123456',
     role: 'Project Menager'
   };
+ @Input() isListView: boolean = false;
 }

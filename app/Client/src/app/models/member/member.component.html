@@ -1,9 +1,18 @@
-<h2>Member</h2>
-<div>
-    <span>{{member.name}}</span><br>
-    <span>{{member.lastName}}</span><br>
-    <span>{{member.email}}</span><br>
-    <span>{{member.phone}}</span><br>
-    <span>{{member.role}}</span>
-    <br>
-</div>
+<tr *ngIf="isListView; else gridView">
+        <td>{{member.name}}</td>
+        <td>{{member.lastName}}</td>
+        <td>{{member.role}}</td>
+        <td>{{member.email}}</td>
+        <td>{{member.phone}}</td>
+        <td id="buttons"><button>1</button><button>2</button><button>3</button></td>
+</tr>
+  <ng-template #gridView> <!-- Ako koristimo kao gridView. Sve informacije ce da budu jedna ispod druge -->
+    <h2>Member</h2>
+    <div>
+        <span>{{member.name}}</span><br>
+        <span>{{member.lastName}}</span><br>
+        <span>{{member.email}}</span><br>
+        <span>{{member.phone}}</span><br>
+        <span>{{member.role}}</span><br>
+    </div>
+  </ng-template>
