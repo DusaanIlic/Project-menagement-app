@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import {NavigationEnd, NavigationStart, Router, RouterOutlet} from '@angular/router';
 import { AddMemberComponent } from './components/add-member/add-member.component';
-import { AllProjectsComponentComponent } from './components/all-projects-component/all-projects-component.component';
-import { AllMembersComponentComponent } from './components/all-members-component/all-members-component.component';
-import { ProjectAddComponent } from './components/project-add/project-add.component';
+import { AllProjectsComponent } from './components/all-projects/all-projects.component';
+import { AllMembersComponent } from './components/all-members/all-members.component';
+import { AddProjectComponent } from './components/add-project/add-project.component';
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 
@@ -14,9 +14,9 @@ import {NgIf} from "@angular/common";
   styleUrl: './app.component.scss',
   imports: [
     RouterOutlet,
-    AllProjectsComponentComponent,
-    AllMembersComponentComponent,
-    ProjectAddComponent,
+    AllProjectsComponent,
+    AllMembersComponent,
+    AddProjectComponent,
     NavbarComponent,
     NgIf,
   ],
