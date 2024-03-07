@@ -1,25 +1,30 @@
-<div class="login-container">
-  <div class="login-item image-container">
+<div class="flex min-h-screen flex-nowrap">
+  <div class="basis-1/2 flex flex-col justify-center items-center bg-gradient-to-bl from-[#a9edf6] to-[#6dafb8]">
     <img ngSrc="/assets/logo.png" alt="Logic Tenacity Logo" height="394" width="633">
   </div>
 
-  <div class="login-item">
-    <h1>Welcome, please sign in</h1>
+  <div class="basis-1/2 flex flex-col justify-center items-center gap-10">
+    <div class="flex flex-col justify-center items-center gap-2">
+      <h1 class="font-bold text-6xl">WELCOME</h1>
+      <h2 class="text-2xl">Please login</h2>
+    </div>
 
-    <div class="form-container">
-      <form>
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" required
-          [(ngModel)]="email">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required
-          [(ngModel)]="password">
+    <div class="flex flex-col min-w-96 items-center justify-between gap-10">
+      <form class="flex flex-col gap-2 w-full">
+        <label class="text-xl" for="email">Email</label>
+        <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5"
+               type="email" name="email" id="email" required [(ngModel)]="email">
+        <label class="text-xl" for="password">Password</label>
+        <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5"
+               type="password" name="password" id="password" required [(ngModel)]="password">
       </form>
 
-      <button type="button" (click)="onSubmit()">Sign in</button>
+      <button class="w-full bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover"
+              type="button" (click)="onSubmit()">Login</button>
 
-      <div class="errors" *ngIf="errorMessage">
-        <p>{{errorMessage}}</p>
+      <div class="w-full bg-[lightcoral] rounded-2xl flex flex-wrap items-center justify-center gap-2 p-2 select-none"
+           *ngIf="errorMessage">
+        <p class="w-full text-[darkred] text-3 italic flex items-center justify-center">{{errorMessage}}</p>
       </div>
     </div>
   </div>
