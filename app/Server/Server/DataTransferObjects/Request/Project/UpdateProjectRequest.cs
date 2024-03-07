@@ -7,5 +7,6 @@
         public string ProjectDescription { get; set; } = string.Empty;
 
         public DateTime DeadLine { get; set; }
+
     }
 }

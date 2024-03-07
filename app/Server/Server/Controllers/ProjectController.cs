@@ -32,7 +32,9 @@ namespace Server.Controllers
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
                 ProjectDescription = p.ProjectDescription,
-                DeadLine = p.DeadLine
+                DeadLine = p.DeadLine,
+                ProjectStatus = p.ProjectStatus.Status,
+                ProjectStatusId = p.ProjectStatusId
             }).ToList();
             return Ok(projectDTOs);
         }
@@ -44,8 +46,12 @@ namespace Server.Controllers
             {
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
-                DeadLine = addProjectRequest.DeadLine
-            };
+                DeadLine = addProjectRequest.DeadLine,
+                ProjectStatusId = 1,
+                ProjectStatus = dbContext.ProjectStatuses
+                                     .Where(ps => ps.Id == 1)
+                                     .FirstOrDefault()
+        };
 
             dbContext.Projects.Add(project);
             await dbContext.SaveChangesAsync();
@@ -55,7 +61,9 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine 
+                DeadLine = project.DeadLine,
+                ProjectStatus = project.ProjectStatus.Status,
+                ProjectStatusId = project.ProjectStatusId
             };
 
             return Ok(projectDTO);
@@ -77,7 +85,9 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine
+                DeadLine = project.DeadLine,
+                ProjectStatus = project.ProjectStatus.Status,
+                ProjectStatusId = project.ProjectStatusId
             };
 
             return Ok(projectDTO);
@@ -105,7 +115,9 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine
+                DeadLine = project.DeadLine,
+                ProjectStatus = project.ProjectStatus.Status,
+                ProjectStatusId = project.ProjectStatusId
             };
 
             return Ok(projectDTO);
@@ -131,7 +143,9 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine
+                DeadLine = project.DeadLine,
+                ProjectStatus = project.ProjectStatus.Status,
+                ProjectStatusId = project.ProjectStatusId
             };
 
             return Ok(projectDTO);

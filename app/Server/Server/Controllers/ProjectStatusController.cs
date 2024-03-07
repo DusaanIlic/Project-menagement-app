@@ -53,7 +53,7 @@ namespace Server.Controllers
         }
 
         [HttpGet("{projectStatusId}")]
-        public IActionResult GetProject(int projectStatusId)
+        public IActionResult GetProjectStatus(int projectStatusId)
         {
 
             var projectStatus = dbContext.ProjectStatuses.SingleOrDefault(p => p.Id == projectStatusId);
