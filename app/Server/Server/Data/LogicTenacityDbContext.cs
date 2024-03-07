@@ -11,6 +11,8 @@ namespace Server.Data
 
         public  DbSet<Project> Projects { get; set; }
         public DbSet<Member> Members { get; set; }
+        public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

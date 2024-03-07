@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240307220543_FkProjectProjectStatus")]
+    partial class FkProjectProjectStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -67,6 +70,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ProjectStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ProjectStatusId")
                         .HasColumnType("INTEGER");
 
@@ -94,13 +101,11 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
-                    b.HasOne("Server.Models.ProjectStatus", "ProjectStatus")
+                    b.HasOne("Server.Models.ProjectStatus", null)
                         .WithMany("Projects")
                         .HasForeignKey("ProjectStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ProjectStatus");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>
