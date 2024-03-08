@@ -1,8 +1,13 @@
 <div class="flex min-h-screen">
-  <div class="basis-1/12 grow" *ngIf="showNavbar">
+  <div class="basis-1/12 grow flex flex-col flex-wrap" *ngIf="showNavbar">
     <app-navbar></app-navbar>
   </div>
-  <div class="basis-11/12 grow">
-    <router-outlet></router-outlet>
+  <div class="basis-11/12 grow flex min-h-full flex-col gap-4">
+    <div class="basis-1/12 grow" *ngIf="showHeader">
+      <app-header></app-header>
+    </div>
+    <div class="basis-11/12 grow p-5">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

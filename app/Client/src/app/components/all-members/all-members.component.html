@@ -1,5 +1,4 @@
 <div>
-    <div id="header"><div id="title"><h1>Staff overview</h1></div>  <div id="memberProfile">{{members[0].name}} {{members[0].lastName}} <button id="picture"></button></div></div>
     <div id="tableDiv">
         <table id="allMembersTable">
             <thead>
@@ -13,7 +12,7 @@
             <tbody>
                 <tr>
                     <td id="pictureTd"><button id="addNewBtnPic"></button></td>
-                    <td colspan="5" ><button id="addNewBtn" (click)="addNewMember()"><h2>Add new</h2></button></td>
+                    <td colspan="5" ><button id="addNewBtn" routerLink="/members/add"><h2>Add new</h2></button></td>
                 </tr>
                 <tr *ngFor="let member of members">
                     <td><button id="picture"></button></td>
