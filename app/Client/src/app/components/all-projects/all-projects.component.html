@@ -1,3 +1,14 @@
-<h1>All projects</h1>
-<div id="gridView">
+<div class="md: grid grid-cols-5 gap-5 ml-8">
+    <div class="flex border-dashed border-black rounded-lg border-2 md:w-5 md:h-5 lg:w-56 lg:h-56 items-center justify-center"><img class="lg:w-36 lg:h-36 md:w-2 md:h-2" src="assets/icons/plusBlue.png" alt="addProject"></div>
+
+    <div *ngFor="let project of projects" class="border-dashed border-black rounded-lg border-2 md:w-5 md:h-5 lg:w-56 lg:h-56">
+        <div class="w-full h-3/5 bg-green-400">Pera</div>
+        <div class="flex h-2/5 w-full bg-red-400">
+            <span class="flex justify-start">{{project.Name}}</span>
+            <span class="flex justify-end">{{project.Status}}</span>
+            <span class="flex justify-start">Project lead: {{project.Lead}}</span>
+            <span class="flex justify-start">Member count: {{project.DateStarts}}</span>
+        </div>
+    </div>
+    
 </div>
