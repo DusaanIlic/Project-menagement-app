@@ -9,5 +9,6 @@ namespace Server.DataTransferObjects
         public string ProjectDescription { get; set; } = string.Empty;
         public DateTime DeadLine { get; set; }
         public int ProjectStatusId { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }
