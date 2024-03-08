@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ProjectComponent } from "../../models/project/project.component";
 import { Project } from '../../project';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-all-projects',
     standalone: true,
     templateUrl: './all-projects.component.html',
     styleUrl: './all-projects.component.scss',
-    imports: [ProjectComponent, CommonModule]
+    imports: [ProjectComponent, CommonModule, RouterLink]
 })
 export class AllProjectsComponent implements OnInit{
     
@@ -28,6 +29,11 @@ export class AllProjectsComponent implements OnInit{
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
+    }
+
+    addNewProject()
+    {
+        console.log("Test");
     }
 
 
