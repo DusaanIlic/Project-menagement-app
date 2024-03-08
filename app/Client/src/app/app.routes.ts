@@ -7,10 +7,10 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 import { AllRolesComponent } from "./components/all-roles/all-roles.component";
 
 export const routes: Routes = [
-  { path: "login", component: LoginComponent },
-  { path: "members/add", component: AddMemberComponent },
-  { path: "members/all", component: AllMembersComponent },
-  { path: "projects/all", component: AllProjectsComponent },
-  { path: "projects/add", component: AddProjectComponent },
-  { path: "roles/all", component: AllRolesComponent }
+  { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
+  { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' } },
+  { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' } },
+  { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' } },
+  { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }  },
+  { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' } }
 ]
