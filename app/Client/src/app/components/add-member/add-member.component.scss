@@ -1,51 +1,70 @@
-#content{
+#add-member {
     position: absolute;
     top: 50%;
-    left: 30%;
+    left: 50%;
     transform: translate(-50%, -50%);
+    width: 100%; /* Širina forme */
+    max-width: 70%; /* Maksimalna širina forme */
+    padding: 20px;
 }
 
-.dugme{
+.div {
+    margin-bottom: 20px; /* Razmak između polja forme */
+    margin-right: 20%;
+    display: inline-block;
+}
+
+.naslov1{
+    position: absolute;
+    top: -15%;
+    left: 12%;
+    transform: translate(-50%, -50%);
+    font-size: 300%;
+}
+
+.naslov {
+    margin-bottom: 5px; /* Razmak između naslova i polja forme */
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.inputi, #role {
+    width: 250%; /* Širina polja forme */
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#inputi2{
+    width: 70%; /* Širina polja forme */
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#role {
+    height: 40px; /* Visina selekt polja */
+}
+
+.dugme {
+    position: absolute;
+    bottom: -50px; /* Razmak dugmeta od dna stranice */
+    right: 100px; /* Razmak dugmeta od desne strane */
     height: 50px;
     width: 130px;
     background-color: rgb(1, 1, 153);
     color: white;
-    border-radius: 10px;
-    position: absolute;
-    right: -50px;
-    bottom: -50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
 }
 
-.inputi{
-    border-radius: 10px;
-    border: 2px solid black;
-    height: 20px;
-    width: 200px;
-}
-
-#inputi2{
-    border-radius: 10px;
-    border: 2px solid black;
-}
-
-.div{
-    display: inline-block;
-    margin-right: 50px;
-    margin-bottom: 10px;
-}
-
-.naslov{
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.naslov1{
-    margin-bottom: 10px;
-}
-
-#role{
-    border-radius: 10px;
-    border: 2px solid black;
-    height: 25px;
-    width: 200px;
+@media (max-width: 768px) {
+    #add-member {
+        width: 90%; /* Manja širina forme za male ekrane */
+    }
 }
