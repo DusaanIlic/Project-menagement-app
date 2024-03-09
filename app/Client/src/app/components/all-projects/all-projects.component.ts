@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
     imports: [ProjectComponent, CommonModule, RouterLink]
 })
 export class AllProjectsComponent implements OnInit{
-    
+
 
     projects : Project[] = [];
     project : Project = {
@@ -33,6 +33,24 @@ export class AllProjectsComponent implements OnInit{
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
+        this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+      this.projects.push(this.project);
+
+
     }
 
     addNewProject()

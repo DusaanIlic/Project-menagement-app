@@ -1,9 +1,10 @@
-<div class="flex min-h-screen">
-  <div class="basis-11/12 grow flex min-h-full flex-col gap-4">
-    <div class="basis-1/12 grow" *ngIf="showHeader">
-      <app-header></app-header>
-    </div>
-    <div class="basis-11/12 grow">
+<div class="min-h-screen max-h-screen flex bg-background">
+  <app-navbar *ngIf="showNavbar"></app-navbar>
+
+  <div class="grow flex flex-col">
+    <app-header *ngIf="showHeader"></app-header>
+
+    <div class="overflow-auto">
       <router-outlet></router-outlet>
     </div>
   </div>
