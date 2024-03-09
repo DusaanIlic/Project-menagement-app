@@ -165,5 +165,34 @@ namespace Server.Controllers
 
             return Ok(projectDTO);
         }
+
+        [HttpPut("{projectId}/status/{statusId}")]
+        public async Task<IActionResult> UpdateProjectStatus(int projectId, int statusId)
+        {
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if (project == null)
+                return NotFound("Project not found");
+
+            var status = await dbContext.ProjectStatuses.FindAsync(statusId);
+            if (status == null)
+                return NotFound("Status not found");
+
+            
+            project.ProjectStatusId = statusId;
+            await dbContext.SaveChangesAsync();
+
+            var projectDTO = new ProjectDTO
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName,
+                ProjectDescription = project.ProjectDescription,
+                DeadLine = project.DeadLine,
+                ProjectStatusId = project.ProjectStatusId,
+                Status = project.ProjectStatus.Status
+            };
+
+            return Ok(projectDTO);
+        }
+
     }
 }
