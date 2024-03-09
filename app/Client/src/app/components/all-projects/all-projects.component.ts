@@ -22,10 +22,14 @@ export class AllProjectsComponent implements OnInit{
         DateEnds: 321,
         Details: 'Details1 ',
         Status: 'Active',
-        Lead: 'Pera'
+        Lead: 'Pera',
     };
 
     ngOnInit(): void {
+        this.projects.push(this.project);
+        this.projects.push(this.project);
+        this.projects.push(this.project);
+        this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);

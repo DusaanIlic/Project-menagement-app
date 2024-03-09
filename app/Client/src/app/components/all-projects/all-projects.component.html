@@ -1,16 +1,25 @@
-<div class="md: grid grid-cols-5 gap-5 ml-8">
-    <div class="flex border-dashed border-black rounded-lg border-2 md:w-5 md:h-5 lg:w-56 lg:h-56 items-center justify-center" routerLink="/projects/add">
-        <img class="lg:w-36 lg:h-36 md:w-2 md:h-2" src="assets/icons/plusBlue.png" alt="addProject">
+<div class="grid items-center justify-center ml-8 xl:grid-cols-5 gap-4">
+    <div class="flex border-dashed border-black rounded-lg border-2 w-56 h-56 items-center justify-center" routerLink="/projects/add">
+        <img class="w-20 h-20 xl:w-36 xl:h-36" src="assets/icons/plusBlue.png" alt="addProject">
     </div>
 
-    <div *ngFor="let project of projects" class="md:w-5 md:h-5 lg:w-56 lg:h-56">
-        <div class="w-full h-1/2 rounded-lg rounded-b-none border-black border-2"><img src="assets/allProjects/projectImg.jpg" alt=""></div>
-        <div class="h-1/2 w-full p-1 rounded-lg rounded-t-none">
-            <span class="flex justify-start">{{project.Name}}</span>
-            <span class="flex justify-end">{{project.Status}}</span>
-            <span class="flex justify-start">Project lead: {{project.Lead}}</span>
-            <span class="flex justify-start">Member count: {{project.DateStarts}}</span>
+    <div *ngFor="let project of projects" class="border-dashed border-black rounded-lg border-2 w-56 h-56">
+        <div>
+            <img src="assets/allProjects/projectImg.jpg" alt="projectImg.jpg" class="rounded-lg rounded-b-none">
         </div>
+        
+        
+        <div class="h-1/3 p-1 pb-0 xl:p-2">
+            <div class="flex justify-between">
+                <p>{{project.Name}}</p>
+                <p>{{project.Status}}</p> 
+            </div>
+            <div>
+                <p>Leader: {{project.Lead}}</p>
+                <p>Members: </p> 
+            </div>
+        </div>
+         
     </div>
     
 </div>
