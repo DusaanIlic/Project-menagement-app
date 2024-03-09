@@ -5,5 +5,5 @@ export interface Project {
     DateEnds: number,
     Details: string,
     Status: string,
-    Lead: string
+    Lead: string,
 }
