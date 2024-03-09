@@ -1,42 +1,51 @@
-<h1>Add staff member</h1>
-<form action="">
-    <div id="form">
-        <div id="name">
-            <p>First Name</p>
-            <input name="name" type="text" placeholder="Name..." [(ngModel)]="name">
-        </div>
-          
-        <div id="lname">
-            <p>Last name</p>
-            <input name="lname" type="text" placeholder="Last name..." [(ngModel)]="lname">
-        </div>
-    
-        <div id="email">
-            <p>Email</p>
-            <input name="email" type="text" placeholder="Email..." [(ngModel)]="email">
-        </div>
-    
-        <div id="phone">
-            <p>Phone number</p>
-            <input name="phone" type="text" placeholder="Number..." [(ngModel)]="phone">
-        </div>
-        <br>
-    
-       <div id="Role">
+<div id="add-member">
+    <h1 class="naslov1">Add staff member</h1>
+      <form>
+            <div id="name" class="div">
+                <p class="naslov">First Name</p>
+                <input class="inputi" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
+            </div>
+            
+            <div id="lname" class="div">
+                <p class="naslov">Last name</p>
+                <input class="inputi" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
+            </div>
+            <br>
+        
+            <div id="email" class="div">
+                <p class="naslov">Email</p>
+                <input class="inputi" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
+            </div>
+        
+            <div id="phone" class="div">
+                <p class="naslov">Phone number</p>
+                <input class="inputi" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
+            </div>
+            <br>
+        
+            <div id="Role" class="div">
+                <p class="naslov">Starting role</p>
+                <select name="role" id="role" aria-placeholder="">
+                    <option value="">Administrator</option>
+                    <option value="">Project manager</option>
+                    <option value="">Worker</option>
+                    <option value="">Guest</option>
+                </select>
 
-       </div>
-              
-        <div id="Date">
-            <p>Date of birth</p>
-            <input name="date" type="text" placeholder="Date..." [(ngModel)]="date">
-        </div>
-    
-        <div id="Info">
-            <p>Additional information</p>
-            <input name="info" type="text" placeholder="Info..." [(ngModel)]="info">
-        </div>
-        <br>
-    
-        <button type="button" (click)="onClick()">Add staff member</button>
-    </div>
-</form>
+             </div>
+                
+            <div id="Date" class="div">
+                <p class="naslov">Date of birth</p>
+                <input class="inputi" name="date" type="date" [(ngModel)]="date">
+            </div>
+            <br>
+
+            <div>
+                <p class="naslov">Additional information</p>
+                <!--<input class="inputi2" name="info" type="text" placeholder=" Info..." [(ngModel)]="info">-->
+                <textarea name="info" id="inputi2" cols="50" rows="5"></textarea>
+            </div>
+            <br>
+        </form>
+        <button type="button" class="dugme" (click)="onClick()">Add staff member</button>
+</div>
