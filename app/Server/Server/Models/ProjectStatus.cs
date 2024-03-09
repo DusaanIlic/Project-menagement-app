@@ -11,7 +11,7 @@ namespace Server.Models
 
         public string Status { get; set; } = string.Empty;
 
-        public ICollection<Project> Projects { get; set; } 
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
 
     }
 }

@@ -19,6 +19,13 @@ namespace Server.Data
             modelBuilder.Entity<Member>()
                 .HasIndex(m => m.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.ProjectStatus)
+                .WithMany(ps => ps.Projects)
+                .HasForeignKey(p => p.ProjectStatusId)
+                .IsRequired();
+
         }
 
     }

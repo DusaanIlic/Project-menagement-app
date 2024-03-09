@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240307220752_FKUpdate")]
-    partial class FKUpdate
+    [Migration("20240309203512_NewMigration")]
+    partial class NewMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,17 +5,20 @@
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class FkProjectProjectStatus : Migration
+    public partial class NewMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ProjectStatus",
+            
+            migrationBuilder.AlterColumn<int>(
+                name: "ProjectId",
                 table: "Projects",
-                type: "TEXT",
+                type: "INTEGER",
                 nullable: false,
-                defaultValue: "");
+                oldClrType: typeof(int),
+                oldType: "INTEGER")
+                .Annotation("Sqlite:Autoincrement", true);
 
             migrationBuilder.AddColumn<int>(
                 name: "ProjectStatusId",
@@ -23,6 +26,11 @@ namespace Server.Migrations
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_Projects",
+                table: "Projects",
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectStatusId",
@@ -45,17 +53,26 @@ namespace Server.Migrations
                 name: "FK_Projects_ProjectStatuses_ProjectStatusId",
                 table: "Projects");
 
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Projects",
+                table: "Projects");
+
             migrationBuilder.DropIndex(
                 name: "IX_Projects_ProjectStatusId",
                 table: "Projects");
 
             migrationBuilder.DropColumn(
-                name: "ProjectStatus",
-                table: "Projects");
-
-            migrationBuilder.DropColumn(
                 name: "ProjectStatusId",
                 table: "Projects");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "ProjectId",
+                table: "Project",
+                type: "INTEGER",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "INTEGER")
+                .OldAnnotation("Sqlite:Autoincrement", true);
         }
     }
 }
