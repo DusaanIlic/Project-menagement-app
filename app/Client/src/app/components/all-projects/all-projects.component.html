@@ -3,7 +3,7 @@
         <img class="w-20 h-20 xl:w-36 xl:h-36" src="assets/icons/plusBlue.png" alt="addProject">
     </div>
 
-    <div *ngFor="let project of projects" class="border-dashed border-black rounded-lg border-2 w-56 h-56">
+    <div *ngFor="let project of projects" class="border-dashed border-black rounded-lg border-2 w-56 h-56" (click)="openDetails()">
         <div>
             <img src="assets/allProjects/projectImg.jpg" alt="projectImg.jpg" class="rounded-lg rounded-b-none">
         </div>

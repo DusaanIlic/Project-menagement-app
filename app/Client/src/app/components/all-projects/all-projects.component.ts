@@ -40,6 +40,11 @@ export class AllProjectsComponent implements OnInit{
         console.log("Test");
     }
 
+    openDetails()
+    {
+        console.log("Open details");
+    }
+
 
 
 }
