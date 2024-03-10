@@ -1,14 +1,33 @@
 <section class="">
-  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-    <label for="name">Project Name</label>
-    <input type="text" id="name" formControlName="name" />
+  <form
+    [formGroup]="projectForm"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col place-items-center min-h-screen"
+  >
+    <label for="name" class="">Project Name</label>
+    <input
+      type="text"
+      id="name"
+      formControlName="name"
+      class="border border-gray-800 rounded-md"
+    />
 
     <label for="date">Due Date</label>
     <input type="date" formControlName="date" id="date" />
 
     <label for="description">Description</label>
-    <input type="text" formControlName="description" id="description" />
+    <input
+      type="text"
+      formControlName="description"
+      id="description"
+      class="border border-gray-800 rounded-md size-56"
+    />
 
-    <button type="submit">Create Project</button>
+    <button
+      type="submit"
+      class="mt-20 rounded-full p-5 bg-blue-800 shadow-md text-white text-4xl font-bold"
+    >
+      Create Project
+    </button>
   </form>
 </section>
