@@ -1,25 +1,30 @@
 <div class="flex ml-2 justify-center">
     <table class="table-fixed">
         <thead class="text-xs xl:text-xl">
+            <th></th>
             <th class="xl:w-60 xl:text-2xl">Name</th>
             <th class="xl:w-60 xl:text-2xl">Role</th>
             <th class="xl:w-60 xl:text-2xl">Email</th>
-            <th class="xl:w-60 xl:text-2xl">Date of employment</th>
+            <th class="xl:w-60 hidden xl:text-2xl xl:block">Date of employment</th>
             <th class="xl:w-60 xl:text-2xl">Actions</th>
         </thead>
         <tbody>
             <tr>
-                <td colspan="5">
-                    <button class="rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3">Add new</button>
+                <td colspan="6">
+                    <button class="rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3 xl:h-16">Add new
+                    </button>
                 </td>
             </tr>
-            <tr *ngFor="let member of members">
-                <td class="text-center xl:w-60 xl:text-xl">{{member.name}}</td>
-                <td class="text-center xl:w-60 xl:text-xl">{{member.role}}</td>
-                <td class="text-center xl:w-60 xl:text-xl">{{member.email}}</td>
-                <td class="text-center xl:w-60 xl:text-xl">{{member.phone}}</td>
-                <td class="text-center xl:w-60 xl:text-xl">
-                    <button >1</button> <button>2</button> <button>3</button>
+            <tr class="xl:mb-3 border-b-black border-2 xl:h-16" *ngFor="let member of members">
+                <td>
+                    <button class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell"></button>
+                </td>
+                <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.name}}</td>
+                <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.role}}</td>
+                <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.email}}</td>
+                <td class="text-center text-xs hidden xl:w-60 xl:text-xl xl:table-cell">{{member.phone}}</td>
+                <td class="text-center text-xs xl:w-60 xl:text-xl">
+                    <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button> <button class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img src="assets/icons/edit_36_jpg.jpg"></button> <button class="hidden w-5 h-5 xl:inline-flex"><img src="assets/icons/delete_36_jpg.jpg"></button>
                 </td>
             </tr>
         </tbody>
