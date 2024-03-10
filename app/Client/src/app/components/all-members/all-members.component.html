@@ -1,27 +1,30 @@
-<div>
-    <div id="tableDiv">
-        <table id="allMembersTable">
-            <thead>
-                <th id="pictureTh"></th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Email</th>
-                <th>Date of employment</th>
-                <th>Actions</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="pictureTd"><button id="addNewBtnPic"></button></td>
-                    <td colspan="5" ><button id="addNewBtn" routerLink="/members/add"><h2>Add new</h2></button></td>
-                </tr>
-                <tr *ngFor="let member of members">
-                    <td><button id="picture"></button></td>
-                    <td colspan="5"><div class="tdRow">{{member.name}} {{member.lastName}}</div> <div class="tdRow">{{member.role}}</div> <div class="tdRow">{{member.email}}</div> <div class="tdRow">{{member.phone}}</div> <div class="tdRow" id="tdRowBtns"><button id="details"></button> <button id="edit"></button> <button id="delete"></button></div></td>
-                    <td id="buttons"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<div class="flex ml-2 justify-center">
+    <table class="table-fixed">
+        <thead class="text-xs xl:text-xl">
+            <th class="xl:w-60 xl:text-2xl">Name</th>
+            <th class="xl:w-60 xl:text-2xl">Role</th>
+            <th class="xl:w-60 xl:text-2xl">Email</th>
+            <th class="xl:w-60 xl:text-2xl">Date of employment</th>
+            <th class="xl:w-60 xl:text-2xl">Actions</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="5">
+                    <button class="rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3">Add new</button>
+                </td>
+            </tr>
+            <tr *ngFor="let member of members">
+                <td class="text-center xl:w-60 xl:text-xl">{{member.name}}</td>
+                <td class="text-center xl:w-60 xl:text-xl">{{member.role}}</td>
+                <td class="text-center xl:w-60 xl:text-xl">{{member.email}}</td>
+                <td class="text-center xl:w-60 xl:text-xl">{{member.phone}}</td>
+                <td class="text-center xl:w-60 xl:text-xl">
+                    <button >1</button> <button>2</button> <button>3</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
 
 
 </div>
