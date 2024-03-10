@@ -17,6 +17,7 @@ export class MemberComponent {
     lastName: 'Peric',
     email: 'peraperic@gmail.com',
     phone: '066/123456',
-    role: 'Project Menager'
+    role: 'Project Menager',
+    dateOfEmployment : new Date()
   };
 }

@@ -30,7 +30,8 @@ export class AllMembersComponent implements OnInit{
             lastName: 'Peric',
             email: 'peraperic@gmail.com',
             phone: '1.1.2024.',
-            role: 'Project Menager'
+            role: 'Project Menager',
+            dateOfEmployment : new Date(),
           };
 
         this.members?.push(this.member1)
