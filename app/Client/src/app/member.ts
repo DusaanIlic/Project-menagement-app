@@ -5,4 +5,5 @@ export interface Member {
     email: string;
     phone: string;
     role: string;
+    dateOfEmployment: Date;
 }
