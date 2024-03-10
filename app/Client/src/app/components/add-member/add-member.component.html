@@ -1,31 +1,29 @@
-<div id="min-h-screen flex flex-nowrap">
-    <h1 class="font-bold text-5xl">Add staff member</h1>
-      <form>
-            <div id="name" class="inline-block ">
-                <p class="naslov">First Name</p>
-                <input class="inputi" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
+<h1 class="font-bold text-5xl ml-9 mb-9">Add staff member</h1>
+<form>
+    <div class="grid grid-cols-2 place-items-center">
+            <div id="name" class="mb-3">
+                <p class="text-xl">First Name</p>
+                <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
             </div>
             
-            <div id="lname" class="div">
-                <p class="naslov">Last name</p>
-                <input class="inputi" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
-            </div>
-            <br>
-        
-            <div id="email" class="div">
-                <p class="naslov">Email</p>
-                <input class="inputi" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
+            <div id="lname" class="mb-3">
+                <p class="text-xl">Last name</p>
+                <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
             </div>
         
-            <div id="phone" class="div">
-                <p class="naslov">Phone number</p>
-                <input class="inputi" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
+            <div id="email" class="mb-3">
+                <p class="text-xl">Email</p>
+                <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
             </div>
-            <br>
         
-            <div id="Role" class="div">
-                <p class="naslov">Starting role</p>
-                <select name="role" id="role" aria-placeholder="">
+            <div id="phone" class="mb-3">
+                <p class="text-xl">Phone number</p>
+                <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
+            </div>
+        
+            <div id="Role" class="mb-3">
+                <p class="text-xl">Starting role</p>
+                <select name="role" class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" aria-placeholder="">
                     <option value="">Administrator</option>
                     <option value="">Project manager</option>
                     <option value="">Worker</option>
@@ -34,17 +32,14 @@
 
              </div>
                 
-            <div id="Date" class="div">
-                <p class="naslov">Date of birth</p>
-                <input class="inputi" name="date" type="date" [(ngModel)]="date">
+            <div id="Date" class="mb-3">
+                <p class="text-xl">Date of birth</p>
+                <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="date" type="date" [(ngModel)]="date">
             </div>
-            <br>
-
-            <div>
-                <p class="naslov">Additional information</p>
-                <textarea name="info" id="inputi2" cols="50" rows="5"></textarea>
-            </div>
-            <br>
-        </form>
-        <button type="button" class="dugme" (click)="onClick()">Add staff member</button>
-</div>
+    </div>
+    <div class="place-self-center">
+        <p class="text-xl">Additional information</p>
+        <textarea name="info" id="inputi2" cols="50" rows="5"></textarea>
+    </div>
+    <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="onClick()">Add staff member</button>
+</form>
