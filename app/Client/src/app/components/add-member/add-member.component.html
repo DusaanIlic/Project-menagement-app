@@ -1,27 +1,31 @@
-<h1 class="font-bold text-5xl ml-9 mb-9">Add staff member</h1>
 <form>
-    <div class="grid grid-cols-2 place-items-center">
-            <div id="name" class="mb-3">
+    <div class=" flex flex-col justify-center items-center gap-6 w-2/3">
+        <div class="flex items-center justify-center gap-4">
+            <div id="name" class="basis-1/2 grow">
                 <p class="text-xl">First Name</p>
                 <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
             </div>
             
-            <div id="lname" class="mb-3">
+            <div id="lname" class="basis-1/2 grow">
                 <p class="text-xl">Last name</p>
                 <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
             </div>
+        </div>
         
-            <div id="email" class="mb-3">
+        <div class="flex items-center justify-center gap-4">
+            <div id="email" class=" basis-1/2 grow">
                 <p class="text-xl">Email</p>
                 <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
             </div>
         
-            <div id="phone" class="mb-3">
+            <div id="phone" class=" basis-1/2 grow">
                 <p class="text-xl">Phone number</p>
                 <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
             </div>
+        </div>
         
-            <div id="Role" class="mb-3">
+        <div class="flex items-center justify-center gap-4">
+            <div id="Role" class="basis-1/2 grow">
                 <p class="text-xl">Starting role</p>
                 <select name="role" class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" aria-placeholder="">
                     <option value="">Administrator</option>
@@ -32,12 +36,14 @@
 
              </div>
                 
-            <div id="Date" class="mb-3">
+            <div id="Date" class=" basis-1/2 grow">
                 <p class="text-xl">Date of birth</p>
                 <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="date" type="date" [(ngModel)]="date">
             </div>
+        </div>
+
     </div>
-    <div class="place-self-center">
+    <div class="grid justify-items-center ">
         <p class="text-xl">Additional information</p>
         <textarea name="info" id="inputi2" cols="50" rows="5"></textarea>
     </div>
