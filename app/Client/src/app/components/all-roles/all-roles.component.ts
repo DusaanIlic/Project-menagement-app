@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import {Role} from "../../models/role";
+import {NgForOf, NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-all-roles',
   standalone: true,
-  imports: [],
+  imports: [
+    NgForOf,
+    NgOptimizedImage
+  ],
   templateUrl: './all-roles.component.html',
   styleUrl: './all-roles.component.scss'
 })
