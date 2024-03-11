@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
@@ -12,8 +13,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
+    [Authorize(Roles="admin")]
     [Route("api/[controller]")]
     [ApiController]
+    
     public class MemberController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
