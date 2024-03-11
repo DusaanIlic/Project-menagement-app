@@ -13,7 +13,7 @@ namespace Server.Models
 
         public string TaskDescription { get; set; } = string.Empty;
 
-        public DateOnly DeadLine { get; set; }
+        public DateTime DeadLine { get; set; }
 
         public int ProjectId { get; set; }
         public Project Project { get; set; }

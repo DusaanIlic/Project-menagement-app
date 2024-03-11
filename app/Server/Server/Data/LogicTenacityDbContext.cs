@@ -29,7 +29,7 @@ namespace Server.Data
 
             modelBuilder.Entity<ProjectTask>()
                 .HasOne(t => t.Project)
-                .WithMany(p => p.Tasks)
+                .WithMany(p => p.ProjectTasks)
                 .HasForeignKey(t => t.ProjectId)
                 .IsRequired();
         }
