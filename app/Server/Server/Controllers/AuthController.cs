@@ -62,7 +62,7 @@ namespace Server.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, member.Email),
-                    new Claim(ClaimTypes.Role, member.Role) // Add role claim here
+                    new Claim(ClaimTypes.Role, member.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
