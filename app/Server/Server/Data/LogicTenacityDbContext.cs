@@ -12,7 +12,7 @@ namespace Server.Data
         public  DbSet<Project> Projects { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
-        public DbSet<ProjectTask> Tasks{ get; set; }
+        public DbSet<ProjectTask> ProjectTasks{ get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -12,7 +12,7 @@ namespace Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Tasks",
+                name: "ProjectTasks",
                 columns: table => new
                 {
                     TaskId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -24,9 +24,9 @@ namespace Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskId);
+                    table.PrimaryKey("PK_ProjectTasks", x => x.TaskId);
                     table.ForeignKey(
-                        name: "FK_Tasks_Projects_ProjectId",
+                        name: "FK_ProjectTasks_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
@@ -34,8 +34,8 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_ProjectId",
-                table: "Tasks",
+                name: "IX_ProjectTasks_ProjectId",
+                table: "ProjectTasks",
                 column: "ProjectId");
         }
 
@@ -43,7 +43,7 @@ namespace Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Tasks");
+                name: "ProjectTasks");
         }
     }
 }

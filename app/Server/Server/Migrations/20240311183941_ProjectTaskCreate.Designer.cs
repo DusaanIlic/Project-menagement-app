@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240311182129_ProjectTaskCreate")]
+    [Migration("20240311183941_ProjectTaskCreate")]
     partial class ProjectTaskCreate
     {
         /// <inheritdoc />
@@ -119,7 +119,7 @@ namespace Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>

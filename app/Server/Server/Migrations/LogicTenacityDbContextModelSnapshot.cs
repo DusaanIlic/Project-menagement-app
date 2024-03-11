@@ -116,7 +116,7 @@ namespace Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
