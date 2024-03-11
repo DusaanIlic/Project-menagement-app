@@ -7,7 +7,7 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 
 export const routes: Routes = [
     { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
-    { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' } },
+    { path: "members/add", component: AddMemberComponent, data: { title: 'Add Members' } },
     { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' } },
     { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' } },
     { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }  }

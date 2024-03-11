@@ -1,15 +1,15 @@
-#add-member {
+/*#add-member {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%; /* Širina forme */
-    max-width: 70%; /* Maksimalna širina forme */
+    width: 100%;
+    max-width: 70%; 
     padding: 20px;
 }
 
 .div {
-    margin-bottom: 20px; /* Razmak između polja forme */
+    margin-bottom: 20px; 
     margin-right: 20%;
     width: 12%;
     display: inline-block;
@@ -24,13 +24,13 @@
 }
 
 .naslov {
-    margin-bottom: 5px; /* Razmak između naslova i polja forme */
+    margin-bottom: 5px; 
     font-weight: bold;
     font-size: 150%;
 }
 
 .inputi, #role {
-    width: 250%; /* Širina polja forme */
+    width: 250%; 
     padding: 8px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -38,7 +38,7 @@
 }
 
 #inputi2{
-    width: 70%; /* Širina polja forme */
+    width: 70%;
     padding: 8px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -46,13 +46,13 @@
 }
 
 #role {
-    height: 40px; /* Visina selekt polja */
+    height: 40px; 
 }
 
 .dugme {
     position: absolute;
-    bottom: -50px; /* Razmak dugmeta od dna stranice */
-    right: 100px; /* Razmak dugmeta od desne strane */
+    bottom: -50px; 
+    right: 100px; 
     height: 50px;
     width: 130px;
     background-color: rgb(1, 1, 153);
@@ -66,6 +66,6 @@
 
 @media (max-width: 768px) {
     #add-member {
-        width: 90%; /* Manja širina forme za male ekrane */
+        width: 90%; 
     }
-}
+}*/
