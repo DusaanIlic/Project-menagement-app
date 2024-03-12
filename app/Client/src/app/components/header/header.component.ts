@@ -3,6 +3,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {filter, map} from "rxjs";
 import { ProfileDropdownMenuComponent } from "../profile-dropdown-menu/profile-dropdown-menu.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-header',
@@ -11,14 +12,17 @@ import { ProfileDropdownMenuComponent } from "../profile-dropdown-menu/profile-d
     styleUrl: './header.component.scss',
     imports: [
         NgOptimizedImage,
-        ProfileDropdownMenuComponent
+        ProfileDropdownMenuComponent,
+        CommonModule
     ]
 })
 export class HeaderComponent {
 
     visible:boolean = false;
+    notVisible:boolean = true;
 dropdownShow() {
   this.visible = !this.visible;
+  this.notVisible = !this.notVisible;
 }
   title: string = '';
 

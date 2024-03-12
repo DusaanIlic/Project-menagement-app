@@ -4,6 +4,8 @@
   <a class="flex justify-center items-center gap-2">
     <p class="hidden sm:block">Pera Peric</p>
     <img ngSrc="/assets/avatar.png" alt="Person avatar" height="48" width="48">
+    <img src="/assets/icons/dropDownIcon.png" class="w-4 h-2 rotate-180" *ngIf="visible">
+    <img src="/assets/icons/dropDownIcon.png" class="w-4 h-2" *ngIf="notVisible">
   </a>
 </header>
 <app-profile-dropdown-menu [visible]="visible"></app-profile-dropdown-menu>
