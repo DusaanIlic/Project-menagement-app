@@ -26,22 +26,34 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
-            var projects = await dbContext.Projects.Include(p => p.ProjectStatus).ToListAsync();
+            var projects = await dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks)
+                .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
             foreach (var p in projects)
             {
-                
-                    projectDTOs.Add(new ProjectDTO
+                var taskDTOs = p.ProjectTasks.Select(t => new ProjectTaskDTO
+                {
+                    TaskId = t.TaskId,
+                    TaskName = t.TaskName,
+                    TaskDescription = t.TaskDescription,
+                    DeadLine = t.DeadLine,
+                    ProjectId = p.ProjectId
+
+                }).ToList();
+
+                projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
                         ProjectName = p.ProjectName,
                         ProjectDescription = p.ProjectDescription,
                         DeadLine = p.DeadLine,
                         ProjectStatusId = p.ProjectStatusId,
-                        Status = p.ProjectStatus.Status
-                    });
-                
+                        Status = p.ProjectStatus.Status,
+                        ProjectTasks = taskDTOs
+                });
             }
 
             return Ok(projectDTOs);
@@ -57,8 +69,8 @@ namespace Server.Controllers
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
                 DeadLine = addProjectRequest.DeadLine,
-                ProjectStatus = projectStatus,
-        };
+                ProjectStatus = projectStatus
+            };
 
             dbContext.Projects.Add(project);
             await dbContext.SaveChangesAsync();
@@ -80,12 +92,24 @@ namespace Server.Controllers
         public IActionResult GetProject(int projectId)
         {
        
-            var project = dbContext.Projects.Include(p => p.ProjectStatus).SingleOrDefault(p => p.ProjectId == projectId);
+            var project = dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks)
+                .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
             {
                 return NotFound(); 
             }
+
+            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
+            {
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskDescription = t.TaskDescription,
+                DeadLine = t.DeadLine,
+                ProjectId = t.ProjectId
+            }).ToList();
 
             var projectDTO = new ProjectDTO
             {
@@ -94,7 +118,8 @@ namespace Server.Controllers
                 ProjectDescription = project.ProjectDescription,
                 DeadLine = project.DeadLine,
                 ProjectStatusId = project.ProjectStatusId,
-                Status = project.ProjectStatus.Status
+                Status = project.ProjectStatus.Status,
+                ProjectTasks = taskDTOs
             };
 
             return Ok(projectDTO);
@@ -104,7 +129,10 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateProject(int projectId, UpdateProjectRequest updateProjectRequest)
         {
 
-            var project = await dbContext.Projects.Include(p => p.ProjectStatus).FirstOrDefaultAsync(p => p.ProjectId == projectId);
+            var project = await dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
             {
@@ -117,6 +145,15 @@ namespace Server.Controllers
             
             await dbContext.SaveChangesAsync();
 
+            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
+            {
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskDescription = t.TaskDescription,
+                DeadLine = t.DeadLine,
+                ProjectId = t.ProjectId
+            }).ToList();
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -124,7 +161,8 @@ namespace Server.Controllers
                 ProjectDescription = project.ProjectDescription,
                 DeadLine = project.DeadLine,
                 ProjectStatusId = project.ProjectStatusId,
-                Status = project.ProjectStatus.Status
+                Status = project.ProjectStatus.Status,
+                ProjectTasks = taskDTOs
             };
 
             return Ok(projectDTO);
@@ -133,7 +171,10 @@ namespace Server.Controllers
         [HttpDelete("{projectId}")]
         public async Task<IActionResult> DeleteProject(int projectId)
         {
-            var project = await dbContext.Projects.Include(p => p.ProjectStatus).FirstOrDefaultAsync(p => p.ProjectId == projectId);
+            var project = await dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks )
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
             {
@@ -144,6 +185,15 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
+            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
+            {
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskDescription = t.TaskDescription,
+                DeadLine = t.DeadLine,
+                ProjectId = t.ProjectId
+            }).ToList();
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -151,7 +201,8 @@ namespace Server.Controllers
                 ProjectDescription = project.ProjectDescription,
                 DeadLine = project.DeadLine,
                 ProjectStatusId = project.ProjectStatusId,
-                Status =  project.ProjectStatus.Status
+                Status =  project.ProjectStatus.Status,
+                ProjectTasks = taskDTOs
             };
 
             return Ok(projectDTO);
@@ -160,7 +211,11 @@ namespace Server.Controllers
         [HttpPut("{projectId}/status/{statusId}")]
         public async Task<IActionResult> UpdateProjectStatus(int projectId, int statusId)
         {
-            var project = await dbContext.Projects.Include(p => p.ProjectStatus).FirstOrDefaultAsync(p => p.ProjectId == projectId);
+            var project = await dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
             if (project == null)
                 return NotFound("Project not found");
 
@@ -171,6 +226,15 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
+            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
+            {
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskDescription = t.TaskDescription,
+                DeadLine = t.DeadLine,
+                ProjectId = t.ProjectId
+            }).ToList();
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -178,7 +242,8 @@ namespace Server.Controllers
                 ProjectDescription = project.ProjectDescription,
                 DeadLine = project.DeadLine,
                 ProjectStatusId = project.ProjectStatus.Id,
-                Status = project.ProjectStatus.Status
+                Status = project.ProjectStatus.Status,
+                ProjectTasks = taskDTOs
             };
 
             return Ok(projectDTO);
