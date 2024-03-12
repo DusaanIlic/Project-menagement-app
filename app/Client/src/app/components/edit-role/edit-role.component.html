@@ -1,14 +1,14 @@
 <div class="h-full pt-5 flex flex-col justify-center items-center">
     <label for="text" class="text-3xl mb-5 w-75%">EDITING ADMIN ROLE</label>
-    <div style="overflow: auto;" class="w-2/4">
-        <p>Display</p>
+    <div style="overflow: auto;" class="w-3/4">
+        <p class="text-xl">Display</p>
         <div class="bg-[#94b1e7] px-3 py-2 mb-5">
             <p>Role name *</p>
             <input class="w-full min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="ADMIN">
         </div>
 
-        <p>Permissions</p>
-        <div class="bg-[#94b1e7] px-5 py-2 mb-5">
+        <p class="text-xl">Permissions</p>
+        <div class="bg-[#94b1e7] px-5 py-2 mb-3 pb-10">
             <p>Manage Roles</p>
             <div class="flex flex-row gap-5 mb-2">
                 <input class="basis-5/6 min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="Allows members to create new roles and edit roles">
@@ -22,14 +22,55 @@
             </div>
         </div>
 
-        <p>Display</p>
-        <div class="bg-[#94b1e7] px-5 py-2 mb-5">
-            <p>Role name *</p>
-            <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="ADMIN">
+        <div class="flex flex-row justify-between items-baseline">
+            <p class="text-xl">Assigned members</p>
+            <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" placeholder=" Search...">
+            <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Add Member</button>
+        </div>
+        <div class="bg-[#94b1e7] px-5 py-5 mb-5 mt-1">
+            <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
+                <div class="flex flex-row items-center gap-4">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <p>Pera Peric</p>
+                </div>
+                <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">REMOVE</button>
+            </div>
+
+            <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
+                <div class="flex flex-row items-center gap-4">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <p>Pera Peric</p>
+                </div>
+                <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">REMOVE</button>
+            </div>
+
+            <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
+                <div class="flex flex-row items-center gap-4">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <p>Pera Peric</p>
+                </div>
+                <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">REMOVE</button>
+            </div>
+
+            <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
+                <div class="flex flex-row items-center gap-4">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <p>Pera Peric</p>
+                </div>
+                <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">REMOVE</button>
+            </div>
+
+            <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
+                <div class="flex flex-row items-center gap-4">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <p>Pera Peric</p>
+                </div>
+                <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">REMOVE</button>
+            </div>
         </div>
     </div>
 
-    <div class="flex justify-end w-4/5 gap-4 mt-5">
+    <div class="flex justify-end w-4/5 gap-4 mt-3">
         <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Save</button>
         <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Close</button>
     </div>
