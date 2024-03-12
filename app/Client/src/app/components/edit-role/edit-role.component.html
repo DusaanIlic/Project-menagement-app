@@ -1,1 +1,36 @@
-<p>edit-role works!</p>
+<div class="h-full pt-5 flex flex-col justify-center items-center">
+    <label for="text" class="text-3xl mb-5 w-75%">EDITING ADMIN ROLE</label>
+    <div style="overflow: auto;" class="w-2/4">
+        <p>Display</p>
+        <div class="bg-[#94b1e7] px-3 py-2 mb-5">
+            <p>Role name *</p>
+            <input class="w-full min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="ADMIN">
+        </div>
+
+        <p>Permissions</p>
+        <div class="bg-[#94b1e7] px-5 py-2 mb-5">
+            <p>Manage Roles</p>
+            <div class="flex flex-row gap-5 mb-2">
+                <input class="basis-5/6 min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="Allows members to create new roles and edit roles">
+                <button type="button" class="basis-1/6 px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">NO</button>
+            </div>
+
+            <p>Manage Projects</p>
+            <div class="flex flex-row gap-5">
+                <input class="basis-5/6 min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="Allows members to create new projects and edit projects">
+                <button type="button" class="basis-1/6 px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">YES</button>
+            </div>
+        </div>
+
+        <p>Display</p>
+        <div class="bg-[#94b1e7] px-5 py-2 mb-5">
+            <p>Role name *</p>
+            <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="role" type="text" value="ADMIN">
+        </div>
+    </div>
+
+    <div class="flex justify-end w-4/5 gap-4 mt-5">
+        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Save</button>
+        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Close</button>
+    </div>
+</div>

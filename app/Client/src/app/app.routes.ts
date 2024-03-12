@@ -14,5 +14,5 @@ export const routes: Routes = [
   { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' } },
   { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }  },
   { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' } },
-  { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' } },
+  { path: 'roles/edit', component: EditRoleComponent, data: { title: 'Edit Role' } },
 ]
