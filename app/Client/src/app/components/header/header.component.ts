@@ -2,17 +2,24 @@ import { Component } from '@angular/core';
 import {NgOptimizedImage} from "@angular/common";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {filter, map} from "rxjs";
+import { ProfileDropdownMenuComponent } from "../profile-dropdown-menu/profile-dropdown-menu.component";
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [
-    NgOptimizedImage
-  ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    standalone: true,
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss',
+    imports: [
+        NgOptimizedImage,
+        ProfileDropdownMenuComponent
+    ]
 })
 export class HeaderComponent {
+
+    visible:boolean = false;
+dropdownShow() {
+  this.visible = !this.visible;
+}
   title: string = '';
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
