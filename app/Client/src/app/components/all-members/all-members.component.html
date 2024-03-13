@@ -11,20 +11,23 @@
         <tbody>
             <tr>
                 <td colspan="6">
-                    <button class="rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3 xl:h-16" routerLink = "/members/add">Add new
-                    </button>
+                    <div class="flex justify-center items-center rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3 xl:h-16" routerLink = "/members/add">
+                        <p class="flex font-bold mr-3">Add new</p><img src="assets/icons/plusBlue.png" class="flex w-12 h-12">
+                    </div>
                 </td>
             </tr>
             <tr class="xl:mb-3 border-b-black border-2 xl:h-16" *ngFor="let member of members">
                 <td>
-                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-solid border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
                 </td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.name}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.role}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.email}}</td>
                 <td class="text-center text-xs hidden xl:w-60 xl:text-xl xl:table-cell">{{member.dateOfEmployment | date}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">
-                    <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button> <button class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img src="assets/icons/edit_36_jpg.jpg"></button> <button class="hidden w-5 h-5 xl:inline-flex"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                    <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button>
+                    <button class="hidden w-5 h-5 xl:mr-4 xl:inline-flex" routerLink="/edit/1"><img src="assets/icons/edit_36_jpg.jpg"></button> <!-- Umesto 1 treba da bude ID Membera koji se edituje -->
+                    <button class="hidden w-5 h-5 xl:inline-flex"><img src="assets/icons/delete_36_jpg.jpg"></button>
                 </td>
             </tr>
         </tbody>
