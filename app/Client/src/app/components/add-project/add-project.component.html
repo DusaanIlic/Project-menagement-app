@@ -1,14 +1,49 @@
 <section class="">
-  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-    <label for="name">Project Name</label>
-    <input type="text" id="name" formControlName="name" />
+  <form
+    [formGroup]="projectForm"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col place-items-center min-h-screen"
+  >
+    <div class="grid grid-rows-2">
+      <div class="mt-8 grid lg:grid-cols-2 gap-10">
+        <div class="grid grid-rows-2">
+          <label for="name" class="">Project Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="border-2 rounded-md max-h-8"
+          />
+        </div>
 
-    <label for="date">Due Date</label>
-    <input type="date" formControlName="date" id="date" />
+        <div class="grid grid-rows-2">
+          <label for="date">Due Date</label>
+          <input
+            class="border-2 rounded-md max-h-8"
+            type="date"
+            formControlName="date"
+            id="date"
+          />
+        </div>
+      </div>
 
-    <label for="description">Description</label>
-    <input type="text" formControlName="description" id="description" />
+      <div class="mt-5 grid grid-rows-2">
+        <label for="description">Description</label>
+        <textarea
+          type="text"
+          formControlName="description"
+          id="description"
+          class="border-2 rounded-md"
+        >
+        </textarea>
+      </div>
+    </div>
 
-    <button type="submit">Create Project</button>
+    <button
+      type="submit"
+      class="mt-20 rounded-xl p-5 bg-accent-blue shadow-md text-white text-xl font-bold"
+    >
+      Create Project
+    </button>
   </form>
 </section>
