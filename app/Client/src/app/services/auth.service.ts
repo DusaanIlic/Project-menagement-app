@@ -1,6 +1,7 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
+import {Router} from "@angular/router";
 
 const AUTH_API = 'http://localhost:8000/api/Auth'
 
@@ -23,6 +24,12 @@ export class AuthService {
       },
       httpOptions
     );
+  }
+
+  logout() {
+    console.log('logging out');
+    localStorage.removeItem('jwt-token');
+    localStorage.removeItem('auth-member');
   }
 }
 
