@@ -22,7 +22,7 @@
         <td class="text-center text-xs xl:w-60 xl:text-xl">
           <button class="inline-flex w-5 h-5 xl:mr-4"><img ngSrc="assets/icons/details_36_jpg.jpg" alt="Role details icon"
                                                            height="36" width="36"></button>
-          <button class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img ngSrc="assets/icons/edit_36_jpg.jpg" alt="Role edit icon"
+          <button [routerLink]="['/roles/edit']"  class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img ngSrc="assets/icons/edit_36_jpg.jpg" alt="Role edit icon"
                                                                      height="37" width="37"></button>
           <button class="hidden w-5 h-5 xl:inline-flex"><img ngSrc="assets/icons/delete_36_jpg.jpg" alt="Role delete icon"
                                                              height="36" width="32"></button>
