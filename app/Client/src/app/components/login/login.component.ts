@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -18,14 +19,22 @@ export class LoginComponent {
   email: string | undefined;
   password: string | undefined;
 
+  constructor(private authService : AuthService) {}
+
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = "* Email and password are required.";
+      this.errorMessage = '* Email and password are required.';
       return;
     }
 
-    console.log(this.email, this.password);
+    this.authService.login(this.email, this.password).subscribe({
+      next: data => {
+        localStorage.setItem('jwt-token', data.token);
+        console.log("logged in");
+      },
+      error: err => {
+        this.errorMessage = '* Wrong email and password combination';
+      }
+    });
   }
-
-  /* Cekam bek za dalje */
 }

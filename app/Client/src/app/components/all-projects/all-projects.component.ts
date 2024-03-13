@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectComponent } from "../../models/project/project.component";
 import { Project } from '../../project';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -9,7 +8,7 @@ import { RouterLink } from '@angular/router';
     standalone: true,
     templateUrl: './all-projects.component.html',
     styleUrl: './all-projects.component.scss',
-    imports: [ProjectComponent, CommonModule, RouterLink]
+    imports: [CommonModule, RouterLink]
 })
 export class AllProjectsComponent implements OnInit{
 

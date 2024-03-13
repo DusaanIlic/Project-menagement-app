@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {Role} from "../../models/role";
 import {NgForOf, NgOptimizedImage} from "@angular/common";
+import {ProjectService} from "../../services/project.service";
 
 @Component({
   selector: 'app-all-roles',
