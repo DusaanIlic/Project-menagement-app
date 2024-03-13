@@ -11,7 +11,7 @@
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
-            <input type="file" class="flex w-auto file:rounded-md file:border-0  file:bg-[#0E2954] file:text-gray-400 text-sm"/>
+            <input type="file" class="flex w-auto h-auto file:rounded-md file:border-0  file:bg-[#0E2954] file:text-gray-400 text-sm"/>
             <p class="flex">The maximum file size allowed is 200KB.</p>
             <hr class="border-1 border-black w-80">
             <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2">Remove current avatar</button>
@@ -57,7 +57,7 @@
 
         <div class="w-40">
             <label for="userid" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">User ID</label>
-            <input type="text" id="userid" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-20" value="123" disabled readonly>
+            <input type="text" id="userid" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-20" value="123" disabled readonly>
         </div>
     </div>
 
@@ -93,9 +93,9 @@
 
     <hr class="border-1 border-black w-80 ml-2 xl:w-full">
 
-
-
-
-
+    <div class="flex flex-col justify-between mt-4 xl:flex-row p-2">
+        <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Update profile settings</button>
+        <button type="button" class="flex items-center justify-center w-48 text-white bg-red-700   font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-red-800" routerLink="/members/all">Cancel</button>
+    </div>
 </div>
 
