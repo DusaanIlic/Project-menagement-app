@@ -11,11 +11,42 @@
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
-            <input type="file" class="flex w-auto file:rounded-md file:border-0  file:bg-[#0E2954] file:text-white"/>
+            <input type="file" class="flex w-auto file:rounded-md file:border-0  file:bg-[#0E2954] file:text-gray-400 text-sm"/>
             <p class="flex">The maximum file size allowed is 200KB.</p>
             <hr class="border-1 border-black w-80">
-            <button type="button" class="flex focus:outline-none w-40 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2">Remove current avatar</button>
+            <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2">Remove current avatar</button>
         </div>
     </div>
+
+    <hr class="border-1 border-black w-80 ml-2 xl:w-full">
+
+    <div class="flex flex-col w-full xl:flex-row p-2 justify-between">
+        <div>
+            <h1 class="font-bold text-xl">Current status</h1>
+            <p class="flex">This status will appear on your profile.</p>
+        </div>
+
+        <div>
+            <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Your status</label>
+            <input type="text" id="status" class="flex mb-2 bg-[#0E2954] border border-gray-300  text-sm rounded-md p-2.5 dark:bg-[#0E2954] placeholder:text-gray-400 text-white" placeholder="Your status..."/>
+            <div class="flex">
+                <input id="busy" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded-md bg-gray-50"/>
+                <label for="busy" class="text-sm font-medium ml-1  text-black">Busy</label>
+            </div>
+            <p class="text-sm ml-3.5">"Busy" will be shown next to your name.</p>
+        </div>
+
+        <div class="w-40"></div>
+    </div>
+
+    <hr class="border-1 border-black w-80 ml-2 xl:w-full">
+
+    <div>
+
+    </div>
+
+
+
+
 </div>
 
