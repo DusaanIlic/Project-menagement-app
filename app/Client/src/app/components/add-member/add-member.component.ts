@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import {  MemberComponent } from "../../models/member/member.component";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -8,7 +7,7 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     templateUrl: './add-member.component.html',
     styleUrl: './add-member.component.scss',
-    imports: [MemberComponent, FormsModule]
+    imports: [FormsModule]
 })
 export class AddMemberComponent {
     //@Input()
