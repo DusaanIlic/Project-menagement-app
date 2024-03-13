@@ -8,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './edit-member.component.scss'
 })
 export class EditMemberComponent {
+openAvatar() {
+}
 
 }
