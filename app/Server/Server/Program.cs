@@ -1,9 +1,11 @@
+global using Server.Services.EmailService;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text; // Added using directive for Encoding
 using Microsoft.AspNetCore.Builder; // Added using directive for UseAuthentication
+
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -33,6 +35,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
