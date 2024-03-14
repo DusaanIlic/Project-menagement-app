@@ -32,12 +32,14 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: data => {
         const member : Member = {
-          id: data.id,
-          fullName: data.fullName,
-          email: data.email,
-          role: data.role,
-          dateAdded: data.dateAdded
+          id: data.member.id,
+          fullName: data.member.fullName,
+          email: data.member.email,
+          role: data.member.role,
+          dateAdded: data.member.dateAdded
         };
+
+        console.log(data);
 
         const token = data.token;
 
