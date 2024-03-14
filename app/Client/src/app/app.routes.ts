@@ -11,8 +11,8 @@ export const routes: Routes = [
   { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
   { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' } },
   { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' } },
+  { path: "members/edit/:id", component: EditMemberComponent, data: { title: 'Edit member'}}, //Umeso 1 treba da bude ID membera koji se edituje
   { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' } },
   { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }  },
   { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' } },
-  { path: "edit/1", component: EditMemberComponent, data: { title: 'Edit members'}} //Umeso 1 treba da bude ID membera koji se edituje
 ]

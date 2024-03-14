@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {AuthService} from "../../services/auth.service";
+import {Member} from "../../models/member";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -18,14 +21,34 @@ export class LoginComponent {
   email: string | undefined;
   password: string | undefined;
 
+  constructor(private authService : AuthService, private router: Router) {}
+
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = "* Email and password are required.";
+      this.errorMessage = '* Email and password are required.';
       return;
     }
 
-    console.log(this.email, this.password);
-  }
+    this.authService.login(this.email, this.password).subscribe({
+      next: data => {
+        const member : Member = {
+          id: data.id,
+          fullName: data.fullName,
+          email: data.email,
+          role: data.role,
+          dateAdded: data.dateAdded
+        };
 
-  /* Cekam bek za dalje */
+        const token = data.token;
+
+        localStorage.setItem('auth-member', JSON.stringify(member));
+        localStorage.setItem('jwt-token', token);
+
+        this.router.navigate(['/']);
+      },
+      error: err => {
+        this.errorMessage = '* Wrong email and password combination';
+      }
+    });
+  }
 }

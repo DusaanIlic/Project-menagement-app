@@ -20,10 +20,10 @@
                 <td>
                     <img src="assets/avatar.png" class="hidden rounded-full border-solid border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
                 </td>
-                <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.name}}</td>
+                <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.fullName}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.role}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">{{member.email}}</td>
-                <td class="text-center text-xs hidden xl:w-60 xl:text-xl xl:table-cell">{{member.dateOfEmployment | date}}</td>
+                <td class="text-center text-xs hidden xl:w-60 xl:text-xl xl:table-cell">{{member.dateAdded | date}}</td>
                 <td class="text-center text-xs xl:w-60 xl:text-xl">
                     <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button>
                     <button class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img src="assets/icons/edit_36_jpg.jpg"></button>
@@ -32,7 +32,7 @@
             </tr>
         </tbody>
     </table>
-    
+
 
 
 </div>

@@ -22,13 +22,13 @@ export class AddProjectComponent {
   constructor(private projectService: ProjectService) {}
 
   public onSubmit() {
-    this.project = {
+    /*this.project = {
       id: 0,
       name: this.projectForm.get('name')?.value || '',
-      date: new Date(this.projectForm.get('date')?.value || ''),
+      startDate: '123',
       description: this.projectForm.get('description')?.value || '',
     };
     alert('kreiran projekat');
-    console.log(this.project);
+    console.log(this.project);*/
   }
 }

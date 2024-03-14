@@ -11,7 +11,7 @@
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
-            <input type="file" class="flex w-auto h-auto file:rounded-md file:border-0  file:bg-[#0E2954] file:text-gray-400 text-sm"/>
+            <input type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray  text-sm"/>
             <p class="flex">The maximum file size allowed is 200KB.</p>
             <hr class="border-1 border-black w-80">
             <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2">Remove current avatar</button>
@@ -28,7 +28,7 @@
 
         <div>
             <label for="status" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">Your status</label>
-            <input type="text" id="status" class="flex mb-2 bg-[#0E2954] border border-gray-300  text-sm rounded-md p-2.5 dark:bg-[#0E2954] placeholder:text-gray-400 text-white" placeholder="Your status..."/>
+            <input type="text" id="status" class="flex mb-2  border border-gray-300  text-sm rounded-md p-2.5  placeholder:text-gray-400" placeholder="Your status..."/>
             <div class="flex">
                 <input id="busy" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded-md bg-gray-50"/>
                 <label for="busy" class="text-sm font-medium ml-1  text-black">Busy</label>
@@ -44,12 +44,12 @@
     <div class="flex flex-col w-full xl:flex-row p-2 justify-between">
         <div class="mb-2.5">
             <h1 class="text-xl font-bold">Main settings</h1>
-            <p class="flex">This information will show on your profile.</p>         
+            <p class="flex">This information will show on your profile.</p>
         </div>
 
         <div class="mb-2.5">
             <label for="status" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">Full name</label>
-            <input type="text" id="status" class="flex mb-2 bg-[#0E2954] border border-gray-300  text-sm rounded-md p-2.5 dark:bg-[#0E2954] placeholder:text-gray-400 text-white" placeholder="Your status..."/>
+            <input type="text" id="status" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="Your status..."/>
             <div class="flex text-sm">
                 <p>Enter your name so people can recognize you.</p>
             </div>
@@ -57,14 +57,14 @@
 
         <div class="w-40">
             <label for="userid" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">User ID</label>
-            <input type="text" id="userid" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-20" value="123" disabled readonly>
+            <input type="text" id="userid" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" value="123" disabled readonly>
         </div>
     </div>
 
     <div class="flex flex-col p-2 xl:items-center w-full overflow-visible">
         <div class="w-[155px] overflow-visible">
             <label for="email" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Email</label>
-            <input type="text" id="email" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-50" value="peraperic@gmail.com" disabled>
+            <input type="text" id="email" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 text-gray-400 w-50" value="peraperic@gmail.com" disabled>
             <div class="overflow-visible w-96">
                 <p class="flex text-sm mb-2 w-96">Your email was automatically set by your administrator.</p>
             </div>
@@ -72,22 +72,22 @@
 
         <div class="mb-2 w-[155px]">
             <label for="skype" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Skype</label>
-            <input type="text" id="skype" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-50" value="" placeholder="Username...">
+            <input type="text" id="skype" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Username...">
         </div>
 
         <div class="mb-2 w-[155px]">
             <label for="linkedin" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Linkedin</label>
-            <input type="text" id="linkedin" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-50" value="" placeholder="Username...">
+            <input type="text" id="linkedin" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Username...">
         </div>
 
         <div class="mb-2 w-[155px]">
             <label for="twitter" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Twitter</label>
-            <input type="text" id="twitter" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-50" value="" placeholder="Username...">
+            <input type="text" id="twitter" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Username...">
         </div>
 
         <div class="mb-2 w-[155px]">
             <label for="location" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Location</label>
-            <input type="text" id="location" aria-label="disabled input 2" class="flex mb-2 bg-[#0E2954] border border-gray-300 text-sm rounded-md p-2.5 dark:bg-[#0E2954] text-gray-400 w-50" value="" placeholder="City, country">
+            <input type="text" id="location" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="City, country">
         </div>
     </div>
 

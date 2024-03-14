@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-profile-dropdown-menu',
@@ -11,4 +12,11 @@ import { RouterLink } from '@angular/router';
 })
 export class ProfileDropdownMenuComponent {
   @Input() visible : boolean = false;
+
+  constructor(private authService: AuthService, private router: Router) { }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
