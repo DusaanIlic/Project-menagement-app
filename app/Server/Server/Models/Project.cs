@@ -18,5 +18,7 @@ namespace Server.Models
         public int ProjectStatusId { get; set; }
 
         public ProjectStatus ProjectStatus { get; set; }
+
+        public ICollection<ProjectTask> ProjectTasks { get; set; }
     }
 }

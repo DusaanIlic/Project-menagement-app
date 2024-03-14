@@ -1,6 +1,10 @@
 export interface Project {
   id?: number;
   name?: string;
-  date?: Date;
+  endDate?: string;
+  startDate?: string;
   description?: string;
+  details?: string;
+  status?: string;
+  lead?: string;
 }

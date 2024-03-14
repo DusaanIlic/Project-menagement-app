@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MemberComponent } from "../../models/member/member.component";
 import { CommonModule } from '@angular/common';
-import { Member } from '../../member';
+import { Member } from '../../models/member';
 import {RouterLink} from "@angular/router";
 
 @Component({
@@ -9,7 +8,7 @@ import {RouterLink} from "@angular/router";
     standalone: true,
     templateUrl: './all-members.component.html',
     styleUrl: './all-members.component.scss',
-  imports: [MemberComponent, CommonModule, RouterLink]
+    imports: [CommonModule, RouterLink]
 })
 export class AllMembersComponent implements OnInit{
 
@@ -26,12 +25,10 @@ export class AllMembersComponent implements OnInit{
 
         this.member1 = {
             id: 1,
-            name: 'Pera',
-            lastName: 'Peric',
+            fullName: 'Pera Peric',
             email: 'peraperic@gmail.com',
-            phone: '1.1.2024.',
             role: 'Project Menager',
-            dateOfEmployment : new Date(),
+            dateAdded : '2024-03-13',
           };
 
         this.members?.push(this.member1)

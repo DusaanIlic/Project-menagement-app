@@ -12,6 +12,7 @@ namespace Server.Data
         public  DbSet<Project> Projects { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+        public DbSet<ProjectTask> ProjectTasks{ get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +27,11 @@ namespace Server.Data
                 .HasForeignKey(p => p.ProjectStatusId)
                 .IsRequired();
 
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(t => t.Project)
+                .WithMany(p => p.ProjectTasks)
+                .HasForeignKey(t => t.ProjectId)
+                .IsRequired();
         }
 
     }

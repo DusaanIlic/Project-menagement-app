@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectComponent } from "../../models/project/project.component";
-import { Project } from '../../project';
+import { Project} from "../../models/project";
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -9,20 +8,20 @@ import { RouterLink } from '@angular/router';
     standalone: true,
     templateUrl: './all-projects.component.html',
     styleUrl: './all-projects.component.scss',
-    imports: [ProjectComponent, CommonModule, RouterLink]
+    imports: [CommonModule, RouterLink]
 })
 export class AllProjectsComponent implements OnInit{
 
 
     projects : Project[] = [];
     project : Project = {
-        Id: 1,
-        Name: 'Project 1',
-        DateStarts: 123,
-        DateEnds: 321,
-        Details: 'Details1 ',
-        Status: 'Active',
-        Lead: 'Pera',
+        id: 1,
+        name: 'Project 1',
+        startDate: '123',
+        endDate: '321',
+        details: 'Details1 ',
+        status: 'Active',
+        lead: 'Pera',
     };
 
     ngOnInit(): void {

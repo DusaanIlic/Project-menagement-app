@@ -1,51 +1,53 @@
-<div id="add-member">
-    <h1 class="naslov1">Add staff member</h1>
-      <form>
-            <div id="name" class="div">
-                <p class="naslov">First Name</p>
-                <input class="inputi" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
-            </div>
-            
-            <div id="lname" class="div">
-                <p class="naslov">Last name</p>
-                <input class="inputi" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
-            </div>
-            <br>
-        
-            <div id="email" class="div">
-                <p class="naslov">Email</p>
-                <input class="inputi" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
-            </div>
-        
-            <div id="phone" class="div">
-                <p class="naslov">Phone number</p>
-                <input class="inputi" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
-            </div>
-            <br>
-        
-            <div id="Role" class="div">
-                <p class="naslov">Starting role</p>
-                <select name="role" id="role" aria-placeholder="">
-                    <option value="">Administrator</option>
-                    <option value="">Project manager</option>
-                    <option value="">Worker</option>
-                    <option value="">Guest</option>
-                </select>
+  <div class="pt-10 flex flex-col justify-center items-center gap-6">
+      <div class="flex items-center justify-center gap-4">
+          <div class="basis-1/2 grow">
+              <p class="text-xl">First Name</p>
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
+          </div>
 
-             </div>
-                
-            <div id="Date" class="div">
-                <p class="naslov">Date of birth</p>
-                <input class="inputi" name="date" type="date" [(ngModel)]="date">
-            </div>
-            <br>
+          <div class="basis-1/2 grow">
+              <p class="text-xl">Last name</p>
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
+          </div>
+      </div>
 
-            <div>
-                <p class="naslov">Additional information</p>
-                <!--<input class="inputi2" name="info" type="text" placeholder=" Info..." [(ngModel)]="info">-->
-                <textarea name="info" id="inputi2" cols="50" rows="5"></textarea>
-            </div>
-            <br>
-        </form>
-        <button type="button" class="dugme" (click)="onClick()">Add staff member</button>
-</div>
+      <div class="flex items-center justify-center gap-4">
+          <div class="basis-1/2 grow">
+              <p class="text-xl">Email</p>
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="email" type="text" placeholder=" Email..." [(ngModel)]="email">
+          </div>
+
+          <div id="phone" class=" basis-1/2 grow">
+              <p class="text-xl">Phone number</p>
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="phone" type="text" placeholder=" Number..." [(ngModel)]="phone">
+          </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-4">
+          <div class="basis-1/2">
+              <p class="text-xl">Starting role</p>
+              <select name="role" class="w-72 min-h-9 text-xl border-2 rounded-xl p-1.5 aria-">
+                  <option value="">Administrator</option>
+                  <option value="">Project manager</option>
+                  <option value="">Worker</option>
+                  <option value="">Guest</option>
+              </select>
+
+           </div>
+
+          <div class="basis-1/2">
+              <p class="text-xl">Date of birth</p>
+              <input class="w-72 min-h-9 text-xl border-2 rounded-xl p-1.5" name="date" type="date" [(ngModel)]="date">
+          </div>
+      </div>
+
+      <div class="basis-full grow">
+          <p class="text-xl">Additional information</p>
+          <textarea name="info" class="min-h-24 text-xl border-2 rounded-xl p-1.5" cols="51" rows="5" ></textarea>
+      </div>
+
+      <div class="flex items-center justify-center">
+        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="onClick()">Add staff member</button>
+      </div>
+    </div>
+
