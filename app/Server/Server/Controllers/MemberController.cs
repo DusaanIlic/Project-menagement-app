@@ -20,10 +20,12 @@ namespace Server.Controllers
     public class MemberController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
+        private readonly IEmailService _emailService;
 
-        public MemberController(LogicTenacityDbContext dbContext)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService)
         {
             this.dbContext = dbContext;
+            this._emailService = emailService;
         }
 
         [HttpGet]
@@ -66,6 +68,37 @@ namespace Server.Controllers
                 Role = member.Role,
                 DateAdded = member.DateAdded
             };
+
+            var request = new EmailDTO
+            {
+                To = memberDTO.Email,
+                Subject = "Welcome to LogicTeancity - Your Account Details",
+                Body = $@"
+                <p>Hello {memberDTO.FullName},</p>
+                
+                <p>We are delighted to welcome you to LogicTeancity! Your account has been successfully created, and we're excited to have you on board.</p>
+                
+                <p>Below are your account details:</p>
+                
+                <ul>
+                    <li><strong>Username/Email:</strong> {memberDTO.Email}</li>
+                    <li><strong>Temporary Password:</strong> {memberDTO.Password}</li>
+                </ul>
+                
+                <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
+                
+                <ol>
+                    <li>Visit our website at <a href=""http://localhost:4200"" target=""_blank"">this link<a/>.</li>
+                    <li>Click on the ""Login"" button.</li>
+                    <li>Enter your username/email and the temporary password provided above.</li>
+                    <li>Follow the prompts to create a new, secure password.</li>
+                </ol>
+                                
+                <p>Once again, welcome to the LogicTeancity family! We look forward to working with you.</p>"
+            };
+
+
+            _emailService.SendEmail(request);
 
             return Ok(memberResponse);
         }
