@@ -50,7 +50,16 @@ namespace Server.Controllers
 
             var token = GenerateJwtToken(member);
 
-            return Ok(new { Token = token });
+             var memberResponse = new MemberDTO
+            {
+                Id = member.Id,
+                FullName = member.FullName,
+                Email = member.Email,
+                Role = member.Role,
+                DateAdded = member.DateAdded
+            };
+
+            return Ok(new { Token = token, member = memberResponse });
         }
 
         private string GenerateJwtToken(Member member)
