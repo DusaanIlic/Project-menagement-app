@@ -1,29 +1,30 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, Inject, Injectable, NgModule, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {Member} from "../../models/member";
 import { FormsModule, NgModel } from '@angular/forms';
 import { RouterModule, Router} from '@angular/router';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-edit-role',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, NgToastModule],
   templateUrl: './edit-role.component.html',
-  styleUrl: './edit-role.component.scss'
+  styleUrl: './edit-role.component.scss',
 })
+
+
 export class EditRoleComponent implements OnInit {
 
-/*openForm() {
-throw new Error('Method not implemented.');
-}*/
   roleId: number | undefined;
 
   members: { name: string }[] = [];
   filteredMembers: { name: string }[] = [];
   searchTerm: any;
   member: any;
+  messageService: any;
 
-  constructor(private router: Router, private route: ActivatedRoute){}
+  constructor(private route: ActivatedRoute, private router: Router,
+    private _ngToastService: NgToastService){}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -41,18 +42,12 @@ throw new Error('Method not implemented.');
 
   filterMembers(searchTerm: string){
     this.filteredMembers = this.members.filter(member =>
-      member.name.toLowerCase().includes(searchTerm.toLowerCase())
+      member.name.toLowerCase().includes(searchTerm.toLowerCase())  
     );
   }
 
-  saveChanges(): void {
-    this.router.navigate(['/roles/all'], { queryParams: {saved:true} });
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { saved: true },
-      queryParamsHandling: 'merge'
-    });
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Saved successfully", duration: 3000});
   }
 
 }

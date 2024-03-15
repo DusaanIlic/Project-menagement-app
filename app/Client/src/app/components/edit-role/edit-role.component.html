@@ -71,7 +71,9 @@
     </div>
 
     <div class="flex justify-end w-4/5 gap-4 mt-3">
-        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="saveChanges()">Save</button>
+        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="showMessage()">Save</button>
         <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" [routerLink]="['/roles/all']">Close</button>
     </div>
+
+    <ng-toast></ng-toast>
 </div>
