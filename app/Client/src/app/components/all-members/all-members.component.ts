@@ -16,11 +16,11 @@ export class AllMembersComponent implements OnInit{
 
     members : Member[] = [];
     member1? : Member;
-    acs = true;
+    sortByName = true;
+    sortByEmail = true;
+    sortByDate = true;
 
     ngOnInit(): void {
-
-        this.acs = true;
         this.member1 = {
             id: 1,
             fullName: 'AB',
@@ -57,7 +57,9 @@ export class AllMembersComponent implements OnInit{
 
     constructor() {
         this.filteredMembers = this.members;
-        this.sort();
+        this.sortNames();
+        this.sortEmails();
+        this.sortDates();
     }
 
   search(): void {
@@ -69,16 +71,28 @@ export class AllMembersComponent implements OnInit{
     this.filteredMembers = this.members.filter(member => regex.test(member.fullName));
   }
 
-  switchSort()
+  switchSortName()
   {
-    this.acs = !this.acs;
-    this.sort();
+    this.sortByName = !this.sortByName;
+    this.sortNames();
   }
 
-  sort()
+  switchSortEmail()
+  {
+    this.sortByEmail = !this.sortByEmail;
+    this.sortEmails();
+  }
+
+  switchSortDate()
+  {
+    this.sortByDate = !this.sortByDate;
+    this.sortDates();
+  }
+
+  sortNames()
   {
     
-    if(this.acs)
+    if(this.sortByName)
     {
       for(let i=0;i<this.filteredMembers.length-1;i++)
       {
@@ -100,6 +114,78 @@ export class AllMembersComponent implements OnInit{
         for(let j=i+1;j<this.filteredMembers.length;j++)
         {
           if(this.filteredMembers[j].fullName > this.filteredMembers[i].fullName)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+  }
+
+
+  sortEmails()
+  {
+    
+    if(this.sortByEmail)
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].email <= this.filteredMembers[i].email)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+    else
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].email > this.filteredMembers[i].email)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+  }
+
+
+  sortDates()
+  {
+    
+    if(this.sortByDate)
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].dateAdded <= this.filteredMembers[i].dateAdded)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+    else
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].dateAdded > this.filteredMembers[i].dateAdded)
           {
             let temp = this.filteredMembers[j];
             this.filteredMembers[j] = this.filteredMembers[i];

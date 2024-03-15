@@ -7,10 +7,10 @@
             <table class="table-auto">
                 <thead class="text-lg xl:text-2xl">
                     <th class="hidden w-16 sm:table-cell md:table-cell lg:table-cell xl:table-cell"></th>
-                    <th class="flex justify-center xl:w-60">Name<img class="flex size-8 text-base" src="assets/icons/asc.png" *ngIf="this.acs" (click)="switchSort()"><img class="flex size-8 text-base" src="assets/icons/desc.png" *ngIf="!this.acs" (click)="switchSort()"></th>
+                    <th class="flex justify-center xl:w-60">Name<img class="flex size-8 text-base" src="assets/icons/asc.png" *ngIf="this.sortByName" (click)="switchSortName()"><img class="flex size-8 text-base" src="assets/icons/desc.png" *ngIf="!this.sortByName" (click)="switchSortName()"></th>
                     <th class="xl:w-60">Role</th>
-                    <th class="xl:w-60 hidden md:table-cell lg:table-cell xl:table-cell">Email</th>
-                    <th class="xl:w-60 hidden lg:table-cell xl:table-cell">Date of employment</th>
+                    <th class="flex justify-center xl:w-60">Email<img class="flex size-8 text-base" src="assets/icons/asc.png" *ngIf="this.sortByEmail" (click)="switchSortEmail()"><img class="flex size-8 text-base" src="assets/icons/desc.png" *ngIf="!this.sortByEmail" (click)="switchSortEmail()"></th>
+                    <th class="table-cell justify-center xl:w-60">Date of employment</th>
                     <th class="xl:w-60">Actions</th>
                 </thead>
                 <tbody class="text-base xl:text-xl">
