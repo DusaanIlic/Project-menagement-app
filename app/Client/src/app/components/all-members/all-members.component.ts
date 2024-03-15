@@ -16,12 +16,14 @@ export class AllMembersComponent implements OnInit{
 
     members : Member[] = [];
     member1? : Member;
+    acs = true;
 
     ngOnInit(): void {
 
+        this.acs = true;
         this.member1 = {
             id: 1,
-            fullName: 'Pera Peric',
+            fullName: 'AB',
             email: 'peraperic@gmail.com',
             role: 'Project Menager',
             dateAdded : '2024-03-13',
@@ -31,7 +33,7 @@ export class AllMembersComponent implements OnInit{
 
           this.member1 = {
             id: 1,
-            fullName: 'Mika Mikic',
+            fullName: 'C',
             email: 'peraperic@gmail.com',
             role: 'Project Menager',
             dateAdded : '2024-03-13',
@@ -41,16 +43,13 @@ export class AllMembersComponent implements OnInit{
 
           this.member1 = {
             id: 1,
-            fullName: 'Laza Lazic',
+            fullName: 'BA',
             email: 'peraperic@gmail.com',
             role: 'Project Menager',
             dateAdded : '2024-03-13',
           };
 
-        this.members?.push(this.member1)
-        this.members?.push(this.member1)
-        this.members?.push(this.member1)
-        this.members?.push(this.member1)
+          this.members.push(this.member1);
     }
 
     filteredMembers: Member[] = [];
@@ -58,6 +57,7 @@ export class AllMembersComponent implements OnInit{
 
     constructor() {
         this.filteredMembers = this.members;
+        this.sort();
     }
 
   search(): void {
@@ -68,4 +68,46 @@ export class AllMembersComponent implements OnInit{
     const regex = new RegExp(this.searchQuery.trim(), 'i');
     this.filteredMembers = this.members.filter(member => regex.test(member.fullName));
   }
+
+  switchSort()
+  {
+    this.acs = !this.acs;
+    this.sort();
+  }
+
+  sort()
+  {
+    
+    if(this.acs)
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].fullName <= this.filteredMembers[i].fullName)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+    else
+    {
+      for(let i=0;i<this.filteredMembers.length-1;i++)
+      {
+        for(let j=i+1;j<this.filteredMembers.length;j++)
+        {
+          if(this.filteredMembers[j].fullName > this.filteredMembers[i].fullName)
+          {
+            let temp = this.filteredMembers[j];
+            this.filteredMembers[j] = this.filteredMembers[i];
+            this.filteredMembers[i] = temp;
+          }
+        }
+      }
+    }
+  }
 }
+

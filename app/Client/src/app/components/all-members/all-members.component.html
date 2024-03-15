@@ -1,36 +1,38 @@
-<div>
-    <div>
-        <input type="text" class="flex ml-4 rounded-md border-2 border-black" [(ngModel)]="searchQuery" (keyup)="search()">
+<div class="flex items-center justify-center">
+    <div class="flex items-start flex-col">
+        <div class="my-5">
+            <input type="text" class="rounded-md border-2 border-black" [(ngModel)]="searchQuery" (keyup)="search()">
+        </div>
+        <div class="flex">
+            <table class="table-auto">
+                <thead class="text-lg xl:text-2xl">
+                    <th class="hidden w-16 sm:table-cell md:table-cell lg:table-cell xl:table-cell"></th>
+                    <th class="flex justify-center xl:w-60">Name<img class="flex size-8 text-base" src="assets/icons/asc.png" *ngIf="this.acs" (click)="switchSort()"><img class="flex size-8 text-base" src="assets/icons/desc.png" *ngIf="!this.acs" (click)="switchSort()"></th>
+                    <th class="xl:w-60">Role</th>
+                    <th class="xl:w-60 hidden md:table-cell lg:table-cell xl:table-cell">Email</th>
+                    <th class="xl:w-60 hidden lg:table-cell xl:table-cell">Date of employment</th>
+                    <th class="xl:w-60">Actions</th>
+                </thead>
+                <tbody class="text-base xl:text-xl">
+                    <tr class="xl:mb-3 border-b-black border-2 xl:h-16 " *ngFor="let member of filteredMembers">
+                        <td class="hidden w-16 sm:table-cell md:table-cell lg:table-cell xl:table-cell">
+                            <img src="assets/avatar.png" class="rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2">
+                        </td>
+                        <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">{{member.fullName}}</td>
+                        <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">{{member.role}}</td>
+                        <td class="text-center hidden w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60 md:table-cell lg:table-cell xl:table-cell">{{member.email}}</td>
+                        <td class="text-center w-20 sm:w-28 hidden md:w-28 lg:w-56 xl:w-60 lg:table-cell xl:table-cell">{{member.dateAdded | date}}</td>
+                        <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">
+                            <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button>
+                            <button class="hidden w-5 h-5 xl:mr-4 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"><img src="assets/icons/edit_36_jpg.jpg"></button>
+                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    
+    
     </div>
-    <div class="flex justify-center">
-        <table class="table-auto">
-            <thead class="text-lg xl:text-2xl">
-                <th></th>
-                <th class="xl:w-60">Name</th>
-                <th class="xl:w-60">Role</th>
-                <th class="xl:w-60 hidden md:table-cell lg:table-cell xl:table-cell">Email</th>
-                <th class="xl:w-60 hidden lg:table-cell xl:table-cell">Date of employment</th>
-                <th class="xl:w-60">Actions</th>
-            </thead>
-            <tbody class="text-base xl:text-xl">
-                <tr class="xl:mb-3 border-b-black border-2 xl:h-16 " *ngFor="let member of filteredMembers">
-                    <td>
-                        <img src="assets/avatar.png" class="hidden rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2 xl:table-cell">
-                    </td>
-                    <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">{{member.fullName}}</td>
-                    <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">{{member.role}}</td>
-                    <td class="text-center hidden w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60 md:table-cell lg:table-cell xl:table-cell">{{member.email}}</td>
-                    <td class="text-center w-20 sm:w-28 hidden md:w-28 lg:w-56 xl:w-60 lg:table-cell xl:table-cell">{{member.dateAdded | date}}</td>
-                    <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">
-                        <button class="inline-flex w-5 h-5 xl:mr-4"><img src="assets/icons/details_36_jpg.jpg"></button>
-                        <button class="hidden w-5 h-5 xl:mr-4 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"><img src="assets/icons/edit_36_jpg.jpg"></button>
-                        <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"><img src="assets/icons/delete_36_jpg.jpg"></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-
-
 </div>
