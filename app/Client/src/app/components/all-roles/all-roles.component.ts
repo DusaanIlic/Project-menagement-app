@@ -1,19 +1,34 @@
-import { Component } from '@angular/core';
-import {Role} from "../../models/role";
+import { Component, OnInit } from '@angular/core';
 import {NgForOf, NgOptimizedImage} from "@angular/common";
-import {ProjectService} from "../../services/project.service";
+import { RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import {Role} from "../../models/role";
 
 @Component({
   selector: 'app-all-roles',
   standalone: true,
   imports: [
     NgForOf,
-    NgOptimizedImage
+    NgOptimizedImage,
+    RouterModule,
+    CommonModule
   ],
   templateUrl: './all-roles.component.html',
   styleUrl: './all-roles.component.scss'
 })
-export class AllRolesComponent {
+
+export class AllRolesComponent implements OnInit {
+  saveChanges: boolean = false;
+
+  constructor(private route: ActivatedRoute){}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.saveChanges = params['saved'] == 'true';
+    });
+  }
+
   roles: Role[] = [
     { id: 1, name: 'Administrator', count: 1 },
     { id: 2, name: 'Project Manager', count: 2 },
@@ -21,3 +36,4 @@ export class AllRolesComponent {
     { id: 4, name: 'Guest', count: 4 }
   ];
 }
+

@@ -6,6 +6,7 @@ import { AllProjectsComponent } from "./components/all-projects/all-projects.com
 import { AddProjectComponent } from './components/add-project/add-project.component';
 import { AllRolesComponent } from "./components/all-roles/all-roles.component";
 import { EditMemberComponent } from './components/edit-member/edit-member.component';
+import { EditRoleComponent } from './components/edit-role/edit-role.component';
 
 export const routes: Routes = [
   { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' } },
   { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }  },
   { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' } },
+  { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' } },
 ]
