@@ -119,6 +119,21 @@ namespace Server.Migrations
                     b.ToTable("ProjectTasks");
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectTaskStatuses");
+                });
+
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.HasOne("Server.Models.ProjectStatus", "ProjectStatus")

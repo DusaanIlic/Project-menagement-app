@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240313182205_AdditionalDataProjectTaskStatus")]
-    partial class AdditionalDataProjectTaskStatus
+    [Migration("20240315194748_ProcetTaskStatusCreate")]
+    partial class ProcetTaskStatusCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

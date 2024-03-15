@@ -5,7 +5,7 @@
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class ProjectTaskStatusCreate : Migration
+    public partial class ProcetTaskStatusCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

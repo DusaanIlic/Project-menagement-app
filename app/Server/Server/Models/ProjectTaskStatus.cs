@@ -10,6 +10,6 @@ namespace Server.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
-        public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+
     }
 }

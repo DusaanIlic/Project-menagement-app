@@ -33,12 +33,6 @@ namespace Server.Data
                 .WithMany(p => p.ProjectTasks)
                 .HasForeignKey(t => t.ProjectId)
                 .IsRequired();
-
-           modelBuilder.Entity<ProjectTask>()
-               .HasOne(p => p.ProjectTaskStatus)
-               .WithMany(pt => pt.ProjectTasks)
-               .HasForeignKey(p => p.ProjectTaskStatusId)
-               .IsRequired();
         }
 
     }
