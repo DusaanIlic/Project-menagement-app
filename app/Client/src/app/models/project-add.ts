@@ -1,5 +1,5 @@
-export interface ProjectAdd {
+export interface Project {
   projectName?: string;
-  projectDescription?: string;
   deadLine?: string;
+  projectDescription?: string;
 }

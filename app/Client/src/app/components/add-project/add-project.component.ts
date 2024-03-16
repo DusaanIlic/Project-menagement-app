@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../services/project.service';
-import { Project } from '../../models/project';
+import {
+  FormGroup,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ProjectService } from '../../services/add.project.service';
+import { Project } from '../../models/project-add';
 
 @Component({
   selector: 'app-add-project',
@@ -12,9 +17,12 @@ import { Project } from '../../models/project';
 })
 export class AddProjectComponent {
   projectForm = new FormGroup({
-    name: new FormControl(''),
-    date: new FormControl(''),
-    description: new FormControl(''),
+    projectName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]),
+    deadLine: new FormControl('', [Validators.required]),
+    projectDescription: new FormControl(''),
   });
 
   private project?: Project;
@@ -22,13 +30,9 @@ export class AddProjectComponent {
   constructor(private projectService: ProjectService) {}
 
   public onSubmit() {
-    /*this.project = {
-      id: 0,
-      name: this.projectForm.get('name')?.value || '',
-      startDate: '123',
-      description: this.projectForm.get('description')?.value || '',
-    };
-    alert('kreiran projekat');
-    console.log(this.project);*/
+    if (this.projectForm.valid) {
+      // Obrada podataka
+      console.log(this.projectForm.value);
+    }
   }
 }
