@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {MemberService} from "../../services/member.service";
 
 @Component({
     selector: 'app-add-member',
@@ -18,6 +19,8 @@ export class AddMemberComponent {
     date: string = "";
     info: string = "";
 
+    constructor(private memberService: MemberService) { }
+
     public onClick(){
         console.log(this.name);
         console.log(this.lname);
@@ -26,7 +29,6 @@ export class AddMemberComponent {
         console.log(this.date);
         console.log(this.info);
     }
-
 }
 
 
