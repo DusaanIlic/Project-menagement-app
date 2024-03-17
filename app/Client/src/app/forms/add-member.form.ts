@@ -1,5 +1,4 @@
 export interface AddMemberForm {
-  id: string;
   firstName: string;
   lastName: string;
   fullName: string;

@@ -1,7 +1,9 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
+import {AddMemberForm} from "../forms/add-member.form";
+import {Observable} from "rxjs";
 
-const AUTH_API = 'http://localhost:8000/api/Member'
+const API = 'http://localhost:8000/api/Member';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,15 +15,11 @@ const httpOptions = {
 export class MemberService {
   constructor(private http: HttpClient) { }
 
-  addMember(fullName: string, email: string, role: string, password: string) {
+  addMember(formData: AddMemberForm): Observable<any> {
+    console.log('sent');
     return this.http.post(
-      AUTH_API,
-      {
-        fullName,
-        email,
-        role,
-        password
-      },
+      API,
+      formData,
       httpOptions
     )
   }
