@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {MemberService} from "../../services/member.service";
+import {AddMemberForm} from "../../forms/add-member.form";
 
 @Component({
     selector: 'app-add-member',
@@ -10,23 +12,33 @@ import { FormsModule } from '@angular/forms';
     imports: [FormsModule]
 })
 export class AddMemberComponent {
-    //@Input()
-    name: string = "";
-    lname: string = "";
-    email: string = "";
-    phone: string = "";
-    date: string = "";
-    info: string = "";
+  formData: AddMemberForm = {
+    firstName: '',
+    lastName: '',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    dateOfBirth: '',
+    role: '',
+    password: ''
+  };
 
-    public onClick(){
-        console.log(this.name);
-        console.log(this.lname);
-        console.log(this.email);
-        console.log(this.phone);
-        console.log(this.date);
-        console.log(this.info);
-    }
+  constructor(private memberService: MemberService) { }
 
+  public onClick(){
+    this.formData.fullName = this.formData.firstName + this.formData.lastName;
+
+    console.log(this.formData.role);
+
+    this.memberService.addMember(this.formData).subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
 }
 
 
