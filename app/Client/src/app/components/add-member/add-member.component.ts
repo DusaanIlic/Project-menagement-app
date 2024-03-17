@@ -28,6 +28,8 @@ export class AddMemberComponent {
   public onClick(){
     this.formData.fullName = this.formData.firstName + this.formData.lastName;
 
+    console.log(this.formData.role);
+
     this.memberService.addMember(this.formData).subscribe({
       next: data => {
         console.log(data);
