@@ -199,5 +199,27 @@ namespace Server.Controllers
 
             return Ok(taskDTO);
         }
+
+        [HttpGet("project/{projectId}")]
+        public async Task<IActionResult> GetTasksByProject(int projectId)
+        {
+            var tasks = await dbContext.ProjectTasks
+                .Where(t => t.ProjectId == projectId)
+                .Include(ts => ts.ProjectTaskStatus)
+                .ToListAsync();
+
+            var taskDTOs = tasks.Select(t => new ProjectTaskDTO
+            {
+                DeadLine = t.DeadLine,
+                ProjectId = t.ProjectId,
+                TaskDescription = t.TaskDescription,
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskStatusId = t.ProjectTaskStatusId,
+                TaskStatus = t.ProjectTaskStatus.Name
+            }).ToList();
+
+            return Ok(taskDTOs);
+        }
     }
 }
