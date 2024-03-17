@@ -2,12 +2,12 @@
       <div class="flex items-center justify-center gap-4">
           <div class="basis-1/2 grow">
               <p class="text-xl">First Name</p>
-              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="name" type="text" placeholder=" Name..." [(ngModel)]="name">
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="name" type="text" placeholder=" Name..." [(ngModel)]="firstName">
           </div>
 
           <div class="basis-1/2 grow">
               <p class="text-xl">Last name</p>
-              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lname">
+              <input class="min-h-9 text-xl border-2 rounded-xl p-1.5" name="lname" type="text" placeholder=" Last name..." [(ngModel)]="lastName">
           </div>
       </div>
 
@@ -26,7 +26,7 @@
       <div class="flex items-center justify-center gap-4">
           <div class="basis-1/2">
               <p class="text-xl">Starting role</p>
-              <select name="role" class="w-72 min-h-9 text-xl border-2 rounded-xl p-1.5 aria-">
+              <select name="role" class="w-72 min-h-9 text-xl border-2 rounded-xl p-1.5" >
                   <option value="">Administrator</option>
                   <option value="">Project manager</option>
                   <option value="">Worker</option>

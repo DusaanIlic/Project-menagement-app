@@ -12,18 +12,19 @@ import {MemberService} from "../../services/member.service";
 })
 export class AddMemberComponent {
     //@Input()
-    name: string = "";
-    lname: string = "";
+    firstName: string = "";
+    lastName: string = "";
     email: string = "";
     phone: string = "";
+    role: string = "";
     date: string = "";
     info: string = "";
 
     constructor(private memberService: MemberService) { }
 
     public onClick(){
-        console.log(this.name);
-        console.log(this.lname);
+        console.log(this.firstName);
+        console.log(this.lastName);
         console.log(this.email);
         console.log(this.phone);
         console.log(this.date);
