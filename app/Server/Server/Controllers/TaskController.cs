@@ -167,5 +167,37 @@ namespace Server.Controllers
 
             return Ok(taskDTO); 
         }
+
+        [HttpPut("{taskId}/status/{statusId}")]
+        public async Task<IActionResult> UpdateTaskStatus(int taskId, int statusId)
+        {
+            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            if (projectTask == null)
+            {
+                return NotFound();
+            }
+
+            var projectTaskStatus = await dbContext.ProjectTaskStatuses.FindAsync(statusId);
+            if (projectTaskStatus == null)
+            {
+                return NotFound("Specified task status does not exist.");
+            }
+
+            projectTask.ProjectTaskStatus = projectTaskStatus;
+            await dbContext.SaveChangesAsync();
+
+            var taskDTO = new ProjectTaskDTO
+            {
+                DeadLine = projectTask.DeadLine,
+                ProjectId = projectTask.ProjectId,
+                TaskDescription = projectTask.TaskDescription,
+                TaskId = projectTask.TaskId,
+                TaskName = projectTask.TaskName,
+                TaskStatusId = projectTaskStatus.Id,
+                TaskStatus = projectTaskStatus.Name
+            };
+
+            return Ok(taskDTO);
+        }
     }
 }
