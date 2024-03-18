@@ -31,6 +31,14 @@ export class AuthService {
     localStorage.removeItem('jwt-token');
     localStorage.removeItem('auth-member');
   }
+
+  getToken(): string | null{
+    return localStorage.getItem('jwt-token');
+  }
+
+  isAuthenticated(): boolean {
+    return this.getToken() !== null;
+  }
 }
 
 
