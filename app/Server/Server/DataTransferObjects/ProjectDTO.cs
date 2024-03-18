@@ -7,7 +7,7 @@ namespace Server.DataTransferObjects
         public int ProjectId { get; set; }
         public string ProjectName { get; set; } = string.Empty;
         public string ProjectDescription { get; set; } = string.Empty;
-        public DateTime DeadLine { get; set; }
+        public DateTime Deadline { get; set; }
         public int ProjectStatusId { get; set; }
         public string Status { get; set; } = string.Empty;
         public ICollection<ProjectTaskDTO> ProjectTasks { get; set; }

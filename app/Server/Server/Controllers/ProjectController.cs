@@ -40,7 +40,7 @@ namespace Server.Controllers
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
                     TaskDescription = t.TaskDescription,
-                    DeadLine = t.DeadLine,
+                    Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.ProjectTaskStatus.Name,
                     TaskStatusId = t.ProjectTaskStatusId
@@ -52,7 +52,7 @@ namespace Server.Controllers
                         ProjectId = p.ProjectId,
                         ProjectName = p.ProjectName,
                         ProjectDescription = p.ProjectDescription,
-                        DeadLine = p.DeadLine,
+                        Deadline = p.Deadline,
                         ProjectStatusId = p.ProjectStatusId,
                         Status = p.ProjectStatus.Status,
                         ProjectTasks = taskDTOs
@@ -71,7 +71,7 @@ namespace Server.Controllers
             {
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
-                DeadLine = addProjectRequest.DeadLine,
+                Deadline = addProjectRequest.Deadline,
                 ProjectStatus = projectStatus
             };
 
@@ -83,7 +83,7 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine,
+                Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatus.Id,
                 Status = projectStatus.Status
             };
@@ -111,7 +111,7 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskDescription = t.TaskDescription,
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.ProjectTaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
@@ -122,7 +122,7 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine,
+                Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs
@@ -148,7 +148,7 @@ namespace Server.Controllers
 
             project.ProjectName = updateProjectRequest.ProjectName;
             project.ProjectDescription = updateProjectRequest.ProjectDescription;
-            project.DeadLine = updateProjectRequest.DeadLine;
+            project.Deadline = updateProjectRequest.Deadline;
             
             await dbContext.SaveChangesAsync();
 
@@ -157,7 +157,7 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskDescription = t.TaskDescription,
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.ProjectTaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
@@ -168,7 +168,7 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine,
+                Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs
@@ -200,7 +200,7 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskDescription = t.TaskDescription,
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.ProjectTaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
@@ -211,7 +211,7 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine,
+                Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatusId,
                 Status =  project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs
@@ -244,7 +244,7 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskDescription = t.TaskDescription,
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.ProjectTaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
@@ -255,7 +255,7 @@ namespace Server.Controllers
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
                 ProjectDescription = project.ProjectDescription,
-                DeadLine = project.DeadLine,
+                Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatus.Id,
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs
@@ -281,7 +281,7 @@ namespace Server.Controllers
 
             var tasksDTOs = tasks.Select(t => new ProjectTaskDTO
             {
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskDescription = t.TaskDescription,
                 TaskId = t.TaskId,

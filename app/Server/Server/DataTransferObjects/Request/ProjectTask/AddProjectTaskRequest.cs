@@ -4,7 +4,7 @@
     {
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
-        public DateTime DeadLine { get; set; }
+        public DateTime Deadline { get; set; }
         public int ProjectId { get; set; }
     }
 }

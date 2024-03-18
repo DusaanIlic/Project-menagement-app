@@ -25,5 +25,7 @@ namespace Server.Models
         public string Role { get; set; } = string.Empty;
 
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Project> ProjectsLead { get; set; }
     }
 }
