@@ -25,7 +25,7 @@
         <div class="flex flex-row justify-between items-baseline">
             <p class="text-xl">Assigned members</p>
             <input class="min-h-9 text-xl border-2 border-black rounded-2xl p-1.5" name="search" type="text" placeholder=" Search..." [(ngModel)]="searchTerm" (input)="filterMembers(searchTerm)">
-            <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover">Add Member</button>
+            <button type="button" class="px-5 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="openAddMemberDialog()">Add Member</button>
         </div>
         <div class="bg-[#94b1e7] px-5 py-5 mb-5 mt-1">
             <div class="flex flex-row justify-between py-3 px-3 my-1 bg-[#3453a8] rounded-2xl">
@@ -71,7 +71,9 @@
     </div>
 
     <div class="flex justify-end w-4/5 gap-4 mt-3">
-        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="saveChanges()">Save</button>
+        <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" (click)="showMessage()">Save</button>
         <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-2xl min-h-12 font-bold hover" [routerLink]="['/roles/all']">Close</button>
     </div>
+
+    <ng-toast></ng-toast>
 </div>

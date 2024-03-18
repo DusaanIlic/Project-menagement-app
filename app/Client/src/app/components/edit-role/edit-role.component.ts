@@ -1,29 +1,33 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, Inject, Injectable, NgModule, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {Member} from "../../models/member";
 import { FormsModule, NgModel } from '@angular/forms';
 import { RouterModule, Router} from '@angular/router';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddMemberFormComponent } from '../add-member-form/add-member-form.component';
 
 @Component({
-  selector: 'app-edit-role',
-  standalone: true,
-  imports: [FormsModule, RouterModule],
-  templateUrl: './edit-role.component.html',
-  styleUrl: './edit-role.component.scss'
+    selector: 'app-edit-role',
+    standalone: true,
+    templateUrl: './edit-role.component.html',
+    styleUrl: './edit-role.component.scss',
+    imports: [FormsModule, RouterModule, NgToastModule, MatDialogModule]
 })
+
+
 export class EditRoleComponent implements OnInit {
 
-/*openForm() {
-throw new Error('Method not implemented.');
-}*/
   roleId: number | undefined;
 
   members: { name: string }[] = [];
   filteredMembers: { name: string }[] = [];
   searchTerm: any;
   member: any;
+  messageService: any;
+  isDialogOpen: boolean = false;
 
-  constructor(private router: Router, private route: ActivatedRoute){}
+  constructor(private route: ActivatedRoute, private router: Router,
+    private _ngToastService: NgToastService, private dialog: MatDialog){}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -41,18 +45,28 @@ throw new Error('Method not implemented.');
 
   filterMembers(searchTerm: string){
     this.filteredMembers = this.members.filter(member =>
-      member.name.toLowerCase().includes(searchTerm.toLowerCase())
+      member.name.toLowerCase().includes(searchTerm.toLowerCase())  
     );
   }
 
-  saveChanges(): void {
-    this.router.navigate(['/roles/all'], { queryParams: {saved:true} });
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Saved successfully", duration: 3000});
+  }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { saved: true },
-      queryParamsHandling: 'merge'
-    });
+  openAddMemberDialog(): void{
+    if(!this.isDialogOpen){
+      this.isDialogOpen = true;
+
+      const dialogRef = this.dialog.open(AddMemberFormComponent, {
+        width: '500px',
+        data: { isDialogOpen: this.isDialogOpen }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed');
+        this.isDialogOpen = false;
+      });
+    }
   }
 
 }
