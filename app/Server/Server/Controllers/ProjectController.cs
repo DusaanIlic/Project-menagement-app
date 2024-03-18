@@ -30,6 +30,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.ProjectTaskStatus)
+                .Include(p => p.TeamLeader)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
@@ -47,6 +48,14 @@ namespace Server.Controllers
 
                 }).ToList();
 
+                var teamLeaderDTO = new MemberDTO
+                {
+                    Id = p.TeamLeader.Id,
+                    FullName = p.TeamLeader.FullName,
+                    Email = p.TeamLeader.Email,
+                    Role = p.TeamLeader.Role
+                };
+
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -55,7 +64,8 @@ namespace Server.Controllers
                         Deadline = p.Deadline,
                         ProjectStatusId = p.ProjectStatusId,
                         Status = p.ProjectStatus.Status,
-                        ProjectTasks = taskDTOs
+                        ProjectTasks = taskDTOs,
+                        TeamLider = teamLeaderDTO
                 });
             }
 
@@ -99,6 +109,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.ProjectTaskStatus)
+                .Include(p => p.TeamLeader)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -117,6 +128,14 @@ namespace Server.Controllers
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
+            var teamLeaderDTO = new MemberDTO
+            {
+                Id = project.TeamLeader.Id,
+                FullName = project.TeamLeader.FullName,
+                Email = project.TeamLeader.Email,
+                Role = project.TeamLeader.Role
+            };
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -125,7 +144,8 @@ namespace Server.Controllers
                 Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
-                ProjectTasks = taskDTOs
+                ProjectTasks = taskDTOs,
+                TeamLider = teamLeaderDTO
             };
 
             return Ok(projectDTO);
@@ -139,6 +159,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.ProjectTaskStatus)
+                .Include(p => p.TeamLeader)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -163,6 +184,14 @@ namespace Server.Controllers
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
+            var teamLeaderDTO = new MemberDTO
+            {
+                Id = project.TeamLeader.Id,
+                FullName = project.TeamLeader.FullName,
+                Email = project.TeamLeader.Email,
+                Role = project.TeamLeader.Role
+            };
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -171,7 +200,8 @@ namespace Server.Controllers
                 Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
-                ProjectTasks = taskDTOs
+                ProjectTasks = taskDTOs,
+                TeamLider = teamLeaderDTO
             };
 
             return Ok(projectDTO);
@@ -195,29 +225,7 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
-            {
-                TaskId = t.TaskId,
-                TaskName = t.TaskName,
-                TaskDescription = t.TaskDescription,
-                Deadline = t.Deadline,
-                ProjectId = t.ProjectId,
-                TaskStatus = t.ProjectTaskStatus.Name,
-                TaskStatusId = t.ProjectTaskStatusId
-            }).ToList();
-
-            var projectDTO = new ProjectDTO
-            {
-                ProjectId = project.ProjectId,
-                ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription,
-                Deadline = project.Deadline,
-                ProjectStatusId = project.ProjectStatusId,
-                Status =  project.ProjectStatus.Status,
-                ProjectTasks = taskDTOs
-            };
-
-            return Ok(projectDTO);
+            return Ok();
         }
 
         [HttpPut("{projectId}/status/{statusId}")]
@@ -239,29 +247,7 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
-            var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
-            {
-                TaskId = t.TaskId,
-                TaskName = t.TaskName,
-                TaskDescription = t.TaskDescription,
-                Deadline = t.Deadline,
-                ProjectId = t.ProjectId,
-                TaskStatus = t.ProjectTaskStatus.Name,
-                TaskStatusId = t.ProjectTaskStatusId
-            }).ToList();
-
-            var projectDTO = new ProjectDTO
-            {
-                ProjectId = project.ProjectId,
-                ProjectName = project.ProjectName,
-                ProjectDescription = project.ProjectDescription,
-                Deadline = project.Deadline,
-                ProjectStatusId = project.ProjectStatus.Id,
-                Status = project.ProjectStatus.Status,
-                ProjectTasks = taskDTOs
-            };
-
-            return Ok(projectDTO);
+            return Ok();
         }
 
         [HttpGet("{projectId}/Tasks")]

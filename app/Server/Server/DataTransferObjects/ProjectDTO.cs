@@ -8,8 +8,10 @@ namespace Server.DataTransferObjects
         public string ProjectName { get; set; } = string.Empty;
         public string ProjectDescription { get; set; } = string.Empty;
         public DateTime Deadline { get; set; }
+        public DateTime StartDate { get; set; }
         public int ProjectStatusId { get; set; }
         public string Status { get; set; } = string.Empty;
         public ICollection<ProjectTaskDTO> ProjectTasks { get; set; }
+        public MemberDTO TeamLider { get; set; }
     }
 }
