@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240315194748_ProcetTaskStatusCreate")]
+    partial class ProcetTaskStatusCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -104,9 +107,6 @@ namespace Server.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ProjectTaskStatusId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -118,8 +118,6 @@ namespace Server.Migrations
                     b.HasKey("TaskId");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("ProjectTaskStatusId");
 
                     b.ToTable("ProjectTasks");
                 });
@@ -158,15 +156,7 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.ProjectTaskStatus", "ProjectTaskStatus")
-                        .WithMany("ProjectTasks")
-                        .HasForeignKey("ProjectTaskStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Project");
-
-                    b.Navigation("ProjectTaskStatus");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -177,11 +167,6 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>
                 {
                     b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
-                {
-                    b.Navigation("ProjectTasks");
                 });
 #pragma warning restore 612, 618
         }
