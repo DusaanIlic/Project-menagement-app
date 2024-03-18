@@ -526,6 +526,6 @@ testem.log
 Thumbs.db
 
 # Database
-*.db
-*.db-shm 
-*.db-wal 
+# *.db
+# *.db-shm 
+# *.db-wal 
