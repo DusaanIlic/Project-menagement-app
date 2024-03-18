@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import {NgOptimizedImage} from "@angular/common";
+import {NgIf, NgOptimizedImage} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";
+import {ProfileDropdownMenuComponent} from "../profile-dropdown-menu/profile-dropdown-menu.component";
 
 @Component({
   selector: 'app-navbar',
@@ -8,11 +9,17 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
   imports: [
     NgOptimizedImage,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NgIf,
+    ProfileDropdownMenuComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
+  visible: boolean = false;
 
+  dropdownShow() {
+    this.visible = !this.visible;
+  }
 }

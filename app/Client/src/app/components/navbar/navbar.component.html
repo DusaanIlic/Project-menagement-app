@@ -1,13 +1,36 @@
-<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center">
-  <ul class="h-10 flex gap-1 justify-center">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black">
+<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none">
+  <ul class="h-10 flex gap-1">
+    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden">
       <a class="flex gap-1 justify-center items-center">
         <img ngSrc="/assets/navbar/hamburger.svg" alt="hamburger icon" height="30" width="30">
       </a>
     </li>
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black">
+      <a class="flex gap-1 justify-center items-center">
+        <p class="flex items-center justify-center">Projects</p>
+      </a>
+    </li>
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black">
+      <a class="flex gap-1 justify-center items-center">
+        <p class="flex items-center justify-center">Members</p>
+      </a>
+    </li>
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black">
+      <a class="flex gap-1 justify-center items-center">
+        <p class="flex items-center justify-center">Roles</p>
+      </a>
+    </li>
+  </ul>
 
-    <li>
-
+  <ul class="h-10 flex gap-1">
+    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow()">
+      <a class="flex gap-2 justify-center items-center">
+        <img ngSrc="/assets/avatar.png" alt="avatar icon" height="30" width="30">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible">
+      </a>
     </li>
   </ul>
 </nav>
+
+<app-profile-dropdown-menu [visible]="visible"></app-profile-dropdown-menu>

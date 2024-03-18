@@ -1,11 +1,8 @@
 <div class="max-h-screen flex flex-col">
   <!-- Header -->
-  <app-navbar *ngIf="showNavbar"></app-navbar>
-
+  <app-navbar class="sticky top-0" *ngIf="showNavbar"></app-navbar>
   <!-- Main Content -->
-  <main class="overflow-auto">
-    <router-outlet></router-outlet>
-  </main>
+  <router-outlet></router-outlet>
 </div>
 
 
