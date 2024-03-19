@@ -248,7 +248,7 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Project deleted successfully");
         }
 
         [HttpPut("{projectId}/status/{statusId}")]
@@ -275,7 +275,7 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Project status updated successfully");
         }
 
         [HttpGet("{projectId}/Tasks")]
@@ -307,5 +307,26 @@ namespace Server.Controllers
             return Ok(tasksDTOs);
         }
 
+        [HttpPost("{projectId}/teamleader/{memberId}")]
+        public async Task<IActionResult> AddTeamLeaderToProject(int projectId, int memberId)
+        {
+            
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            var person = await dbContext.Members.FindAsync(memberId);
+            if (person == null)
+            {
+                return NotFound("Member not found");
+            }
+
+            project.TeamLeaderId = memberId;
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Team leader added successfully");
+        }
     }
 }
