@@ -1,4 +1,4 @@
-export interface Project {
+export interface ProjectAddRequest {
   projectName?: string;
   deadLine?: string;
   projectDescription?: string;

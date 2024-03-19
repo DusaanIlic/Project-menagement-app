@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ProjectService } from '../../services/add.project.service';
-import { Project } from '../../models/project-add';
+import { ProjectAddRequest } from '../../models/project-add';
 
 @Component({
   selector: 'app-add-project',
@@ -25,7 +25,7 @@ export class AddProjectComponent {
     projectDescription: new FormControl(''),
   });
 
-  private project?: Project;
+  private project?: ProjectAddRequest;
 
   constructor(private projectService: ProjectService) {}
 
