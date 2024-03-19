@@ -12,6 +12,8 @@ import { RouterLink } from '@angular/router';
 })
 export class AllProjectsComponent implements OnInit{
 
+    activeProjectsCount = 0;
+    finishedProjectsCount = 0;
     activeProjects: Project[] = [];
     finishedProjects: Project[] = [];
     projects : Project[] = [];
@@ -35,16 +37,18 @@ export class AllProjectsComponent implements OnInit{
         lead: 'Pera',
     };
 
+
+        
+    
+
     ngOnInit(): void {
+
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project1);
-        this.projects.push(this.project1);
         this.projects.push(this.project1);
         this.projects.push(this.project1);
         this.projects.push(this.project1);
@@ -59,5 +63,7 @@ export class AllProjectsComponent implements OnInit{
                 this.finishedProjects.push(this.projects[i]);
         }
 
+        this.finishedProjectsCount = this.finishedProjects.length;
+        this.activeProjectsCount = this.activeProjects.length;
     }
 }
