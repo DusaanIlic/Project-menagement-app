@@ -21,7 +21,6 @@ export const routes: Routes = [
   { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' }, canActivate: [AuthGuard] },
 ]
 
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

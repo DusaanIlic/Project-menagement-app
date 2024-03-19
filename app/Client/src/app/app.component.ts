@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, NavigationStart, Router, RouterOutlet} from '@angular/router';
 import { AddMemberComponent } from './components/add-member/add-member.component';
 import { AllProjectsComponent } from './components/all-projects/all-projects.component';
@@ -8,6 +8,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import {HeaderComponent} from "./components/header/header.component";
 import {filter, map} from "rxjs";
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ import {filter, map} from "rxjs";
     HeaderComponent,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   showNavbar: boolean = true;
   showHeader: boolean = true;
   pageTitle: string = 'Default Title';
@@ -44,5 +45,9 @@ export class AppComponent {
         }
       }
     });
+  }
+
+  ngOnInit(): void {
+    initFlowbite();
   }
 }
