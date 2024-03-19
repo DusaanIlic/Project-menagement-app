@@ -48,13 +48,19 @@ namespace Server.Controllers
 
                 }).ToList();
 
-                var teamLeaderDTO = new MemberDTO
+                MemberDTO teamLeaderDTO = null;
+
+                if (p.TeamLeader != null)
                 {
-                    Id = p.TeamLeader.Id,
-                    FullName = p.TeamLeader.FullName,
-                    Email = p.TeamLeader.Email,
-                    Role = p.TeamLeader.Role
-                };
+
+                    teamLeaderDTO = new MemberDTO
+                    {
+                        Id = p.TeamLeader.Id,
+                        FullName = p.TeamLeader.FullName,
+                        Email = p.TeamLeader.Email,
+                        Role = p.TeamLeader.Role
+                    };
+                }
 
                 projectDTOs.Add(new ProjectDTO
                     {
@@ -128,13 +134,20 @@ namespace Server.Controllers
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
-            var teamLeaderDTO = new MemberDTO
+            MemberDTO teamLeaderDTO = null;
+
+            if (project.TeamLeader != null)
             {
-                Id = project.TeamLeader.Id,
-                FullName = project.TeamLeader.FullName,
-                Email = project.TeamLeader.Email,
-                Role = project.TeamLeader.Role
-            };
+
+                teamLeaderDTO = new MemberDTO
+                {
+                    Id = project.TeamLeader.Id,
+                    FullName = project.TeamLeader.FullName,
+                    Email = project.TeamLeader.Email,
+                    Role = project.TeamLeader.Role
+                };
+            }
+               
 
             var projectDTO = new ProjectDTO
             {
@@ -184,13 +197,19 @@ namespace Server.Controllers
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
-            var teamLeaderDTO = new MemberDTO
+            MemberDTO teamLeaderDTO = null;
+
+            if (project.TeamLeader != null)
             {
-                Id = project.TeamLeader.Id,
-                FullName = project.TeamLeader.FullName,
-                Email = project.TeamLeader.Email,
-                Role = project.TeamLeader.Role
-            };
+
+                teamLeaderDTO = new MemberDTO
+                {
+                    Id = project.TeamLeader.Id,
+                    FullName = project.TeamLeader.FullName,
+                    Email = project.TeamLeader.Email,
+                    Role = project.TeamLeader.Role
+                };
+            }
 
             var projectDTO = new ProjectDTO
             {

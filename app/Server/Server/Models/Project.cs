@@ -14,12 +14,14 @@ namespace Server.Models
         public string ProjectDescription { get; set; } = string.Empty;
 
         public DateTime Deadline { get; set; }
+        public DateTime StartDate { get; set; }
+
 
         public int ProjectStatusId { get; set; }
 
         public ProjectStatus ProjectStatus { get; set; }
 
-        public int TeamLeaderId { get; set; }
+        public int? TeamLeaderId { get; set; }
         public Member TeamLeader { get; set; }
 
         public ICollection<ProjectTask> ProjectTasks { get; set; }
