@@ -71,7 +71,8 @@ namespace Server.Controllers
                         ProjectStatusId = p.ProjectStatusId,
                         Status = p.ProjectStatus.Status,
                         ProjectTasks = taskDTOs,
-                        TeamLider = teamLeaderDTO
+                        TeamLider = teamLeaderDTO,
+                        StartDate = p.StartDate
                 });
             }
 
@@ -101,7 +102,8 @@ namespace Server.Controllers
                 ProjectDescription = project.ProjectDescription,
                 Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatus.Id,
-                Status = projectStatus.Status
+                Status = projectStatus.Status,
+                StartDate = project.StartDate
             };
 
             return Ok(projectDTO);
@@ -158,7 +160,8 @@ namespace Server.Controllers
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs,
-                TeamLider = teamLeaderDTO
+                TeamLider = teamLeaderDTO,
+                StartDate = project.StartDate
             };
 
             return Ok(projectDTO);
@@ -220,7 +223,8 @@ namespace Server.Controllers
                 ProjectStatusId = project.ProjectStatusId,
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs,
-                TeamLider = teamLeaderDTO
+                TeamLider = teamLeaderDTO,
+                StartDate = project.StartDate
             };
 
             return Ok(projectDTO);
@@ -262,6 +266,11 @@ namespace Server.Controllers
             var status = await dbContext.ProjectStatuses.FindAsync(statusId);
             if (status == null)
                 return NotFound("Status not found");
+
+            if(statusId == 2 && project.StartDate == DateTime.MinValue)
+            {
+                project.StartDate = DateTime.UtcNow;
+            }
 
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
