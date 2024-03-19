@@ -12,7 +12,8 @@ import { RouterLink } from '@angular/router';
 })
 export class AllProjectsComponent implements OnInit{
 
-
+    activeProjects: Project[] = [];
+    finishedProjects: Project[] = [];
     projects : Project[] = [];
     project : Project = {
         id: 1,
@@ -21,6 +22,16 @@ export class AllProjectsComponent implements OnInit{
         endDate: '321',
         details: 'Details1 ',
         status: 'Active',
+        lead: 'Pera Peric',
+    };
+
+    project1 : Project = {
+        id: 1,
+        name: 'Project 1',
+        startDate: '123',
+        endDate: '321',
+        details: 'Details1 ',
+        status: 'Finished',
         lead: 'Pera',
     };
 
@@ -32,36 +43,21 @@ export class AllProjectsComponent implements OnInit{
         this.projects.push(this.project);
         this.projects.push(this.project);
         this.projects.push(this.project);
-        this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
-      this.projects.push(this.project);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
+        this.projects.push(this.project1);
 
+        for(let i = 0; i<this.projects.length;i++)
+        {
+            if(this.projects[i].status == "Active")
+                this.activeProjects.push(this.projects[i])
+            else
+                this.finishedProjects.push(this.projects[i]);
+        }
 
     }
-
-    addNewProject()
-    {
-        console.log("Test");
-    }
-
-    openDetails()
-    {
-        console.log("Open details");
-    }
-
-
-
 }
