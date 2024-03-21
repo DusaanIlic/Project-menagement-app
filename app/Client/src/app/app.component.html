@@ -1,11 +1,8 @@
-<div class="min-h-screen max-h-screen flex bg-background">
-  <app-navbar *ngIf="showNavbar"></app-navbar>
-
-  <div class="grow flex flex-col">
-    <app-header *ngIf="showHeader"></app-header>
-
-    <div class="overflow-auto">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
+<div class="max-h-screen flex flex-col">
+  <!-- Header -->
+  <app-navbar class="sticky top-0" *ngIf="showNavbar"></app-navbar>
+  <!-- Main Content -->
+  <router-outlet></router-outlet>
 </div>
+
+

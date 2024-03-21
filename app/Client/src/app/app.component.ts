@@ -6,8 +6,6 @@ import { AllMembersComponent } from './components/all-members/all-members.compon
 import { AddProjectComponent } from './components/add-project/add-project.component';
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
-import {HeaderComponent} from "./components/header/header.component";
-import {filter, map} from "rxjs";
 import { initFlowbite } from 'flowbite';
 
 @Component({
@@ -22,7 +20,6 @@ import { initFlowbite } from 'flowbite';
     AddProjectComponent,
     NavbarComponent,
     NgIf,
-    HeaderComponent,
   ],
 })
 export class AppComponent implements OnInit{
