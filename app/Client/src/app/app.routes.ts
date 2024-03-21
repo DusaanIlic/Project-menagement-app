@@ -9,9 +9,11 @@ import { EditMemberComponent } from './components/edit-member/edit-member.compon
 import { EditRoleComponent } from './components/edit-role/edit-role.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NgModule } from '@angular/core';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 export const routes: Routes = [
   { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
+  { path: "", component: DashboardComponent, data: { title: 'Home' }, canActivate: [AuthGuard] },
   { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' }, canActivate: [AuthGuard] },
   { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' }, canActivate: [AuthGuard] },
   { path: "members/edit/:id", component: EditMemberComponent, data: { title: 'Edit member'}, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
