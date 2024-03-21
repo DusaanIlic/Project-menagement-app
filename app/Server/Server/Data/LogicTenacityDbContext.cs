@@ -38,6 +38,11 @@ namespace Server.Data
                .HasOne(pt => pt.ProjectTaskStatus)
                .WithMany(pts => pts.ProjectTasks)
                .HasForeignKey(pt => pt.ProjectTaskStatusId);
+
+            modelBuilder.Entity<Project>()
+            .HasOne(p => p.TeamLeader)
+            .WithMany(ms => ms.ProjectsLead)
+            .HasForeignKey(p => p.TeamLeaderId);
         }
 
     }

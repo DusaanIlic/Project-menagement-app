@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240318220950_FkTeamLeader")]
+    partial class FkTeamLeader
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -70,10 +73,7 @@ namespace Server.Migrations
                     b.Property<int>("ProjectStatusId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("TeamLeaderId")
+                    b.Property<int>("TeamLeaderId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectId");
@@ -157,7 +157,9 @@ namespace Server.Migrations
 
                     b.HasOne("Server.Models.Member", "TeamLeader")
                         .WithMany("ProjectsLead")
-                        .HasForeignKey("TeamLeaderId");
+                        .HasForeignKey("TeamLeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ProjectStatus");
 

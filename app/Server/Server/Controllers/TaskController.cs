@@ -32,7 +32,7 @@ namespace Server.Controllers
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
-                   DeadLine = t.DeadLine,
+                   Deadline = t.Deadline,
                    ProjectId = t.ProjectId,
                    TaskDescription= t.TaskDescription,
                    TaskId = t.TaskId,
@@ -54,7 +54,7 @@ namespace Server.Controllers
 
             var projectTask = new ProjectTask()
             {
-                DeadLine = addProjectTaskRequest.DeadLine,
+                Deadline = addProjectTaskRequest.Deadline,
                 ProjectId = addProjectTaskRequest.ProjectId,
                 TaskDescription =  addProjectTaskRequest.TaskDescription,
                 TaskName = addProjectTaskRequest.TaskName,
@@ -67,7 +67,7 @@ namespace Server.Controllers
 
             var tasksDTO = new ProjectTaskDTO
             {                 
-                DeadLine = projectTask.DeadLine,
+                Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
@@ -91,7 +91,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            projectTask.DeadLine = updateProjectTaskRequest.DeadLine;
+            projectTask.Deadline = updateProjectTaskRequest.DeadLine;
             projectTask.TaskDescription = updateProjectTaskRequest.TaskDescription;
             projectTask.TaskName = updateProjectTaskRequest.TaskName;
 
@@ -101,7 +101,7 @@ namespace Server.Controllers
 
             var tasksDTO = new ProjectTaskDTO
             {
-                DeadLine = projectTask.DeadLine,
+                Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
@@ -130,7 +130,7 @@ namespace Server.Controllers
 
             var tasksDTO = new ProjectTaskDTO
             {
-                DeadLine = projectTask.DeadLine,
+                Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
@@ -156,7 +156,7 @@ namespace Server.Controllers
 
             var taskDTO = new ProjectTaskDTO
             {
-                DeadLine = projectTask.DeadLine,
+                Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
@@ -188,7 +188,7 @@ namespace Server.Controllers
 
             var taskDTO = new ProjectTaskDTO
             {
-                DeadLine = projectTask.DeadLine,
+                Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
@@ -210,7 +210,7 @@ namespace Server.Controllers
 
             var taskDTOs = tasks.Select(t => new ProjectTaskDTO
             {
-                DeadLine = t.DeadLine,
+                Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskDescription = t.TaskDescription,
                 TaskId = t.TaskId,
