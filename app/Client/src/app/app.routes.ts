@@ -9,14 +9,16 @@ import { EditMemberComponent } from './components/edit-member/edit-member.compon
 import { EditRoleComponent } from './components/edit-role/edit-role.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NgModule } from '@angular/core';
+import { ProjectAnalyticsComponent } from './components/project-analytics/project-analytics.component';
 
 export const routes: Routes = [
   { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
   { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' }, canActivate: [AuthGuard] },
   { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' }, canActivate: [AuthGuard] },
-  { path: "members/edit/:id", component: EditMemberComponent, data: { title: 'Edit member'}, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
+  { path: "members/edit/:id", component: EditMemberComponent, data: { title: 'Edit member'}, canActivate: [AuthGuard]},
   { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' }, canActivate: [AuthGuard] },
   { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }, canActivate: [AuthGuard]  },
+  { path: "projects/:id/analytics", component: ProjectAnalyticsComponent, data: { title: 'Project Analytics' }, canActivate: [AuthGuard]  },
   { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' }, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' }, canActivate: [AuthGuard] },
 ]
