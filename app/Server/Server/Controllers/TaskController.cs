@@ -245,5 +245,26 @@ namespace Server.Controllers
 
             return Ok(taskDTOs);
         }
+
+        [HttpPut("{taskId}/priority/{priorityId}")]
+        public async Task<IActionResult> UpdateTaskPriority(int taskId, int priorityId)
+        {
+            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            if (projectTask == null)
+            {
+                return NotFound("Specified task does not exist");
+            }
+
+            var taskPriority = await dbContext.TaskPriority.FindAsync(priorityId);
+            if (taskPriority == null)
+            {
+                return NotFound("Specified task priority does not exist.");
+            }
+
+            projectTask.TaskPriority = taskPriority;
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Task priority is changed successfully!");
+        }
     }
 }
