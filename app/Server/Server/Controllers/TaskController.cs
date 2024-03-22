@@ -163,8 +163,8 @@ namespace Server.Controllers
                 TaskName = projectTask.TaskName,
                 TaskStatusId = projectTask.ProjectTaskStatusId,
                 TaskStatus = projectTask.ProjectTaskStatus.Name,
-                StartDate = t.StartDate,
-                TaskPriorityId = t.TaskPriorityId
+                StartDate = projectTask.StartDate,
+                TaskPriorityId = projectTask.TaskPriorityId
             };
 
             return Ok(taskDTO); 
