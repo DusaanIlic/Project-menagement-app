@@ -4,7 +4,8 @@ using Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text; // Added using directive for Encoding
-using Microsoft.AspNetCore.Builder; // Added using directive for UseAuthentication
+using Microsoft.AspNetCore.Builder;
+using Server.Models; // Added using directive for UseAuthentication
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +58,25 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var dbContext = serviceScope.ServiceProvider.GetService<LogicTenacityDbContext>();
+    if (!dbContext.Members.Any())
+    {
+        var admin = new Member()
+        {
+            FullName = "admin",
+            Email = "admin",
+            Password = BCrypt.Net.BCrypt.HashPassword("admin"),
+            Role = "admin",
+            DateAdded = DateTime.UtcNow
+        };
+        dbContext.Members.Add(admin);
+        dbContext.SaveChanges();
+    }
+}
+
 
 app.MapControllers();
 
