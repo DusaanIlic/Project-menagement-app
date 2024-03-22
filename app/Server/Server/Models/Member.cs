@@ -27,5 +27,7 @@ namespace Server.Models
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 
         public ICollection<Project> ProjectsLead { get; set; }
+
+        public ICollection<MemberTask> Tasks { get; set; }
     }
 }

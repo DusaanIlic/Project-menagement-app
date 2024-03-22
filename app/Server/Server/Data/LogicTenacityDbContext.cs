@@ -15,6 +15,7 @@ namespace Server.Data
         public DbSet<ProjectTask> ProjectTasks{ get; set; }
         public DbSet<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
         public DbSet<TaskPriority> TaskPriority { get; set; }
+        public DbSet<MemberTask> MemberTasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +49,19 @@ namespace Server.Data
                .HasOne(pt => pt.TaskPriority)
                .WithMany(ts => ts.ProjectTasks)
                .HasForeignKey(pt => pt.TaskPriorityId);
+
+            modelBuilder.Entity<MemberTask>()
+                .HasKey(mt => new { mt.MemberId, mt.TaskId });
+
+            modelBuilder.Entity<MemberTask>()
+                .HasOne(mt => mt.Member)
+                .WithMany(m => m.Tasks)
+                .HasForeignKey(mt => mt.MemberId);
+
+            modelBuilder.Entity<MemberTask>()
+                .HasOne(mt => mt.Task)
+                .WithMany(t => t.Members)
+                .HasForeignKey(mt => mt.TaskId);
         }
 
     }
