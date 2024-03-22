@@ -9,5 +9,7 @@ namespace Server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TaskPriorityId { get; set; }
         public string Name { get; set; }
+
+        public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
     }
 }
