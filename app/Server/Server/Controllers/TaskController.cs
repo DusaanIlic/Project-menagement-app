@@ -220,5 +220,30 @@ namespace Server.Controllers
 
             return Ok(taskDTOs);
         }
+
+        [HttpGet("project/{projectId}/priority/{priorityId}")]
+        public async Task<IActionResult> GetTasksByProjectAndPriority(int projectId, int priorityId)
+        {
+            var tasks = await dbContext.ProjectTasks
+                .Where(t => t.ProjectId == projectId && t.TaskPriorityId == priorityId)
+                .Include(ts => ts.ProjectTaskStatus)
+                .Include(tp => tp.TaskPriority)
+                .ToListAsync();
+
+            var taskDTOs = tasks.Select(t => new ProjectTaskDTO
+            {
+                Deadline = t.Deadline,
+                ProjectId = t.ProjectId,
+                TaskDescription = t.TaskDescription,
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskStatusId = t.ProjectTaskStatusId,
+                TaskStatus = t.ProjectTaskStatus.Name,
+                StartDate = t.StartDate,
+                TaskPriorityId = t.TaskPriorityId
+            }).ToList();
+
+            return Ok(taskDTOs);
+        }
     }
 }
