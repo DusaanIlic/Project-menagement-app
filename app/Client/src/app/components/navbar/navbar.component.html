@@ -1,28 +1,38 @@
 <nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none">
   <ul class="h-10 flex gap-1">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden" routerLinkActive="bg-black">
+    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden">
       <a class="flex gap-1 justify-center items-center">
-        <img ngSrc="/assets/navbar/hamburger.svg" alt="hamburger icon" height="30" width="30">
+        <img ngSrc="/assets/navbar/hamburger.png" alt="hamburger icon" height="30" width="30">
       </a>
     </li>
-    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center" routerLink="/home">
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black">
+      <a class="flex gap-1 justify-center items-center" routerLink="">
+        <img ngSrc="assets/navbar/home.png" height="30" width="30">
         <p class="flex items-center justify-center">Home</p>
       </a>
     </li>
     <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
       <a class="flex gap-1 justify-center items-center" routerLink="/projects/all">
+        <img ngSrc="assets/navbar/projects.png" height="30" width="30">
         <p class="flex items-center justify-center">Projects</p>
       </a>
     </li>
     <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
       <a class="flex gap-1 justify-center items-center" routerLink="/members/all">
+        <img ngSrc="assets/navbar/members.png" height="30" width="30">
         <p class="flex items-center justify-center">Members</p>
       </a>
     </li>
     <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
       <a class="flex gap-1 justify-center items-center" routerLink="/roles/all">
+        <img ngSrc="assets/navbar/roles.png" height="30" width="30">
         <p class="flex items-center justify-center">Roles</p>
+      </a>
+    </li>
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
+      <a class="flex gap-1 justify-center items-center">
+        <img ngSrc="assets/navbar/analytics.png" height="30" width="30">
+        <p class="flex items-center justify-center">Analytics</p>
       </a>
     </li>
   </ul>

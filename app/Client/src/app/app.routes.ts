@@ -10,17 +10,19 @@ import { EditRoleComponent } from './components/edit-role/edit-role.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NgModule } from '@angular/core';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
 
 export const routes: Routes = [
-  { path: "login", component: LoginComponent, data: { title: 'Login Menu' } },
-  { path: "", component: DashboardComponent, data: { title: 'Home' }, canActivate: [AuthGuard] },
-  { path: "members/add", component: AddMemberComponent, data: { title: 'Add Member' }, canActivate: [AuthGuard] },
-  { path: "members/all", component: AllMembersComponent, data: { title: 'All Members' }, canActivate: [AuthGuard] },
-  { path: "members/edit/:id", component: EditMemberComponent, data: { title: 'Edit member'}, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
-  { path: "projects/all", component: AllProjectsComponent, data: { title: 'All Projects' }, canActivate: [AuthGuard] },
-  { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }, canActivate: [AuthGuard]  },
-  { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' }, canActivate: [AuthGuard] },
-  { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' }, canActivate: [AuthGuard] },
+  { path: "login", component: LoginComponent },
+  { path: "", component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: "members/add", component: AddMemberComponent, canActivate: [AuthGuard] },
+  { path: "members/all", component: AllMembersComponent, canActivate: [AuthGuard] },
+  { path: "members/edit/:id", component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
+  { path: "projects/all", component: AllProjectsComponent, canActivate: [AuthGuard] },
+  { path: "projects/add", component: AddProjectComponent, canActivate: [AuthGuard]  },
+  { path: "projects/:id", component: ProjectOverviewComponent, canActivate: [AuthGuard] },
+  { path: "roles/all", component: AllRolesComponent, canActivate: [AuthGuard] },
+  { path: 'roles/edit/:id', component: EditRoleComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({

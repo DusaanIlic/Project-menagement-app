@@ -7,6 +7,7 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import { initFlowbite } from 'flowbite';
+import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar.component";
 
 @Component({
   selector: 'app-root',
@@ -20,26 +21,20 @@ import { initFlowbite } from 'flowbite';
     AddProjectComponent,
     NavbarComponent,
     NgIf,
+    ProjectNavbarComponent,
   ],
 })
 export class AppComponent implements OnInit{
   showNavbar: boolean = true;
-  showHeader: boolean = true;
-  pageTitle: string = 'Default Title';
+  showProjectNavbar: boolean = false;
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        if (event.url === '/login') {
-          this.showNavbar = false;
-          this.showHeader = false;
-        }
-      }
       if (event instanceof NavigationEnd) {
-        if (event.url !== '/login') {
-          this.showNavbar = true;
-          this.showHeader = true;
-        }
+        const url = event.urlAfterRedirects;
+
+        this.showNavbar = url !== '/login';
+        this.showProjectNavbar = /^\/projects\/\d+$/.test(url);
       }
     });
   }
