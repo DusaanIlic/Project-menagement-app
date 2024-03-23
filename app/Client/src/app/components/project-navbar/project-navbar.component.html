@@ -1,28 +1,52 @@
-<nav class="h-full flex flex-col justify-between border-r-[1px] border-accent-blue select-none text-[#323232] text-2xl">
-  <ul class="flex flex-col w-full">
+<nav class="h-full flex flex-col justify-between border-r-[1px] border-accent-blue select-none text-[#323232] text-2xl bg-background">
+  <ul class="flex flex-col w-full gap-1">
     <li class="h-16 flex justify-center items-center w-full border-b-[1px] border-accent-blue">
       <p class="sm:text-3xl text-black">Project 123</p>
     </li>
-    <li class="h-12 flex items-center w-full">
-      <a class="h-full grow flex items-center">Overview</a>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/overview.png" alt="Project Overview" height="32" width="32">
+        <p>Overview</p>
+      </a>
     </li>
-    <li class="h-12 flex items-center w-full">
-      <a class="h-full grow flex items-center">Tasks</a>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/members.png" alt="Project Members" height="32" width="32">
+        <p>Members</p>
+      </a>
     </li>
-    <li class="h-12 flex items-center w-full">
-      <a class="h-full grow flex items-center">Gantt</a>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/tasks.png" alt="Project Tasks" height="32" width="32">
+        <p>Tasks</p>
+      </a>
     </li>
-    <li class="h-12 flex items-center w-full">
-      <a class="h-full grow flex items-center">Kanban</a>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/gantogram.png" alt="Project Gantt" height="32" width="32">
+        <p>Gantt</p>
+      </a>
     </li>
-    <li class="h-12 flex items-center w-full">
-      <a class="h-full grow flex items-center">Analytics</a>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/kanban.png" alt="Project Kanban" height="32" width="32">
+        <p>Kanban</p>
+      </a>
+    </li>
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/analytics.png" alt="Project Analytics" height="32" width="32">
+        <p>Analytics</p>
+      </a>
     </li>
   </ul>
 
-  <ul class="flex flex-col-reverse w-full">
-    <li class="h-12 flex items-center w-full">
-      Go back
+  <ul class="flex flex-col-reverse w-full gap-1">
+    <li class="h-12 flex items-center w-full pl-2">
+      <a class="h-full grow flex items-center gap-2">
+        <img ngSrc="assets/project-navbar/back.png" alt="Go back to all projects" height="32" width="32">
+        <p>Go back</p>
+      </a>
     </li>
   </ul>
 </nav>
