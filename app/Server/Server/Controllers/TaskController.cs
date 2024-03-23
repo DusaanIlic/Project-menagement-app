@@ -292,5 +292,42 @@ namespace Server.Controllers
 
             return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
         }
+
+        [HttpGet("members/{memberId}/tasks")]
+        public async Task<IActionResult> GetMemberTasks(int memberId)
+        {
+            var member = await dbContext.Members.FindAsync(memberId);
+            if (member == null)
+            {
+                return NotFound("Member do not exist.");
+            }
+
+            var memberTasks = await dbContext.MemberTasks
+                .Where(mt => mt.MemberId == memberId)
+                .Select(mt => mt.Task)
+                .Include(ts => ts.ProjectTaskStatus)
+                .Include(tp => tp.TaskPriority)
+                .ToListAsync();
+
+            if (!memberTasks.Any())
+            {
+                return Ok("Member do not have any task.");
+            }
+
+            var taskDTOs = memberTasks.Select(t => new ProjectTaskDTO
+            {
+                Deadline = t.Deadline,
+                ProjectId = t.ProjectId,
+                TaskDescription = t.TaskDescription,
+                TaskId = t.TaskId,
+                TaskName = t.TaskName,
+                TaskStatusId = t.ProjectTaskStatusId,
+                TaskStatus = t.ProjectTaskStatus.Name,
+                StartDate = t.StartDate,
+                TaskPriorityId = t.TaskPriorityId
+            }).ToList();
+
+            return Ok(taskDTOs);
+        }
     }
 }
