@@ -11,6 +11,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { NgModule } from '@angular/core';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
+import { MemberOverviewComponent } from './components/member-overview/member-overview.component';
 
 export const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: "projects/:id", component: ProjectOverviewComponent, canActivate: [AuthGuard] },
   { path: "roles/all", component: AllRolesComponent, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, canActivate: [AuthGuard] },
+  { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({

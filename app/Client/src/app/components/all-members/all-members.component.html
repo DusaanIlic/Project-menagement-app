@@ -14,7 +14,7 @@
                     <th class="xl:w-60">Actions</th>
                 </thead>
                 <tbody class="text-base xl:text-xl">
-                    <tr class="xl:mb-3 border-b-black border-2 xl:h-16 " *ngFor="let member of filteredMembers">
+                    <tr class="xl:mb-3 border-b-black border-2 xl:h-16 " *ngFor="let member of filteredMembers" [routerLink]="['/members/', member.id]">
                         <td class="hidden w-16 sm:table-cell md:table-cell lg:table-cell xl:table-cell">
                             <img src="assets/avatar.png" class="rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2">
                         </td>
