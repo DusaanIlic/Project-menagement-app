@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Member } from '../../models/member';
 
 @Component({
   selector: 'app-member-overview',
@@ -9,4 +10,11 @@ import { Component } from '@angular/core';
 })
 export class MemberOverviewComponent {
 
+  member : Member = {
+    id: 1,
+    fullName: 'Pera Peric',
+    email: 'pera.peric@gmail.com',
+    role: 'Project Manager',
+    dateAdded: '1/1/2024'
+  };
 }
