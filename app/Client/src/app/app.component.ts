@@ -30,9 +30,11 @@ export class AppComponent implements OnInit{
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.showNavbar = event.url !== '/login';
-        this.showProjectNavbar = event.url.includes('/project/')
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects;
+
+        this.showNavbar = url !== '/login';
+        this.showProjectNavbar = /^\/projects\/\d+$/.test(url);
       }
     });
   }
