@@ -266,5 +266,31 @@ namespace Server.Controllers
 
             return Ok("Task priority is changed successfully!");
         }
+
+        [HttpPut("{taskId}/assign/{memberId}")]
+        public async Task<IActionResult> AssignMemberToTask(int taskId, int memberId)
+        {         
+            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            if (projectTask == null)
+            {
+                return NotFound("Task not found");
+            }
+
+            var member = await dbContext.Members.FindAsync(memberId);
+            if (member == null)
+            {
+                return NotFound("Member not found");
+            }
+
+            if (projectTask.Members.Any(mt => mt.MemberId == memberId))
+            {
+                return BadRequest("Member is already assigned to this task");
+            }
+
+            projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
+        }
     }
 }
