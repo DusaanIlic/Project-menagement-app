@@ -78,6 +78,8 @@ namespace Server.Controllers
             dbContext.ProjectTasks.Add(projectTask);
             await dbContext.SaveChangesAsync();
 
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
             var tasksDTO = new ProjectTaskDTO
             {                 
                 Deadline = projectTask.Deadline,
@@ -88,7 +90,8 @@ namespace Server.Controllers
                 TaskStatus = projectTask.ProjectTaskStatus.Name,
                 TaskStatusId = projectTask.ProjectTaskStatusId,
                 StartDate = projectTask.StartDate,
-                TaskPriorityId = projectTask.TaskPriorityId
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn
             };
 
             return Ok(tasksDTO);
@@ -115,6 +118,9 @@ namespace Server.Controllers
             dbContext.ProjectTasks.Update(projectTask);
             await dbContext.SaveChangesAsync();
 
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
+
             var tasksDTO = new ProjectTaskDTO
             {
                 Deadline = projectTask.Deadline,
@@ -125,7 +131,8 @@ namespace Server.Controllers
                 TaskStatusId = projectTask.ProjectTaskStatusId,
                 TaskStatus = projectTask.ProjectTaskStatus.Name,
                 StartDate = projectTask.StartDate,
-                TaskPriorityId = projectTask.TaskPriorityId
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn
             };
 
             return Ok(tasksDTO);
@@ -160,6 +167,9 @@ namespace Server.Controllers
                 return NotFound(); 
             }
 
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
+
             var taskDTO = new ProjectTaskDTO
             {
                 Deadline = projectTask.Deadline,
@@ -170,7 +180,8 @@ namespace Server.Controllers
                 TaskStatusId = projectTask.ProjectTaskStatusId,
                 TaskStatus = projectTask.ProjectTaskStatus.Name,
                 StartDate = projectTask.StartDate,
-                TaskPriorityId = projectTask.TaskPriorityId
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn
             };
 
             return Ok(taskDTO); 
@@ -211,18 +222,26 @@ namespace Server.Controllers
                 .Include(tp => tp.TaskPriority)
                 .ToListAsync();
 
-            var taskDTOs = tasks.Select(t => new ProjectTaskDTO
+            var taskDTOs = new List<ProjectTaskDTO>();
+
+            foreach (var t in tasks)
             {
-                Deadline = t.Deadline,
-                ProjectId = t.ProjectId,
-                TaskDescription = t.TaskDescription,
-                TaskId = t.TaskId,
-                TaskName = t.TaskName,
-                TaskStatusId = t.ProjectTaskStatusId,
-                TaskStatus = t.ProjectTaskStatus.Name,
-                StartDate = t.StartDate,
-                TaskPriorityId = t.TaskPriorityId
-            }).ToList();
+                var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
+
+                taskDTOs.Add(new ProjectTaskDTO
+                {
+                    Deadline = t.Deadline,
+                    ProjectId = t.ProjectId,
+                    TaskDescription = t.TaskDescription,
+                    TaskId = t.TaskId,
+                    TaskName = t.TaskName,
+                    TaskStatusId = t.ProjectTaskStatusId,
+                    TaskStatus = t.ProjectTaskStatus.Name,
+                    StartDate = t.StartDate,
+                    TaskPriorityId = t.TaskPriorityId,
+                    IsTaskDependentOn = isTaskDependentOn
+                });
+            }
 
             return Ok(taskDTOs);
         }
@@ -236,18 +255,26 @@ namespace Server.Controllers
                 .Include(tp => tp.TaskPriority)
                 .ToListAsync();
 
-            var taskDTOs = tasks.Select(t => new ProjectTaskDTO
+            var taskDTOs = new List<ProjectTaskDTO>();
+
+            foreach (var t in tasks)
             {
-                Deadline = t.Deadline,
-                ProjectId = t.ProjectId,
-                TaskDescription = t.TaskDescription,
-                TaskId = t.TaskId,
-                TaskName = t.TaskName,
-                TaskStatusId = t.ProjectTaskStatusId,
-                TaskStatus = t.ProjectTaskStatus.Name,
-                StartDate = t.StartDate,
-                TaskPriorityId = t.TaskPriorityId
-            }).ToList();
+                var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
+
+                taskDTOs.Add(new ProjectTaskDTO
+                {
+                    Deadline = t.Deadline,
+                    ProjectId = t.ProjectId,
+                    TaskDescription = t.TaskDescription,
+                    TaskId = t.TaskId,
+                    TaskName = t.TaskName,
+                    TaskStatusId = t.ProjectTaskStatusId,
+                    TaskStatus = t.ProjectTaskStatus.Name,
+                    StartDate = t.StartDate,
+                    TaskPriorityId = t.TaskPriorityId,
+                    IsTaskDependentOn = isTaskDependentOn
+                });
+            }
 
             return Ok(taskDTOs);
         }
@@ -305,33 +332,42 @@ namespace Server.Controllers
             var member = await dbContext.Members.FindAsync(memberId);
             if (member == null)
             {
-                return NotFound("Member do not exist.");
+                return NotFound("Member does not exist.");
             }
 
             var memberTasks = await dbContext.MemberTasks
-              .Where(mt => mt.MemberId == memberId)
-              .Include(mt => mt.Task)
-              .ThenInclude(t => t.ProjectTaskStatus)
-              .Include(mt => mt.Task).ThenInclude(t => t.TaskPriority)
-              .ToListAsync();
+                .Where(mt => mt.MemberId == memberId)
+                .Include(mt => mt.Task)
+                .ThenInclude(t => t.ProjectTaskStatus)
+                .Include(mt => mt.Task)
+                .ThenInclude(t => t.TaskPriority)
+                .ToListAsync();
 
             if (!memberTasks.Any())
             {
-                return Ok("Member do not have any task.");
+                return Ok("Member does not have any task.");
             }
 
-            var taskDTOs = memberTasks.Select(t => new ProjectTaskDTO
+            var taskDTOs = new List<ProjectTaskDTO>();
+
+            foreach (var mt in memberTasks)
             {
-                Deadline = t.Task.Deadline,
-                ProjectId = t.Task.ProjectId,
-                TaskDescription = t.Task.TaskDescription,
-                TaskId = t.Task.TaskId,
-                TaskName = t.Task.TaskName,
-                TaskStatusId = t.Task.ProjectTaskStatusId,
-                TaskStatus = t.Task.ProjectTaskStatus.Name,
-                StartDate = t.Task.StartDate,
-                TaskPriorityId = t.Task.TaskPriorityId
-            }).ToList();
+                var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == mt.TaskId);
+
+                taskDTOs.Add(new ProjectTaskDTO
+                {
+                    Deadline = mt.Task.Deadline,
+                    ProjectId = mt.Task.ProjectId,
+                    TaskDescription = mt.Task.TaskDescription,
+                    TaskId = mt.Task.TaskId,
+                    TaskName = mt.Task.TaskName,
+                    TaskStatusId = mt.Task.ProjectTaskStatusId,
+                    TaskStatus = mt.Task.ProjectTaskStatus.Name,
+                    StartDate = mt.Task.StartDate,
+                    TaskPriorityId = mt.Task.TaskPriorityId,
+                    IsTaskDependentOn = isTaskDependentOn
+                });
+            }
 
             return Ok(taskDTOs);
         }
