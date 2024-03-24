@@ -22,7 +22,7 @@ export const routes: Routes = [
   { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
   { path: 'projects/add', component: AddProjectComponent, canActivate: [AuthGuard]  },
   { path: 'projects/:id', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
-  { path: 'projects/:id/tasks/all', component: AllTasksComponent, canActivate: [AuthGuard] },
+  { path: 'projects/:id/tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
   { path: 'roles/all', component: AllRolesComponent, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, canActivate: [AuthGuard] },
 ]
