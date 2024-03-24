@@ -22,7 +22,7 @@ export const routes: Routes = [
   { path: "projects/add", component: AddProjectComponent, data: { title: 'Add Project' }, canActivate: [AuthGuard]  },
   { path: "roles/all", component: AllRolesComponent, data: { title: 'All Roles' }, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, data: { title: 'Edit Role' }, canActivate: [AuthGuard] },
-  { path: "kanban", component: KanbanComponent, data: { title: 'Kanban' }, canActivate: [AuthGuard] },
+  { path: "projects/:id/kanban", component: KanbanComponent, data: { title: 'Kanban' }, canActivate: [AuthGuard] },
 ]
 
 @NgModule({
