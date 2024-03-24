@@ -34,6 +34,7 @@ namespace Server.Controllers
 
             foreach (var t in tasks)
             {
+                var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
@@ -45,7 +46,8 @@ namespace Server.Controllers
                    TaskStatus = t.ProjectTaskStatus.Name,
                    TaskStatusId = t.ProjectTaskStatusId,
                    StartDate = t.StartDate,
-                   TaskPriorityId = t.TaskPriorityId
+                   TaskPriorityId = t.TaskPriorityId,
+                   IsTaskDependentOn = isTaskDependentOn
 
                 });
 
