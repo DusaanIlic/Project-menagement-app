@@ -47,7 +47,7 @@ namespace Server.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Members");
+                    b.ToTable("Members", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -62,7 +62,7 @@ namespace Server.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("MemberTasks");
+                    b.ToTable("MemberTasks", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -97,7 +97,7 @@ namespace Server.Migrations
 
                     b.HasIndex("TeamLeaderId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>
@@ -112,7 +112,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectStatuses");
+                    b.ToTable("ProjectStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
@@ -152,7 +152,7 @@ namespace Server.Migrations
 
                     b.HasIndex("TaskPriorityId");
 
-                    b.ToTable("ProjectTasks");
+                    b.ToTable("ProjectTasks", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
@@ -167,7 +167,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectTaskStatuses");
+                    b.ToTable("ProjectTaskStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.TaskPriority", b =>
@@ -182,7 +182,7 @@ namespace Server.Migrations
 
                     b.HasKey("TaskPriorityId");
 
-                    b.ToTable("TaskPriority");
+                    b.ToTable("TaskPriority", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>

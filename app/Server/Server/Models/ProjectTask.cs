@@ -25,6 +25,6 @@ namespace Server.Models
         public int TaskPriorityId { get; set; }
         public TaskPriority TaskPriority { get; set; }
 
-        public ICollection<MemberTask> Members { get; set; }
+        public ICollection<MemberTask> Members { get; set; } = new List<MemberTask>();
     }
 }

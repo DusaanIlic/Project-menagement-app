@@ -58,16 +58,20 @@ namespace Server.Controllers
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
             var projectTaskStatus = dbContext.ProjectTaskStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
 
             var projectTask = new ProjectTask()
             {
                 Deadline = addProjectTaskRequest.Deadline,
                 ProjectId = addProjectTaskRequest.ProjectId,
-                TaskDescription =  addProjectTaskRequest.TaskDescription,
+                TaskDescription = addProjectTaskRequest.TaskDescription,
                 TaskName = addProjectTaskRequest.TaskName,
-                ProjectTaskStatus = projectTaskStatus
+                ProjectTaskStatus = projectTaskStatus,
+                TaskPriority = taskPriority
 
             };
+
+            Console.WriteLine(taskPriority.Name);
 
             dbContext.ProjectTasks.Add(projectTask);
             await dbContext.SaveChangesAsync();
@@ -101,7 +105,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            projectTask.Deadline = updateProjectTaskRequest.DeadLine;
+            projectTask.Deadline = updateProjectTaskRequest.Deadline;
             projectTask.TaskDescription = updateProjectTaskRequest.TaskDescription;
             projectTask.TaskName = updateProjectTaskRequest.TaskName;
 
@@ -303,11 +307,11 @@ namespace Server.Controllers
             }
 
             var memberTasks = await dbContext.MemberTasks
-                .Where(mt => mt.MemberId == memberId)
-                .Select(mt => mt.Task)
-                .Include(ts => ts.ProjectTaskStatus)
-                .Include(tp => tp.TaskPriority)
-                .ToListAsync();
+              .Where(mt => mt.MemberId == memberId)
+              .Include(mt => mt.Task)
+              .ThenInclude(t => t.ProjectTaskStatus)
+              .Include(mt => mt.Task).ThenInclude(t => t.TaskPriority)
+              .ToListAsync();
 
             if (!memberTasks.Any())
             {
@@ -316,15 +320,15 @@ namespace Server.Controllers
 
             var taskDTOs = memberTasks.Select(t => new ProjectTaskDTO
             {
-                Deadline = t.Deadline,
-                ProjectId = t.ProjectId,
-                TaskDescription = t.TaskDescription,
-                TaskId = t.TaskId,
-                TaskName = t.TaskName,
-                TaskStatusId = t.ProjectTaskStatusId,
-                TaskStatus = t.ProjectTaskStatus.Name,
-                StartDate = t.StartDate,
-                TaskPriorityId = t.TaskPriorityId
+                Deadline = t.Task.Deadline,
+                ProjectId = t.Task.ProjectId,
+                TaskDescription = t.Task.TaskDescription,
+                TaskId = t.Task.TaskId,
+                TaskName = t.Task.TaskName,
+                TaskStatusId = t.Task.ProjectTaskStatusId,
+                TaskStatus = t.Task.ProjectTaskStatus.Name,
+                StartDate = t.Task.StartDate,
+                TaskPriorityId = t.Task.TaskPriorityId
             }).ToList();
 
             return Ok(taskDTOs);
