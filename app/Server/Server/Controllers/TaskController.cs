@@ -164,7 +164,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound(); 
+                return NotFound("Specified project does not exist"); 
             }
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
@@ -193,7 +193,7 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
-                return NotFound();
+                return NotFound("Specified project does not exist");
             }
 
             var projectTaskStatus = await dbContext.ProjectTaskStatuses.FindAsync(statusId);
