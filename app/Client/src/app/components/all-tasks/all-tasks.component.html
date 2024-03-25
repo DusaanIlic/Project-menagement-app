@@ -1,4 +1,4 @@
-<div class="flex h-full justify-center items-center">
+<div class="flex justify-center p-8">
   <div class="p-2 basis-3/4 flex flex-col bg-background gap-4 rounded-t-xl">
     <div class="flex flex-col gap-4 select-none">
       <p class="text-accent-blue font-bold text-2xl">All Tasks</p>
@@ -19,7 +19,10 @@
 
         <span class="grow"></span>
 
-        <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">Add new task</button>
+        <div class="flex gap-1">
+          <button class="rounded-xl bg-red-800 text-l text-white w-[120px] disabled:bg-red-400" disabled>Delete task</button>
+          <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">Add new task</button>
+        </div>
       </div>
 
       <hr class="border-accent-blue">
@@ -46,10 +49,10 @@
 
     <hr class="border-accent-blue">
 
-    <table>
-      <thead>
-        <tr class="text-accent-blue">
-          <th><input type="radio" id="radio-all-tasks"></th>
+    <table class="overflow-auto">
+      <thead class="text-left">
+        <tr class="text-accent-blue h-12 select-none">
+          <th><input type="checkbox" id="checkbox-tasks-all"></th>
           <th>TASK</th>
           <th>STATUS</th>
           <th>ASSIGNEES</th>
@@ -57,6 +60,16 @@
           <th>DUE DATE</th>
         </tr>
       </thead>
+
+      <tbody>
+        <tr class="h-12">
+          <td><input type="checkbox" id="checkbox-task-1"></td>
+          <td>Upload feeds and reels to instagram</td>
+          <td class="flex items-center h-12">
+            <p class="bg-blue-800 p-1 rounded-xl text-blue-300 font-bold text-sm select-none">In Progress</p>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
