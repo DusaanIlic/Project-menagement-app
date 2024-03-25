@@ -371,5 +371,37 @@ namespace Server.Controllers
 
             return Ok(taskDTOs);
         }
+
+        [HttpPost("{taskId}/dependency/{dependentTaskId}")]
+        public async Task<IActionResult> AddTaskDependency(int taskId, int dependentTaskId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+            var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
+
+            if (task == null || dependentTask == null)
+            {
+                return NotFound("Specified task or dependent task does not exist.");
+            }
+
+            var existingDependency = await dbContext.TaskDependencies
+                .FirstOrDefaultAsync(td => td.TaskId == taskId && td.DependentTaskId == dependentTaskId);
+
+            if (existingDependency != null)
+            {
+                return BadRequest("Dependency already exists for the specified tasks.");
+            }
+
+            var newDependency = new TaskDependency
+            {
+                TaskId = taskId,
+                DependentTaskId = dependentTaskId
+            };
+
+            dbContext.TaskDependencies.Add(newDependency);
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Dependency added between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+        }
+
     }
 }
