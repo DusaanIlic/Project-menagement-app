@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322221527_InitialDataTaskPriority")]
+    partial class InitialDataTaskPriority
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -48,21 +51,6 @@ namespace Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Members");
-                });
-
-            modelBuilder.Entity("Server.Models.MemberTask", b =>
-                {
-                    b.Property<int>("MemberId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("MemberId", "TaskId");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("MemberTasks");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -170,21 +158,6 @@ namespace Server.Migrations
                     b.ToTable("ProjectTaskStatuses");
                 });
 
-            modelBuilder.Entity("Server.Models.TaskDependency", b =>
-                {
-                    b.Property<int>("TaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DependentTaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("TaskId", "DependentTaskId");
-
-                    b.HasIndex("DependentTaskId");
-
-                    b.ToTable("TaskDependencies");
-                });
-
             modelBuilder.Entity("Server.Models.TaskPriority", b =>
                 {
                     b.Property<int>("TaskPriorityId")
@@ -198,25 +171,6 @@ namespace Server.Migrations
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
-                });
-
-            modelBuilder.Entity("Server.Models.MemberTask", b =>
-                {
-                    b.HasOne("Server.Models.Member", "Member")
-                        .WithMany("Tasks")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.ProjectTask", "Task")
-                        .WithMany("Members")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-
-                    b.Navigation("Task");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -263,30 +217,9 @@ namespace Server.Migrations
                     b.Navigation("TaskPriority");
                 });
 
-            modelBuilder.Entity("Server.Models.TaskDependency", b =>
-                {
-                    b.HasOne("Server.Models.ProjectTask", "DependentTask")
-                        .WithMany("DependentTasks")
-                        .HasForeignKey("DependentTaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.ProjectTask", "Task")
-                        .WithMany("Dependencies")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DependentTask");
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
                     b.Navigation("ProjectsLead");
-
-                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -297,15 +230,6 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>
                 {
                     b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTask", b =>
-                {
-                    b.Navigation("Dependencies");
-
-                    b.Navigation("DependentTasks");
-
-                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322231058_MemberTaskEntity")]
+    partial class MemberTaskEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -170,21 +173,6 @@ namespace Server.Migrations
                     b.ToTable("ProjectTaskStatuses");
                 });
 
-            modelBuilder.Entity("Server.Models.TaskDependency", b =>
-                {
-                    b.Property<int>("TaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DependentTaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("TaskId", "DependentTaskId");
-
-                    b.HasIndex("DependentTaskId");
-
-                    b.ToTable("TaskDependencies");
-                });
-
             modelBuilder.Entity("Server.Models.TaskPriority", b =>
                 {
                     b.Property<int>("TaskPriorityId")
@@ -263,25 +251,6 @@ namespace Server.Migrations
                     b.Navigation("TaskPriority");
                 });
 
-            modelBuilder.Entity("Server.Models.TaskDependency", b =>
-                {
-                    b.HasOne("Server.Models.ProjectTask", "DependentTask")
-                        .WithMany("DependentTasks")
-                        .HasForeignKey("DependentTaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.ProjectTask", "Task")
-                        .WithMany("Dependencies")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DependentTask");
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
                     b.Navigation("ProjectsLead");
@@ -301,10 +270,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
                 {
-                    b.Navigation("Dependencies");
-
-                    b.Navigation("DependentTasks");
-
                     b.Navigation("Members");
                 });
 

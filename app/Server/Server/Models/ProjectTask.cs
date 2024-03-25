@@ -13,6 +13,7 @@ namespace Server.Models
 
         public string TaskDescription { get; set; } = string.Empty;
 
+        public DateTime StartDate { get; set; }
         public DateTime Deadline { get; set; }
 
         public int ProjectId { get; set; }
@@ -21,5 +22,12 @@ namespace Server.Models
         public int ProjectTaskStatusId { get; set; }
         public ProjectTaskStatus ProjectTaskStatus { get; set; }
 
+        public int TaskPriorityId { get; set; }
+        public TaskPriority TaskPriority { get; set; }
+
+        public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();
+        public ICollection<TaskDependency> DependentTasks { get; set; } = new List<TaskDependency>();
+
+        public ICollection<MemberTask> Members { get; set; } = new List<MemberTask>();
     }
 }
