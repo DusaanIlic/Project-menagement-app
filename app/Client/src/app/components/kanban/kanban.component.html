@@ -27,7 +27,7 @@
 
 
     <div class="w-4/5 flex flex-row gap-20 p-10" cdkDropListGroup>
-        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/6 p-5">
+        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/4 p-5">
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>To Do</b></p>
                 <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Remove</button>
@@ -35,7 +35,7 @@
 
             <div
                 cdkDropList
-                [cdkDropListData]="todo"
+                [cdkDropListData]="todo.length > 0 ? todo : []"
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
                 
@@ -50,7 +50,7 @@
         </div>
 
 
-        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/6 p-5">
+        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/4 p-5">
             
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>In Progress</b></p>
@@ -59,7 +59,7 @@
 
             <div
                 cdkDropList
-                [cdkDropListData]="progress"
+                [cdkDropListData]="progress.length > 0 ? progress : []"
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngFor="let item of progress; let i = index">
@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/6 p-5">
+        <div class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/4 p-5">
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>Completed</b></p>
                 <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Remove</button>
@@ -79,7 +79,7 @@
 
             <div
                 cdkDropList
-                [cdkDropListData]="done"
+                [cdkDropListData]="done.length > 0 ? done : []"
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngFor="let item of done; let i = index">

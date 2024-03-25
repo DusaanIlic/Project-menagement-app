@@ -31,8 +31,8 @@ export class KanbanComponent {
       .pipe(
         map((data: any[]) => {
           this.todo = data.filter(task => task.taskStatusId === 1);
-          this.progress = data.filter(task => task.taskStatusId === 3);
-          this.done = data.filter(task => task.taskStatusId === 4);
+          this.progress = data.filter(task => task.taskStatusId === 2);
+          this.done = data.filter(task => task.taskStatusId === 3);
           return data;
         }),
         catchError(error => {
