@@ -16,9 +16,8 @@ namespace Server.Migrations
             values: new object[,]
             {
                { 1, "New" },
-               { 2, "Started" },
-               { 3, "In Progress" },
-               { 4, "Completed" }
+               { 2, "In Progress" },
+               { 3, "Completed" }
             });
         }
 
@@ -36,14 +35,9 @@ namespace Server.Migrations
                 keyValue: 2);
 
             migrationBuilder.DeleteData(
-                table: "ProjectTaskStatuses",
-                keyColumn: "Id",
-                keyValue: 3);
-
-            migrationBuilder.DeleteData(
         table: "ProjectTaskStatuses",
         keyColumn: "Id",
-        keyValue: 4);
+        keyValue: 3);
         }
     }
 }
