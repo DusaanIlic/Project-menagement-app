@@ -40,7 +40,7 @@
                 (cdkDropListDropped)="drop($event)">
                 
                 <ng-container *ngFor="let item of todo; let i = index">
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item}}
+                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                         (click)="deleteTask('todo', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
@@ -63,7 +63,7 @@
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngFor="let item of progress; let i = index">
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item}}
+                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                         (click)="deleteTask('progress', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
@@ -83,7 +83,7 @@
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngFor="let item of done; let i = index">
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item}}
+                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                         (click)="deleteTask('done', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
