@@ -1,26 +1,29 @@
 import { Component } from '@angular/core';
-import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { NgFor } from '@angular/common';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [DragDropModule, NgFor],
+  imports: [CdkDropList, CdkDrag],
   templateUrl: './kanban.component.html',
   styleUrl: './kanban.component.scss'
 })
 
 export class KanbanComponent {
-todoTasks: any;
-  onDrop(event: CdkDragDrop<string[]>, targetColumn: string) {
+  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
+
+  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+
+  drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
-      const task = event.previousContainer.data[event.previousIndex];
-      //task.status = targetColumn;
-      event.previousContainer.data.splice(event.previousIndex, 1);
-      event.container.data.splice(event.currentIndex, 0, task);
-    } 
-
-    
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
   }
-
 }
