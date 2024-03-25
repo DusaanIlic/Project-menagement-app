@@ -34,7 +34,7 @@ export class AppComponent implements OnInit{
         const url = event.urlAfterRedirects;
 
         this.showNavbar = url !== '/login';
-        this.showProjectNavbar = /^\/projects\/\d+$/.test(url);
+        this.showProjectNavbar = url.includes('/projects/') && url !== '/projects/all' &&  url !== '/projects/add';
       }
     });
   }
