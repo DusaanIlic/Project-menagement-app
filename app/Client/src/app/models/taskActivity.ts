@@ -1,9 +1,10 @@
 export interface taskActivity
 {
-    projectName? : string,
+    projectName : string,
     taskName? : string,
     memberName? : string,
     type? : string,
     dateModified? : number,
     description? : string
+    expanded? : boolean
 }

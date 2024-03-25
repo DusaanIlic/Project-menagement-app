@@ -58,9 +58,32 @@
                 <h1>Activity</h1>
             </div>
 
-            <div class="size-full py-5">
-                <div class="table size-full">
-                    
+            <div class="size-[90%] flex justify-center">
+                <div class="table w-full py-5 border-2 border-gray-500">
+                    <thead>
+                        <th></th>
+                        <th>Project name</th>
+                        <th>Task</th>
+                        <th>Type</th>
+                        <th>Date modified</th>
+                        <th>Description</th>
+                    </thead>
+
+                    <tbody class="text-center" *ngFor="let project of projects; index as i">
+                        <tr>
+                            <td (click)="hideNshow(i)"><img src="assets/navbar/dropdown-arrow.png" class="bg-black size-4 hover:cursor-pointer"></td>
+                            <td>{{project}}</td>
+                        </tr>
+                        <tr *ngFor="let task of activities">
+                            <td *ngIf="expanded[i] === true"></td>
+                            <td *ngIf="expanded[i] === true"></td>
+                            <td *ngIf="expanded[i] === true">{{task.taskName}}</td>
+                            <td *ngIf="expanded[i] === true">{{task.type}}</td>
+                            <td *ngIf="expanded[i] === true">{{task.dateModified}}</td>
+                            <td *ngIf="expanded[i] === true">{{task.description}}</td>
+
+                        </tr>
+                    </tbody>
                 </div>
             </div>
         </div>
