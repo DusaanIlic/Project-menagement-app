@@ -1,5 +1,5 @@
 <div class="flex justify-center p-8">
-  <div class="p-2 basis-3/4 flex flex-col bg-background gap-4 rounded-t-xl">
+  <div class="p-2 basis-[90%] flex flex-col bg-background gap-4 rounded-t-xl">
     <div class="flex flex-col gap-4 select-none">
       <p class="text-accent-blue font-bold text-2xl">All Tasks</p>
 
@@ -20,7 +20,7 @@
         <span class="grow"></span>
 
         <div class="flex gap-1">
-          <button class="rounded-xl bg-red-800 text-l text-white w-[120px] disabled:bg-red-400" disabled>Delete task</button>
+          <button class="rounded-xl bg-red-800 text-l text-white w-[120px] disabled:bg-red-400" disabled>Delete selected</button>
           <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">Add new task</button>
         </div>
       </div>
@@ -49,7 +49,7 @@
 
     <hr class="border-accent-blue">
 
-    <table class="overflow-auto">
+    <table class="overflow-auto border-spacing-20">
       <thead class="text-left">
         <tr class="text-accent-blue h-12 select-none">
           <th><input type="checkbox" id="checkbox-tasks-all"></th>
@@ -57,7 +57,8 @@
           <th>STATUS</th>
           <th>ASSIGNEES</th>
           <th>PROGRESS</th>
-          <th>DUE DATE</th>
+          <th class="text-center">DUE DATE</th>
+          <th></th>
         </tr>
       </thead>
 
@@ -65,8 +66,103 @@
         <tr class="h-12">
           <td><input type="checkbox" id="checkbox-task-1"></td>
           <td>Upload feeds and reels to instagram</td>
-          <td class="flex items-center h-12">
-            <p class="bg-blue-800 p-1 rounded-xl text-blue-300 font-bold text-sm select-none">In Progress</p>
+          <td>
+            <div class="flex items-center h-12">
+              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none">In Progress</p>
+            </div>
+          </td>
+          <td>
+            <div class="flex list-none first select-none">
+              <a class="border-[1px] border-black rounded-[100%] z-40">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+              <a class="border-[1px] border-black rounded-[100%] ml-[-20px] z-30">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+              <a class="border-[1px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
+                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
+              </a>
+            </div>
+          </td>
+          <td>
+            <div id="outer-progress-1" class="border-[1px] border-black h-6 flex select-none">
+              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
+                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">
+            <p>25.03.2024.</p>
+          </td>
+          <td>
+            <button class="bg-accent-blue w-full rounded-xl text-white h-8">Open</button>
+          </td>
+        </tr>
+        <tr class="h-12">
+          <td><input type="checkbox" id="checkbox-task-1"></td>
+          <td>Upload feeds and reels to instagram</td>
+          <td>
+            <div class="flex items-center h-12">
+              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none">In Progress</p>
+            </div>
+          </td>
+          <td>
+            <div class="flex list-none first select-none">
+              <a class="border-[1px] border-black rounded-[100%] z-40">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+              <a class="border-[1px] border-black rounded-[100%] ml-[-20px] z-30">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+            </div>
+          </td>
+          <td>
+            <div id="outer-progress-1" class="border-[1px] border-black h-6 flex select-none">
+              <div id="inner-progress-1" class="relative basis-[25%] bg-lime-300">
+                <span class="absolute left-2 flex items-center justify-center text-black">25%</span>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">
+            <p>25.03.2024.</p>
+          </td>
+          <td>
+            <button class="bg-accent-blue w-full rounded-xl text-white h-8">Open</button>
+          </td>
+        </tr>
+        <tr class="h-12">
+          <td><input type="checkbox" id="checkbox-task-1"></td>
+          <td>Upload feeds and reels to instagram</td>
+          <td>
+            <div class="flex items-center h-12">
+              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none">In Progress</p>
+            </div>
+          </td>
+          <td>
+            <div class="flex list-none first select-none">
+              <a class="border-[1px] border-black rounded-[100%] z-40">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+              <a class="border-[1px] border-black rounded-[100%] ml-[-20px] z-30">
+                <img ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
+              </a>
+              <a class="border-[1px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
+                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
+              </a>
+            </div>
+          </td>
+          <td>
+            <div id="outer-progress-1" class="border-[1px] border-black h-6 flex select-none">
+              <div id="inner-progress-1" class="relative basis-[75%] bg-lime-300">
+                <span class="absolute left-2 flex items-center justify-center text-black">75%</span>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">
+            <p>25.03.2024.</p>
+          </td>
+          <td>
+            <button class="bg-accent-blue w-full rounded-xl text-white h-8">Open</button>
           </td>
         </tr>
       </tbody>
