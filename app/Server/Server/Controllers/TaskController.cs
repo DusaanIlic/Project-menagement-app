@@ -403,5 +403,30 @@ namespace Server.Controllers
             return Ok($"Dependency added between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
         }
 
+        [HttpDelete("{taskId}/dependency/{dependentTaskId}")]
+        public async Task<IActionResult> RemoveTaskDependency(int taskId, int dependentTaskId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+            var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
+
+            if (task == null || dependentTask == null)
+            {
+                return NotFound("Specified task or dependent task does not exist.");
+            }
+
+            var existingDependency = await dbContext.TaskDependencies
+                .FirstOrDefaultAsync(td => td.TaskId == taskId && td.DependentTaskId == dependentTaskId);
+
+            if (existingDependency == null)
+            {
+                return NotFound("Dependency does not exist between the specified tasks.");
+            }
+
+            
+            dbContext.TaskDependencies.Remove(existingDependency);
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Dependency removed between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+        }
     }
 }
