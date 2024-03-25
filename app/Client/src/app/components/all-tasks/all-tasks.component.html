@@ -1,6 +1,7 @@
 <div class="flex h-full justify-center items-center">
-  <div class="flex flex-col gap-4 bg-background">
-      <p>All Tasks</p>
+  <div class="p-2 basis-3/4 flex flex-col bg-background gap-4 rounded-t-xl">
+    <div class="flex flex-col gap-4 select-none">
+      <p class="text-accent-blue font-bold text-2xl">All Tasks</p>
 
       <div class="flex gap-10">
         <div class="flex">
@@ -11,13 +12,51 @@
         <select class="rounded-xl">
           <option selected>Sort by</option>
           <option>Name</option>
+          <option>Priority</option>
           <option>Due date</option>
           <option>Progression</option>
         </select>
 
-        <span></span>
+        <span class="grow"></span>
 
         <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">Add new task</button>
       </div>
+
+      <hr class="border-accent-blue">
+
+      <div class="flex gap-4">
+        <p class="text-accent-blue font-bold">Show only:</p>
+
+        <div class="flex items-center justify-center gap-1">
+          <input type="radio" id="radio-all" name="radio-filter">
+          <label for="radio-all">All</label>
+        </div>
+
+        <div class="flex items-center justify-center gap-1">
+          <input type="radio" id="radio-completed" name="radio-filter">
+          <label for="radio-completed">Completed Tasks</label>
+        </div>
+
+        <div class="flex items-center justify-center gap-1">
+          <input type="radio" id="radio-in-progress" name="radio-filter">
+          <label for="radio-in-progress">In Progress</label>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-accent-blue">
+
+    <table>
+      <thead>
+        <tr class="text-accent-blue">
+          <th><input type="radio" id="radio-all-tasks"></th>
+          <th>TASK</th>
+          <th>STATUS</th>
+          <th>ASSIGNEES</th>
+          <th>PROGRESS</th>
+          <th>DUE DATE</th>
+        </tr>
+      </thead>
+    </table>
   </div>
 </div>
