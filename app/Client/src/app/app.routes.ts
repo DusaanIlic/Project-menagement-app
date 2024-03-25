@@ -15,7 +15,8 @@ import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'members/add', component: AddMemberComponent, canActivate: [AuthGuard] },
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
   { path: 'members/edit/:id', component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
