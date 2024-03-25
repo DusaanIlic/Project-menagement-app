@@ -11,17 +11,20 @@ import { AuthGuard } from './guards/auth.guard';
 import { NgModule } from '@angular/core';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
+import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
 
 export const routes: Routes = [
-  { path: "login", component: LoginComponent },
-  { path: "", component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: "members/add", component: AddMemberComponent, canActivate: [AuthGuard] },
-  { path: "members/all", component: AllMembersComponent, canActivate: [AuthGuard] },
-  { path: "members/edit/:id", component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
-  { path: "projects/all", component: AllProjectsComponent, canActivate: [AuthGuard] },
-  { path: "projects/add", component: AddProjectComponent, canActivate: [AuthGuard]  },
-  { path: "projects/:id", component: ProjectOverviewComponent, canActivate: [AuthGuard] },
-  { path: "roles/all", component: AllRolesComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'members/add', component: AddMemberComponent, canActivate: [AuthGuard] },
+  { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
+  { path: 'members/edit/:id', component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
+  { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
+  { path: 'projects/add', component: AddProjectComponent, canActivate: [AuthGuard]  },
+  { path: 'projects/:id', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
+  { path: 'projects/:id/tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
+  { path: 'roles/all', component: AllRolesComponent, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, canActivate: [AuthGuard] },
 ]
 

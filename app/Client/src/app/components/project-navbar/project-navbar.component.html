@@ -1,7 +1,7 @@
-<nav class="h-full flex flex-col justify-between border-r-[1px] border-accent-blue select-none text-[#323232] text-2xl bg-background">
+<nav class="w-60 h-full flex flex-col justify-between border-r-[1px] border-accent-blue select-none text-[#323232] text-2xl bg-background">
   <ul class="flex flex-col w-full gap-1">
     <li class="h-16 flex justify-center items-center w-full border-b-[1px] border-accent-blue">
-      <p class="sm:text-3xl text-black">Project 123</p>
+      <p class="text-3xl text-black">Project 123</p>
     </li>
     <li class="h-12 flex items-center w-full pl-2 hover:bg-[#D6E5FF]">
       <a class="h-full grow flex items-center gap-2">
@@ -15,8 +15,8 @@
         <p>Assignees</p>
       </a>
     </li>
-    <li class="h-12 flex items-center w-full pl-2 hover:bg-[#D6E5FF]">
-      <a class="h-full grow flex items-center gap-2">
+    <li class="h-12 flex items-center w-full pl-2 hover:bg-[#D6E5FF]" routerLinkActive="bg-[#D6E5FF]">
+      <a class="h-full grow flex items-center gap-2" routerLink="/projects/1/tasks">
         <img ngSrc="assets/project-navbar/tasks.png" alt="Project Tasks" height="32" width="32">
         <p>Tasks</p>
       </a>
