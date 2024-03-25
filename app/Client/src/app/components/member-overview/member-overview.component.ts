@@ -176,22 +176,7 @@ hideNshow(i: number) {
           "dateModified": 20240218,
           "description": "Reviewed pull requests."
       },
-      {
-          "projectName": "Project Xi",
-          "taskName": "Feature Development",
-          "memberName": "Ethan Rodriguez",
-          "type": "Update",
-          "dateModified": 20240216,
-          "description": "Implemented new feature."
-      },
-      {
-          "projectName": "Project Xi",
-          "taskName": "Testing",
-          "memberName": "Chloe Martinez",
-          "type": "Update",
-          "dateModified": 20240214,
-          "description": "Performed regression testing."
-      }
+      
   ]
   }
 

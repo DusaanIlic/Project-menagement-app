@@ -58,32 +58,34 @@
                 <h1>Activity</h1>
             </div>
 
-            <div class="size-[90%] flex justify-center">
-                <div class="table w-full py-5 border-2 border-gray-500">
-                    <thead>
-                        <th></th>
-                        <th>Project name</th>
-                        <th>Task</th>
-                        <th>Type</th>
-                        <th>Date modified</th>
-                        <th>Description</th>
-                    </thead>
-
-                    <tbody class="text-center" *ngFor="let project of projects; index as i">
-                        <tr>
-                            <td (click)="hideNshow(i)"><img src="assets/navbar/dropdown-arrow.png" class="bg-black size-4 hover:cursor-pointer"></td>
-                            <td>{{project}}</td>
-                        </tr>
-                        <tr *ngFor="let task of activities">
-                            <td *ngIf="expanded[i] === true"></td>
-                            <td *ngIf="expanded[i] === true"></td>
-                            <td *ngIf="expanded[i] === true">{{task.taskName}}</td>
-                            <td *ngIf="expanded[i] === true">{{task.type}}</td>
-                            <td *ngIf="expanded[i] === true">{{task.dateModified}}</td>
-                            <td *ngIf="expanded[i] === true">{{task.description}}</td>
-
-                        </tr>
-                    </tbody>
+            <div class="flex justify-center">
+                <div class="size-[90%]">
+                    <div class="table w-full py-5 border-2 border-gray-500">
+                        <thead class="text-xl">
+                            <th class="w-5"></th>
+                            <th class="w-40">Project name</th>
+                            <th class="w-40">Task</th>
+                            <th class="w-40">Type</th>
+                            <th class="w-40">Date modified</th>
+                            <th class="w-96">Description</th>
+                        </thead>
+    
+                        <tbody class="text-center" *ngFor="let project of projects; index as i">
+                            <tr>
+                                <td (click)="hideNshow(i)" class="w-5"><img src="assets/navbar/dropdown-arrow.png" class="bg-black size-4 hover:cursor-pointer"></td>
+                                <td>{{project}}</td>
+                            </tr>
+                            <tr *ngFor="let task of activities">
+                                <td *ngIf="expanded[i] === true"></td>
+                                <td *ngIf="expanded[i] === true"></td>
+                                <td *ngIf="expanded[i] === true" class="w-40">{{task.taskName}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-40">{{task.type}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-40">{{task.dateModified}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-96">{{task.description}}</td>
+    
+                            </tr>
+                        </tbody>
+                    </div>
                 </div>
             </div>
         </div>
