@@ -15,7 +15,6 @@ import { FormsModule, NgModel } from '@angular/forms';
 })
 
 export class KanbanComponent {
-  allTasks: any[] = [];
   todo: any[] = [];
   progress: any[] = [];
   done: any[] = [];
@@ -75,10 +74,19 @@ export class KanbanComponent {
   deleteTask(column: string, index: number) {
     if (column === 'todo') {
       this.todo.splice(index, 1);
+      this.taskService.deleteTask(index);
     } else if (column === 'progress') {
       this.progress.splice(index, 1);
+      this.taskService.deleteTask(index).subscribe(
+        (error) => console.log("error", error)
+      );
     } else if (column === 'done') {
       this.done.splice(index, 1);
+      this.taskService.deleteTask(index);
     }
+  }
+
+  printProgress(){
+    console.log(this.progress);
   }
 }

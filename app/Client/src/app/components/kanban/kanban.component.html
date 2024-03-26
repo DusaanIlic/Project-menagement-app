@@ -41,7 +41,7 @@
         <div *ngIf="showToDoList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>To Do</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Remove</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
             </div>
 
             <div
@@ -65,7 +65,7 @@
             
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>In Progress</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Remove</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
             </div>
 
             <div
@@ -76,7 +76,7 @@
                 <ng-container *ngFor="let item of progress; let i = index">
                     <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                        (click)="deleteTask('progress', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                        (click)="deleteTask('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
                 </ng-container> 
             </div>
@@ -85,7 +85,7 @@
         <div *ngIf="showDoneList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>Completed</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Remove</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
             </div>
 
             <div
