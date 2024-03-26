@@ -23,6 +23,7 @@
     "flowbite": "^2.3.0",
     "ng-angular-popup": "^0.5.2",
     "rxjs": "~7.8.0",
+    "smart-webcomponents-angular": "^18.0.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
