@@ -9,5 +9,7 @@ namespace Server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TaskCategoryID { get; set; }
         public string CategoryName { get; set; }
+
+        public List<ProjectTask> ProjectTasks { get; set; }
     }
 }
