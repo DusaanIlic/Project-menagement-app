@@ -61,6 +61,7 @@ namespace Server.Controllers
         {
             var projectTaskStatus = dbContext.ProjectTaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
+            var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
             var projectTask = new ProjectTask()
             {
@@ -69,8 +70,8 @@ namespace Server.Controllers
                 TaskDescription = addProjectTaskRequest.TaskDescription,
                 TaskName = addProjectTaskRequest.TaskName,
                 ProjectTaskStatus = projectTaskStatus,
-                TaskPriority = taskPriority
-
+                TaskPriority = taskPriority,
+                TaskCategory = taskCategory
             };
 
             Console.WriteLine(taskPriority.Name);
