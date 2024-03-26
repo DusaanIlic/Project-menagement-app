@@ -12,17 +12,12 @@
                     <p>Starting date</p>
                 </div>
                 <div class="flex flex-row items-center">
-                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell">
+                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-1 xl:table-cell">
                     <p>+20</p>
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-row gap-5 ml-10">
-            <form>
-                <button type="button" class="px-5 py-2 bg-[#0E2954] text-white rounded-xl min-h-12 font-medium hover mr-5">Add Column</button>
-            </form>
-        </div>
 
         <div class="flex flex-row gap-5 ml-10">
             <form>
@@ -37,8 +32,9 @@
     </div>
 
 
-    <div class="w-full flex flex-row gap-20 p-10" cdkDropListGroup>
-        <div *ngIf="showToDoList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+    <div class="w-full flex flex-row gap-20 p-10" cdkDropListGroup cdkDropList (cdkDropListDropped)="drop2($event)">
+        <div *ngIf="showToDoList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" cdkDrag>
+
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>To Do</b></p>
                 <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
@@ -53,7 +49,7 @@
                 <ng-container *ngFor="let item of todo; let i = index">
                     <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                        (click)="deleteTask('todo', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                        (click)="deleteTask('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
                 </ng-container> 
             </div>
@@ -61,7 +57,7 @@
         </div>
 
 
-        <div *ngIf="showProgressList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+        <div *ngIf="showProgressList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" cdkDrag>
             
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>In Progress</b></p>
@@ -82,7 +78,7 @@
             </div>
         </div>
 
-        <div *ngIf="showDoneList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+        <div *ngIf="showDoneList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" cdkDrag>
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>Completed</b></p>
                 <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
@@ -96,7 +92,7 @@
                 <ng-container *ngFor="let item of done; let i = index">
                     <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                         <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                        (click)="deleteTask('done', i)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                        (click)="deleteTask('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                     </div>
                 </ng-container> 
         </div>
