@@ -283,7 +283,8 @@ namespace Server.Controllers
                     TaskStatus = t.ProjectTaskStatus.Name,
                     StartDate = t.StartDate,
                     TaskPriorityId = t.TaskPriorityId,
-                    IsTaskDependentOn = isTaskDependentOn
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = t.TaskCategoryId
                 });
             }
 
@@ -352,6 +353,8 @@ namespace Server.Controllers
                 .ThenInclude(t => t.ProjectTaskStatus)
                 .Include(mt => mt.Task)
                 .ThenInclude(t => t.TaskPriority)
+                .Include(mt => mt.Task)
+                .ThenInclude(tc => tc.TaskCategory)
                 .ToListAsync();
 
             if (!memberTasks.Any())
@@ -376,7 +379,8 @@ namespace Server.Controllers
                     TaskStatus = mt.Task.ProjectTaskStatus.Name,
                     StartDate = mt.Task.StartDate,
                     TaskPriorityId = mt.Task.TaskPriorityId,
-                    IsTaskDependentOn = isTaskDependentOn
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = mt.Task.TaskCategoryId
                 });
             }
 
@@ -438,6 +442,24 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok($"Dependency removed between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+        }
+
+        [HttpPost("{taskId}/category/{categoryId}")]
+        public async Task<IActionResult> AddTaskCategory(int taskId, int categoryId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+            var category = await dbContext.TaskCategories.FindAsync(categoryId);
+
+            if (task == null || category == null)
+            {
+                return NotFound("Specified task or category does not exist.");
+            }
+
+            task.TaskCategoryId = categoryId;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Category added to Task ID {taskId}.");
         }
     }
 }
