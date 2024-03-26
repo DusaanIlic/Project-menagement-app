@@ -1,0 +1,95 @@
+<div class="flex justify-center mt-5">
+    <div class="flex justify-between w-[90%] gap-10">
+        <div class="h-96 w-1/5 flex-col justify-between">
+            <div class="h-1/2 w-full flex items-center border-b-8 border-gray-600">
+                <div class="flex justify-between">
+                    <div>
+                        <img src="assets/avatar.png" class="border-2 border-black rounded-full size-16">
+                    </div>
+
+                    <div class="flex flex-col justify-center pl-10">
+                        <h1 class="text-5xl">{{member.fullName}}</h1>
+                        <p class="text-xl">{{member.email}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full flex justify-center gap-5 mt-5">
+                    <div class="flex flex-col justify-between h-60 w-64">
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Role</h1>
+                            <p class=" w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none">{{member.role}}</p>
+                        </div>
+    
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Phone number</h1>
+                            <p class=" w-full px-2 py-1 rounded-md rounded-b-none">060 123 4567</p>
+                        </div>
+    
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Twitter</h1>
+                            <p class=" w-full px-2 py-1 rounded-md rounded-b-none">www.twitter.com</p>
+                        </div>
+                    </div>
+    
+                    <div class="flex flex-col justify-between h-60 w-64">
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Status</h1>
+                            <p class=" w-full px-2 py-1 rounded-md rounded-b-none">Active</p>
+                        </div>
+    
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">GitHub</h1>
+                            <p class=" w-full px-2 py-1 rounded-md rounded-b-none">www.github.com</p>
+                        </div>
+    
+                        <div class="rounded-md shadow-2xl">
+                            <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Linkedin</h1>
+                            <p class=" w-full px-2 py-1 rounded-md rounded-b-none">www.linkedin.com</p>
+                        </div>
+                    </div>
+            </div>
+
+        </div>
+    
+    
+        <div class="w-4/5">
+            <div class="border-b-8 border-gray-600 text-2xl p-2 pl-5">
+                <h1>Activity</h1>
+            </div>
+
+            <div class="flex justify-center">
+                <div class="w-[90%]">
+                    <div class="table w-full px-2 mt-5 border-2 border-gray-500">
+                        <thead class="text-xl h-14">
+                            <th class="w-5 mb-5"></th>
+                            <th class="w-40 border-b-2 border-b-gray-500">Project name</th>
+                            <th class="w-40 border-b-2 border-b-gray-500">Task</th>
+                            <th class="w-40 border-b-2 border-b-gray-500">Type</th>
+                            <th class="w-40 border-b-2 border-b-gray-500">Date modified</th>
+                            <th class="w-96 border-b-2 border-b-gray-500">Description</th>
+                        </thead>
+    
+                        <tbody class="text-center" *ngFor="let project of projects; index as i">
+                            <tr class="h-8">
+                                <td (click)="hideNshow(i)" *ngIf="!expanded[i]" class="w-5"><img src="assets/icons/arrow.png" class=" hover:cursor-pointer :"></td>
+                                <td (click)="hideNshow(i)" *ngIf="expanded[i]" class="w-5"><img src="assets/icons/arrow.png" class=" rotate-180 hover:cursor-pointer :"></td>
+                                <td>{{project}}</td>
+                            </tr>
+                            <tr *ngFor="let task of activities">
+                                <td *ngIf="expanded[i] === true" ></td>
+                                <td *ngIf="expanded[i] === true"></td>
+                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.taskName}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.type}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.dateModified | date}}</td>
+                                <td *ngIf="expanded[i] === true" class="w-96 border-b-2 border-b-gray-500">{{task.description}}</td>
+    
+                            </tr>
+                        </tbody>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>

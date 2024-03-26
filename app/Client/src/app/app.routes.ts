@@ -13,6 +13,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
 import { KanbanComponent } from './components/kanban/kanban.component';
+import { MemberOverviewComponent } from './components/member-overview/member-overview.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,5 +28,6 @@ export const routes: Routes = [
   { path: 'projects/:id/tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
   { path: 'roles/all', component: AllRolesComponent, canActivate: [AuthGuard] },
   { path: 'roles/edit/:id', component: EditRoleComponent, canActivate: [AuthGuard] },
-  { path: "projects/:id/kanban", component: KanbanComponent, data: { title: 'Kanban' }, canActivate: [AuthGuard] },
+  { path: "projects/:id/kanban", component: KanbanComponent, canActivate: [AuthGuard] },
+  { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
 ]
