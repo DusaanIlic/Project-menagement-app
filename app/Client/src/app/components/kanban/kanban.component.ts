@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
-import { NgFor } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor],
+  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule],
   templateUrl: './kanban.component.html',
   styleUrl: './kanban.component.scss'
 })
@@ -19,6 +20,21 @@ export class KanbanComponent {
   progress: any[] = [];
   done: any[] = [];
 
+  showToDoList: boolean = true;
+  showProgressList: boolean = true;
+  showDoneList: boolean = true;
+
+  toggleToDoList(){
+    this.showToDoList = !this.showToDoList;
+  }
+
+  toggleProgressList(){
+    this.showProgressList = !this.showProgressList;
+  }
+
+  toggleDoneList(){
+    this.showDoneList = !this.showDoneList;
+  }
 
   constructor(private taskService: TaskService) {}
 
