@@ -157,7 +157,7 @@ namespace Server.Controllers
             dbContext.ProjectTasks.Remove(projectTask);
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task is deleted");
+            return Ok(new { message = "Task is deleted" });
         }
 
         [HttpGet("{id}")]
@@ -460,6 +460,23 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok($"Category added to Task ID {taskId}.");
+        }
+
+        [HttpDelete("{taskId}/category")]
+        public async Task<IActionResult> RemoveTaskCategory(int taskId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+
+            if (task == null)
+            {
+                return NotFound("Specified task does not exist.");
+            }
+
+            task.TaskCategoryId = 1;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Category removed from Task ID {taskId}.");
         }
     }
 }
