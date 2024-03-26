@@ -17,6 +17,7 @@ namespace Server.Data
         public DbSet<TaskPriority> TaskPriority { get; set; }
         public DbSet<MemberTask> MemberTasks { get; set; }
         public DbSet<TaskDependency> TaskDependencies { get; set; }
+        public DbSet<TaskCategory> TaskCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
