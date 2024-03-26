@@ -4,7 +4,7 @@ export interface taskActivity
     taskName? : string,
     memberName? : string,
     type? : string,
-    dateModified? : number,
+    dateModified? : Date,
     description? : string
     expanded? : boolean
 }

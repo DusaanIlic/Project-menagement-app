@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
-import { Project } from '../../models/project';
 
 
 @Component({
@@ -37,7 +36,7 @@ hideNshow(i: number) {
           "taskName": "Backend Development",
           "memberName": "Elena Rodriguez",
           "type": "Update",
-          "dateModified": 20240324,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Implemented authentication system."
       },
       {
@@ -45,7 +44,7 @@ hideNshow(i: number) {
           "taskName": "Frontend Development",
           "memberName": "David Lee",
           "type": "Update",
-          "dateModified": 20240322,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Integrated API endpoints."
       },
       {
@@ -53,7 +52,7 @@ hideNshow(i: number) {
           "taskName": "Testing Phase",
           "memberName": "Maria Garcia",
           "type": "Bug Fix",
-          "dateModified": 20240320,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Fixed UI rendering issue."
       },
       {
@@ -61,7 +60,7 @@ hideNshow(i: number) {
           "taskName": "Deployment",
           "memberName": "Chris Johnson",
           "type": "Update",
-          "dateModified": 20240318,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Deployed latest version to production."
       },
       {
@@ -69,7 +68,7 @@ hideNshow(i: number) {
           "taskName": "Documentation",
           "memberName": "Sophia Kim",
           "type": "Update",
-          "dateModified": 20240316,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Updated project documentation."
       },
       {
@@ -77,7 +76,7 @@ hideNshow(i: number) {
           "taskName": "Code Review",
           "memberName": "Emma Wilson",
           "type": "Review",
-          "dateModified": 20240314,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Reviewed pull requests."
       },
       {
@@ -85,7 +84,7 @@ hideNshow(i: number) {
           "taskName": "Feature Development",
           "memberName": "Michael Brown",
           "type": "Update",
-          "dateModified": 20240312,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Implemented new feature."
       },
       {
@@ -93,7 +92,7 @@ hideNshow(i: number) {
           "taskName": "Testing",
           "memberName": "Laura Martinez",
           "type": "Update",
-          "dateModified": 20240310,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Performed regression testing."
       },
       {
@@ -101,7 +100,7 @@ hideNshow(i: number) {
           "taskName": "Database Optimization",
           "memberName": "William Jones",
           "type": "Update",
-          "dateModified": 20240308,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Optimized database queries."
       },
       {
@@ -109,7 +108,7 @@ hideNshow(i: number) {
           "taskName": "Security Audit",
           "memberName": "Olivia White",
           "type": "Update",
-          "dateModified": 20240306,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Conducted security vulnerability assessment."
       },
       {
@@ -117,7 +116,7 @@ hideNshow(i: number) {
           "taskName": "Integration",
           "memberName": "Daniel Davis",
           "type": "Update",
-          "dateModified": 20240304,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Integrated third-party services."
       },
       {
@@ -125,7 +124,7 @@ hideNshow(i: number) {
           "taskName": "Bug Fixing",
           "memberName": "Sophie Brown",
           "type": "Bug Fix",
-          "dateModified": 20240302,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Resolved critical bugs."
       },
       {
@@ -133,7 +132,7 @@ hideNshow(i: number) {
           "taskName": "UI Design",
           "memberName": "Jackson Taylor",
           "type": "Update",
-          "dateModified": 20240228,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Designed user interface components."
       },
       {
@@ -141,7 +140,7 @@ hideNshow(i: number) {
           "taskName": "Performance Optimization",
           "memberName": "Amelia Clark",
           "type": "Update",
-          "dateModified": 20240226,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Optimized application performance."
       },
       {
@@ -149,7 +148,7 @@ hideNshow(i: number) {
           "taskName": "Feature Implementation",
           "memberName": "Liam Brown",
           "type": "Update",
-          "dateModified": 20240224,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Implemented new feature."
       },
       {
@@ -157,7 +156,7 @@ hideNshow(i: number) {
           "taskName": "Testing Phase",
           "memberName": "Charlotte Evans",
           "type": "Update",
-          "dateModified": 20240222,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Tested new functionalities."
       },
       {
@@ -165,7 +164,7 @@ hideNshow(i: number) {
           "taskName": "Documentation",
           "memberName": "James Smith",
           "type": "Update",
-          "dateModified": 20240220,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Updated project documentation."
       },
       {
@@ -173,7 +172,7 @@ hideNshow(i: number) {
           "taskName": "Code Review",
           "memberName": "Ava Johnson",
           "type": "Review",
-          "dateModified": 20240218,
+          "dateModified": new Date("1. 2. 2024."),
           "description": "Reviewed pull requests."
       },
       
