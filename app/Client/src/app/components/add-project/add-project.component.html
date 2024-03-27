@@ -45,5 +45,15 @@
     >
       Create Project
     </button>
+
+    <div *ngIf="isSuccess; else errorMessage">
+      <label>Projekat je uspešno dodat</label>
+    </div>
+
+    <ng-template #errorMessage>
+      <div *ngIf="isError" class="mt-8">
+        <label>Greška prilikom dodavanja projekta</label>
+      </div>
+    </ng-template>
   </form>
 </section>
