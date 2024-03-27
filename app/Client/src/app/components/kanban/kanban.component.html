@@ -48,8 +48,7 @@
                 
                 <ng-container *ngIf="todo.length > 0; else emptyTodo">
                     <ng-container *ngFor="let item of todo; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>
-                            {{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                                 (click)="deleteTask('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
@@ -124,7 +123,7 @@
         </div>
     </div>
 
-
+    <ng-toast></ng-toast>
 
 </div>
 
