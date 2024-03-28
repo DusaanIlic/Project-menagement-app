@@ -11,18 +11,3 @@ const httpOptions = {
     Authorization: 'my-auth-token', // ovde ce da ide token za autorizaciju kada ona bude omogucena na bekendu
   }),
 };
-
-@Injectable({
-  providedIn: 'root',
-})
-export class ProjectService {
-  constructor(private http: HttpClient) {}
-
-  createProject(project: Project): Observable<Project> {
-    return this.http.post<Project>(
-      `${environment.apiUrl}/projects`,
-      project,
-      httpOptions
-    );
-  }
-}
