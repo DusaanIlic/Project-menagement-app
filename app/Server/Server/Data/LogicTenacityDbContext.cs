@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
+using File = Server.Models.File;
 
 namespace Server.Data
 {
@@ -18,8 +19,7 @@ namespace Server.Data
         public DbSet<MemberTask> MemberTasks { get; set; }
         public DbSet<TaskDependency> TaskDependencies { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
-        
-        public DbSet<UploadedFile> UploadedFiles { get; set; }
+        public DbSet<File> Files { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -87,7 +87,7 @@ namespace Server.Data
                 .WithMany(tc => tc.ProjectTasks)
                 .HasForeignKey(pt => pt.TaskCategoryId);
 
-            modelBuilder.Entity<UploadedFile>()
+            modelBuilder.Entity<File>()
                 .HasOne(uf => uf.Uploader)
                 .WithMany(m => m.UploadedFiles)
                 .HasForeignKey(uf => uf.UploaderId);

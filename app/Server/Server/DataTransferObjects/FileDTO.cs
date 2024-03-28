@@ -1,6 +1,6 @@
 ﻿namespace Server.DataTransferObjects;
 
-public class UploadedFileDTO
+public class FileDTO
 {
     public IFormFile FileDetails;
     public int UploaderId;

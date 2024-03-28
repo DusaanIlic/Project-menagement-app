@@ -5,10 +5,10 @@ namespace Server.Services.File
 {
     public interface IFileService
     {
-        public Task PostFileAsync(UploadedFileDTO fileData);
+        public Task PostFileAsync(FileDTO fileData);
 
-        public Task PostMultiFileAsync(List<UploadedFileDTO> fileData);
+        public Task PostMultiFileAsync(List<FileDTO> fileData);
 
-        public Task DownloadFileById(int fileId);
+        public Task<(byte[], string)> GetFileData(int fileId);
     }
 }

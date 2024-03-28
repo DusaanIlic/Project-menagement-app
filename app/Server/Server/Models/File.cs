@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models
 {
-    public class UploadedFile
+    public class File
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

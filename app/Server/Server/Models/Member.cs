@@ -30,6 +30,6 @@ namespace Server.Models
 
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();
 
-        public ICollection<UploadedFile> UploadedFiles { get; set; } = new List<UploadedFile>();
+        public ICollection<File> UploadedFiles { get; set; } = new List<File>();
     }
 }
