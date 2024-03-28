@@ -12,15 +12,15 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
   styleUrl: './all-tasks.component.scss'
 })
 export class AllTasksComponent {
-  showUncategorized: boolean = true;
-  uncategorizedCategory: string = '- Uncategorized';
+  showStandalone: boolean = true;
+  standaloneTasks: string = '- None';
 
   toggleUncategorized() {
-    this.showUncategorized = !this.showUncategorized;
+    this.showStandalone = !this.showStandalone;
 
-    if (this.showUncategorized)
-      this.uncategorizedCategory = '- Uncategorized';
+    if (this.showStandalone)
+      this.standaloneTasks = '- None';
     else
-      this.uncategorizedCategory = '+ Uncategorized';
+      this.standaloneTasks = '+ None';
   }
 }
