@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Server.Data;
+using Server.DataTransferObjects;
 using Server.Models;
 
 namespace Server.Services.File
@@ -15,12 +16,12 @@ namespace Server.Services.File
             this._configuration = configuration;
         }
         
-        public Task PostFileAsync(IFormFile fileData)
+        public Task PostFileAsync(UploadedFileDTO uploadedFileDto)
         {
             throw new NotImplementedException();
         }
 
-        public Task PostMultiFileAsync(List<UploadedFile> fileData)
+        public Task PostMultiFileAsync(List<UploadedFileDTO> fileData)
         {
             throw new NotImplementedException();
         }
