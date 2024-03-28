@@ -82,7 +82,7 @@
                                 <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.taskName}}</td>
                                 <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.type}}</td>
                                 <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.dateModified | date}}</td>
-                                <td *ngIf="expanded[i] === true" class="w-9 border-b-2 border-b-gray-500 "><img class="scale-75 block mx-auto hover:cursor-pointer" src="assets/icons/edit_36_jpg.jpg" alt=""></td>
+                                <td *ngIf="expanded[i] === true" class="w-9 border-b-2 border-b-gray-500 "><img class="scale-75 block mx-auto hover:cursor-pointer" src="assets/icons/edit_36_jpg.jpg" (click)="openDialog()"></td>
     
                             </tr>
                         </tbody>
@@ -92,4 +92,7 @@
         </div>
     
     </div>
+
+    
+
 </div>

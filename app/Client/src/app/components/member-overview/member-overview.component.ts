@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
+import { TaskOverviewComponent } from "../task-overview/task-overview.component";
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
 @Component({
-  selector: 'app-member-overview',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './member-overview.component.html',
-  styleUrl: './member-overview.component.scss'
+    selector: 'app-member-overview',
+    standalone: true,
+    templateUrl: './member-overview.component.html',
+    styleUrl: './member-overview.component.scss',
+    imports: [CommonModule, TaskOverviewComponent, MatDialogModule]
 })
 export class MemberOverviewComponent{
+
+
 hideNshow(i: number) {
   this.expanded[i] = !this.expanded[i];
 }
@@ -179,7 +183,7 @@ hideNshow(i: number) {
   ]
   }
 
-  constructor() {
+  constructor(public dialog: MatDialog) {
     this.generateData();
 
     for(let i=0;i<this.activities.length;i++)
@@ -192,6 +196,16 @@ hideNshow(i: number) {
     {
       this.expanded.push(false);
     }
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
 }
