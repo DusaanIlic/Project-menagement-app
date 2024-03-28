@@ -24,7 +24,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSingleFile(UploadFileRequest uploadFileRequest)
         {
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "MemberId");
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
             if (idClaim == null)
             {
@@ -33,7 +33,7 @@ namespace Server.Controllers
 
             UploadedFileDTO uploadedFileDto = new()
             {
-                MemberId = Int32.Parse(idClaim.Value),
+                UploaderId = Int32.Parse(idClaim.Value),
                 FileDetails = uploadFileRequest.FileDetails
             };
 

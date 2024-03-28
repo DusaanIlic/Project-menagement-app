@@ -21,6 +21,12 @@ namespace Server.Services.File
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadedFileDto.FileDetails.FileName);
             var filePath = Path.Combine(_configuration["FileService:StoragePath"], fileName);
 
+            var directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await uploadedFileDto.FileDetails.CopyToAsync(stream);
@@ -29,7 +35,7 @@ namespace Server.Services.File
             var uploadedFile = new UploadedFile
             {
                 FilePath = filePath,
-                UploaderId = uploadedFileDto.MemberId
+                UploaderId = uploadedFileDto.UploaderId
             };
 
             _dbContext.UploadedFiles.Add(uploadedFile);

@@ -3,5 +3,5 @@
 public class UploadedFileDTO
 {
     public IFormFile FileDetails;
-    public int MemberId;
+    public int UploaderId;
 }
