@@ -18,6 +18,8 @@ namespace Server.Data
         public DbSet<MemberTask> MemberTasks { get; set; }
         public DbSet<TaskDependency> TaskDependencies { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
+        
+        public DbSet<UploadedFile> UploadedFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,9 +45,9 @@ namespace Server.Data
                .HasForeignKey(pt => pt.ProjectTaskStatusId);
 
             modelBuilder.Entity<Project>()
-            .HasOne(p => p.TeamLeader)
-            .WithMany(ms => ms.ProjectsLead)
-            .HasForeignKey(p => p.TeamLeaderId);
+                .HasOne(p => p.TeamLeader)
+                .WithMany(ms => ms.ProjectsLead)
+                .HasForeignKey(p => p.TeamLeaderId);
 
             modelBuilder.Entity<ProjectTask>()
                .HasOne(pt => pt.TaskPriority)
@@ -66,7 +68,7 @@ namespace Server.Data
                 .HasForeignKey(mt => mt.TaskId);
 
             modelBuilder.Entity<TaskDependency>()
-        .HasKey(td => new { td.TaskId, td.DependentTaskId });
+                .HasKey(td => new { td.TaskId, td.DependentTaskId });
 
             modelBuilder.Entity<TaskDependency>()
                 .HasOne(td => td.Task)
@@ -84,7 +86,11 @@ namespace Server.Data
                 .HasOne(pt => pt.TaskCategory)
                 .WithMany(tc => tc.ProjectTasks)
                 .HasForeignKey(pt => pt.TaskCategoryId);
-        }
 
+            modelBuilder.Entity<UploadedFile>()
+                .HasOne(uf => uf.Uploader)
+                .WithMany(m => m.UploadedFiles)
+                .HasForeignKey(uf => uf.UploaderId);
+        }
     }
 }
