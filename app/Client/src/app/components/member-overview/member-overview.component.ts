@@ -188,7 +188,7 @@ hideNshow(i: number) {
 
     for(let i=0;i<this.activities.length;i++)
     {
-      if(!this.projects.includes(this.activities[i].projectName))
+      if(!this.projects.includes(this.activities[i].projectName.trim()))
       this.projects.push(this.activities[i].projectName);
     }
 
@@ -198,9 +198,11 @@ hideNshow(i: number) {
     }
   }
 
-  openDialog(): void {
+  openDialog(id: number): void {
+    console.log(this.activities[id]);
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
+      data: {activities: this.activities[id]}
     });
 
     dialogRef.afterClosed().subscribe(result => {
