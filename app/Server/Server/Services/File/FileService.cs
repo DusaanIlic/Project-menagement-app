@@ -7,18 +7,34 @@ namespace Server.Services.File
 {
     public class FileService : IFileService
     {
-        private readonly LogicTenacityDbContext _dbContextClass;
+        private readonly LogicTenacityDbContext _dbContext;
         private readonly IConfiguration _configuration;
 
         public FileService(LogicTenacityDbContext dbContextClass, IConfiguration configuration)
         {
-            this._dbContextClass = dbContextClass;
-            this._configuration = configuration;
+            _dbContext = dbContextClass;
+            _configuration = configuration;
         }
         
-        public Task PostFileAsync(UploadedFileDTO uploadedFileDto)
+        public async Task PostFileAsync(UploadedFileDTO uploadedFileDto)
         {
-            throw new NotImplementedException();
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadedFileDto.FileDetails.FileName);
+            var filePath = Path.Combine(_configuration["FileService:StoragePath"], fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFileDto.FileDetails.CopyToAsync(stream);
+            }
+
+            var uploadedFile = new UploadedFile
+            {
+                FilePath = filePath,
+                UploaderId = uploadedFileDto.MemberId
+            };
+
+            _dbContext.UploadedFiles.Add(uploadedFile);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         public Task PostMultiFileAsync(List<UploadedFileDTO> fileData)
