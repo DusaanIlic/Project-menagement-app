@@ -13,7 +13,6 @@
           <option selected>Sort by</option>
           <option>Name</option>
           <option>Role</option>
-          <option>Status</option>
           <option>Load</option>
           <option>Last login</option>
         </select>
@@ -21,8 +20,29 @@
         <span class="grow"></span>
 
         <div class="flex gap-1">
-          <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">New Assignee</button>
+          <button class="rounded-xl bg-accent-blue text-l text-white w-[150px]">Add new Assignee</button>
         </div>
+      </div>
+    </div>
+
+    <hr class="border-accent-blue">
+
+    <div class="flex gap-4 text-accent-blue">
+      <p class="text-accent-blue font-bold">Show only:</p>
+
+      <div class="flex items-center justify-center gap-1 ">
+        <input type="radio" id="radio-all" name="radio-filter">
+        <label for="radio-all">All</label>
+      </div>
+
+      <div class="flex items-center justify-center gap-1">
+        <input type="radio" id="radio-in-progress" name="radio-filter">
+        <label for="radio-in-progress">Online</label>
+      </div>
+
+      <div class="flex items-center justify-center gap-1">
+        <input type="radio" id="radio-completed" name="radio-filter">
+        <label for="radio-completed">Offline</label>
       </div>
     </div>
   </div>
