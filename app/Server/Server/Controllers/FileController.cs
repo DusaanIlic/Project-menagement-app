@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.UploadedFile;
 using Server.Models;
@@ -15,10 +16,12 @@ namespace Server.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
+        private readonly LogicTenacityDbContext _dbContext;
         
-        public FileController(IFileService fileService)
+        public FileController(IFileService fileService, LogicTenacityDbContext dbContext)
         {
-            this._fileService = fileService;
+            _fileService = fileService;
+            _dbContext = dbContext;
         }
 
         [HttpPost("Single")]
@@ -89,6 +92,39 @@ namespace Server.Controllers
             {
                 return StatusCode(500);
             }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFile(int id)
+        {
+            if (id < 1)
+            {
+                return BadRequest();
+            }
+            
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (idClaim == null)
+            {
+                return BadRequest("Member id claim is missing in jwt token");
+            }
+
+            var uploaderId = Int32.Parse(idClaim.Value);
+            var file = await _dbContext.Files.FindAsync(id);
+
+            if (file == null)
+            {
+                return NotFound();
+            }
+
+            if (file.UploaderId != uploaderId)
+            {
+                return Forbid();
+            }
+
+            await _fileService.DeleteFile(file);
+
+            return Ok();
         }
     }
 }

@@ -85,7 +85,15 @@ namespace Server.Services.File
             return (fileContentBytes, contentType);
         }
 
-        public string GetContentType(String fileExtension)
+        public async Task DeleteFile(Models.File file)
+        {
+            System.IO.File.Delete(file.FilePath);
+            _dbContext.Files.Remove(file);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
+        public static string GetContentType(String fileExtension)
         {
             String contentType;
             

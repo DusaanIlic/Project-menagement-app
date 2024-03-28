@@ -10,5 +10,7 @@ namespace Server.Services.File
         public Task PostMultiFileAsync(List<FileDTO> fileData);
 
         public Task<(byte[], string)> GetFileData(int fileId);
+
+        public Task DeleteFile(Models.File file);
     }
 }
