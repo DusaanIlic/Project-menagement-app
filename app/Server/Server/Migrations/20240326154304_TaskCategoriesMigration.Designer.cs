@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240326154304_TaskCategoriesMigration")]
+    partial class TaskCategoriesMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -133,9 +136,6 @@ namespace Server.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TaskCategoryId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -152,8 +152,6 @@ namespace Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("ProjectTaskStatusId");
-
-                    b.HasIndex("TaskCategoryId");
 
                     b.HasIndex("TaskPriorityId");
 
@@ -270,12 +268,6 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.TaskCategory", "TaskCategory")
-                        .WithMany("ProjectTasks")
-                        .HasForeignKey("TaskCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Server.Models.TaskPriority", "TaskPriority")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskPriorityId")
@@ -285,8 +277,6 @@ namespace Server.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("ProjectTaskStatus");
-
-                    b.Navigation("TaskCategory");
 
                     b.Navigation("TaskPriority");
                 });
@@ -337,11 +327,6 @@ namespace Server.Migrations
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
-                {
-                    b.Navigation("ProjectTasks");
-                });
-
-            modelBuilder.Entity("Server.Models.TaskCategory", b =>
                 {
                     b.Navigation("ProjectTasks");
                 });

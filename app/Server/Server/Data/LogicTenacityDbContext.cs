@@ -17,6 +17,7 @@ namespace Server.Data
         public DbSet<TaskPriority> TaskPriority { get; set; }
         public DbSet<MemberTask> MemberTasks { get; set; }
         public DbSet<TaskDependency> TaskDependencies { get; set; }
+        public DbSet<TaskCategory> TaskCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -78,6 +79,11 @@ namespace Server.Data
                 .WithMany(t => t.DependentTasks)
                 .HasForeignKey(td => td.DependentTaskId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(pt => pt.TaskCategory)
+                .WithMany(tc => tc.ProjectTasks)
+                .HasForeignKey(pt => pt.TaskCategoryId);
         }
 
     }

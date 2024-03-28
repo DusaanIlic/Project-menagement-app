@@ -12,5 +12,6 @@
         public int TaskStatusId { get; set; }
         public int TaskPriorityId { get; set; }
         public bool IsTaskDependentOn { get; set; }
+        public int TaskCategoryId {  get; set; }
     }
 }
