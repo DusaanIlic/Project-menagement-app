@@ -5,8 +5,23 @@
 
       <div class="flex gap-10">
         <div class="flex">
-          <input class="rounded-l-xl" type="text" placeholder="Search..">
+          <input class="rounded-l-xl" type="text" placeholder="Search by name...">
           <button class="rounded-r-xl bg-accent-blue text-l text-white w-[100px]">Search</button>
+        </div>
+
+        <select class="rounded-xl text-accent-blue">
+          <option selected>Sort by</option>
+          <option>Name</option>
+          <option>Role</option>
+          <option>Status</option>
+          <option>Load</option>
+          <option>Last login</option>
+        </select>
+
+        <span class="grow"></span>
+
+        <div class="flex gap-1">
+          <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]">New Assignee</button>
         </div>
       </div>
     </div>
