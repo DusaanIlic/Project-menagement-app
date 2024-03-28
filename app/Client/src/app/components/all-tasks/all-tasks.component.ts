@@ -13,14 +13,14 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
 })
 export class AllTasksComponent {
   showStandalone: boolean = true;
-  standaloneTasks: string = '- Standalone';
+  standaloneTasks: string = '- None';
 
   toggleUncategorized() {
     this.showStandalone = !this.showStandalone;
 
     if (this.showStandalone)
-      this.standaloneTasks = '- Standalone';
+      this.standaloneTasks = '- None';
     else
-      this.standaloneTasks = '+ Standalone';
+      this.standaloneTasks = '+ None';
   }
 }
