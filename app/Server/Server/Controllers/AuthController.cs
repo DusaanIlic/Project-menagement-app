@@ -55,7 +55,7 @@ namespace Server.Controllers
                 Id = member.Id,
                 FullName = member.FullName,
                 Email = member.Email,
-                Role = member.Role,
+                //Role = member.Role,
                 DateAdded = member.DateAdded
             };
 
@@ -71,7 +71,7 @@ namespace Server.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, member.Email),
-                    new Claim(ClaimTypes.Role, member.Role),
+                    //new Claim(ClaimTypes.Role, member.Role),
                     new Claim("Id", member.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7), // Token expiration time

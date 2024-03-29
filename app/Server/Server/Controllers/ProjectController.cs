@@ -58,7 +58,6 @@ namespace Server.Controllers
                         Id = p.TeamLeader.Id,
                         FullName = p.TeamLeader.FullName,
                         Email = p.TeamLeader.Email,
-                        Role = p.TeamLeader.Role
                     };
                 }
 
@@ -146,7 +145,6 @@ namespace Server.Controllers
                     Id = project.TeamLeader.Id,
                     FullName = project.TeamLeader.FullName,
                     Email = project.TeamLeader.Email,
-                    Role = project.TeamLeader.Role
                 };
             }
                
@@ -210,7 +208,6 @@ namespace Server.Controllers
                     Id = project.TeamLeader.Id,
                     FullName = project.TeamLeader.FullName,
                     Email = project.TeamLeader.Email,
-                    Role = project.TeamLeader.Role
                 };
             }
 

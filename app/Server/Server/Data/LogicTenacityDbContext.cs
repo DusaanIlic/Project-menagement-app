@@ -93,6 +93,11 @@ namespace Server.Data
                 .HasOne(uf => uf.Uploader)
                 .WithMany(m => m.UploadedFiles)
                 .HasForeignKey(uf => uf.UploaderId);
+
+            modelBuilder.Entity<Member>()
+               .HasOne(m => m.Role)
+               .WithMany(r => r.Members)
+               .HasForeignKey(m => m.RoleId);
         }
     }
 }

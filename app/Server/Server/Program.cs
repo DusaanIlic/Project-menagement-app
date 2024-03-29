@@ -100,7 +100,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
             FullName = "admin",
             Email = "admin",
             Password = BCrypt.Net.BCrypt.HashPassword("admin"),
-            Role = "admin",
             DateAdded = DateTime.UtcNow
         };
         dbContext.Members.Add(admin);

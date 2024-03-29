@@ -37,7 +37,6 @@ namespace Server.Controllers
                 Id = m.Id,
                 FullName = m.FullName,
                 Email = m.Email,
-                Role = m.Role,
                 DateAdded = m.DateAdded
             }).ToList();
             return Ok(memberDTOs);
@@ -53,7 +52,6 @@ namespace Server.Controllers
                 FullName = memberDTO.FullName,
                 Email = memberDTO.Email,
                 Password = hashedPassword,
-                Role = memberDTO.Role,
                 DateAdded = DateTime.UtcNow
             };
 
@@ -65,7 +63,6 @@ namespace Server.Controllers
                 Id = member.Id,
                 FullName = member.FullName,
                 Email = member.Email,
-                Role = member.Role,
                 DateAdded = member.DateAdded
             };
 
@@ -118,7 +115,6 @@ namespace Server.Controllers
                 Id = member.Id,
                 FullName = member.FullName,
                 Email = member.Email,
-                Role = member.Role,
                 DateAdded = member.DateAdded
             };
 
@@ -137,7 +133,6 @@ namespace Server.Controllers
 
             member.FullName = memberDTO.FullName;
             member.Email = memberDTO.Email;
-            member.Role = memberDTO.Role;
 
             await dbContext.SaveChangesAsync();
 

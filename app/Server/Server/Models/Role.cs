@@ -4,5 +4,7 @@
     {
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+
+        public ICollection<Member> Members { get; set; } = new List<Member>();
     }
 }

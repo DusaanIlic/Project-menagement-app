@@ -21,10 +21,12 @@ namespace Server.Models
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Role is required.")]
-        public string Role { get; set; } = string.Empty;
-
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+
+        public int RoleId { get; set; }
+
+        [ForeignKey("RoleId")]
+        public Role Role { get; set; }
 
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 
