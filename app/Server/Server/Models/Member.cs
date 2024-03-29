@@ -29,6 +29,7 @@ namespace Server.Models
         public int AvatarId { get; set; }
         
         public File Avatar { get; set; }
+        
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();

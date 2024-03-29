@@ -29,8 +29,8 @@ namespace Server.Data
 
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Avatar)
-                .WithOne()
-                .HasForeignKey<Member>(m => m.AvatarId);
+                .WithMany()
+                .HasForeignKey(m => m.AvatarId);
                 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.ProjectStatus)
