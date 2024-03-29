@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240328211853_sdfdsf")]
-    partial class sdfdsf
+    [Migration("20240329195116_RoleAndPermissionEntity")]
+    partial class RoleAndPermissionEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Server.Migrations
 
                     b.HasIndex("UploaderId");
 
-                    b.ToTable("UploadedFiles");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>
@@ -86,6 +86,21 @@ namespace Server.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("MemberTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -196,6 +211,21 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectTaskStatuses");
+                });
+
+            modelBuilder.Entity("Server.Models.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>

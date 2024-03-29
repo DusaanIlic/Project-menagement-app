@@ -85,6 +85,21 @@ namespace Server.Migrations
                     b.ToTable("MemberTasks");
                 });
 
+            modelBuilder.Entity("Server.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
+                });
+
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -193,6 +208,21 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectTaskStatuses");
+                });
+
+            modelBuilder.Entity("Server.Models.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>

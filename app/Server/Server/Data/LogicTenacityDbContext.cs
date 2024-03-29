@@ -20,6 +20,8 @@ namespace Server.Data
         public DbSet<TaskDependency> TaskDependencies { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
         public DbSet<File> Files { get; set; }
+        public DbSet<Role> Roles {  get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
