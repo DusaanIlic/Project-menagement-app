@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -9,6 +9,7 @@ import { ProjectService } from '../../services/add.project.service';
 import { ProjectAddRequest } from '../../models/project-add';
 import { tap } from 'rxjs/internal/operators/tap';
 import { CommonModule } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-project',
@@ -17,7 +18,9 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./add-project.component.scss'],
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class AddProjectComponent {
+export class AddProjectComponent implements OnInit {
+  isDialogOpen: boolean = false;
+
   isSuccess: boolean = false;
   isError: boolean = false;
   projectForm = new FormGroup({
@@ -28,7 +31,28 @@ export class AddProjectComponent {
 
   private project?: ProjectAddRequest;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    public dialogRef: MatDialogRef<AddProjectComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private projectService: ProjectService
+  ) {}
+
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  ngOnDestroy(): void {
+    if (
+      this.dialogRef.componentInstance.data &&
+      this.dialogRef.componentInstance.data.isDialogOpen
+    ) {
+      this.dialogRef.componentInstance.data.isDialogOpen = false;
+    }
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 
   public onSubmit() {
     if (this.projectForm.valid) {
