@@ -1,22 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProjectService } from '../../services/add.project.service';
 import { ProjectAddRequest } from '../../models/project-add';
 import { tap } from 'rxjs/internal/operators/tap';
-import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-project',
-  standalone: true,
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule],
 })
 export class AddProjectComponent implements OnInit {
   isDialogOpen: boolean = false;
