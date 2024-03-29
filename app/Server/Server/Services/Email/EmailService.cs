@@ -1,7 +1,7 @@
 namespace Server.Services.EmailService
 {
   using Server.DataTransferObjects;
-  ﻿using MailKit.Net.Smtp;
+  using MailKit.Net.Smtp;
   using MailKit.Security;
   using MimeKit;
   using MimeKit.Text;

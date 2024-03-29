@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,32 +11,14 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240328193758_UplaodedFile2")]
+    partial class UplaodedFile2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
-
-            modelBuilder.Entity("Server.Models.File", b =>
-                {
-                    b.Property<int>("FileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UploaderId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("FileId");
-
-                    b.HasIndex("UploaderId");
-
-                    b.ToTable("Files");
-                });
 
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
@@ -240,15 +223,23 @@ namespace Server.Migrations
                     b.ToTable("TaskPriority");
                 });
 
-            modelBuilder.Entity("Server.Models.File", b =>
+            modelBuilder.Entity("Server.Models.UploadedFile", b =>
                 {
-                    b.HasOne("Server.Models.Member", "Uploader")
-                        .WithMany("UploadedFiles")
-                        .HasForeignKey("UploaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("FilePath")
+                        .HasColumnType("TEXT");
 
-                    b.Navigation("Uploader");
+                    b.Property<int>("FileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UploaderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("FilePath");
+
+                    b.HasIndex("UploaderId");
+
+                    b.ToTable("UploadedFiles");
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -339,6 +330,17 @@ namespace Server.Migrations
                     b.Navigation("DependentTask");
 
                     b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("Server.Models.UploadedFile", b =>
+                {
+                    b.HasOne("Server.Models.Member", "Uploader")
+                        .WithMany("UploadedFiles")
+                        .HasForeignKey("UploaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Uploader");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>

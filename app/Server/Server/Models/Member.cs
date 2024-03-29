@@ -29,5 +29,7 @@ namespace Server.Models
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();
+
+        public ICollection<File> UploadedFiles { get; set; } = new List<File>();
     }
 }
