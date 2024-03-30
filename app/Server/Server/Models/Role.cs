@@ -6,6 +6,6 @@
         public string RoleName { get; set; }
 
         public ICollection<Member> Members { get; set; } = new List<Member>();
-        public ICollection<RolePermission> RolePermissions { get; set; }
+        public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }
