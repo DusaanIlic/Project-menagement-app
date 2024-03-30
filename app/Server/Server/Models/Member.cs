@@ -24,6 +24,14 @@ namespace Server.Models
         [Required(ErrorMessage = "Role is required.")]
         public string Role { get; set; } = string.Empty;
 
+        public String Linkedin { get; set; } = String.Empty;
+
+        public String Github { get; set; } = String.Empty;
+
+        public String Status { get; set; } = String.Empty;
+
+        public String PhoneNumber { get; set; } = String.Empty;
+        
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
         
         public int AvatarId { get; set; }
