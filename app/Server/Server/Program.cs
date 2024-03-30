@@ -93,6 +93,8 @@ app.UseAuthorization();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var dbContext = serviceScope.ServiceProvider.GetService<LogicTenacityDbContext>();
+
+    var role = dbContext.Roles.FirstOrDefault(r => r.RoleId == 1);
     if (!dbContext.Members.Any())
     {
         var admin = new Member()
@@ -100,7 +102,8 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
             FullName = "admin",
             Email = "admin",
             Password = BCrypt.Net.BCrypt.HashPassword("admin"),
-            DateAdded = DateTime.UtcNow
+            DateAdded = DateTime.UtcNow,
+            Role = role 
         };
         dbContext.Members.Add(admin);
         dbContext.SaveChanges();
