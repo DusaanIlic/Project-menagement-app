@@ -56,7 +56,8 @@ namespace Server.Controllers
                     teamLeaderDTO = new MemberDTO
                     {
                         Id = p.TeamLeader.Id,
-                        FullName = p.TeamLeader.FullName,
+                        FirstName = p.TeamLeader.LastName,
+                        LastName = p.TeamLeader.LastName,
                         Email = p.TeamLeader.Email,
                         Role = p.TeamLeader.Role
                     };
@@ -144,7 +145,8 @@ namespace Server.Controllers
                 teamLeaderDTO = new MemberDTO
                 {
                     Id = project.TeamLeader.Id,
-                    FullName = project.TeamLeader.FullName,
+                    FirstName = project.TeamLeader.FirstName,
+                    LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     Role = project.TeamLeader.Role
                 };
@@ -208,7 +210,8 @@ namespace Server.Controllers
                 teamLeaderDTO = new MemberDTO
                 {
                     Id = project.TeamLeader.Id,
-                    FullName = project.TeamLeader.FullName,
+                    FirstName = project.TeamLeader.FirstName,
+                    LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     Role = project.TeamLeader.Role
                 };

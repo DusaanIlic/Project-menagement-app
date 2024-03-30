@@ -97,7 +97,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     {
         var admin = new Member()
         {
-            FullName = "admin",
             Email = "admin",
             Password = BCrypt.Net.BCrypt.HashPassword("admin"),
             Role = "admin",

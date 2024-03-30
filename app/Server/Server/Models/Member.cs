@@ -10,8 +10,11 @@ namespace Server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Full name is required.")]
-        public string FullName { get; set; } = string.Empty;
+        [Required(ErrorMessage = "First name is required.")]
+        public string FirstName { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Last name is required.")]
+        public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email address is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
@@ -32,9 +35,15 @@ namespace Server.Models
 
         public String PhoneNumber { get; set; } = String.Empty;
         
-        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+        public String Country { get; set; } = String.Empty;
         
-        public int AvatarId { get; set; }
+        public String City { get; set; } = String.Empty;
+        
+        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+
+        public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch;
+        
+        public int? AvatarId { get; set; }
         
         public File Avatar { get; set; }
         

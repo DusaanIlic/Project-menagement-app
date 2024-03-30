@@ -53,7 +53,9 @@ namespace Server.Controllers
              var memberResponse = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                
                 Email = member.Email,
                 Role = member.Role,
                 DateAdded = member.DateAdded

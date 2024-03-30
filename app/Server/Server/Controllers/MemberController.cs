@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
@@ -35,7 +37,8 @@ namespace Server.Controllers
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
-                FullName = m.FullName,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
                 Email = m.Email,
                 Role = m.Role,
                 DateAdded = m.DateAdded
@@ -46,11 +49,20 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(memberDTO.Password);
+            var existingMember = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
+
+            if (existingMember != null)
+            {
+                return Conflict();
+            }
+            
+            String randomPassword = GenerateRandomPassword(8);
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(randomPassword);
 
             var member = new Member
             {
-                FullName = memberDTO.FullName,
+                FirstName = memberDTO.FirstName,
+                LastName = memberDTO.LastName,
                 Email = memberDTO.Email,
                 Password = hashedPassword,
                 Role = memberDTO.Role,
@@ -63,7 +75,8 @@ namespace Server.Controllers
             var memberResponse = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
                 Role = member.Role,
                 DateAdded = member.DateAdded
@@ -72,17 +85,17 @@ namespace Server.Controllers
             var request = new EmailDTO
             {
                 To = memberDTO.Email,
-                Subject = "Welcome to LogicTeancity - Your Account Details",
+                Subject = "Welcome to LogicTenacity - Your Account Details",
                 Body = $@"
-                <p>Hello {memberDTO.FullName},</p>
+                <p>Hello {memberDTO.FirstName} {memberDTO.LastName},</p>
                 
-                <p>We are delighted to welcome you to LogicTeancity! Your account has been successfully created, and we're excited to have you on board.</p>
+                <p>We are delighted to welcome you to LogicTenacity! Your account has been successfully created, and we're excited to have you on board.</p>
                 
                 <p>Below are your account details:</p>
                 
                 <ul>
-                    <li><strong>Username/Email:</strong> {memberDTO.Email}</li>
-                    <li><strong>Temporary Password:</strong> {memberDTO.Password}</li>
+                    <li><strong>Email:</strong> {memberDTO.Email}</li>
+                    <li><strong>Temporary Password:</strong> {randomPassword}</li>
                 </ul>
                 
                 <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
@@ -94,7 +107,7 @@ namespace Server.Controllers
                     <li>Follow the prompts to create a new, secure password.</li>
                 </ol>
                                 
-                <p>Once again, welcome to the LogicTeancity family! We look forward to working with you.</p>"
+                <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
             };
 
 
@@ -116,7 +129,8 @@ namespace Server.Controllers
             var memberDTO = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
                 Role = member.Role,
                 DateAdded = member.DateAdded
@@ -135,7 +149,8 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            member.FullName = memberDTO.FullName;
+            member.FirstName = memberDTO.FirstName;
+            member.LastName = memberDTO.LastName;
             member.Email = memberDTO.Email;
             member.Role = memberDTO.Role;
 
@@ -159,6 +174,21 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+        
+        public static string GenerateRandomPassword(int length)
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
+            StringBuilder password = new StringBuilder();
+            
+            byte[] randomBytes = RandomNumberGenerator.GetBytes(length);
+            
+            for (int i = 0; i < length; i++)
+            {
+                password.Append(validChars[randomBytes[i] % validChars.Length]);
+            }
+
+            return password.ToString();
         }
     }
 }
