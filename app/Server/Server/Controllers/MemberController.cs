@@ -31,13 +31,15 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
-            var members = await dbContext.Members.ToListAsync();
+            var members = await dbContext.Members.Include(m => m.Role).ToListAsync();
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
                 FullName = m.FullName,
                 Email = m.Email,
-                DateAdded = m.DateAdded
+                DateAdded = m.DateAdded,
+                RoleId = m.RoleId
+               
             }).ToList();
             return Ok(memberDTOs);
         }
@@ -47,12 +49,15 @@ namespace Server.Controllers
         {
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(memberDTO.Password);
 
+            var role = await dbContext.Roles.FindAsync(memberDTO.RoleId);
+
             var member = new Member
             {
                 FullName = memberDTO.FullName,
                 Email = memberDTO.Email,
                 Password = hashedPassword,
-                DateAdded = DateTime.UtcNow
+                DateAdded = DateTime.UtcNow,
+                Role = role
             };
 
             dbContext.Members.Add(member);
@@ -63,7 +68,8 @@ namespace Server.Controllers
                 Id = member.Id,
                 FullName = member.FullName,
                 Email = member.Email,
-                DateAdded = member.DateAdded
+                DateAdded = member.DateAdded,
+                RoleId = role.RoleId
             };
 
             var request = new EmailDTO
@@ -103,7 +109,9 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMember(int id)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await dbContext.Members
+                         .Include(m => m.Role) 
+                         .FirstOrDefaultAsync(m => m.Id == id);
 
             if (member == null)
             {
@@ -115,7 +123,8 @@ namespace Server.Controllers
                 Id = member.Id,
                 FullName = member.FullName,
                 Email = member.Email,
-                DateAdded = member.DateAdded
+                DateAdded = member.DateAdded,
+                RoleId = member.RoleId
             };
 
             return Ok(memberDTO);
