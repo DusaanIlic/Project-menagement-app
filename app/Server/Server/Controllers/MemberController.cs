@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
-    [Authorize(Roles="admin")]
+    [Authorize(Roles="Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     

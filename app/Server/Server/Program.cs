@@ -95,6 +95,7 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var dbContext = serviceScope.ServiceProvider.GetService<LogicTenacityDbContext>();
 
     var role = dbContext.Roles.FirstOrDefault(r => r.RoleId == 1);
+
     if (!dbContext.Members.Any())
     {
         var admin = new Member()
