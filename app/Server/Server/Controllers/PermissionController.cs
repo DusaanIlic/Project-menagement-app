@@ -71,6 +71,20 @@ namespace Server.Controllers
             return Ok(permissionDTO);
         }
 
+        [HttpDelete("{permissionId}")]
+        public async Task<IActionResult> RemovePermission(int permissionId)
+        {
+            var permission = await dbContext.Permissions.FindAsync(permissionId);
+            if (permission == null)
+            {
+                return NotFound("Permission with this id does not exist");
+            }
+
+            dbContext.Permissions.Remove(permission);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
 
     }
 }
