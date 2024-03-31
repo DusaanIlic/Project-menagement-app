@@ -1,9 +1,12 @@
-import { Component} from '@angular/core';
+import { Component, OnInit, inject} from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
 import { TaskOverviewComponent } from "../task-overview/task-overview.component";
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -13,8 +16,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     styleUrl: './member-overview.component.scss',
     imports: [CommonModule, TaskOverviewComponent, MatDialogModule]
 })
-export class MemberOverviewComponent{
+export class MemberOverviewComponent implements OnInit{
 
+
+  httpClient = inject(HttpClient);
+  data : any = [];
+
+  private routeSub: Subscription = new Subscription();
 
 hideNshow(i: number) {
   this.expanded[i] = !this.expanded[i];
@@ -183,7 +191,23 @@ hideNshow(i: number) {
   ]
   }
 
-  constructor(public dialog: MatDialog) {
+  getProjects()
+  {
+    this.httpClient.get("http://localhost:8000/api/Member/3")
+    .subscribe((data) => {
+      console.log(data);
+      this.data = data;
+    });
+  }
+
+  ngOnInit() {
+    this.getProjects();
+    this.routeSub = this.route.params.subscribe(params => {
+
+    });
+  }
+
+  constructor(public dialog: MatDialog, private route: ActivatedRoute) {
     this.generateData();
 
     for(let i=0;i<this.activities.length;i++)
@@ -208,6 +232,10 @@ hideNshow(i: number) {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
   }
 
 }

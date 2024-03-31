@@ -6,5 +6,4 @@ export interface taskActivity
     type? : string,
     dateModified? : Date,
     description? : string
-    expanded? : boolean
 }
