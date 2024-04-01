@@ -12,6 +12,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.Services.File;
 
 namespace Server.Controllers
 {
@@ -19,19 +20,21 @@ namespace Server.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        private readonly LogicTenacityDbContext dbContext;
+        private readonly LogicTenacityDbContext _dbContext;
         private readonly IEmailService _emailService;
+        private readonly IFileService _fileService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService)
         {
-            this.dbContext = dbContext;
-            this._emailService = emailService;
+            _dbContext = dbContext;
+            _emailService = emailService;
+            _fileService = fileService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
-            var members = await dbContext.Members.ToListAsync();
+            var members = await _dbContext.Members.ToListAsync();
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
@@ -54,7 +57,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
-            var existingMember = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
+            var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
 
             if (existingMember != null)
             {
@@ -74,8 +77,8 @@ namespace Server.Controllers
                 DateAdded = DateTime.UtcNow
             };
 
-            dbContext.Members.Add(member);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Members.Add(member);
+            await _dbContext.SaveChangesAsync();
 
             var memberResponse = new MemberDTO
             {
@@ -131,7 +134,7 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMember(int id)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
@@ -149,7 +152,7 @@ namespace Server.Controllers
                 Country = member.Country,
                 City = member.City,
                 Status = member.Status,
-                Github = member.Status,
+                Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
                 DateOfBirth = member.DateOfBirth
@@ -159,9 +162,9 @@ namespace Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMember(int id, MemberDTO memberDTO)
+        public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members.FindAsync(id);
             var isAdmin = User.IsInRole("admin");
 
             if (member == null)
@@ -174,21 +177,19 @@ namespace Server.Controllers
                 return Forbid();
             }
 
-            member.Id = memberDTO.Id;
             member.FirstName = memberDTO.FirstName;
             member.LastName = memberDTO.LastName;
             member.Email = memberDTO.Email;
             member.Role = memberDTO.Role;
-            member.DateAdded = memberDTO.DateAdded;
             member.Country = memberDTO.Country;
             member.City = memberDTO.City;
             member.Status = memberDTO.Status;
-            member.Github = memberDTO.Status;
+            member.Github = memberDTO.Github;
             member.Linkedin = memberDTO.Linkedin;
             member.PhoneNumber = memberDTO.PhoneNumber;
             member.DateOfBirth = memberDTO.DateOfBirth;
-
-            await dbContext.SaveChangesAsync();
+            
+            await _dbContext.SaveChangesAsync();
 
             // Return the updated member DTO
             return Ok(memberDTO);
@@ -197,15 +198,15 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMember(int id)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members.FindAsync(id);
         
             if (member == null)
             {
                 return NotFound();
             }
         
-            dbContext.Members.Remove(member);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Members.Remove(member);
+            await _dbContext.SaveChangesAsync();
         
             return Ok();
         }

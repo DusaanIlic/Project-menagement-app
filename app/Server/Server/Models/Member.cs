@@ -45,7 +45,7 @@ namespace Server.Models
         
         public int? AvatarId { get; set; }
         
-        public File Avatar { get; set; }
+        public File? Avatar { get; set; }
         
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 

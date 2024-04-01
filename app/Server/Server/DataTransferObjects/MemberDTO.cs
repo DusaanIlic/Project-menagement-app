@@ -1,3 +1,5 @@
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework;
 
 namespace Server.DataTransferObjects
@@ -5,7 +7,7 @@ namespace Server.DataTransferObjects
     public class MemberDTO
     {
         public int Id { get; set; }
-
+        
         public string FirstName { get; set; } = string.Empty;
         
         public string LastName { get; set; } = string.Empty;
@@ -29,5 +31,7 @@ namespace Server.DataTransferObjects
         public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch; 
 
         public DateTime DateAdded { get; set; }
+
+        public IFormFile? Avatar { get; set; }
     }
 }
