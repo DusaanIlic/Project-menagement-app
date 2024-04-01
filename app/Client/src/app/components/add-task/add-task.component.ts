@@ -5,11 +5,12 @@ import { NgxEditorModule, Editor } from 'ngx-editor';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-add-task',
   standalone: true,
-  imports: [NgxEditorModule, FormsModule, CommonModule],
+  imports: [NgxEditorModule, FormsModule, CommonModule, NgToastModule],
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss'
 })
@@ -23,7 +24,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService) {}
+  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -48,9 +49,14 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     this.taskService.saveTask(taskData).subscribe(response => {
       console.log('Task saved successfully:', response);
       this.taskAdded.emit();
+      this.showMessage();
       this.closeDialog();
     }, error => {
       console.error('Error saving task', error);
     });
+  }
+
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
   }
 }
