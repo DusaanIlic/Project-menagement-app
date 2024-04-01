@@ -1,5 +1,5 @@
 <div id="default-modal" tabindex="-1" aria-hidden="true" class="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-2xl max-h-full">
+    <div class="relative p-4 w-full max-w-4xl max-h-full">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
@@ -14,26 +14,43 @@
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
+
             <!-- Modal body -->
-            <div class="p-4 md:p-5 space-y-3 flex flex-col">
-                <div class="flex flex-row justify-between items-center">
-                    <label for="name">Name </label>
-                    <input type="text" placeholder="Task name..." id="name">
-                    <label for="name">Description </label>
-                    <input type="text" placeholder="Task description..." id="name">
+            <div class="p-4 md:p-5 flex justify-between">
+                <div class="w-2/5">
+                    <div class="flex-row justify-between pb-10">
+                        <label for="name" class="pr-8">Name </label>
+                        <input type="text" placeholder="Task name..." id="name"  [(ngModel)]="taskName">
+                    </div>
+                    
+                    <div class="flex-row justify-between pt-5">
+                        <label for="name" class="mr-2">Project ID </label>
+                        <input type="text" [value]="data.projectId" id="projectId" [(ngModel)]="projectId">
+                    </div>
+                    
                 </div>
                
-                <div class="flex flex-row justify-between items-center">
-                    <label for="name">Deadline </label>
-                    <input type="date" id="name">
-                    <label for="name">Project ID </label>
-                    <input type="text" [value]="data.projectId" id="projectInput">
+                <div class="w-3/5">
+                    <div class="flex-row justify-between">
+                        <label for="name" class="pr-10">Deadline </label>
+                        <input type="date" id="name" class="w-3/4" [(ngModel)]="deadline">
+                    </div>
+                    
+                    <div class="flex-row justify-between">
+                        <label for="name">Description </label>
+                        <div class="NgxEditor__Wrapper">
+                            <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+                            <ngx-editor [(ngModel)]="html" [editor]="editor" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>
+                        </div>
+                    </div>
+                    
+                      
                 </div>
                 
             </div>
             <!-- Modal footer -->
-            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button data-modal-hide="default-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" (click)="closeDialog()">Close</button>
+            <div class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button data-modal-hide="default-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" (click)="saveTask()">Save</button>
             </div>
         </div>
     </div>

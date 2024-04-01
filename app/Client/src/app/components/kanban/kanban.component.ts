@@ -31,23 +31,23 @@ export class KanbanComponent implements OnInit {
 
   projectId: string | undefined;
 
-  toggleToDoList(){
-    this.showToDoList = !this.showToDoList;
-  }
-
-  toggleProgressList(){
-    this.showProgressList = !this.showProgressList;
-  }
-
-  toggleDoneList(){
-    this.showDoneList = !this.showDoneList;
-  }
-
   constructor(private taskService: TaskService, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void{
     this.loadTasksByProject(1);
     this.getProjectIdFromRoute();
+  }
+
+  toggleToDoList(){
+    this.showToDoList = !this.showToDoList;
+  }
+  
+  toggleProgressList(){
+    this.showProgressList = !this.showProgressList;
+  }
+  
+  toggleDoneList(){
+    this.showDoneList = !this.showDoneList;
   }
 
   loadTasksByProject(projectId: number): void {
@@ -145,13 +145,15 @@ export class KanbanComponent implements OnInit {
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
-      width: '250px',
+      width: '500px',
       data: { projectId: this.projectId}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("The dialog was closed");
+    dialogRef.componentInstance.taskAdded.subscribe(() => {
+      this.loadTasksByProject(1); // Ponovo učitava zadatke nakon dodavanja novog zadatka
     });
   }
 
 }
+
+

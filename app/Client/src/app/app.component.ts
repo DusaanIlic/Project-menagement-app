@@ -8,6 +8,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import { initFlowbite } from 'flowbite';
 import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar.component";
+import { NgxEditorModule } from 'ngx-editor';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar
     NavbarComponent,
     NgIf,
     ProjectNavbarComponent,
+    NgxEditorModule
   ],
 })
 export class AppComponent implements OnInit{

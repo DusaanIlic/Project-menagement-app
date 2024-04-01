@@ -24,4 +24,8 @@ export class TaskService {
     return this.http.delete<any>(`${TASK_API}/${id}`);
   }
 
+  saveTask(taskData: any): Observable<any>{
+    return this.http.post<any>(`${TASK_API}`, taskData);
+  }
+
 }
