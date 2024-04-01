@@ -90,5 +90,28 @@ namespace Server.Controllers
 
             return Ok();
         }
+
+        [HttpGet("permissions/{roleId}")]
+        public async Task<IActionResult> GetPermissionsByRoleId(int roleId)
+        {
+            var rolePermissions = await dbContext.RolePermissions
+                                                .Where(rp => rp.RoleId == roleId)
+                                                .Select(rp => rp.Permission)
+                                                .ToListAsync();
+
+            if (rolePermissions == null || rolePermissions.Count == 0)
+            {
+                return NotFound("Permissions for this role not found.");
+            }
+
+            var permissionDTOs = rolePermissions.Select(p => new PermissionDTO
+            {
+                PermissionId = p.PermissionId,
+                PermissionName = p.PermissionName
+            }).ToList();
+
+            return Ok(permissionDTOs);
+        }
+
     }
 }
