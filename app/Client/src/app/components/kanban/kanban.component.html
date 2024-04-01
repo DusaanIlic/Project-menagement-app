@@ -37,7 +37,7 @@
 
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>To Do</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3" (click)="openDialog()">Add task</button>
             </div>
 
             <div
@@ -70,7 +70,7 @@
             
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>In Progress</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3" (click)="openDialog()">Add task</button>
             </div>
 
             <div
@@ -98,7 +98,7 @@
         <div *ngIf="showDoneList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>Completed</b></p>
-                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3">Add task</button>
+                <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3" (click)="openDialog()">Add task</button>
             </div>
 
             <div

@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
@@ -8,16 +8,18 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddTaskComponent } from '../add-task/add-task.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule],
+  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent],
   templateUrl: './kanban.component.html', 
   styleUrl: './kanban.component.scss',
 })
 
-export class KanbanComponent {
+export class KanbanComponent implements OnInit {
   todo: any[] = [];
   progress: any[] = [];
   done: any[] = [];
@@ -26,6 +28,8 @@ export class KanbanComponent {
   showToDoList: boolean = true;
   showProgressList: boolean = true;
   showDoneList: boolean = true;
+
+  projectId: string | undefined;
 
   toggleToDoList(){
     this.showToDoList = !this.showToDoList;
@@ -39,10 +43,11 @@ export class KanbanComponent {
     this.showDoneList = !this.showDoneList;
   }
 
-  constructor(private taskService: TaskService, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, private dialog: MatDialog) {}
+  constructor(private taskService: TaskService, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void{
     this.loadTasksByProject(1);
+    this.getProjectIdFromRoute();
   }
 
   loadTasksByProject(projectId: number): void {
@@ -60,6 +65,12 @@ export class KanbanComponent {
         })
       )
       .subscribe();
+  }
+
+  getProjectIdFromRoute(){
+    this.route.params.subscribe(params => {
+      this.projectId = params['id'];
+    });
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -132,5 +143,15 @@ export class KanbanComponent {
     this._ngToastService.success({detail: "Success Message", summary: "Deleted successfully", duration: 3000});
   }
 
+  openDialog(): void{
+    const dialogRef = this.dialog.open(AddTaskComponent, {
+      width: '250px',
+      data: { projectId: this.projectId}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+    });
+  }
 
 }
