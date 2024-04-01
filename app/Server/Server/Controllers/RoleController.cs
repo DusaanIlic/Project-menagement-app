@@ -113,5 +113,22 @@ namespace Server.Controllers
             return Ok(permissionDTOs);
         }
 
+        [HttpDelete("{roleId}/permissions/{permissionId}")]
+        public async Task<IActionResult> RemovePermissionFromRole(int roleId, int permissionId)
+        {
+            var rolePermission = await dbContext.RolePermissions
+                                              .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+
+            if (rolePermission == null)
+            {
+                return NotFound("Role permission not found.");
+            }
+
+            dbContext.RolePermissions.Remove(rolePermission);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
     }
 }
