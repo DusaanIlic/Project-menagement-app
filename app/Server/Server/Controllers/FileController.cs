@@ -45,31 +45,31 @@ namespace Server.Controllers
             return Ok();
         }
 
-        [HttpPost("Multiple")]
-        public async Task<IActionResult> PostMultipleFile(List<UploadFileRequest> uploadFileRequests)
-        {
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (idClaim == null)
-            {
-                return BadRequest("Member id claim is missing in jwt token");
-            }
-
-            List<FileDTO> uploadedFileDTOs = new List<FileDTO>();
-
-            foreach (var uploadFileRequest in uploadFileRequests)
-            {
-                uploadedFileDTOs.Add(new FileDTO 
-                {
-                    UploaderId = Int32.Parse(idClaim.Value),
-                    FileDetails = uploadFileRequest.FileDetails
-                });
-            }
-            
-            await _fileService.PostMultiFileAsync(uploadedFileDTOs);
-
-            return Ok();
-        }
+        // [HttpPost("Multiple")]
+        // public async Task<IActionResult> PostMultipleFile(List<UploadFileRequest> uploadFileRequests)
+        // {
+        //     var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+        //
+        //     if (idClaim == null)
+        //     {
+        //         return BadRequest("Member id claim is missing in jwt token");
+        //     }
+        //
+        //     List<FileDTO> uploadedFileDTOs = new List<FileDTO>();
+        //
+        //     foreach (var uploadFileRequest in uploadFileRequests)
+        //     {
+        //         uploadedFileDTOs.Add(new FileDTO 
+        //         {
+        //             UploaderId = Int32.Parse(idClaim.Value),
+        //             FileDetails = uploadFileRequest.FileDetails
+        //         });
+        //     }
+        //     
+        //     await _fileService.PostMultiFileAsync(uploadedFileDTOs);
+        //
+        //     return Ok();
+        // }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> SendFile(int id)
@@ -122,7 +122,7 @@ namespace Server.Controllers
                 return Forbid();
             }
 
-            await _fileService.DeleteFile(file);
+            await _fileService.DeleteFile(id);
 
             return Ok();
         }

@@ -85,10 +85,13 @@ namespace Server.Services.File
             return (fileContentBytes, contentType);
         }
 
-        public async Task DeleteFile(Models.File file)
+        public async Task DeleteFile(int fileId)
         {
+            var file = await _dbContext.Files.FindAsync(fileId);
+            
             System.IO.File.Delete(file.FilePath);
-            _dbContext.Files.Remove(file);
+            
+            _dbContext.Remove(file);
             await _dbContext.SaveChangesAsync();
         }
 
