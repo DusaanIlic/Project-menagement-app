@@ -7,7 +7,7 @@
     <div class="grid grid-rows-2">
       <div class="mt-8 grid lg:grid-cols-2 gap-10">
         <div class="grid grid-rows-2">
-          <label for="name" class="">Project Name</label>
+          <label for="projectName" class="">Project Name</label>
           <input
             type="text"
             id="projectName"
@@ -17,18 +17,18 @@
         </div>
 
         <div class="grid grid-rows-2">
-          <label for="date">Due Date</label>
+          <label for="deadLine">Due Date</label>
           <input
             class="border-2 rounded-md max-h-8"
             type="date"
             formControlName="deadLine"
-            id="deadLine"
+            id="date"
           />
         </div>
       </div>
 
       <div class="mt-5 grid grid-rows-2">
-        <label for="description">Description</label>
+        <label for="projectDescription">Description</label>
         <textarea
           type="text"
           formControlName="projectDescription"
