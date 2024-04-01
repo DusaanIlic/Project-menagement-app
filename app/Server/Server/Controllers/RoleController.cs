@@ -130,5 +130,28 @@ namespace Server.Controllers
             return Ok();
         }
 
+        [HttpPost("{roleId}/permissions/{permissionId}")]
+        public async Task<IActionResult> AddPermissionToRole(int roleId, int permissionId)
+        {
+            var existingRolePermission = await dbContext.RolePermissions
+                                                      .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+
+            if (existingRolePermission != null)
+            {
+                return Conflict("Role already has this permission.");
+            }
+
+            var newRolePermission = new RolePermission
+            {
+                RoleId = roleId,
+                PermissionId = permissionId
+            };
+
+            dbContext.RolePermissions.Add(newRolePermission);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
     }
 }
