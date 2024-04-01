@@ -19,9 +19,24 @@
                 </div>
                 <div>
                     <h2 class="text-lg">Activity:</h2>
-                    <textarea cols="30" rows="2" class="resize-none w-full" placeholder="Write your comment..."></textarea>
-                    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">Save comment</button>
-                </div>
+                    <textarea rows="1" class="resize-none w-full" placeholder="Write your comment..."></textarea>
+                    <button (click)="dateCheck()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">Save comment</button>
+                
+                    <div class="mt-2 flex flex-col justify-between gap-1">
+                        <div class="flex w-full rounded-md items-center px-1">
+                            <img src="assets/avatar.png" class="size-10 mr-1 border-2 border-black rounded-full" alt="">
+                            <div>
+                                <p class="text-lg">{{data.activities.memberName}} wrote "{{data.activities.description}}"</p>
+                                <p *ngIf="lessThanHour" class="text-md">Modified {{difference | date:'mm'}} minutes ago.</p>
+                                <p *ngIf="!lessThanHour" class="text-md">{{data.activities.dateModified | date}}</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    </div>
             </div>
             <!-- Modal footer -->
             <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">

@@ -48,7 +48,7 @@ hideNshow(i: number) {
           "taskName": "Backend Development",
           "memberName": "Elena Rodriguez",
           "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
+          "dateModified": new Date("March 31, 2024 23:20:00"),
           "description": "Implemented authentication system."
       },
       {
