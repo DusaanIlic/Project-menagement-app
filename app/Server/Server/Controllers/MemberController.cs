@@ -15,10 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
-    [Authorize(Roles="admin")]
     [Route("api/[controller]")]
     [ApiController]
-    
     public class MemberController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
@@ -41,7 +39,14 @@ namespace Server.Controllers
                 LastName = m.LastName,
                 Email = m.Email,
                 Role = m.Role,
-                DateAdded = m.DateAdded
+                DateAdded = m.DateAdded,
+                Country = m.Country,
+                City = m.City,
+                Status = m.Status,
+                Github = m.Status,
+                Linkedin = m.Linkedin,
+                PhoneNumber = m.PhoneNumber,
+                DateOfBirth = m.DateOfBirth
             }).ToList();
             return Ok(memberDTOs);
         }
@@ -79,7 +84,14 @@ namespace Server.Controllers
                 LastName = member.LastName,
                 Email = member.Email,
                 Role = member.Role,
-                DateAdded = member.DateAdded
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Status,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             var request = new EmailDTO
@@ -133,7 +145,14 @@ namespace Server.Controllers
                 LastName = member.LastName,
                 Email = member.Email,
                 Role = member.Role,
-                DateAdded = member.DateAdded
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Status,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             return Ok(memberDTO);
@@ -143,16 +162,31 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateMember(int id, MemberDTO memberDTO)
         {
             var member = await dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
 
             if (member == null)
             {
                 return NotFound();
             }
 
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            member.Id = memberDTO.Id;
             member.FirstName = memberDTO.FirstName;
             member.LastName = memberDTO.LastName;
             member.Email = memberDTO.Email;
             member.Role = memberDTO.Role;
+            member.DateAdded = memberDTO.DateAdded;
+            member.Country = memberDTO.Country;
+            member.City = memberDTO.City;
+            member.Status = memberDTO.Status;
+            member.Github = memberDTO.Status;
+            member.Linkedin = memberDTO.Linkedin;
+            member.PhoneNumber = memberDTO.PhoneNumber;
+            member.DateOfBirth = memberDTO.DateOfBirth;
 
             await dbContext.SaveChangesAsync();
 
@@ -164,15 +198,15 @@ namespace Server.Controllers
         public async Task<IActionResult> DeleteMember(int id)
         {
             var member = await dbContext.Members.FindAsync(id);
-
+        
             if (member == null)
             {
                 return NotFound();
             }
-
+        
             dbContext.Members.Remove(member);
             await dbContext.SaveChangesAsync();
-
+        
             return Ok();
         }
         
