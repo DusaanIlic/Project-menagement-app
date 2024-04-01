@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240329200250_MemberFKRole")]
+    partial class MemberFKRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -226,21 +229,6 @@ namespace Server.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Server.Models.RolePermission", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("RoleId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("RolePermissions");
-                });
-
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
                 {
                     b.Property<int>("TaskCategoryID")
@@ -379,25 +367,6 @@ namespace Server.Migrations
                     b.Navigation("TaskPriority");
                 });
 
-            modelBuilder.Entity("Server.Models.RolePermission", b =>
-                {
-                    b.HasOne("Server.Models.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.Role", "Role")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
                 {
                     b.HasOne("Server.Models.ProjectTask", "DependentTask")
@@ -424,11 +393,6 @@ namespace Server.Migrations
                     b.Navigation("Tasks");
 
                     b.Navigation("UploadedFiles");
-                });
-
-            modelBuilder.Entity("Server.Models.Permission", b =>
-                {
-                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -458,8 +422,6 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.Role", b =>
                 {
                     b.Navigation("Members");
-
-                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>

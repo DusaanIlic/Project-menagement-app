@@ -20,6 +20,9 @@ namespace Server.Data
         public DbSet<TaskDependency> TaskDependencies { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
         public DbSet<File> Files { get; set; }
+        public DbSet<Role> Roles {  get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -91,6 +94,24 @@ namespace Server.Data
                 .HasOne(uf => uf.Uploader)
                 .WithMany(m => m.UploadedFiles)
                 .HasForeignKey(uf => uf.UploaderId);
+
+            modelBuilder.Entity<Member>()
+               .HasOne(m => m.Role)
+               .WithMany(r => r.Members)
+               .HasForeignKey(m => m.RoleId);
+
+            modelBuilder.Entity<RolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+            modelBuilder.Entity<Role>()
+                .HasMany(r => r.RolePermissions)
+                .WithOne(rp => rp.Role)
+                .HasForeignKey(rp => rp.RoleId);
+
+            modelBuilder.Entity<Permission>()
+                .HasMany(p => p.RolePermissions)
+                .WithOne(rp => rp.Permission)
+                .HasForeignKey(rp => rp.PermissionId);
         }
     }
 }

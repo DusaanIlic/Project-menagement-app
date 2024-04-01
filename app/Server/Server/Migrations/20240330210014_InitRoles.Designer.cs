@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240328211853_sdfdsf")]
-    partial class sdfdsf
+    [Migration("20240330210014_InitRoles")]
+    partial class InitRoles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Server.Migrations
 
                     b.HasIndex("UploaderId");
 
-                    b.ToTable("UploadedFiles");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>
@@ -61,14 +61,15 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Members");
                 });
@@ -86,6 +87,21 @@ namespace Server.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("MemberTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -198,6 +214,36 @@ namespace Server.Migrations
                     b.ToTable("ProjectTaskStatuses");
                 });
 
+            modelBuilder.Entity("Server.Models.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Server.Models.RolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+                });
+
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
                 {
                     b.Property<int>("TaskCategoryID")
@@ -252,6 +298,17 @@ namespace Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Uploader");
+                });
+
+            modelBuilder.Entity("Server.Models.Member", b =>
+                {
+                    b.HasOne("Server.Models.Role", "Role")
+                        .WithMany("Members")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -325,6 +382,25 @@ namespace Server.Migrations
                     b.Navigation("TaskPriority");
                 });
 
+            modelBuilder.Entity("Server.Models.RolePermission", b =>
+                {
+                    b.HasOne("Server.Models.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
                 {
                     b.HasOne("Server.Models.ProjectTask", "DependentTask")
@@ -353,6 +429,11 @@ namespace Server.Migrations
                     b.Navigation("UploadedFiles");
                 });
 
+            modelBuilder.Entity("Server.Models.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.Navigation("ProjectTasks");
@@ -375,6 +456,13 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
                 {
                     b.Navigation("ProjectTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.Role", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
