@@ -263,6 +263,33 @@ namespace Server.Controllers
             return Ok();
         }
         
+        [HttpDelete("{id}/Avatar")]
+        public async Task<IActionResult> DeleteAvatar(int id)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            if (member.AvatarId != null)
+            {
+                await _fileService.DeleteFile(member.AvatarId.Value);
+                member.AvatarId = null;
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
         public static string GenerateRandomPassword(int length)
         {
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
