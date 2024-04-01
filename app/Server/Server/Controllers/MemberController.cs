@@ -160,7 +160,7 @@ namespace Server.Controllers
 
             return Ok(memberDTO);
         }
-
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {

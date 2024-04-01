@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Server.Data;
-using Server.DataTransferObjects;
-using Server.DataTransferObjects.Request.UploadedFile;
-using Server.Models;
+using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
 
 namespace Server.Controllers
@@ -25,51 +23,35 @@ namespace Server.Controllers
         }
 
         [HttpPost("Single")]
-        public async Task<IActionResult> PostSingleFile(UploadFileRequest uploadFileRequest)
+        public async Task<IActionResult> PostSingleFile(AddFileRequest addFileRequest)
         {
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+            var uploaderId = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
-            if (idClaim == null)
+            if (uploaderId == null)
             {
                 return BadRequest("Member id claim is missing in jwt token");
             }
+            
 
-            FileDTO fileDto = new()
-            {
-                UploaderId = Int32.Parse(idClaim.Value),
-                FileDetails = uploadFileRequest.FileDetails
-            };
-
-            await _fileService.PostFileAsync(fileDto);
+            await _fileService.PostFileAsync(int.Parse(uploaderId.Value), addFileRequest);
 
             return Ok();
         }
 
-        // [HttpPost("Multiple")]
-        // public async Task<IActionResult> PostMultipleFile(List<UploadFileRequest> uploadFileRequests)
-        // {
-        //     var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-        //
-        //     if (idClaim == null)
-        //     {
-        //         return BadRequest("Member id claim is missing in jwt token");
-        //     }
-        //
-        //     List<FileDTO> uploadedFileDTOs = new List<FileDTO>();
-        //
-        //     foreach (var uploadFileRequest in uploadFileRequests)
-        //     {
-        //         uploadedFileDTOs.Add(new FileDTO 
-        //         {
-        //             UploaderId = Int32.Parse(idClaim.Value),
-        //             FileDetails = uploadFileRequest.FileDetails
-        //         });
-        //     }
-        //     
-        //     await _fileService.PostMultiFileAsync(uploadedFileDTOs);
-        //
-        //     return Ok();
-        // }
+        [HttpPost("Multiple")]
+        public async Task<IActionResult> PostMultipleFile(List<AddFileRequest> addFileRequests)
+        {
+            var uploaderId = User.Claims.FirstOrDefault(c => c.Type == "Id");
+        
+            if (uploaderId == null)
+            {
+                return BadRequest("Member id claim is missing in jwt token");
+            }
+            
+            await _fileService.PostMultiFileAsync(int.Parse(uploaderId.Value), addFileRequests);
+        
+            return Ok();
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> SendFile(int id)
@@ -81,8 +63,8 @@ namespace Server.Controllers
             
             try
             {
-                var (fileContent, contentType) = await _fileService.GetFileData(id);
-                return File(fileContent, contentType);
+                var fileDTO = await _fileService.GetFileData(id);
+                return Ok(fileDTO);
             }
             catch (FileNotFoundException)
             {

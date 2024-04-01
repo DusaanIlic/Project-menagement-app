@@ -32,6 +32,6 @@ namespace Server.DataTransferObjects
 
         public DateTime DateAdded { get; set; }
 
-        public IFormFile? Avatar { get; set; }
+        public FileDTO Avatar { get; set; }
     }
 }
