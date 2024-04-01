@@ -12,6 +12,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
 
 namespace Server.Controllers
@@ -208,6 +209,57 @@ namespace Server.Controllers
             _dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
         
+            return Ok();
+        }
+
+        [HttpGet("{id}/Avatar")]
+        public async Task<IActionResult> GetAvatar(int id)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (member.AvatarId == null)
+            {
+                return NotFound();
+            }
+
+            var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
+
+            return File(bytes, mime);
+        }
+
+        [HttpPost("{id}/Avatar")]
+        public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            if (member.AvatarId != null)
+            {
+                await _fileService.DeleteFile(member.AvatarId.Value);
+            }
+
+            var file = await _fileService.PostFileAsync(id, addFileRequest);
+            
+            member.AvatarId = file.FileId;
+            member.Avatar = file;
+
+            await _dbContext.SaveChangesAsync();
+
             return Ok();
         }
         

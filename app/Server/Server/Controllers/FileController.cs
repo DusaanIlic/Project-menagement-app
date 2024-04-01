@@ -38,20 +38,20 @@ namespace Server.Controllers
             return Ok();
         }
 
-        [HttpPost("Multiple")]
-        public async Task<IActionResult> PostMultipleFile(List<AddFileRequest> addFileRequests)
-        {
-            var uploaderId = User.Claims.FirstOrDefault(c => c.Type == "Id");
-        
-            if (uploaderId == null)
-            {
-                return BadRequest("Member id claim is missing in jwt token");
-            }
-            
-            await _fileService.PostMultiFileAsync(int.Parse(uploaderId.Value), addFileRequests);
-        
-            return Ok();
-        }
+        // [HttpPost("Multiple")]
+        // public async Task<IActionResult> PostMultipleFile(List<AddFileRequest> addFileRequests)
+        // {
+        //     var uploaderId = User.Claims.FirstOrDefault(c => c.Type == "Id");
+        //
+        //     if (uploaderId == null)
+        //     {
+        //         return BadRequest("Member id claim is missing in jwt token");
+        //     }
+        //     
+        //     await _fileService.PostMultiFileAsync(int.Parse(uploaderId.Value), addFileRequests);
+        //
+        //     return Ok();
+        // }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> SendFile(int id)
@@ -63,8 +63,8 @@ namespace Server.Controllers
             
             try
             {
-                var fileDTO = await _fileService.GetFileData(id);
-                return Ok(fileDTO);
+                var (fileBytes, fileMime) = await _fileService.GetFileData(id);
+                return File(fileBytes, fileMime);
             }
             catch (FileNotFoundException)
             {

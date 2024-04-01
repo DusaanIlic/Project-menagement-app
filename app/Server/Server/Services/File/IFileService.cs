@@ -6,11 +6,11 @@ namespace Server.Services.File
 {
     public interface IFileService
     {
-        public Task PostFileAsync(int uploaderId, AddFileRequest fileData);
+        public Task<Models.File> PostFileAsync(int uploaderId, AddFileRequest fileData);
 
-        public Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileData);
+        // public Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileData);
 
-        public Task<FileDTO> GetFileData(int fileId);
+        public Task<(byte[], string)> GetFileData(int fileId);
 
         public Task DeleteFile(int fileId);
     }

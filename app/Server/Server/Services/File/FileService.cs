@@ -18,7 +18,7 @@ namespace Server.Services.File
             _configuration = configuration;
         }
         
-        public async Task PostFileAsync(int uploaderId, AddFileRequest addFileRequest)
+        public async Task<Models.File> PostFileAsync(int uploaderId, AddFileRequest addFileRequest)
         {
             var fileName = Guid.NewGuid() + Path.GetExtension(addFileRequest.FileDetails.FileName);
             var filePath = Path.Combine(_configuration["FileService:StoragePath"], fileName);
@@ -43,6 +43,8 @@ namespace Server.Services.File
             _dbContext.Files.Add(uploadedFile);
 
             await _dbContext.SaveChangesAsync();
+
+            return uploadedFile;
         }
 
         public async Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileDatas)
@@ -53,7 +55,7 @@ namespace Server.Services.File
             }
         }
 
-        public async Task<FileDTO> GetFileData(int fileId)
+        public async Task<(byte[], string)> GetFileData(int fileId)
         {
             var file = await _dbContext.Files.FindAsync(fileId);
 
@@ -70,15 +72,8 @@ namespace Server.Services.File
             var fileContentBytes = System.IO.File.ReadAllBytes(file.FilePath);
             var fileExtension = Path.GetExtension(file.FilePath);
             var contentType = GetContentType(fileExtension);
-
-            var fileDTO = new FileDTO()
-            {
-                FileBytes = Convert.ToBase64String(fileContentBytes),
-                FileType = contentType,
-                UploaderId = file.UploaderId
-            };
             
-            return fileDTO;
+            return (fileContentBytes, contentType);
         }
 
         public async Task DeleteFile(int fileId)
