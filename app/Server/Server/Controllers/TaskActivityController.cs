@@ -46,36 +46,26 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost] 
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
+            var bearerToken = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(bearerToken);
 
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return BadRequest("Authorization token is missing or invalid.");
-            }
+            
+            var userEmail = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Name")?.Value;
+           
 
-            var jwtToken = token.Split(" ")[1];
-
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(jwtToken);
-
-
-            string memberEmail = decodedToken.Claims.First(claim => claim.Type == "email").Value;
-            Console.WriteLine(memberEmail);
-
-          
-            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberEmail);
+            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == userEmail);
 
             if (member == null)
             {
                 return NotFound("Member not found.");
             }
 
-         
             var taskActivity = new TaskActivity
             {
                 MemberId = member.Id,
@@ -85,12 +75,12 @@ namespace Server.Controllers
                 TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId
             };
 
-    
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
 
             return Ok("Task activity added successfully.");
         }
+
 
         [HttpDelete("{taskActivityId}")]
         public async Task<IActionResult> DeleteTaskActivity(int taskActivityId)
