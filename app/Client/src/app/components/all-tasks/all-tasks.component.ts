@@ -5,6 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskService } from '../../services/task.service';
 import { catchError, map } from 'rxjs/operators';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-all-tasks',
@@ -26,7 +27,12 @@ export class AllTasksComponent {
   done: any[] = [];
   projectId: string | undefined;
 
-  constructor(public dialog: MatDialog, private taskService: TaskService, private _ngToastService: NgToastService){}
+  constructor(public dialog: MatDialog, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
+
+  ngOnInit(): void{
+    this.loadTasksByProject(1);
+    this.getProjectIdFromRoute();
+  }
 
   toggleUncategorized() {
     this.showStandalone = !this.showStandalone;
@@ -64,6 +70,12 @@ export class AllTasksComponent {
         })
       )
       .subscribe();
+  }
+
+  getProjectIdFromRoute(){
+    this.route.params.subscribe(params => {
+      this.projectId = params['id'];
+    });
   }
 
   showMessage(){

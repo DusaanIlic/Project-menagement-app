@@ -168,6 +168,7 @@ export class KanbanComponent implements OnInit {
     });
   }
 
+
 }
 
 
