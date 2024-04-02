@@ -53,7 +53,7 @@
                     <ng-container *ngFor="let item of todo; let i = index">
                         <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                                (click)="deleteTask('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                                (click)="openConfirmationDialog('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
                     </ng-container> 
                 </ng-container>
@@ -84,7 +84,7 @@
                     <ng-container *ngFor="let item of progress; let i = index">
                         <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                            (click)="deleteTask('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                            (click)="openConfirmationDialog('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
                     </ng-container> 
                 </ng-container>
@@ -111,7 +111,7 @@
                 <ng-container *ngFor="let item of done; let i = index">
                         <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                            (click)="deleteTask('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                            (click)="openConfirmationDialog('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
                     </ng-container> 
                 </ng-container>

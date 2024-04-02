@@ -10,6 +10,7 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-kanban',
@@ -151,6 +152,19 @@ export class KanbanComponent implements OnInit {
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
       this.loadTasksByProject(1); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+    });
+  }
+
+  openConfirmationDialog(column: string, index: number): void{
+    const dialogRef = this.dialog.open(ConfirmationComponent, {
+      width: '500px',
+      data: { column, index }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.deleteTask(result.column, result.index);
+      }
     });
   }
 
