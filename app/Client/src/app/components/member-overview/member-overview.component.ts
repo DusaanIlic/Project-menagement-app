@@ -44,14 +44,31 @@ hideNshow(i: number) {
   {
     this.activities = [
       {
+          "projectId": 1,
+          "taskId": 1,
+          "memberId": 1,
           "projectName": "Project Delta",
           "taskName": "Backend Development",
           "memberName": "Elena Rodriguez",
           "type": "Update",
-          "dateModified": new Date("March 31, 2024 23:20:00"),
+          "dateModified": new Date("April 01, 2024 10:00:00"),
           "description": "Implemented authentication system."
       },
       {
+          "projectId": 1,
+          "taskId": 2,
+          "memberId": 2,
+          "projectName": "Project Delta",
+          "taskName": "Backend Development",
+          "memberName": "Veljko Djurovic",
+          "type": "Bug fix",
+          "dateModified": new Date("April 01, 2024 23:00:00"),
+          "description": "Test1."
+      },
+      {
+          "projectId": 1,
+          "taskId": 3,
+          "memberId": 3,
           "projectName": "Project Delta",
           "taskName": "Frontend Development",
           "memberName": "David Lee",
@@ -60,6 +77,9 @@ hideNshow(i: number) {
           "description": "Integrated API endpoints."
       },
       {
+          "projectId": 2,
+          "taskId": 4,
+          "memberId": 4,
           "projectName": "Project Epsilon",
           "taskName": "Testing Phase",
           "memberName": "Maria Garcia",
@@ -68,6 +88,9 @@ hideNshow(i: number) {
           "description": "Fixed UI rendering issue."
       },
       {
+          "projectId": 2,
+          "taskId": 5,
+          "memberId": 5,
           "projectName": "Project Epsilon",
           "taskName": "Deployment",
           "memberName": "Chris Johnson",
@@ -76,6 +99,9 @@ hideNshow(i: number) {
           "description": "Deployed latest version to production."
       },
       {
+          "projectId": 3,
+          "taskId": 6,
+          "memberId": 6,
           "projectName": "Project Zeta",
           "taskName": "Documentation",
           "memberName": "Sophia Kim",
@@ -84,6 +110,9 @@ hideNshow(i: number) {
           "description": "Updated project documentation."
       },
       {
+          "projectId": 3,
+          "taskId": 7,
+          "memberId": 7,
           "projectName": "Project Zeta",
           "taskName": "Code Review",
           "memberName": "Emma Wilson",
@@ -92,6 +121,9 @@ hideNshow(i: number) {
           "description": "Reviewed pull requests."
       },
       {
+          "projectId": 4,
+          "taskId": 8,
+          "memberId": 8,
           "projectName": "Project Theta",
           "taskName": "Feature Development",
           "memberName": "Michael Brown",
@@ -100,6 +132,9 @@ hideNshow(i: number) {
           "description": "Implemented new feature."
       },
       {
+          "projectId": 4,
+          "taskId": 9,
+          "memberId": 9,
           "projectName": "Project Theta",
           "taskName": "Testing",
           "memberName": "Laura Martinez",
@@ -108,6 +143,9 @@ hideNshow(i: number) {
           "description": "Performed regression testing."
       },
       {
+          "projectId": 5,
+          "taskId": 10,
+          "memberId": 10,
           "projectName": "Project Iota",
           "taskName": "Database Optimization",
           "memberName": "William Jones",
@@ -116,6 +154,9 @@ hideNshow(i: number) {
           "description": "Optimized database queries."
       },
       {
+          "projectId": 5,
+          "taskId": 11,
+          "memberId": 11,
           "projectName": "Project Iota",
           "taskName": "Security Audit",
           "memberName": "Olivia White",
@@ -124,6 +165,9 @@ hideNshow(i: number) {
           "description": "Conducted security vulnerability assessment."
       },
       {
+          "projectId": 6,
+          "taskId": 12,
+          "memberId": 12,
           "projectName": "Project Kappa",
           "taskName": "Integration",
           "memberName": "Daniel Davis",
@@ -132,6 +176,9 @@ hideNshow(i: number) {
           "description": "Integrated third-party services."
       },
       {
+          "projectId": 6,
+          "taskId": 13,
+          "memberId": 13,
           "projectName": "Project Kappa",
           "taskName": "Bug Fixing",
           "memberName": "Sophie Brown",
@@ -140,6 +187,9 @@ hideNshow(i: number) {
           "description": "Resolved critical bugs."
       },
       {
+          "projectId": 7,
+          "taskId": 14,
+          "memberId": 14,
           "projectName": "Project Lambda",
           "taskName": "UI Design",
           "memberName": "Jackson Taylor",
@@ -148,6 +198,9 @@ hideNshow(i: number) {
           "description": "Designed user interface components."
       },
       {
+          "projectId": 7,
+          "taskId": 15,
+          "memberId": 15,
           "projectName": "Project Lambda",
           "taskName": "Performance Optimization",
           "memberName": "Amelia Clark",
@@ -156,6 +209,9 @@ hideNshow(i: number) {
           "description": "Optimized application performance."
       },
       {
+          "projectId": 8,
+          "taskId": 16,
+          "memberId": 16,
           "projectName": "Project Mu",
           "taskName": "Feature Implementation",
           "memberName": "Liam Brown",
@@ -164,6 +220,9 @@ hideNshow(i: number) {
           "description": "Implemented new feature."
       },
       {
+          "projectId": 8,
+          "taskId": 17,
+          "memberId": 17,
           "projectName": "Project Mu",
           "taskName": "Testing Phase",
           "memberName": "Charlotte Evans",
@@ -172,6 +231,9 @@ hideNshow(i: number) {
           "description": "Tested new functionalities."
       },
       {
+          "projectId": 9,
+          "taskId": 18,
+          "memberId": 18,
           "projectName": "Project Nu",
           "taskName": "Documentation",
           "memberName": "James Smith",
@@ -180,22 +242,24 @@ hideNshow(i: number) {
           "description": "Updated project documentation."
       },
       {
+          "projectId": 9,
+          "taskId": 19,
+          "memberId": 19,
           "projectName": "Project Nu",
           "taskName": "Code Review",
           "memberName": "Ava Johnson",
           "type": "Review",
           "dateModified": new Date("1. 2. 2024."),
           "description": "Reviewed pull requests."
-      },
-      
-  ]
+      }
+  ];
+  
   }
 
   getProjects()
   {
     this.httpClient.get("http://localhost:8000/api/Member/3")
     .subscribe((data) => {
-      console.log(data);
       this.data = data;
     });
   }
@@ -226,7 +290,7 @@ hideNshow(i: number) {
     console.log(this.activities[id]);
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
-      data: {activities: this.activities[id]}
+      data: id
     });
 
     dialogRef.afterClosed().subscribe(result => {

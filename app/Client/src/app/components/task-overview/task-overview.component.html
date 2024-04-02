@@ -5,30 +5,31 @@
             <!-- Modal header -->
             <div class="flex flex-col items-start justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h1 class="text-2xl text-gray-900 dark:text-white">
-                    Task: {{data.activities.taskName}}
+                    {{activities[taskId].taskName}}
                 </h1>
-                <h2 class="text-xl">
-                    In project: {{data.activities.projectName}}
+                <h2 class="text-l flex text-gray-900">
+                    in project <p (click)="closeDialog()" [routerLink]="['/projects/', activities[taskId].projectId]" class="underline flex ml-2 cursor-pointer">{{activities[taskId].projectName}}</p>
                 </h2>
             </div>
             <!-- Modal body -->
             <div class="p-4 md:p-5 space-y-4">
                 <div>
                     <h2 class="text-lg">Description:</h2>
-                    <textarea cols="30" rows="3" class="w-full resize-none">{{data.activities.description}}</textarea>
+                    <textarea cols="30" rows="3" class="w-full resize-none">{{activities[taskId].description}}</textarea>
                 </div>
                 <div>
                     <h2 class="text-lg">Activity:</h2>
-                    <textarea rows="1" class="resize-none w-full" placeholder="Write your comment..."></textarea>
-                    <button (click)="dateCheck()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">Save comment</button>
+                    <textarea [(ngModel)] = "commentText" rows="1" class="resize-none w-full" placeholder="Write your comment..."></textarea>
+                    <button (click)="saveComment()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">Save comment</button>
                 
                     <div class="mt-2 flex flex-col justify-between gap-1">
                         <div class="flex w-full rounded-md items-center px-1">
                             <img src="assets/avatar.png" class="size-10 mr-1 border-2 border-black rounded-full" alt="">
                             <div>
-                                <p class="text-lg">{{data.activities.memberName}} wrote "{{data.activities.description}}"</p>
-                                <p *ngIf="lessThanHour" class="text-md">Modified {{difference | date:'mm'}} minutes ago.</p>
-                                <p *ngIf="!lessThanHour" class="text-md">{{data.activities.dateModified | date}}</p>
+                                <p class="text-lg">{{activities[taskId].memberName}} wrote "{{activities[taskId].description}}"</p>
+                                <p *ngIf="lessThanHour" class="text-md">Modified {{differenceM}} minutes ago.</p>
+                                <p *ngIf="lessThanDay && !lessThanHour" class="text-md">Modified {{differenceH}} hours ago.</p>
+                                <p *ngIf="!lessThanDay && !lessThanHour" class="text-md">{{activities[taskId].dateModified | date}}</p>
                             </div>
                         </div>
 
