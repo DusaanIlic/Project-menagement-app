@@ -23,10 +23,10 @@ namespace Server.Controllers
         public async Task<IActionResult> GetTaskActivityTypes()
         {
             var activityTypes = await dbContext.TaskActivityTypes.ToListAsync();
-            var activityTypesDTO = activityTypes.Select(t => new TaskActivityType
+            var activityTypesDTO = activityTypes.Select(t => new TaskActivityTypeDTO
             {
                 TaskActivityTypeId = t.TaskActivityTypeId,
-                TaskActivityName = t.TaskActivityName
+                TaskActivityTypeName = t.TaskActivityName
             }).ToList();
 
             return Ok(activityTypesDTO);
@@ -71,6 +71,7 @@ namespace Server.Controllers
             return Ok(taskActivityTypeDTO);
         }
 
+        [HttpDelete("{taskActivityTypeId}")]
         public async Task<IActionResult> DeleteTaskActivityType(int taskActivityTypeId)
         {
             var taskActivityType = await dbContext.TaskActivityTypes.FindAsync(taskActivityTypeId);

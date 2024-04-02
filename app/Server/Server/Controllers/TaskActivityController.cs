@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -46,18 +47,27 @@ namespace Server.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
-            
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+
+            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
+            {
+                return BadRequest("Authorization token is missing or invalid.");
+            }
+
+            var jwtToken = token.Split(" ")[1];
 
             var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(token);
+            var decodedToken = handler.ReadJwtToken(jwtToken);
 
-         
-            string memberEmail = decodedToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-           
+            string memberEmail = decodedToken.Claims.First(claim => claim.Type == "email").Value;
+            Console.WriteLine(memberEmail);
+
+          
             var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberEmail);
 
             if (member == null)
@@ -65,7 +75,7 @@ namespace Server.Controllers
                 return NotFound("Member not found.");
             }
 
-
+         
             var taskActivity = new TaskActivity
             {
                 MemberId = member.Id,
@@ -75,6 +85,7 @@ namespace Server.Controllers
                 TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId
             };
 
+    
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
 
