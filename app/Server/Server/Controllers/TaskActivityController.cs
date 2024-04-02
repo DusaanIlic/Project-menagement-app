@@ -21,33 +21,28 @@ namespace Server.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("{taskActivityId}")]
-        public async Task<IActionResult> GetTaskActivity(int taskActivityId)
+        [HttpGet]
+        public async Task<IActionResult> GetAllTaskActivities()
         {
-            var taskActivity = await dbContext.TaskActivities
+            var taskActivities = await dbContext.TaskActivities
                 .Include(ta => ta.ProjectTask)
                     .ThenInclude(pt => pt.Project)
                 .Include(ta => ta.TaskActivityType)
                 .Include(ta => ta.Member)
-                .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
+                .ToListAsync();
 
-            if (taskActivity == null)
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
-                return NotFound("Task activity not found.");
-            }
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId
+            }).ToList();
 
-            var taskActivityDTO = new TaskActivityDTO
-            {
-                TaskActivityId = taskActivity.TaskActivityId,
-                WorkerId = taskActivity.MemberId, 
-                TaskId = taskActivity.ProjectTaskId, 
-                ProjectId = taskActivity.ProjectTask.ProjectId,
-                DateModify = taskActivity.ActivityDate,
-                Comment = taskActivity.Description,
-                TaskActivityTypeId = taskActivity.TaskActivityTypeId
-            };
-
-            return Ok(taskActivityDTO);
+            return Ok(taskActivityDTOs);
         }
 
         [HttpPost]
