@@ -9,6 +9,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
 using Server.Models;
+using TaskStatus = Server.Models.TaskStatus;
 
 namespace Server.Controllers
 {
@@ -89,10 +90,17 @@ namespace Server.Controllers
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
                 Deadline = addProjectRequest.Deadline,
+                StartDate = DateTime.Now,
                 ProjectStatus = projectStatus
             };
+            
+            var firstThreeTaskStatuses = await dbContext.TaskStatuses.Take(3).ToListAsync();
 
+            project.ProjectTaskStatuses = firstThreeTaskStatuses
+                .Select(status => new ProjectTaskStatus { TaskStatus = status }).ToList();
+            
             dbContext.Projects.Add(project);
+            
             await dbContext.SaveChangesAsync();
 
             var projectDTO = new ProjectDTO

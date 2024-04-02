@@ -167,11 +167,20 @@ namespace Server.Data
                 new RolePermission { RoleId = 2, PermissionId = 10 },
                 new RolePermission { RoleId = 3, PermissionId = 11 }
             );
+
+            modelBuilder.Entity<ProjectStatus>().HasData(
+                new ProjectStatus { Id = 1, Status = "Open" },
+                new ProjectStatus { Id = 2, Status = "Closed" }
+            );
             
             modelBuilder.Entity<TaskStatus>().HasData(
                 new TaskStatus { Id = 1, Name = "New" },
                 new TaskStatus { Id = 2, Name = "In Progress" },
                 new TaskStatus { Id = 3, Name = "Completed" }
+            );
+
+            modelBuilder.Entity<TaskCategory>().HasData(
+                new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
             );
         }
     }
