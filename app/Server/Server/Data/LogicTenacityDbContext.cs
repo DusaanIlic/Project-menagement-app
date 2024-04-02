@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using File = Server.Models.File;
+using TaskStatus = Server.Models.TaskStatus;
 
 namespace Server.Data
 {
@@ -15,6 +16,7 @@ namespace Server.Data
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<ProjectTask> ProjectTasks{ get; set; }
         public DbSet<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
+        public DbSet<TaskStatus> TaskStatuses { get; set; }
         public DbSet<TaskPriority> TaskPriority { get; set; }
         public DbSet<MemberTask> MemberTasks { get; set; }
         public DbSet<TaskDependency> TaskDependencies { get; set; }
@@ -48,7 +50,7 @@ namespace Server.Data
                 .IsRequired();
 
             modelBuilder.Entity<ProjectTask>()
-               .HasOne(pt => pt.ProjectTaskStatus)
+               .HasOne(pt => pt.TaskStatus)
                .WithMany(pts => pts.ProjectTasks)
                .HasForeignKey(pt => pt.ProjectTaskStatusId);
 
@@ -117,6 +119,19 @@ namespace Server.Data
                 .HasMany(p => p.RolePermissions)
                 .WithOne(rp => rp.Permission)
                 .HasForeignKey(rp => rp.PermissionId);
+
+            modelBuilder.Entity<ProjectTaskStatus>()
+                .HasKey(ppts => new { ppts.ProjectId, ppts.TaskStatusId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.ProjectTaskStatuses)
+                .WithOne(pts => pts.Project)
+                .HasForeignKey(pts => pts.ProjectId);
+            
+            modelBuilder.Entity<TaskStatus>()
+                .HasMany(ts => ts.ProjectTaskStatuses)
+                .WithOne(pts => pts.TaskStatus)
+                .HasForeignKey(pts => pts.TaskStatusId);
         }
     }
 }

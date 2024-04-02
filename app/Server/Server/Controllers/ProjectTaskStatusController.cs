@@ -5,6 +5,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.ProjectTaskStatus;
 using Server.Models;
+using TaskStatus = Server.Models.TaskStatus;
 
 namespace Server.Controllers
 {
@@ -22,7 +23,7 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProjectTaskStatuses()
         {
-            var projectTaskStatuses = await dbContext.ProjectTaskStatuses.ToListAsync();
+            var projectTaskStatuses = await dbContext.TaskStatuses.ToListAsync();
             var projectTaskStatusDTOs = projectTaskStatuses.Select(p => new ProjectTaskStatusDTO
             {
                 ProjectTaskStatusId = p.Id,
@@ -34,12 +35,12 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProjectTaskStatus(AddProjectTaskStatusRequest addProjectTaskStatusRequest)
         {
-            var projectTaskStatus = new ProjectTaskStatus()
+            var projectTaskStatus = new TaskStatus()
             {
                 Name = addProjectTaskStatusRequest.Name
             };
 
-            dbContext.ProjectTaskStatuses.Add(projectTaskStatus);
+            dbContext.TaskStatuses.Add(projectTaskStatus);
             await dbContext.SaveChangesAsync();
 
             var projectTaskStatusDTO = new ProjectTaskStatusDTO
@@ -55,7 +56,7 @@ namespace Server.Controllers
         public IActionResult GetProjectTaskStatus(int projectTaskStatusId)
         {
 
-            var projectTaskStatus = dbContext.ProjectTaskStatuses.SingleOrDefault(p => p.Id == projectTaskStatusId);
+            var projectTaskStatus = dbContext.TaskStatuses.SingleOrDefault(p => p.Id == projectTaskStatusId);
 
             if (projectTaskStatus == null)
             {
@@ -74,7 +75,7 @@ namespace Server.Controllers
         [HttpDelete("{projectTaskStatusId}")]
         public async Task<IActionResult> DeleteProjectTaskStatus(int projectTaskStatusId)
         {
-            var projectTaskStatus = await dbContext.ProjectTaskStatuses.FindAsync(projectTaskStatusId);
+            var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(projectTaskStatusId);
 
 
             if (projectTaskStatus == null)
@@ -82,7 +83,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            dbContext.ProjectTaskStatuses.Remove(projectTaskStatus);
+            dbContext.TaskStatuses.Remove(projectTaskStatus);
 
             await dbContext.SaveChangesAsync();
 

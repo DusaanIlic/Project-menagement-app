@@ -8,15 +8,19 @@ namespace Server.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProjectId { get; set; }
-    
+        
+        [Required]
         public string ProjectName { get; set; } = string.Empty;
 
+        [Required]
         public string ProjectDescription { get; set; } = string.Empty;
 
+        [Required]
         public DateTime Deadline { get; set; }
+        
+        [Required]
         public DateTime StartDate { get; set; }
-
-
+        
         public int ProjectStatusId { get; set; }
 
         public ProjectStatus ProjectStatus { get; set; }
@@ -25,5 +29,7 @@ namespace Server.Models
         public Member TeamLeader { get; set; }
 
         public ICollection<ProjectTask> ProjectTasks { get; set; }
+        
+        public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
     }
 }

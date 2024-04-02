@@ -29,7 +29,7 @@ namespace Server.Controllers
             var projects = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
-                .ThenInclude(pts => pts.ProjectTaskStatus)
+                .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
@@ -43,7 +43,7 @@ namespace Server.Controllers
                     TaskDescription = t.TaskDescription,
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
-                    TaskStatus = t.ProjectTaskStatus.Name,
+                    TaskStatus = t.TaskStatus.Name,
                     TaskStatusId = t.ProjectTaskStatusId
 
                 }).ToList();
@@ -116,7 +116,7 @@ namespace Server.Controllers
             var project = dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
-                .ThenInclude(pts => pts.ProjectTaskStatus)
+                .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
@@ -132,7 +132,7 @@ namespace Server.Controllers
                 TaskDescription = t.TaskDescription,
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
-                TaskStatus = t.ProjectTaskStatus.Name,
+                TaskStatus = t.TaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
@@ -174,7 +174,7 @@ namespace Server.Controllers
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
-                .ThenInclude(pts => pts.ProjectTaskStatus)
+                .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
@@ -196,7 +196,7 @@ namespace Server.Controllers
                 TaskDescription = t.TaskDescription,
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
-                TaskStatus = t.ProjectTaskStatus.Name,
+                TaskStatus = t.TaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 
@@ -236,7 +236,7 @@ namespace Server.Controllers
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks )
-                   .ThenInclude(pts => pts.ProjectTaskStatus)
+                   .ThenInclude(pts => pts.TaskStatus)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -257,7 +257,7 @@ namespace Server.Controllers
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
-                .ThenInclude(pts => pts.ProjectTaskStatus)
+                .ThenInclude(pts => pts.TaskStatus)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -290,7 +290,7 @@ namespace Server.Controllers
 
             var tasks = await dbContext.ProjectTasks
                                         .Where(t => t.ProjectId == projectId)
-                                        .Include(pt => pt.ProjectTaskStatus)
+                                        .Include(pt => pt.TaskStatus)
                                         .ToListAsync();
 
             var tasksDTOs = tasks.Select(t => new ProjectTaskDTO
@@ -300,7 +300,7 @@ namespace Server.Controllers
                 TaskDescription = t.TaskDescription,
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
-                TaskStatus = t.ProjectTaskStatus.Name,
+                TaskStatus = t.TaskStatus.Name,
                 TaskStatusId = t.ProjectTaskStatusId
             }).ToList();
 

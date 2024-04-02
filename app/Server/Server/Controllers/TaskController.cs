@@ -26,7 +26,7 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Include(p => p.Project)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
@@ -44,7 +44,7 @@ namespace Server.Controllers
                    TaskDescription= t.TaskDescription,
                    TaskId = t.TaskId,
                    TaskName = t.TaskName,
-                   TaskStatus = t.ProjectTaskStatus.Name,
+                   TaskStatus = t.TaskStatus.Name,
                    TaskStatusId = t.ProjectTaskStatusId,
                    StartDate = t.StartDate,
                    TaskPriorityId = t.TaskPriorityId,
@@ -61,7 +61,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
-            var projectTaskStatus = dbContext.ProjectTaskStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
@@ -71,7 +71,7 @@ namespace Server.Controllers
                 ProjectId = addProjectTaskRequest.ProjectId,
                 TaskDescription = addProjectTaskRequest.TaskDescription,
                 TaskName = addProjectTaskRequest.TaskName,
-                ProjectTaskStatus = projectTaskStatus,
+                TaskStatus = projectTaskStatus,
                 TaskPriority = taskPriority,
                 TaskCategory = taskCategory
             };
@@ -90,7 +90,7 @@ namespace Server.Controllers
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
+                TaskStatus = projectTask.TaskStatus.Name,
                 TaskStatusId = projectTask.ProjectTaskStatusId,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
@@ -105,7 +105,7 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskRequest updateProjectTaskRequest)
         {
             var projectTask = await dbContext.ProjectTasks
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .FirstOrDefaultAsync(t => t.TaskId == id);
@@ -134,7 +134,7 @@ namespace Server.Controllers
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
                 TaskStatusId = projectTask.ProjectTaskStatusId,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
+                TaskStatus = projectTask.TaskStatus.Name,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
@@ -164,7 +164,7 @@ namespace Server.Controllers
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
             var projectTask = await dbContext.ProjectTasks
-               .Include(ts => ts.ProjectTaskStatus)
+               .Include(ts => ts.TaskStatus)
                .Include(tp => tp.TaskPriority)
                .Include(tc => tc.TaskCategory)
                .FirstOrDefaultAsync(t => t.TaskId == id);
@@ -185,7 +185,7 @@ namespace Server.Controllers
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
                 TaskStatusId = projectTask.ProjectTaskStatusId,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
+                TaskStatus = projectTask.TaskStatus.Name,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
@@ -204,7 +204,7 @@ namespace Server.Controllers
                 return NotFound("Specified project does not exist");
             }
 
-            var projectTaskStatus = await dbContext.ProjectTaskStatuses.FindAsync(statusId);
+            var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
             if (projectTaskStatus == null)
             {
                 return NotFound("Specified task status does not exist.");
@@ -215,7 +215,7 @@ namespace Server.Controllers
                 projectTask.StartDate = DateTime.Now;
             }
 
-            projectTask.ProjectTaskStatus = projectTaskStatus;
+            projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
             return Ok("Task status is changed successfully!");
@@ -226,7 +226,7 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Where(t => t.ProjectId == projectId)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
@@ -245,7 +245,7 @@ namespace Server.Controllers
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
                     TaskStatusId = t.ProjectTaskStatusId,
-                    TaskStatus = t.ProjectTaskStatus.Name,
+                    TaskStatus = t.TaskStatus.Name,
                     StartDate = t.StartDate,
                     TaskPriorityId = t.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
@@ -261,7 +261,7 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Where(t => t.ProjectId == projectId && t.TaskPriorityId == priorityId)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
@@ -280,7 +280,7 @@ namespace Server.Controllers
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
                     TaskStatusId = t.ProjectTaskStatusId,
-                    TaskStatus = t.ProjectTaskStatus.Name,
+                    TaskStatus = t.TaskStatus.Name,
                     StartDate = t.StartDate,
                     TaskPriorityId = t.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
@@ -350,7 +350,7 @@ namespace Server.Controllers
             var memberTasks = await dbContext.MemberTasks
                 .Where(mt => mt.MemberId == memberId)
                 .Include(mt => mt.Task)
-                .ThenInclude(t => t.ProjectTaskStatus)
+                .ThenInclude(t => t.TaskStatus)
                 .Include(mt => mt.Task)
                 .ThenInclude(t => t.TaskPriority)
                 .Include(mt => mt.Task)
@@ -376,7 +376,7 @@ namespace Server.Controllers
                     TaskId = mt.Task.TaskId,
                     TaskName = mt.Task.TaskName,
                     TaskStatusId = mt.Task.ProjectTaskStatusId,
-                    TaskStatus = mt.Task.ProjectTaskStatus.Name,
+                    TaskStatus = mt.Task.TaskStatus.Name,
                     StartDate = mt.Task.StartDate,
                     TaskPriorityId = mt.Task.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,

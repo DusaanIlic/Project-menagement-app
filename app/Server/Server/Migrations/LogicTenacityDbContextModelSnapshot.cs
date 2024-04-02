@@ -234,15 +234,15 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TaskStatusId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProjectId", "TaskStatusId");
+
+                    b.HasIndex("TaskStatusId");
 
                     b.ToTable("ProjectTaskStatuses");
                 });
@@ -322,6 +322,21 @@ namespace Server.Migrations
                     b.ToTable("TaskPriority");
                 });
 
+            modelBuilder.Entity("Server.Models.TaskStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskStatuses");
+                });
+
             modelBuilder.Entity("Server.Models.File", b =>
                 {
                     b.HasOne("Server.Models.Member", "Uploader")
@@ -394,7 +409,7 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.ProjectTaskStatus", "ProjectTaskStatus")
+                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("ProjectTaskStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -414,11 +429,30 @@ namespace Server.Migrations
 
                     b.Navigation("Project");
 
-                    b.Navigation("ProjectTaskStatus");
-
                     b.Navigation("TaskCategory");
 
                     b.Navigation("TaskPriority");
+
+                    b.Navigation("TaskStatus");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
+                {
+                    b.HasOne("Server.Models.Project", "Project")
+                        .WithMany("ProjectTaskStatuses")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
+                        .WithMany("ProjectTaskStatuses")
+                        .HasForeignKey("TaskStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("TaskStatus");
                 });
 
             modelBuilder.Entity("Server.Models.RolePermission", b =>
@@ -475,6 +509,8 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
+                    b.Navigation("ProjectTaskStatuses");
+
                     b.Navigation("ProjectTasks");
                 });
 
@@ -492,11 +528,6 @@ namespace Server.Migrations
                     b.Navigation("Members");
                 });
 
-            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
-                {
-                    b.Navigation("ProjectTasks");
-                });
-
             modelBuilder.Entity("Server.Models.Role", b =>
                 {
                     b.Navigation("Members");
@@ -511,6 +542,13 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.TaskPriority", b =>
                 {
+                    b.Navigation("ProjectTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.TaskStatus", b =>
+                {
+                    b.Navigation("ProjectTaskStatuses");
+
                     b.Navigation("ProjectTasks");
                 });
 #pragma warning restore 612, 618

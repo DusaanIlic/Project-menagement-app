@@ -20,7 +20,7 @@ namespace Server.Models
         public Project Project { get; set; }
 
         public int ProjectTaskStatusId { get; set; }
-        public ProjectTaskStatus ProjectTaskStatus { get; set; }
+        public TaskStatus TaskStatus { get; set; }
 
         public int TaskPriorityId { get; set; }
         public TaskPriority TaskPriority { get; set; }
