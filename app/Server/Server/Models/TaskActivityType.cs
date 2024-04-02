@@ -7,9 +7,9 @@ namespace Server.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int TaskActitivityTypeId { get; set; }
+        public int TaskActivityTypeId { get; set; }
 
-        public string TaskAcitivityName { get; set; }
+        public string TaskActivityName { get; set; }
 
         public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
     }

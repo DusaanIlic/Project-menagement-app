@@ -11,7 +11,7 @@ namespace Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "TaskAcitivityTypeId",
+                name: "TaskActivityTypeId",
                 table: "TaskActivities",
                 type: "INTEGER",
                 nullable: false,
@@ -21,26 +21,26 @@ namespace Server.Migrations
                 name: "TaskActivityTypes",
                 columns: table => new
                 {
-                    TaskActitivityTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    TaskActivityTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    TaskAcitivityName = table.Column<string>(type: "TEXT", nullable: false)
+                    TaskActivityName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskActivityTypes", x => x.TaskActitivityTypeId);
+                    table.PrimaryKey("PK_TaskActivityTypes", x => x.TaskActivityTypeId);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskActivities_TaskAcitivityTypeId",
+                name: "IX_TaskActivities_TaskActivityTypeId",
                 table: "TaskActivities",
-                column: "TaskAcitivityTypeId");
+                column: "TaskActivityTypeId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_TaskActivities_TaskActivityTypes_TaskAcitivityTypeId",
+                name: "FK_TaskActivities_TaskActivityTypes_TaskActivityTypeId",
                 table: "TaskActivities",
-                column: "TaskAcitivityTypeId",
+                column: "TaskActivityTypeId",
                 principalTable: "TaskActivityTypes",
-                principalColumn: "TaskActitivityTypeId",
+                principalColumn: "TaskActivityTypeId",
                 onDelete: ReferentialAction.Cascade);
         }
 
@@ -48,18 +48,18 @@ namespace Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_TaskActivities_TaskActivityTypes_TaskAcitivityTypeId",
+                name: "FK_TaskActivities_TaskActivityTypes_TaskActivityTypeId",
                 table: "TaskActivities");
 
             migrationBuilder.DropTable(
                 name: "TaskActivityTypes");
 
             migrationBuilder.DropIndex(
-                name: "IX_TaskActivities_TaskAcitivityTypeId",
+                name: "IX_TaskActivities_TaskActivityTypeId",
                 table: "TaskActivities");
 
             migrationBuilder.DropColumn(
-                name: "TaskAcitivityTypeId",
+                name: "TaskActivityTypeId",
                 table: "TaskActivities");
         }
     }

@@ -263,7 +263,7 @@ namespace Server.Migrations
                     b.Property<int>("ProjectTaskId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TaskAcitivityTypeId")
+                    b.Property<int>("TaskActivityTypeId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("TaskActivityId");
@@ -272,22 +272,22 @@ namespace Server.Migrations
 
                     b.HasIndex("ProjectTaskId");
 
-                    b.HasIndex("TaskAcitivityTypeId");
+                    b.HasIndex("TaskActivityTypeId");
 
                     b.ToTable("TaskActivities");
                 });
 
             modelBuilder.Entity("Server.Models.TaskActivityType", b =>
                 {
-                    b.Property<int>("TaskActitivityTypeId")
+                    b.Property<int>("TaskActivityTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("TaskAcitivityName")
+                    b.Property<string>("TaskActivityName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("TaskActitivityTypeId");
+                    b.HasKey("TaskActivityTypeId");
 
                     b.ToTable("TaskActivityTypes");
                 });
@@ -465,7 +465,7 @@ namespace Server.Migrations
 
                     b.HasOne("Server.Models.TaskActivityType", "TaskActivityType")
                         .WithMany("TaskActivities")
-                        .HasForeignKey("TaskAcitivityTypeId")
+                        .HasForeignKey("TaskActivityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

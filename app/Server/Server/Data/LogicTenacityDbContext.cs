@@ -129,7 +129,7 @@ namespace Server.Data
             modelBuilder.Entity<TaskActivity>()
                 .HasOne(a => a.TaskActivityType)
                 .WithMany(t => t.TaskActivities)
-                .HasForeignKey(a => a.TaskAcitivityTypeId);
+                .HasForeignKey(a => a.TaskActivityTypeId);
         }
     }
 }

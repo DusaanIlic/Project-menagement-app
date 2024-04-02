@@ -12,7 +12,7 @@ namespace Server.Migrations
         {
             migrationBuilder.InsertData(
                table: "TaskActivityTypes",
-               columns: new[] { "TaskActitivityTypeId", "TaskAcitivityName" },
+               columns: new[] { "TaskActivityTypeId", "TaskActivityName" },
                values: new object[,]
                 {
                 { 1, "Review" },
@@ -27,17 +27,17 @@ namespace Server.Migrations
         {
             migrationBuilder.DeleteData(
                 table: "TaskActivityTypes",
-                keyColumn: "TaskActitivityTypeID",
+                keyColumn: "TaskActivityTypeID",
                 keyValue: 1);
 
             migrationBuilder.DeleteData(
                 table: "TaskActivityTypes",
-                keyColumn: "TaskActitivityTypeID",
+                keyColumn: "TaskActivityTypeID",
                 keyValue: 2);
 
             migrationBuilder.DeleteData(
                 table: "TaskActivityTypes",
-                keyColumn: "TaskActitivityTypeID",
+                keyColumn: "TaskActivityTypeID",
                 keyValue: 3);
 
         }
