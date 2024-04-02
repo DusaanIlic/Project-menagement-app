@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Mozilla;
 using Server.Models;
 using File = Server.Models.File;
 
@@ -24,6 +25,7 @@ namespace Server.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<TaskActivity> TaskActivities { get; set; }
+        public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -115,14 +117,19 @@ namespace Server.Data
                 .HasForeignKey(rp => rp.PermissionId);
 
             modelBuilder.Entity<TaskActivity>()
-                        .HasOne(a => a.ProjectTask)
-                        .WithMany(pt => pt.TaskActivities)
-                        .HasForeignKey(a => a.ProjectTaskId);
+                .HasOne(a => a.ProjectTask)
+                .WithMany(pt => pt.TaskActivities)
+                .HasForeignKey(a => a.ProjectTaskId);
 
             modelBuilder.Entity<TaskActivity>()
-                        .HasOne(ta => ta.Member)
-                        .WithMany(m => m.TaskActivities)
-                        .HasForeignKey(ta => ta.MemberId);
+                .HasOne(ta => ta.Member)
+                .WithMany(m => m.TaskActivities)
+                .HasForeignKey(ta => ta.MemberId);
+
+            modelBuilder.Entity<TaskActivity>()
+                .HasOne(a => a.TaskActivityType)
+                .WithMany(t => t.TaskActivities)
+                .HasForeignKey(a => a.TaskAcitivityTypeId);
         }
     }
 }

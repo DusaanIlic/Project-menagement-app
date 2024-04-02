@@ -17,5 +17,8 @@ namespace Server.Models
 
         public string Description { get; set; } 
         public DateTime ActivityDate { get; set; }
+
+        public int TaskAcitivityTypeId { get; set; }
+        public TaskActivityType TaskActivityType { get; set; }
     }
 }
