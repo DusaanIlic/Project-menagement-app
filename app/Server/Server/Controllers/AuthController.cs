@@ -53,10 +53,18 @@ namespace Server.Controllers
              var memberResponse = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
                 RoleId = member.RoleId,
-                DateAdded = member.DateAdded
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Status,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             return Ok(new { Token = token, member = memberResponse });

@@ -30,6 +30,11 @@ namespace Server.Data
                 .HasIndex(m => m.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.Avatar)
+                .WithMany()
+                .HasForeignKey(m => m.AvatarId);
+                
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.ProjectStatus)
                 .WithMany(ps => ps.Projects)

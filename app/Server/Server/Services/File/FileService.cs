@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request.File;
 using Server.Models;
 
 namespace Server.Services.File
@@ -17,9 +18,9 @@ namespace Server.Services.File
             _configuration = configuration;
         }
         
-        public async Task PostFileAsync(FileDTO fileDto)
+        public async Task<Models.File> PostFileAsync(int uploaderId, AddFileRequest addFileRequest)
         {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(fileDto.FileDetails.FileName);
+            var fileName = Guid.NewGuid() + Path.GetExtension(addFileRequest.FileDetails.FileName);
             var filePath = Path.Combine(_configuration["FileService:StoragePath"], fileName);
 
             var directory = Path.GetDirectoryName(filePath);
@@ -30,25 +31,27 @@ namespace Server.Services.File
             
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await fileDto.FileDetails.CopyToAsync(stream);
+                await addFileRequest.FileDetails.CopyToAsync(stream);
             }
 
             var uploadedFile = new Models.File
             {
                 FilePath = filePath,
-                UploaderId = fileDto.UploaderId
+                UploaderId = uploaderId
             };
 
             _dbContext.Files.Add(uploadedFile);
 
             await _dbContext.SaveChangesAsync();
+
+            return uploadedFile;
         }
 
-        public async Task PostMultiFileAsync(List<FileDTO> fileDatas)
+        public async Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileDatas)
         {
             foreach (var fileData in fileDatas)
             {
-                await PostFileAsync(fileData);
+                await PostFileAsync(uploaderId, fileData);
             }
         }
 
@@ -66,29 +69,20 @@ namespace Server.Services.File
                 throw new FileNotFoundException("File not found on disk.");
             }
 
-            byte[] fileContentBytes;
-            string contentType;
-
-            // Read file content
-            using (FileStream fs = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read))
-            {
-                using (BinaryReader br = new BinaryReader(fs))
-                {
-                    fileContentBytes = br.ReadBytes((int)fs.Length);
-                }
-            }
-
-            // Determine content type based on file extension
-            string fileExtension = Path.GetExtension(file.FilePath);
-            contentType = GetContentType(fileExtension);
-
+            var fileContentBytes = System.IO.File.ReadAllBytes(file.FilePath);
+            var fileExtension = Path.GetExtension(file.FilePath);
+            var contentType = GetContentType(fileExtension);
+            
             return (fileContentBytes, contentType);
         }
 
-        public async Task DeleteFile(Models.File file)
+        public async Task DeleteFile(int fileId)
         {
+            var file = await _dbContext.Files.FindAsync(fileId);
+            
             System.IO.File.Delete(file.FilePath);
-            _dbContext.Files.Remove(file);
+            
+            _dbContext.Remove(file);
             await _dbContext.SaveChangesAsync();
         }
 

@@ -49,13 +49,6 @@ namespace Server.Migrations
             migrationBuilder.DropColumn(
                 name: "RoleId",
                 table: "Members");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Role",
-                table: "Members",
-                type: "TEXT",
-                nullable: false,
-                defaultValue: "");
         }
     }
 }
