@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Project} from "../../models/project";
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { ProjectService } from '../../services/add.project.service';
+import { map } from 'rxjs';
+import { ProjectServiceGet } from '../../services/project.service';
 
 @Component({
     selector: 'app-all-projects',
@@ -12,58 +16,61 @@ import { RouterLink } from '@angular/router';
 })
 export class AllProjectsComponent implements OnInit{
 
+
     activeProjectsCount = 0;
     finishedProjectsCount = 0;
-    activeProjects: Project[] = [];
-    finishedProjects: Project[] = [];
-    projects : Project[] = [];
-    project : Project = {
-        id: 1,
-        name: 'Project 1',
-        startDate: '123',
-        endDate: '321',
-        details: 'Details1 ',
-        status: 'Active',
-        lead: 'Pera Peric',
-    };
+    allProjects : Project[] = [];
+    activeProjects : Project[] = [];
+    finishedProjects : Project[] = [];
 
-    project1 : Project = {
-        id: 1,
-        name: 'Project 1',
-        startDate: '123',
-        endDate: '321',
-        details: 'Details1 ',
-        status: 'Finished',
-        lead: 'Pera',
-    };
+    constructor(private projectService : ProjectServiceGet) {}
 
 
-        
+    fetchProjects() : void
+    {
+        this.projectService.getAllProjects().subscribe((data : any[]) => {
+            this.allProjects = this.mapDataFromDTO(data);
+            console.log(this.allProjects);
+            let i = 0;
+        while(this.allProjects[i] != undefined)
+        {
+            if(this.allProjects[i].status === "Closed")
+            {
+                this.finishedProjectsCount++;
+                this.finishedProjects.push(this.allProjects[i]);
+            }
+                
+            else
+            {
+                this.activeProjectsCount++;
+                this.activeProjects.push(this.allProjects[i]);
+            }
+            i++;
+        }
+        });
+    }
+
+    private mapDataFromDTO(projects : any[]) : Project[]
+    {
+        return projects.map(item => ({
+            id: item.projectId,
+            name: item.projectName,
+            endDate: new Date(item.deadline),
+            startDate: new Date(item.startDate),
+            description: item.projectDescription,
+            details: "",
+            status: item.status,
+            lead: item.TeamLead,
+        }));
+    }
+
     
 
-    ngOnInit(): void {
 
-        this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project);
-        this.projects.push(this.project1);
-        this.projects.push(this.project1);
-        this.projects.push(this.project1);
-        this.projects.push(this.project1);
-        this.projects.push(this.project1);
-
-        for(let i = 0; i<this.projects.length;i++)
-        {
-            if(this.projects[i].status == "Active")
-                this.activeProjects.push(this.projects[i])
-            else
-                this.finishedProjects.push(this.projects[i]);
-        }
-
-        this.finishedProjectsCount = this.finishedProjects.length;
-        this.activeProjectsCount = this.activeProjects.length;
+    ngOnInit(): void
+    {
+        this.fetchProjects();
+        
     }
+
 }
