@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240402180032_Initial")]
+    [Migration("20240402180758_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -202,9 +202,6 @@ namespace Server.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ProjectTaskStatusId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
@@ -222,15 +219,18 @@ namespace Server.Migrations
                     b.Property<int>("TaskPriorityId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TaskStatusId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("TaskId");
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("ProjectTaskStatusId");
-
                     b.HasIndex("TaskCategoryId");
 
                     b.HasIndex("TaskPriorityId");
+
+                    b.HasIndex("TaskStatusId");
 
                     b.ToTable("ProjectTasks");
                 });
@@ -412,12 +412,6 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
-                        .WithMany("ProjectTasks")
-                        .HasForeignKey("ProjectTaskStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Server.Models.TaskCategory", "TaskCategory")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskCategoryId")
@@ -427,6 +421,12 @@ namespace Server.Migrations
                     b.HasOne("Server.Models.TaskPriority", "TaskPriority")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskPriorityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
+                        .WithMany("ProjectTasks")
+                        .HasForeignKey("TaskStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -90,6 +90,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var dbContext = serviceScope.ServiceProvider.GetService<LogicTenacityDbContext>();
@@ -109,7 +110,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
         dbContext.SaveChanges();
     }
 }
-
 
 app.MapControllers();
 

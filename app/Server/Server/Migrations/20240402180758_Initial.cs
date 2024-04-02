@@ -204,7 +204,7 @@ namespace Server.Migrations
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProjectTaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
@@ -230,8 +230,8 @@ namespace Server.Migrations
                         principalColumn: "TaskPriorityId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProjectTasks_TaskStatuses_ProjectTaskStatusId",
-                        column: x => x.ProjectTaskStatusId,
+                        name: "FK_ProjectTasks_TaskStatuses_TaskStatusId",
+                        column: x => x.TaskStatusId,
                         principalTable: "TaskStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -351,11 +351,6 @@ namespace Server.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTasks_ProjectTaskStatusId",
-                table: "ProjectTasks",
-                column: "ProjectTaskStatusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProjectTasks_TaskCategoryId",
                 table: "ProjectTasks",
                 column: "TaskCategoryId");
@@ -364,6 +359,11 @@ namespace Server.Migrations
                 name: "IX_ProjectTasks_TaskPriorityId",
                 table: "ProjectTasks",
                 column: "TaskPriorityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectTasks_TaskStatusId",
+                table: "ProjectTasks",
+                column: "TaskStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectTaskStatuses_TaskStatusId",

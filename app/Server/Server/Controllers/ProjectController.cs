@@ -44,7 +44,7 @@ namespace Server.Controllers
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.TaskStatus.Name,
-                    TaskStatusId = t.ProjectTaskStatusId
+                    TaskStatusId = t.TaskStatusId
 
                 }).ToList();
 
@@ -133,7 +133,7 @@ namespace Server.Controllers
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.ProjectTaskStatusId
+                TaskStatusId = t.TaskStatusId
             }).ToList();
 
             MemberDTO teamLeaderDTO = null;
@@ -197,7 +197,7 @@ namespace Server.Controllers
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.ProjectTaskStatusId
+                TaskStatusId = t.TaskStatusId
             }).ToList();
 
             MemberDTO teamLeaderDTO = null;
@@ -301,7 +301,7 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.ProjectTaskStatusId
+                TaskStatusId = t.TaskStatusId
             }).ToList();
 
             return Ok(tasksDTOs);

@@ -52,7 +52,7 @@ namespace Server.Data
             modelBuilder.Entity<ProjectTask>()
                .HasOne(pt => pt.TaskStatus)
                .WithMany(pts => pts.ProjectTasks)
-               .HasForeignKey(pt => pt.ProjectTaskStatusId);
+               .HasForeignKey(pt => pt.TaskStatusId);
 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.TeamLeader)
@@ -132,6 +132,47 @@ namespace Server.Data
                 .HasMany(ts => ts.ProjectTaskStatuses)
                 .WithOne(pts => pts.TaskStatus)
                 .HasForeignKey(pts => pts.TaskStatusId);
+
+            modelBuilder.Entity<Permission>().HasData(
+                new Permission { PermissionId = 1, PermissionName = "Add members" },
+                new Permission { PermissionId = 2, PermissionName = "Deactivate members" },
+                new Permission { PermissionId = 3, PermissionName = "Create project" },
+                new Permission { PermissionId = 4, PermissionName = "Create task" },
+                new Permission { PermissionId = 5, PermissionName = "Delete project" },
+                new Permission { PermissionId = 6, PermissionName = "Delete task" },
+                new Permission { PermissionId = 7, PermissionName = "Add member to task" },
+                new Permission { PermissionId = 8, PermissionName = "Add member to project" },
+                new Permission { PermissionId = 9, PermissionName = "Remove member from task" },
+                new Permission { PermissionId = 10, PermissionName = "Remove member from project" },
+                new Permission { PermissionId = 11, PermissionName = "Change task status" },
+                new Permission { PermissionId = 12, PermissionName = "Change project status" }
+            );
+            
+            modelBuilder.Entity<Role>().HasData(
+                new Role { RoleId = 1, RoleName = "Administrator" },
+                new Role { RoleId = 2, RoleName = "Project Manager"},
+                new Role { RoleId = 3, RoleName = "Worker" }
+            );
+
+            modelBuilder.Entity<RolePermission>().HasData(
+                new RolePermission { RoleId = 1, PermissionId = 1 },
+                new RolePermission { RoleId = 1, PermissionId = 2 },
+                new RolePermission { RoleId = 2, PermissionId = 3 },
+                new RolePermission { RoleId = 2, PermissionId = 4 },
+                new RolePermission { RoleId = 2, PermissionId = 5 },
+                new RolePermission { RoleId = 2, PermissionId = 6 },
+                new RolePermission { RoleId = 2, PermissionId = 7 },
+                new RolePermission { RoleId = 2, PermissionId = 8 },
+                new RolePermission { RoleId = 2, PermissionId = 9 },
+                new RolePermission { RoleId = 2, PermissionId = 10 },
+                new RolePermission { RoleId = 3, PermissionId = 11 }
+            );
+            
+            modelBuilder.Entity<TaskStatus>().HasData(
+                new TaskStatus { Id = 1, Name = "New" },
+                new TaskStatus { Id = 2, Name = "In Progress" },
+                new TaskStatus { Id = 3, Name = "Completed" }
+            );
         }
     }
 }
