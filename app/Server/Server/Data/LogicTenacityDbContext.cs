@@ -23,6 +23,7 @@ namespace Server.Data
         public DbSet<Role> Roles {  get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<TaskActivity> TaskActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -112,6 +113,16 @@ namespace Server.Data
                 .HasMany(p => p.RolePermissions)
                 .WithOne(rp => rp.Permission)
                 .HasForeignKey(rp => rp.PermissionId);
+
+            modelBuilder.Entity<TaskActivity>()
+                        .HasOne(a => a.ProjectTask)
+                        .WithMany(pt => pt.TaskActivities)
+                        .HasForeignKey(a => a.ProjectTaskId);
+
+            modelBuilder.Entity<TaskActivity>()
+                        .HasOne(ta => ta.Member)
+                        .WithMany(m => m.TaskActivities)
+                        .HasForeignKey(ta => ta.MemberId);
         }
     }
 }
