@@ -44,23 +44,34 @@
         <div class="flex justify-center">
             <div id="default-tab-content">
                 <div class="hidden p-4 rounded-lg" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="table">
-                        <thead class="">
-                            <th class="text-left">Project name</th>
-                            <th class="text-left">Start date</th>
-                            <th class="text-left">Deadline</th>
-                            <th class="text-left">Status</th>
-                            <th class="text-left">Team lider</th>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let project of activeProjects">
-                                <td class="w-60">{{project.name}}</td>
-                                <td class="w-60">{{project.startDate | date}}</td>
-                                <td class="w-60">{{project.endDate | date}}</td>
-                                <td class="w-60">{{project.status}}</td>
-                                <td class="w-60">{{project.lead}}</td>
-                            </tr>
-                        </tbody>
+                    <div class="flex justify-center">
+                        <div class="table border-[1px] border-gray-300 rounded-md">
+                                <tr class="">
+                                    <th class="text-left p-3">PROJECT</th>
+                                    <th class="text-left">START DATE</th>
+                                    <th class="text-left">DUE DATE</th>
+                                    <th class="text-left">STATUS</th>
+                                    <th class="text-left">PRIORITY</th>
+                                    <th class="text-left">TEAM LIDER</th>
+                                </tr>
+
+                                <tr *ngFor="let project of activeProjects" class="border-[1px] border-gray-500">
+                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.name}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300">{{project.status}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300">Important</td>
+                                    <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
+                                    <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
+                                    <mat-menu #menu="matMenu">
+                                    <button mat-menu-item>Delete</button>
+                                    <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
+                                    </mat-menu>
+                                </tr>
+
+                        
+                                    
+                        </div>
                     </div>
                 </div>
                 <div class="hidden p-4 rounded-lg" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">

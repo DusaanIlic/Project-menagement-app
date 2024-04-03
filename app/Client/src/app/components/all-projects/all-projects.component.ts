@@ -6,13 +6,15 @@ import { HttpClient } from '@angular/common/http';
 import { ProjectService } from '../../services/add.project.service';
 import { map } from 'rxjs';
 import { ProjectServiceGet } from '../../services/project.service';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
     selector: 'app-all-projects',
     standalone: true,
     templateUrl: './all-projects.component.html',
     styleUrl: './all-projects.component.scss',
-    imports: [CommonModule, RouterLink]
+    imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule]
 })
 export class AllProjectsComponent implements OnInit{
 
@@ -60,7 +62,7 @@ export class AllProjectsComponent implements OnInit{
             description: item.projectDescription,
             details: "",
             status: item.status,
-            lead: item.TeamLead,
+            lead: item.teamLead,
         }));
     }
 
