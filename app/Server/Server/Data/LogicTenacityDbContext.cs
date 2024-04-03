@@ -179,6 +179,12 @@ namespace Server.Data
                 new TaskStatus { Id = 3, Name = "Completed" }
             );
 
+            modelBuilder.Entity<TaskPriority>().HasData(
+                new TaskPriority { TaskPriorityId = 1, Name = "Low" },
+                new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
+                new TaskPriority { TaskPriorityId = 3, Name = "High" }
+            );
+            
             modelBuilder.Entity<TaskCategory>().HasData(
                 new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
             );
