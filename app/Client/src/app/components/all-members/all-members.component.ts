@@ -6,6 +6,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MemberService } from '../../services/member.service';
 import { Role } from '../../models/role';
+import { AddMemberComponent } from '../add-member/add-member.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-all-members',
@@ -67,7 +69,7 @@ export class AllMembersComponent implements OnInit{
   
 
 
-    constructor(private memberService: MemberService) {
+    constructor(private memberService: MemberService,  public dialog: MatDialog) {
         this.filteredMembers = this.members;
         this.sortNames();
         this.sortEmails();
@@ -84,6 +86,17 @@ export class AllMembersComponent implements OnInit{
         regex.test(member.firstName) || regex.test(member.lastName)
       );
   }
+
+  openDialog(): void{
+    const dialogRef = this.dialog.open(AddMemberComponent, {
+      width: '500px',
+    });
+
+    dialogRef.componentInstance.memberAdded.subscribe(() => {
+      this.getMembersFromServer();
+    });
+  }
+
   
 
   switchSortName()

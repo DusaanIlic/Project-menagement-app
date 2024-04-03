@@ -2,7 +2,7 @@
     <div class="flex items-start flex-col">
         <div class="my-5 flex justify-center gap-5 items-center">
             <input type="text" class="rounded-md border-2 border-black" placeholder="Search..." [(ngModel)]="searchQuery" (keyup)="search()">
-            <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">New member</button>
+            <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="openDialog()">New member</button>
         </div>
         
         <div class="flex">

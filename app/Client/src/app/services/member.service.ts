@@ -16,13 +16,8 @@ const httpOptions = {
 export class MemberService {
   constructor(private http: HttpClient) { }
 
-  addMember(formData: AddMemberForm): Observable<any> {
-    console.log('sent');
-    return this.http.post(
-      API,
-      formData,
-      httpOptions
-    )
+  addMember(memberData: any): Observable<any> {
+    return this.http.post<any>(`${API}`, memberData);
   }
 
   getMembers(): Observable<any[]>{
