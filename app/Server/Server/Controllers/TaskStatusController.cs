@@ -42,7 +42,7 @@ public partial class ProjectController
 
         if (alreadyExists)
         {
-            return Conflict("Task Status with same name already exists.");
+            return Conflict("Task Status with given name already exists.");
         }
         
         var taskStatus = new TaskStatus
@@ -80,7 +80,7 @@ public partial class ProjectController
 
         if (projectTaskStatus == null)
         {
-            return NotFound();
+            return NotFound("Project with given id does not exist or this task status does not belong to it.");
         }
         
         var taskStatus = await dbContext.TaskStatuses
@@ -89,17 +89,17 @@ public partial class ProjectController
 
         if (taskStatus == null)
         {
-            return NotFound("Task status sa datim id-om ne postoji.");
+            return NotFound("Task Status with given id does not exist.");
         }
 
         if (taskStatus.IsDefault)
         {
-            return Conflict("Zabranjeno je brisati ovaj task status.");
+            return Conflict("It's forbidden to delete this task status.");
         }
 
         if (taskStatus.ProjectTasks.Count > 0)
         {
-            return Conflict("Postoje taskovi sa ovim statusom.");
+            return Conflict("There are tasks in given project with this task status.");
         }
 
         dbContext.ProjectTaskStatuses.Remove(projectTaskStatus);
@@ -108,5 +108,41 @@ public partial class ProjectController
         await dbContext.SaveChangesAsync();
         
         return NoContent();
+    }
+
+    [HttpPut("{projectId}/TaskStatus/{taskStatusId}")]
+    public async Task<IActionResult> UpdateTaskStatus(int projectId, int taskStatusId, UpdateTaskStatusRequest updateTaskStatusRequest)
+    {
+        var projectTaskStatus = await dbContext.ProjectTaskStatuses
+            .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskStatusId == taskStatusId);
+
+        if (projectTaskStatus == null)
+        {
+            return NotFound("Project with given id does not exist or this task status does not belong to it.");
+        }
+        
+        var taskStatus = await dbContext.TaskStatuses
+            .FirstOrDefaultAsync(ts => ts.Id == taskStatusId);
+
+        if (taskStatus == null)
+        {
+            return NotFound("Task Status with given id does not exist.");
+        }
+
+        if (taskStatus.IsDefault)
+        {
+            return Conflict("It's forbidden to change name of this task status.");
+        }
+
+        taskStatus.Name = updateTaskStatusRequest.Name;
+
+        await dbContext.SaveChangesAsync();
+
+        return Ok(new TaskStatusDTO
+        {
+            Id = taskStatus.Id,
+            Name = taskStatus.Name,
+            IsDefault = taskStatus.IsDefault
+        });
     }
 }
