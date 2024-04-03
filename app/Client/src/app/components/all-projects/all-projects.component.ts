@@ -1,20 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Project} from "../../models/project";
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { ProjectService } from '../../services/add.project.service';
-import { map } from 'rxjs';
 import { ProjectServiceGet } from '../../services/project.service';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
     selector: 'app-all-projects',
     standalone: true,
     templateUrl: './all-projects.component.html',
     styleUrl: './all-projects.component.scss',
-    imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule]
+    imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule]
 })
 export class AllProjectsComponent implements OnInit{
 
@@ -24,6 +23,7 @@ export class AllProjectsComponent implements OnInit{
     allProjects : Project[] = [];
     activeProjects : Project[] = [];
     finishedProjects : Project[] = [];
+    selectedTable: string = "t1";
 
     constructor(private projectService : ProjectServiceGet) {}
 
@@ -52,6 +52,13 @@ export class AllProjectsComponent implements OnInit{
         });
     }
 
+    deleteProject(id?: number)
+    {
+        this.projectService.deleteProjectById(id).subscribe(response => {
+            console.log(response);
+        })
+    }
+
     private mapDataFromDTO(projects : any[]) : Project[]
     {
         return projects.map(item => ({
@@ -74,5 +81,13 @@ export class AllProjectsComponent implements OnInit{
         this.fetchProjects();
         
     }
+
+
+    clickMethod(name?: string, id?: number) {
+        if(confirm("Are you sure to delete " + name))
+        {
+          this.deleteProject(id);
+        }
+      }
 
 }
