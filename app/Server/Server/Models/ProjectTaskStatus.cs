@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
-namespace Server.Models
+namespace Server.Models;
+
+public class ProjectTaskStatus
 {
-    public class ProjectTaskStatus
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+    public int ProjectId { get; set; }
 
-        public ICollection<ProjectTask> ProjectTasks { get; set; }
-    }
+    public Project Project { get; set; }
+    
+    public int TaskStatusId { get; set; }
+    
+    public TaskStatus TaskStatus { get; set; }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402230030_AddedPermissions")]
+    partial class AddedPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -247,18 +250,6 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = "Open"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Status = "Closed"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
@@ -438,13 +429,6 @@ namespace Server.Migrations
                     b.HasKey("TaskCategoryID");
 
                     b.ToTable("TaskCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskCategoryID = 1,
-                            CategoryName = "None"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
@@ -475,32 +459,12 @@ namespace Server.Migrations
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskPriorityId = 1,
-                            Name = "Low"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 2,
-                            Name = "Medium"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 3,
-                            Name = "High"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDefault")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -515,19 +479,16 @@ namespace Server.Migrations
                         new
                         {
                             Id = 1,
-                            IsDefault = true,
                             Name = "New"
                         },
                         new
                         {
                             Id = 2,
-                            IsDefault = true,
                             Name = "In Progress"
                         },
                         new
                         {
                             Id = 3,
-                            IsDefault = true,
                             Name = "Completed"
                         });
                 });

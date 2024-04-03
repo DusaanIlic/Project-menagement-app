@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402225420_AddedDataToRolesAndStatuses")]
+    partial class AddedDataToRolesAndStatuses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -135,68 +138,6 @@ namespace Server.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionId = 1,
-                            PermissionName = "Add members"
-                        },
-                        new
-                        {
-                            PermissionId = 2,
-                            PermissionName = "Deactivate members"
-                        },
-                        new
-                        {
-                            PermissionId = 3,
-                            PermissionName = "Create project"
-                        },
-                        new
-                        {
-                            PermissionId = 4,
-                            PermissionName = "Create task"
-                        },
-                        new
-                        {
-                            PermissionId = 5,
-                            PermissionName = "Delete project"
-                        },
-                        new
-                        {
-                            PermissionId = 6,
-                            PermissionName = "Delete task"
-                        },
-                        new
-                        {
-                            PermissionId = 7,
-                            PermissionName = "Add member to task"
-                        },
-                        new
-                        {
-                            PermissionId = 8,
-                            PermissionName = "Add member to project"
-                        },
-                        new
-                        {
-                            PermissionId = 9,
-                            PermissionName = "Remove member from task"
-                        },
-                        new
-                        {
-                            PermissionId = 10,
-                            PermissionName = "Remove member from project"
-                        },
-                        new
-                        {
-                            PermissionId = 11,
-                            PermissionName = "Change task status"
-                        },
-                        new
-                        {
-                            PermissionId = 12,
-                            PermissionName = "Change project status"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -247,18 +188,6 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = "Open"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Status = "Closed"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
@@ -366,63 +295,6 @@ namespace Server.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 3
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 7
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 8
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 9
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 10
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 11
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
@@ -438,13 +310,6 @@ namespace Server.Migrations
                     b.HasKey("TaskCategoryID");
 
                     b.ToTable("TaskCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskCategoryID = 1,
-                            CategoryName = "None"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
@@ -475,32 +340,12 @@ namespace Server.Migrations
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskPriorityId = 1,
-                            Name = "Low"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 2,
-                            Name = "Medium"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 3,
-                            Name = "High"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDefault")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -515,19 +360,16 @@ namespace Server.Migrations
                         new
                         {
                             Id = 1,
-                            IsDefault = true,
                             Name = "New"
                         },
                         new
                         {
                             Id = 2,
-                            IsDefault = true,
                             Name = "In Progress"
                         },
                         new
                         {
                             Id = 3,
-                            IsDefault = true,
                             Name = "Completed"
                         });
                 });
