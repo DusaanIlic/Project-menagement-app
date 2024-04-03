@@ -1,23 +1,45 @@
-import { Component } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   FormGroup,
   FormControl,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ProjectService } from '../../services/add.project.service';
+
 import { ProjectAddRequest } from '../../models/project-add';
 import { tap } from 'rxjs/internal/operators/tap';
 import { CommonModule } from '@angular/common';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ProjectService } from '../../services/add.project.service';
+import { NgxEditorModule } from 'ngx-editor';
+import { Editor } from 'ngx-editor';
 
 @Component({
   selector: 'app-add-project',
   standalone: true,
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, NgxEditorModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AddProjectComponent {
+export class AddProjectComponent implements OnInit, OnDestroy {
+  editor: Editor = new Editor();
+  html = '';
+
+  ngOnInit(): void {
+    this.editor = new Editor();
+  }
+
+  // make sure to destory the editor
+  ngOnDestroy(): void {
+    this.editor.destroy();
+  }
+
   isSuccess: boolean = false;
   isError: boolean = false;
   projectForm = new FormGroup({
@@ -28,10 +50,13 @@ export class AddProjectComponent {
 
   private project?: ProjectAddRequest;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(public dialogRef: MatDialogRef<AddProjectComponent>) {}
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 
   public onSubmit() {
-    if (this.projectForm.valid) {
+    /*if (this.projectForm.valid) {
       const formValue = this.projectForm.value;
       const sanitizedFormValue: ProjectAddRequest = {
         projectName: formValue.projectName || '',
@@ -67,5 +92,6 @@ export class AddProjectComponent {
   showSuccessMessage() {
     this.isSuccess = true;
     this.isError = false;
+  }*/
   }
 }

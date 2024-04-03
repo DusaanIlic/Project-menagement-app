@@ -3,7 +3,7 @@ import { Project } from '../../models/project';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { AddProjectDialogComponent } from '../add-project-dialog/add-project-dialog.component';
+import { AddProjectComponent } from '../add-project/add-project.component';
 
 @Component({
   selector: 'app-all-projects',
@@ -21,7 +21,7 @@ export class AllProjectsComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
-    const dialogRef = this.dialog.open(AddProjectDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(AddProjectComponent, dialogConfig);
 
     dialogRef
       .afterClosed()
