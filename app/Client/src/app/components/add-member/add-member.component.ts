@@ -3,10 +3,9 @@ import { MemberService } from '../../services/member.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { AddMemberForm } from '../../forms/add-member.form';
-
 @Component({
   selector: 'app-add-member',
   standalone: true,
@@ -22,6 +21,7 @@ export class AddMemberComponent {
   availableRoles: any[] = [];
 
   @Output() memberAdded: EventEmitter<any> = new EventEmitter<any>();
+disableSelect: any;
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private memberService: MemberService, private _ngToastService: NgToastService){
     this.loadRoles();
