@@ -210,6 +210,14 @@ namespace Server.Controllers
                 return NotFound("Specified task status does not exist.");
             }
 
+            var statusBelongsToProject = await dbContext.ProjectTaskStatuses
+                .AnyAsync(pts => pts.ProjectId == projectTask.ProjectId && pts.TaskStatusId == projectTaskStatus.Id);
+
+            if (!statusBelongsToProject)
+            {
+                return BadRequest("Task Status does not belong to this project.");
+            }
+
             if(statusId == 2)
             {
                 projectTask.StartDate = DateTime.Now;

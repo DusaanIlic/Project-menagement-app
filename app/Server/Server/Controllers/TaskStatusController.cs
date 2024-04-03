@@ -94,12 +94,12 @@ public partial class ProjectController
 
         if (taskStatus.IsDefault)
         {
-            return Conflict("It's forbidden to delete this task status.");
+            return BadRequest("It's forbidden to delete this task status.");
         }
 
         if (taskStatus.ProjectTasks.Count > 0)
         {
-            return Conflict("There are tasks in given project with this task status.");
+            return BadRequest("There are tasks in given project with this task status.");
         }
 
         dbContext.ProjectTaskStatuses.Remove(projectTaskStatus);
