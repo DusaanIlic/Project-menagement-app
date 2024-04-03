@@ -28,9 +28,13 @@
                 </div>
 
                 <div class="flex-row justify-between mb-3">
-                    <label for="name" class="pr-10">Role ID </label>
-                    <input type="number" id="role" class="w-1/2 ml-7" [(ngModel)]="roleId">
+                    <label for="role" class="pr-10 ml-3">Role</label>
+                    <select id="role" class="w-1/2 ml-10" [(ngModel)]="roleId">
+                        <option value="" disabled>Select role...</option>
+                        <option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}</option>
+                    </select>
                 </div>
+                
                 
                 <div class="flex-row justify-between mb-3">
                     <label for="name" class="pr-10">Email </label>

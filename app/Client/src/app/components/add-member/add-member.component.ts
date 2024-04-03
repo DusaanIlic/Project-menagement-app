@@ -19,11 +19,21 @@ export class AddMemberComponent {
   lastName: string = '';
   email: string = '';
   roleId: number | null = null;
+  availableRoles: any[] = [];
 
   @Output() memberAdded: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private memberService: MemberService, private _ngToastService: NgToastService){}
+  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private memberService: MemberService, private _ngToastService: NgToastService){
+    this.loadRoles();
+  }
 
+  loadRoles(){
+    this.memberService.getRoles().subscribe((roles: any[]) =>{
+      this.availableRoles = roles;
+    }, error => {
+      console.error('Error fetching roles', error);
+    });
+  }
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -42,7 +52,7 @@ export class AddMemberComponent {
     };
 
     this.memberService.addMember(memberData).subscribe(response => {
-      console.log('Task saved successfully:', response);
+      console.log('Member saved successfully:', response);
       this.memberAdded.emit();
       this.showMessage();
       this.closeDialog();
