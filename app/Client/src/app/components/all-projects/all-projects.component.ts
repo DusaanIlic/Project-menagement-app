@@ -21,7 +21,11 @@ export class AllProjectsComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
-    this.dialog.open(AddProjectDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(AddProjectDialogComponent, dialogConfig);
+
+    dialogRef
+      .afterClosed()
+      .subscribe((data) => console.log('Dialog output:', data));
   }
 
   activeProjectsCount = 0;
