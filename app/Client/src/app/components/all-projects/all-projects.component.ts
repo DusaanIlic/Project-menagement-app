@@ -6,6 +6,7 @@ import { ProjectServiceGet } from '../../services/project.service';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -17,6 +18,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class AllProjectsComponent implements OnInit{
 
+showDialog: boolean = false;
+
+
 
     activeProjectsCount = 0;
     finishedProjectsCount = 0;
@@ -25,7 +29,7 @@ export class AllProjectsComponent implements OnInit{
     finishedProjects : Project[] = [];
     selectedTable: string = "t1";
 
-    constructor(private projectService : ProjectServiceGet) {}
+    constructor(private projectService : ProjectServiceGet, private location : Location) {}
 
 
     fetchProjects() : void
@@ -48,8 +52,12 @@ export class AllProjectsComponent implements OnInit{
                 this.activeProjects.push(this.allProjects[i]);
             }
             i++;
+            console.log('A:',this.activeProjectsCount);
+            console.log('F:',this.finishedProjectsCount);
         }
         });
+
+        
     }
 
     deleteProject(id?: number)
@@ -79,15 +87,26 @@ export class AllProjectsComponent implements OnInit{
     ngOnInit(): void
     {
         this.fetchProjects();
-        
     }
 
 
-    clickMethod(name?: string, id?: number) {
-        if(confirm("Are you sure to delete " + name))
+    clickMethod(name?: string, id?: number, status? : string) {
+        if(confirm("Are you sure you want to delete " + name))
         {
-          this.deleteProject(id);
+            if(status === "In Progress")
+                alert("You cannot delete project in progress!");
+            else
+            {
+                if(status == "Closed")
+                this.finishedProjectsCount--;
+            else
+                this.activeProjectsCount--;
+
+                this.deleteProject(id);
+
+                window.location.reload();
+            }
+                
         }
       }
-
 }
