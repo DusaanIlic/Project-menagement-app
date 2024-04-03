@@ -35,6 +35,7 @@ showDialog: boolean = false;
     fetchProjects() : void
     {
         this.projectService.getAllProjects().subscribe((data : any[]) => {
+          console.log(data);
             this.allProjects = this.mapDataFromDTO(data);
             console.log(this.allProjects);
             let i = 0;
@@ -45,7 +46,7 @@ showDialog: boolean = false;
                 this.finishedProjectsCount++;
                 this.finishedProjects.push(this.allProjects[i]);
             }
-                
+
             else
             {
                 this.activeProjectsCount++;
@@ -57,7 +58,7 @@ showDialog: boolean = false;
         }
         });
 
-        
+
     }
 
     deleteProject(id?: number)
@@ -77,11 +78,11 @@ showDialog: boolean = false;
             description: item.projectDescription,
             details: "",
             status: item.status,
-            lead: item.teamLead,
+            lead: item.teamLider
         }));
     }
 
-    
+
 
 
     ngOnInit(): void
@@ -106,7 +107,7 @@ showDialog: boolean = false;
 
                 window.location.reload();
             }
-                
+
         }
       }
 }
