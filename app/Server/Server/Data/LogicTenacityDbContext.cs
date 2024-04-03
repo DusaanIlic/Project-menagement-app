@@ -130,6 +130,12 @@ namespace Server.Data
                 .HasOne(a => a.TaskActivityType)
                 .WithMany(t => t.TaskActivities)
                 .HasForeignKey(a => a.TaskActivityTypeId);
+
+            modelBuilder.Entity<TaskActivityType>().HasData(
+                new TaskActivityType { TaskActivityTypeId = 1, TaskActivityName = "Review" },
+                new TaskActivityType { TaskActivityTypeId = 2, TaskActivityName = "Update" },
+                new TaskActivityType { TaskActivityTypeId = 3, TaskActivityName = "Bug fix" }
+                );
         }
     }
 }
