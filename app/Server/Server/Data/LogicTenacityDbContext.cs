@@ -174,9 +174,9 @@ namespace Server.Data
             );
             
             modelBuilder.Entity<TaskStatus>().HasData(
-                new TaskStatus { Id = 1, Name = "New" },
-                new TaskStatus { Id = 2, Name = "In Progress" },
-                new TaskStatus { Id = 3, Name = "Completed" }
+                new TaskStatus { Id = 1, Name = "New", IsDefault = true },
+                new TaskStatus { Id = 2, Name = "In Progress", IsDefault = true },
+                new TaskStatus { Id = 3, Name = "Completed", IsDefault = true }
             );
 
             modelBuilder.Entity<TaskPriority>().HasData(

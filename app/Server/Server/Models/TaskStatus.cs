@@ -11,6 +11,9 @@ namespace Server.Models
         
         [Required]
         public string Name { get; set; } = string.Empty;
+
+        [Required]
+        public bool IsDefault { get; set; } = false;
         
         public ICollection<ProjectTask> ProjectTasks { get; set; }
         

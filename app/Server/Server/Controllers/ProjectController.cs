@@ -15,7 +15,7 @@ namespace Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public partial class ProjectController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
 
