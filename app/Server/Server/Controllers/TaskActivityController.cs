@@ -50,20 +50,20 @@ namespace Server.Controllers
         [HttpPost] 
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
-            var bearerToken = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadJwtToken(bearerToken);
-
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
             
-            var userEmail = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Name")?.Value;
-           
+            if (idClaim == null)
+            {
+                return BadRequest("Member id claim is missing in jwt token");
+            }
 
-            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Email == userEmail);
+            var memberId = int.Parse(idClaim.Value);
 
+            var member = await dbContext.Members.FindAsync(memberId);
             if (member == null)
             {
-                return NotFound("Member not found.");
+                return BadRequest("Member not found");
             }
 
             var taskActivity = new TaskActivity
