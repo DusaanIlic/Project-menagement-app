@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402115606_TaskActivity")]
+    partial class TaskActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -43,40 +46,14 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AvatarId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("DateAdded")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Github")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Linkedin")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -84,20 +61,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AvatarId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -135,68 +102,6 @@ namespace Server.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionId = 1,
-                            PermissionName = "Add members"
-                        },
-                        new
-                        {
-                            PermissionId = 2,
-                            PermissionName = "Deactivate members"
-                        },
-                        new
-                        {
-                            PermissionId = 3,
-                            PermissionName = "Create project"
-                        },
-                        new
-                        {
-                            PermissionId = 4,
-                            PermissionName = "Create task"
-                        },
-                        new
-                        {
-                            PermissionId = 5,
-                            PermissionName = "Delete project"
-                        },
-                        new
-                        {
-                            PermissionId = 6,
-                            PermissionName = "Delete task"
-                        },
-                        new
-                        {
-                            PermissionId = 7,
-                            PermissionName = "Add member to task"
-                        },
-                        new
-                        {
-                            PermissionId = 8,
-                            PermissionName = "Add member to project"
-                        },
-                        new
-                        {
-                            PermissionId = 9,
-                            PermissionName = "Remove member from task"
-                        },
-                        new
-                        {
-                            PermissionId = 10,
-                            PermissionName = "Remove member from project"
-                        },
-                        new
-                        {
-                            PermissionId = 11,
-                            PermissionName = "Change task status"
-                        },
-                        new
-                        {
-                            PermissionId = 12,
-                            PermissionName = "Change project status"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.Project", b =>
@@ -247,18 +152,6 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = "Open"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Status = "Closed"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
@@ -271,6 +164,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProjectTaskStatusId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
@@ -290,33 +186,30 @@ namespace Server.Migrations
                     b.Property<int>("TaskPriorityId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TaskStatusId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TaskId");
 
                     b.HasIndex("ProjectId");
 
+                    b.HasIndex("ProjectTaskStatusId");
+
                     b.HasIndex("TaskCategoryId");
 
                     b.HasIndex("TaskPriorityId");
-
-                    b.HasIndex("TaskStatusId");
 
                     b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
                 {
-                    b.Property<int>("ProjectId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TaskStatusId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("ProjectId", "TaskStatusId");
-
-                    b.HasIndex("TaskStatusId");
+                    b.HasKey("Id");
 
                     b.ToTable("ProjectTaskStatuses");
                 });
@@ -334,23 +227,6 @@ namespace Server.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            RoleName = "Project Manager"
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            RoleName = "Worker"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.RolePermission", b =>
@@ -366,63 +242,6 @@ namespace Server.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 3
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 7
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 8
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 9
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 10
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 11
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskActivity", b =>
@@ -444,33 +263,13 @@ namespace Server.Migrations
                     b.Property<int>("ProjectTaskId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TaskActivityTypeId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TaskActivityId");
 
                     b.HasIndex("MemberId");
 
                     b.HasIndex("ProjectTaskId");
 
-                    b.HasIndex("TaskActivityTypeId");
-
                     b.ToTable("TaskActivities");
-                });
-
-            modelBuilder.Entity("Server.Models.TaskActivityType", b =>
-                {
-                    b.Property<int>("TaskActivityTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("TaskActivityName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("TaskActivityTypeId");
-
-                    b.ToTable("TaskActivityTypes");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
@@ -486,13 +285,6 @@ namespace Server.Migrations
                     b.HasKey("TaskCategoryID");
 
                     b.ToTable("TaskCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskCategoryID = 1,
-                            CategoryName = "None"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
@@ -523,61 +315,6 @@ namespace Server.Migrations
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
-
-                    b.HasData(
-                        new
-                        {
-                            TaskPriorityId = 1,
-                            Name = "Low"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 2,
-                            Name = "Medium"
-                        },
-                        new
-                        {
-                            TaskPriorityId = 3,
-                            Name = "High"
-                        });
-                });
-
-            modelBuilder.Entity("Server.Models.TaskStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TaskStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDefault = true,
-                            Name = "New"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDefault = true,
-                            Name = "In Progress"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsDefault = true,
-                            Name = "Completed"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.File", b =>
@@ -593,17 +330,11 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
-                    b.HasOne("Server.Models.File", "Avatar")
-                        .WithMany()
-                        .HasForeignKey("AvatarId");
-
                     b.HasOne("Server.Models.Role", "Role")
                         .WithMany("Members")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Avatar");
 
                     b.Navigation("Role");
                 });
@@ -652,6 +383,12 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Models.ProjectTaskStatus", "ProjectTaskStatus")
+                        .WithMany("ProjectTasks")
+                        .HasForeignKey("ProjectTaskStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Server.Models.TaskCategory", "TaskCategory")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskCategoryId")
@@ -664,38 +401,13 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
-                        .WithMany("ProjectTasks")
-                        .HasForeignKey("TaskStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Project");
+
+                    b.Navigation("ProjectTaskStatus");
 
                     b.Navigation("TaskCategory");
 
                     b.Navigation("TaskPriority");
-
-                    b.Navigation("TaskStatus");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
-                {
-                    b.HasOne("Server.Models.Project", "Project")
-                        .WithMany("ProjectTaskStatuses")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.TaskStatus", "TaskStatus")
-                        .WithMany("ProjectTaskStatuses")
-                        .HasForeignKey("TaskStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("TaskStatus");
                 });
 
             modelBuilder.Entity("Server.Models.RolePermission", b =>
@@ -731,17 +443,9 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Models.TaskActivityType", "TaskActivityType")
-                        .WithMany("TaskActivities")
-                        .HasForeignKey("TaskActivityTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Member");
 
                     b.Navigation("ProjectTask");
-
-                    b.Navigation("TaskActivityType");
                 });
 
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
@@ -781,8 +485,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
-                    b.Navigation("ProjectTaskStatuses");
-
                     b.Navigation("ProjectTasks");
                 });
 
@@ -802,16 +504,16 @@ namespace Server.Migrations
                     b.Navigation("TaskActivities");
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
+                {
+                    b.Navigation("ProjectTasks");
+                });
+
             modelBuilder.Entity("Server.Models.Role", b =>
                 {
                     b.Navigation("Members");
 
                     b.Navigation("RolePermissions");
-                });
-
-            modelBuilder.Entity("Server.Models.TaskActivityType", b =>
-                {
-                    b.Navigation("TaskActivities");
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
@@ -821,13 +523,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.TaskPriority", b =>
                 {
-                    b.Navigation("ProjectTasks");
-                });
-
-            modelBuilder.Entity("Server.Models.TaskStatus", b =>
-                {
-                    b.Navigation("ProjectTaskStatuses");
-
                     b.Navigation("ProjectTasks");
                 });
 #pragma warning restore 612, 618

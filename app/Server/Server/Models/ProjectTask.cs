@@ -37,5 +37,7 @@ namespace Server.Models
         public ICollection<TaskDependency> DependentTasks { get; set; } = new List<TaskDependency>();
 
         public ICollection<MemberTask> Members { get; set; } = new List<MemberTask>();
+
+        public ICollection<TaskActivity> TaskActivities { get; set; }
     }
 }

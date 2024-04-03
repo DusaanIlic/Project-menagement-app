@@ -54,5 +54,7 @@ namespace Server.Models
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();
 
         public ICollection<File> UploadedFiles { get; set; } = new List<File>();
+
+        public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
     }
 }

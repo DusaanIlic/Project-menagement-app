@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Mozilla;
 using Server.Models;
 using File = Server.Models.File;
 using TaskStatus = Server.Models.TaskStatus;
@@ -25,6 +26,8 @@ namespace Server.Data
         public DbSet<Role> Roles {  get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<TaskActivity> TaskActivities { get; set; }
+        public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -132,6 +135,21 @@ namespace Server.Data
                 .HasMany(ts => ts.ProjectTaskStatuses)
                 .WithOne(pts => pts.TaskStatus)
                 .HasForeignKey(pts => pts.TaskStatusId);
+            
+            modelBuilder.Entity<TaskActivity>()
+                .HasOne(a => a.ProjectTask)
+                .WithMany(pt => pt.TaskActivities)
+                .HasForeignKey(a => a.ProjectTaskId);
+
+            modelBuilder.Entity<TaskActivity>()
+                .HasOne(ta => ta.Member)
+                .WithMany(m => m.TaskActivities)
+                .HasForeignKey(ta => ta.MemberId);
+
+            modelBuilder.Entity<TaskActivity>()
+                .HasOne(a => a.TaskActivityType)
+                .WithMany(t => t.TaskActivities)
+                .HasForeignKey(a => a.TaskActivityTypeId);
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Add members" },
@@ -187,6 +205,12 @@ namespace Server.Data
             
             modelBuilder.Entity<TaskCategory>().HasData(
                 new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
+            );
+            
+            modelBuilder.Entity<TaskActivityType>().HasData(
+                new TaskActivityType { TaskActivityTypeId = 1, TaskActivityName = "Review" },
+                new TaskActivityType { TaskActivityTypeId = 2, TaskActivityName = "Update" },
+                new TaskActivityType { TaskActivityTypeId = 3, TaskActivityName = "Bug fix" }
             );
         }
     }
