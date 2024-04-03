@@ -5,6 +5,7 @@ import {RouterLink} from "@angular/router";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MemberService } from '../../services/member.service';
+import { Role } from '../../models/role';
 
 @Component({
     selector: 'app-all-members',
@@ -15,6 +16,7 @@ import { MemberService } from '../../services/member.service';
 })
 export class AllMembersComponent implements OnInit{
 
+    roles: Role[] = [];
     members : Member[] = [];
     filteredMembers: Member[] = [];
     searchQuery: string = '';
@@ -24,6 +26,8 @@ export class AllMembersComponent implements OnInit{
 
     ngOnInit(): void {
         this.getMembersFromServer();
+        this.getRolesFromServer();
+        console.log(this.roles);
     }
 
     getMembersFromServer(): void {
@@ -40,6 +44,23 @@ export class AllMembersComponent implements OnInit{
         }
       );
     }
+
+    getRolesFromServer(): void {
+      this.memberService.getRoles().subscribe(
+        (data: Role[]) => {
+          this.roles = data;
+        },
+        (error) => {
+          console.log('Error fetching roles:', error);
+        }
+      );
+    }
+
+    getRoleName(roleId: number): string {
+      const role = this.roles.find(r => r.id === roleId) as { id: number; name: string } | undefined;
+      return role ? role.name : 'Unknown';
+    }
+  
 
 
     constructor(private memberService: MemberService) {

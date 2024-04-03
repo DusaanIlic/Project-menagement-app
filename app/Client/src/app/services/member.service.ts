@@ -4,6 +4,7 @@ import {AddMemberForm} from "../forms/add-member.form";
 import {Observable} from "rxjs";
 
 const API = 'http://localhost:8000/api/Member';
+const API_ROLES = 'http://localhost:8000/api/Role';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,5 +27,9 @@ export class MemberService {
 
   getMembers(): Observable<any[]>{
     return this.http.get<any[]>(`${API}`);
+  }
+
+  getRoles(): Observable<any[]> {
+    return this.http.get<any[]>(`${API_ROLES}`);
   }
 }
