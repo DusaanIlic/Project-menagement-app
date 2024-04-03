@@ -36,7 +36,7 @@ export class LoginComponent {
           firstName: data.member.firstName,
           lastName: data.member.lastName,
           email: data.member.email,
-          role: data.member.role,
+          roleId: data.member.role,
           dateAdded: data.member.dateAdded
         };
 

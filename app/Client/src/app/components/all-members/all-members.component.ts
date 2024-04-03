@@ -27,7 +27,6 @@ export class AllMembersComponent implements OnInit{
     ngOnInit(): void {
         this.getMembersFromServer();
         this.getRolesFromServer();
-        console.log(this.roles);
     }
 
     getMembersFromServer(): void {
@@ -56,8 +55,13 @@ export class AllMembersComponent implements OnInit{
       );
     }
 
-    getRoleName(roleId: number): string {
-      const role = this.roles.find(r => r.id === roleId) as { id: number; name: string } | undefined;
+    getRoleName(roleId: number): any {
+      if (!this.roles || this.roles.length === 0) {
+        return 'Unknown';
+      }
+      
+      const role = this.roles.find(r => r.id === roleId);
+      
       return role ? role.name : 'Unknown';
     }
   

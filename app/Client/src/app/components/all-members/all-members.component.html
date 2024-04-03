@@ -20,7 +20,7 @@
                             <img src="assets/avatar.png" class="rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2">
                         </td>
                         <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60" [routerLink]="['/members/', member.id]">{{member.firstName}} {{member.lastName}}</td>
-                        <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60" >{{ getRoleName(member.role) }}</td>
+                        <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60" >{{ getRoleName(member.roleId) }}</td>
                         <td class="text-center hidden w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60 sm:table-cell md:table-cell lg:table-cell xl:table-cell" [routerLink]="['/members/', member.id]">{{member.email}}</td>
                         <td class="text-center w-20  hidden  lg:w-56 xl:w-60 lg:table-cell xl:table-cell" [routerLink]="['/members/', member.id]">{{member.dateAdded | date}}</td>
                     </tr>

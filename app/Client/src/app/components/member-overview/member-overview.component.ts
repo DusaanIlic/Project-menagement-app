@@ -21,7 +21,7 @@ hideNshow(i: number) {
     firstName: 'Pera',
     lastName: 'Peric',
     email: 'pera.peric@gmail.com',
-    role: 1,
+    roleId: 1,
     dateAdded: '1/1/2024'
   };
 
