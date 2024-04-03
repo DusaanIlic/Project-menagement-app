@@ -33,7 +33,8 @@ export class LoginComponent {
       next: data => {
         const member : Member = {
           id: data.member.id,
-          fullName: data.member.fullName,
+          firstName: data.member.firstName,
+          lastName: data.member.lastName,
           email: data.member.email,
           role: data.member.role,
           dateAdded: data.member.dateAdded

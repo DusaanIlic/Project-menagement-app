@@ -18,7 +18,8 @@ hideNshow(i: number) {
   
   member : Member = {
     id: 1,
-    fullName: 'Pera Peric',
+    firstName: 'Pera',
+    lastName: 'Peric',
     email: 'pera.peric@gmail.com',
     role: 'Project Manager',
     dateAdded: '1/1/2024'

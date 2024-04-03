@@ -23,4 +23,8 @@ export class MemberService {
       httpOptions
     )
   }
+
+  getMembers(): Observable<any[]>{
+    return this.http.get<any[]>(`${API}`);
+  }
 }
