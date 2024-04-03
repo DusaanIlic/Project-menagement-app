@@ -38,6 +38,13 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     this.dialogRef.close();
   }
 
+  todayDate(): string {
+    const today = new Date();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${today.getFullYear()}-${month}-${day}`;
+}
+
   saveTask(){
     const taskData = {
       taskName: this.taskName,

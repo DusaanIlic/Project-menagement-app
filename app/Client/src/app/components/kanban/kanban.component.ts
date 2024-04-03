@@ -151,7 +151,7 @@ export class KanbanComponent implements OnInit {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(1); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+      this.loadTasksByProject(1); 
     });
   }
 

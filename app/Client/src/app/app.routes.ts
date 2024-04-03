@@ -1,6 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from "./components/login/login.component";
-import { AddMemberComponent } from "./components/add-member/add-member.component";
 import { AllMembersComponent } from "./components/all-members/all-members.component";
 import { AllProjectsComponent } from "./components/all-projects/all-projects.component";
 import { AddProjectComponent } from './components/add-project/add-project.component';
@@ -20,7 +19,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'members/add', component: AddMemberComponent, canActivate: [AuthGuard] },
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
   { path: 'members/edit/:id', component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
   { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
