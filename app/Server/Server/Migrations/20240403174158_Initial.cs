@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Server.Migrations
 {
     /// <inheritdoc />
@@ -51,6 +53,19 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaskActivityTypes",
+                columns: table => new
+                {
+                    TaskActivityTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TaskActivityName = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskActivityTypes", x => x.TaskActivityTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaskCategories",
                 columns: table => new
                 {
@@ -82,7 +97,8 @@ namespace Server.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,6 +302,41 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaskActivities",
+                columns: table => new
+                {
+                    TaskActivityId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProjectTaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    ActivityDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    TaskActivityTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskActivities", x => x.TaskActivityId);
+                    table.ForeignKey(
+                        name: "FK_TaskActivities_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskActivities_ProjectTasks_ProjectTaskId",
+                        column: x => x.ProjectTaskId,
+                        principalTable: "ProjectTasks",
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskActivities_TaskActivityTypes_TaskActivityTypeId",
+                        column: x => x.TaskActivityTypeId,
+                        principalTable: "TaskActivityTypes",
+                        principalColumn: "TaskActivityTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaskDependencies",
                 columns: table => new
                 {
@@ -307,6 +358,97 @@ namespace Server.Migrations
                         principalTable: "ProjectTasks",
                         principalColumn: "TaskId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Permissions",
+                columns: new[] { "PermissionId", "PermissionName" },
+                values: new object[,]
+                {
+                    { 1, "Add members" },
+                    { 2, "Deactivate members" },
+                    { 3, "Create project" },
+                    { 4, "Create task" },
+                    { 5, "Delete project" },
+                    { 6, "Delete task" },
+                    { 7, "Add member to task" },
+                    { 8, "Add member to project" },
+                    { 9, "Remove member from task" },
+                    { 10, "Remove member from project" },
+                    { 11, "Change task status" },
+                    { 12, "Change project status" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectStatuses",
+                columns: new[] { "Id", "Status" },
+                values: new object[,]
+                {
+                    { 1, "Open" },
+                    { 2, "Closed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, "Administrator" },
+                    { 2, "Project Manager" },
+                    { 3, "Worker" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskActivityTypes",
+                columns: new[] { "TaskActivityTypeId", "TaskActivityName" },
+                values: new object[,]
+                {
+                    { 1, "Review" },
+                    { 2, "Update" },
+                    { 3, "Bug fix" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskCategories",
+                columns: new[] { "TaskCategoryID", "CategoryName" },
+                values: new object[] { 1, "None" });
+
+            migrationBuilder.InsertData(
+                table: "TaskPriority",
+                columns: new[] { "TaskPriorityId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Low" },
+                    { 2, "Medium" },
+                    { 3, "High" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskStatuses",
+                columns: new[] { "Id", "IsDefault", "Name" },
+                values: new object[,]
+                {
+                    { 1, true, "New" },
+                    { 2, true, "In Progress" },
+                    { 3, true, "Completed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 2 },
+                    { 4, 2 },
+                    { 5, 2 },
+                    { 6, 2 },
+                    { 7, 2 },
+                    { 8, 2 },
+                    { 9, 2 },
+                    { 10, 2 },
+                    { 11, 3 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -376,6 +518,21 @@ namespace Server.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TaskActivities_MemberId",
+                table: "TaskActivities",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskActivities_ProjectTaskId",
+                table: "TaskActivities",
+                column: "ProjectTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskActivities_TaskActivityTypeId",
+                table: "TaskActivities",
+                column: "TaskActivityTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskDependencies_DependentTaskId",
                 table: "TaskDependencies",
                 column: "DependentTaskId");
@@ -406,10 +563,16 @@ namespace Server.Migrations
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
+                name: "TaskActivities");
+
+            migrationBuilder.DropTable(
                 name: "TaskDependencies");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "TaskActivityTypes");
 
             migrationBuilder.DropTable(
                 name: "ProjectTasks");

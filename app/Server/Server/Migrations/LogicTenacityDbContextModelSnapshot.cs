@@ -471,6 +471,23 @@ namespace Server.Migrations
                     b.HasKey("TaskActivityTypeId");
 
                     b.ToTable("TaskActivityTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            TaskActivityTypeId = 1,
+                            TaskActivityName = "Review"
+                        },
+                        new
+                        {
+                            TaskActivityTypeId = 2,
+                            TaskActivityName = "Update"
+                        },
+                        new
+                        {
+                            TaskActivityTypeId = 3,
+                            TaskActivityName = "Bug fix"
+                        });
                 });
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
