@@ -17,8 +17,10 @@
                 <tbody class="text-base xl:text-xl">
                     <tr class="xl:mb-3 border-b-black border-2 xl:h-16 " *ngFor="let member of members">
                         <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60">
-                            <img src="assets/avatar.png" class="rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2">
-                        </td>
+                            <div class="flex justify-center">
+                                <img src="assets/avatar.png" class="rounded-full border-solid border-black border-2 w-12 h-12 xl:p-2">
+                            </div>
+                        </td>                        
                         <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60" [routerLink]="['/members/', member.id]">{{member.firstName}} {{member.lastName}}</td>
                         <td class="text-center w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60" >{{ getRoleName(member.roleId) }}</td>
                         <td class="text-center hidden w-20 sm:w-28 md:w-28 lg:w-56 xl:w-60 sm:table-cell md:table-cell lg:table-cell xl:table-cell" [routerLink]="['/members/', member.id]">{{member.email}}</td>
