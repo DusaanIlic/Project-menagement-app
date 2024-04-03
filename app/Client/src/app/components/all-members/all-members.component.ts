@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MemberService } from '../../services/member.service';
 import { Role } from '../../models/role';
 import { AddMemberComponent } from '../add-member/add-member.component';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -14,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
     standalone: true,
     templateUrl: './all-members.component.html',
     styleUrl: './all-members.component.scss',
-    imports: [CommonModule, RouterLink, FormsModule]
+    imports: [CommonModule, RouterLink, FormsModule, NgToastModule]
 })
 export class AllMembersComponent implements OnInit{
 
@@ -29,6 +30,10 @@ export class AllMembersComponent implements OnInit{
     ngOnInit(): void {
         this.getMembersFromServer();
         this.getRolesFromServer();
+    }
+
+    showMessage(){
+      this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
     }
 
     getMembersFromServer(): void {
@@ -69,7 +74,7 @@ export class AllMembersComponent implements OnInit{
   
 
 
-    constructor(private memberService: MemberService,  public dialog: MatDialog) {
+    constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
         this.filteredMembers = this.members;
         this.sortNames();
         this.sortEmails();

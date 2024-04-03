@@ -40,7 +40,7 @@ disableSelect: any;
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
   }
 
   addMember(){
