@@ -79,6 +79,22 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaskComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Text = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    MemberTaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskComments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaskPriority",
                 columns: table => new
                 {
@@ -384,8 +400,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "Status" },
                 values: new object[,]
                 {
-                    { 1, "Open" },
-                    { 2, "Closed" }
+                    { 1, "In Preparation" },
+                    { 2, "Closed" },
+                    { 3, "In Progress" }
                 });
 
             migrationBuilder.InsertData(
@@ -564,6 +581,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskActivities");
+
+            migrationBuilder.DropTable(
+                name: "TaskComments");
 
             migrationBuilder.DropTable(
                 name: "TaskDependencies");

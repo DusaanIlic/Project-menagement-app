@@ -517,6 +517,30 @@ namespace Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Server.Models.TaskComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MemberTaskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskComments");
+                });
+
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
                 {
                     b.Property<int>("TaskId")

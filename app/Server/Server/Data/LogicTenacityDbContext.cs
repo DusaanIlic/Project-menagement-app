@@ -28,6 +28,7 @@ namespace Server.Data
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<TaskActivity> TaskActivities { get; set; }
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
+        public DbSet<TaskComment> TaskComments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
