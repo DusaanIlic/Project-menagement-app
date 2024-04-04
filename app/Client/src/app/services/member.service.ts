@@ -2,6 +2,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {AddMemberForm} from "../forms/add-member.form";
 import {Observable} from "rxjs";
+import { Member } from "../models/member";
 
 const API = 'http://localhost:8000/api/Member';
 const API_ROLES = 'http://localhost:8000/api/Role';
@@ -22,6 +23,10 @@ export class MemberService {
 
   getMembers(): Observable<any[]>{
     return this.http.get<any[]>(`${API}`);
+  }
+
+  getMemberById(id : number): Observable<Member>{
+    return this.http.get<Member>(`${API}/${id}`);
   }
 
   getRoles(): Observable<any[]> {
