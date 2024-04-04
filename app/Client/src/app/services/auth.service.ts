@@ -13,7 +13,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(
@@ -30,6 +30,8 @@ export class AuthService {
     console.log('logging out');
     localStorage.removeItem('jwt-token');
     localStorage.removeItem('auth-member');
+
+    this.router.navigate(['/login']);
   }
 
   getToken(): string | null{
