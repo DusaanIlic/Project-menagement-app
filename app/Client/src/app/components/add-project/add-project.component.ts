@@ -1,56 +1,51 @@
 import {
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  EventEmitter,
+  Inject,
   OnDestroy,
   OnInit,
+  Output,
 } from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-
-import { ProjectAddRequest } from '../../models/project-add';
-import { tap } from 'rxjs/internal/operators/tap';
+import { FormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProjectService } from '../../services/add.project.service';
 import { NgxEditorModule } from 'ngx-editor';
 import { Editor } from 'ngx-editor';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-add-project',
   standalone: true,
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule, NgxEditorModule],
+  imports: [FormsModule, CommonModule, NgxEditorModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AddProjectComponent implements OnInit, OnDestroy {
   editor: Editor = new Editor();
   html = '';
 
+  projectName: string = '';
+  projectDescription: string = '';
+  deadLine: Date | null = null;
+
+  @Output() projectAdded: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(
+    public dialogRef: MatDialogRef<AddProjectComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private projectService: ProjectService
+  ) {}
+
   ngOnInit(): void {
-    this.editor = new Editor();
+    throw new Error('Method not implemented.');
   }
-
-  // make sure to destory the editor
   ngOnDestroy(): void {
-    this.editor.destroy();
+    this.editor?.destroy();
   }
 
-  isSuccess: boolean = false;
-  isError: boolean = false;
-  projectForm = new FormGroup({
-    projectName: new FormControl('', [Validators.required]),
-    deadLine: new FormControl('', [Validators.required]),
-    projectDescription: new FormControl('', [Validators.required]),
-  });
-
-  private project?: ProjectAddRequest;
-
-  constructor(public dialogRef: MatDialogRef<AddProjectComponent>) {}
   closeDialog(): void {
     this.dialogRef.close();
   }
@@ -85,13 +80,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
         .subscribe();
     }
   }
-  showErrorMessage() {
-    this.isError = true;
-    this.isSuccess = false;
-  }
-  showSuccessMessage() {
-    this.isSuccess = true;
-    this.isError = false;
+
   }*/
   }
 }

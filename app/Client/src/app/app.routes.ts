@@ -15,7 +15,6 @@ import { AllTasksComponent } from './components/all-tasks/all-tasks.component';
 import { KanbanComponent } from './components/kanban/kanban.component';
 import { MemberOverviewComponent } from './components/member-overview/member-overview.component';
 import { AllAssigneesComponent } from './components/all-assignees/all-assignees.component';
-//import { AddProjectDialogComponent } from './components/add-project-dialog/add-project-dialog.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },

@@ -6,6 +6,7 @@
   </h3>
   <button
     type="button"
+    (click)="closeDialog()"
     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
     data-modal-hide="default-modal"
   >
@@ -27,69 +28,51 @@
     <span class="sr-only">Close modal</span>
   </button>
 </div>
-<form
-  [formGroup]="projectForm"
-  (ngSubmit)="onSubmit()"
-  class="flex flex-col place-items-center min-h-screen"
->
-  <div class="grid grid-rows-2">
-    <div class="mt-8 grid lg:grid-cols-2 gap-10">
-      <div class="grid grid-rows-2">
-        <label for="projectName" class="">Project Name</label>
-        <input
-          type="text"
-          id="projectName"
-          formControlName="projectName"
-          class="border-2 rounded-md max-h-8"
-        />
-      </div>
 
-      <div class="grid grid-rows-2">
-        <label for="deadLine">Due Date</label>
-        <input
-          class="border-2 rounded-md max-h-8"
-          type="date"
-          formControlName="deadLine"
-          id="date"
-        />
-      </div>
-    </div>
-
-    <div class="mt-5 grid grid-rows-2">
-      <label for="projectDescription">Description</label>
-      <textarea
+<!--  -->
+<div class="p-4 md:p-5 flex justify-between">
+  <div class="w-2/5">
+    <div class="flex-row justify-between pb-10">
+      <label for="name" class="pr-8">Project name</label>
+      <input
         type="text"
-        formControlName="projectDescription"
-        id="projectDescription"
-        class="border-2 rounded-md"
-      >
-      </textarea>
-      <!-- <div class="NgxEditor__Wrapper">
-          <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-          <ngx-editor
-            [editor]="editor"
-            [ngModel]="html"
-            [disabled]="false"
-            [placeholder]="'Type here...'"
-          ></ngx-editor>
-        </div>-->
+        placeholder="Project name..."
+        id="name"
+        [(ngModel)]="projectName"
+      />
     </div>
   </div>
 
+  <div class="w-3/5">
+    <div class="flex-row justify-between">
+      <label for="name" class="pr-10">Deadline </label>
+      <input type="date" id="name" class="w-3/4" [(ngModel)]="deadLine" />
+    </div>
+
+    <div class="flex-row justify-between">
+      <label for="name">Description </label>
+      <div class="NgxEditor__Wrapper">
+        <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+        <ngx-editor
+          [(ngModel)]="html"
+          [editor]="editor"
+          [disabled]="false"
+          [placeholder]="'Type here...'"
+        ></ngx-editor>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
+>
   <button
-    type="submit"
-    class="mt-20 rounded-xl p-5 bg-accent-blue shadow-md text-white text-xl font-bold"
+    data-modal-hide="default-modal"
+    type="button"
+    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    (click)="onSubmit()"
   >
-    Create Project
+    Save
   </button>
-
-  <div *ngIf="isSuccess; else errorMessage" class="mt-8">
-    <label>Projekat je uspešno dodat</label>
-  </div>
-
-  <ng-template #errorMessage>
-    <div *ngIf="isError" class="mt-8">
-      <label>Greška prilikom dodavanja projekta</label>
-    </div>
-  </ng-template>
-</form>
+</div>
