@@ -3,6 +3,7 @@ import {Injectable} from "@angular/core";
 import {AddMemberForm} from "../forms/add-member.form";
 import {Observable} from "rxjs";
 import { Member } from "../models/member";
+import { Role } from "../models/role";
 
 const API = 'http://localhost:8000/api/Member';
 const API_ROLES = 'http://localhost:8000/api/Role';
@@ -31,6 +32,10 @@ export class MemberService {
 
   getRoles(): Observable<any[]> {
     return this.http.get<any[]>(`${API_ROLES}`);
+  }
+
+  getRoleById(id:number): Observable<Role> {
+    return this.http.get<Role>(`${API_ROLES}/${id}`);
   }
 
 }

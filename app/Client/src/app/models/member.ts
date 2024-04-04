@@ -5,4 +5,11 @@ export interface Member {
     email: string,
     roleId: number,
     dateAdded: string,
+    phoneNumber: string,
+    linkedin: string,
+    github: string,
+    status: string,
+    country: string,
+    city: string,
+    dateOfBirth: Date
 }

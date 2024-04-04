@@ -7,6 +7,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MemberService } from '../../services/member.service';
+import { Role } from '../../models/role';
+import { TaskService } from '../../services/task.service';
+import { Task } from '../../models/task';
+import { ProjectService } from '../../services/add.project.service';
+import { ProjectServiceGet } from '../../services/project.service';
+import { Project } from '../../models/project';
 
 
 @Component({
@@ -24,29 +30,66 @@ export class MemberOverviewComponent{
     firstName: '',
     lastName: '',
     email: '',
-    roleId: 0,
-    dateAdded: ''
+    roleId: 1,
+    dateAdded: '',
+    phoneNumber: '',
+    linkedin: '',
+    github: '',
+    status: '',
+    country: '',
+    city: '',
+    dateOfBirth: new Date()
   };
 
-  projects : string[] = [];
+  p? : Project;
+  projects : Project[] = [];
   activities : taskActivity[] = [];
+  tasks : Task[] = [];
   expanded : boolean[] = [];
-
+  mRole : string = "";
 
   async getMemberId()
   {
-    this.route.params.subscribe(params => {
+    await this.route.params.subscribe(params => {
       this.member.id = params['id'];
-      console.log(params['id']);
     });
   }
 
   async fetchMemberFromDB()
   {
-    this.mService.getMemberById(this.member.id).subscribe((member : Member) => {
-      console.log(member);
+    this.mService.getMemberById(this.member.id).subscribe((member : Member) => 
+    {
+      this.member = member;
     });
+
+    this.mService.getRoleById(this.member.roleId).subscribe((role : Role) =>
+    {
+      this.mRole = role.name;
+    })
   }
+
+  getTasks()
+{
+  this.tService.getTasksByMember(this.member.id).subscribe((tasks : Task[]) =>
+  {
+    this.tasks = tasks;
+    this.getProjects();
+  })
+}
+
+getProjects()
+{
+  for(let i=0;i<this.tasks.length;i++)
+    {
+      this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => 
+        {
+          this.p = project;
+          this.projects.push(this.p);
+        })
+    }
+    
+  
+}
 
 async getMember()
 {
@@ -54,21 +97,26 @@ async getMember()
   this.fetchMemberFromDB();
 }
 
-  constructor(public dialog: MatDialog, private route: ActivatedRoute, private mService : MemberService) {
+
+
+
+  constructor(public dialog: MatDialog, private route: ActivatedRoute, private mService : MemberService, private tService : TaskService, private pService : ProjectServiceGet) {
 
     this.getMember();
-    
+    this.getTasks();
 
     for(let i=0;i<this.activities.length;i++)
     {
-      if(!this.projects.includes(this.activities[i].projectName.trim()))
-      this.projects.push(this.activities[i].projectName);
+     // if(!this.projects.includes(this.activities[i].projectName.trim()))
+      //this.projects.push(this.activities[i].projectName);
     }
 
     for(let i=0;i<this.projects.length;i++)
     {
       this.expanded.push(false);
     }
+
+    console.log(this.projects[0]);
   }
 
 
@@ -84,7 +132,6 @@ hideNshow(i: number)
   
 
   openDialog(id: number): void {
-    console.log(this.activities[id]);
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
       data: id

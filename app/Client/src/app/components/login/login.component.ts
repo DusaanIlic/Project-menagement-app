@@ -37,7 +37,14 @@ export class LoginComponent {
           lastName: data.member.lastName,
           email: data.member.email,
           roleId: data.member.role,
-          dateAdded: data.member.dateAdded
+          dateAdded: data.member.dateAdded,
+          phoneNumber: data.member.phoneNumber,
+          linkedin: data.member.linkedin,
+          github: data.member.github,
+          status: data.member.status,
+          country: data.member.country,
+          city: data.member.city,
+          dateOfBirth: data.member.dateOfBirth
         };
 
         console.log(data);

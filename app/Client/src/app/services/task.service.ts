@@ -28,4 +28,9 @@ export class TaskService {
     return this.http.post<any>(`${TASK_API}`, taskData);
   }
 
+  getTasksByMember(memberId : number): Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_API}/members/${memberId}/tasks`);
+  }
+
 }
