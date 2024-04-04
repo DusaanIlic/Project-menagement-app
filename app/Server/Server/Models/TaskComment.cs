@@ -9,6 +9,6 @@ namespace Server.Models
         public DateTime CreatedAt { get; set; }
 
         public int MemberTaskId { get; set; }
-        public MemberTask MemberTask { get; set; }
+        public int MemberId { get; set; }
     }
 }
