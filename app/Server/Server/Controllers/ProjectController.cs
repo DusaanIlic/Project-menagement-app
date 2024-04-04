@@ -84,14 +84,28 @@ namespace Server.Controllers
         public async Task<IActionResult> AddProjects(AddProjectRequest addProjectRequest)
         {
             var projectStatus = dbContext.ProjectStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var uploaderId = User.Claims.FirstOrDefault(c => c.Type == "Id").Value;
 
+            if (projectStatus == null)
+            {
+                return BadRequest();
+            }
+
+            var teamLeader = await dbContext.Members.FindAsync(int.Parse(uploaderId));
+
+            if (teamLeader == null)
+            {
+                return BadRequest();
+            }
+            
             var project = new Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
                 Deadline = addProjectRequest.Deadline,
                 StartDate = DateTime.Now,
-                ProjectStatus = projectStatus
+                ProjectStatus = projectStatus,
+                TeamLeaderId = teamLeader.Id
             };
             
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Take(3).ToListAsync();
@@ -103,6 +117,23 @@ namespace Server.Controllers
             
             await dbContext.SaveChangesAsync();
 
+            var teamLeaderDTO = new MemberDTO
+            {
+                Id = teamLeader.Id,
+                FirstName = teamLeader.FirstName,
+                LastName = teamLeader.LastName,
+                Email = teamLeader.Email,
+                RoleId = teamLeader.RoleId,
+                DateAdded = teamLeader.DateAdded,
+                Country = teamLeader.Country,
+                City = teamLeader.City,
+                Status = teamLeader.Status,
+                Github = teamLeader.Github,
+                Linkedin = teamLeader.Linkedin,
+                PhoneNumber = teamLeader.PhoneNumber,
+                DateOfBirth = teamLeader.DateOfBirth
+            };
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -111,7 +142,8 @@ namespace Server.Controllers
                 Deadline = project.Deadline,
                 ProjectStatusId = project.ProjectStatus.Id,
                 Status = projectStatus.Status,
-                StartDate = project.StartDate
+                StartDate = project.StartDate,
+                TeamLider = teamLeaderDTO
             };
 
             return Ok(projectDTO);

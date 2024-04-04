@@ -187,8 +187,9 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
-                new ProjectStatus { Id = 1, Status = "Open" },
-                new ProjectStatus { Id = 2, Status = "Closed" }
+                new ProjectStatus { Id = 1, Status = "In Preparation" },
+                new ProjectStatus { Id = 2, Status = "Closed" },
+                new ProjectStatus { Id = 3, Status = "In Progress" }
             );
             
             modelBuilder.Entity<TaskStatus>().HasData(

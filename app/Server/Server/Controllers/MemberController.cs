@@ -49,7 +49,7 @@ namespace Server.Controllers
                 Country = m.Country,
                 City = m.City,
                 Status = m.Status,
-                Github = m.Status,
+                Github = m.Github,
                 Linkedin = m.Linkedin,
                 PhoneNumber = m.PhoneNumber,
                 DateOfBirth = m.DateOfBirth
@@ -96,7 +96,7 @@ namespace Server.Controllers
                 Country = member.Country,
                 City = member.City,
                 Status = member.Status,
-                Github = member.Status,
+                Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
                 DateOfBirth = member.DateOfBirth
