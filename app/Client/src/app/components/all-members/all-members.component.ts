@@ -1,5 +1,5 @@
 import { Component, Input, OnInit} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Member } from '../../models/member';
 import {RouterLink} from "@angular/router";
 import { NgModule } from '@angular/core';
@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
     standalone: true,
     templateUrl: './all-members.component.html',
     styleUrl: './all-members.component.scss',
-    imports: [CommonModule, RouterLink, FormsModule, NgToastModule]
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage]
 })
 export class AllMembersComponent implements OnInit{
 
@@ -66,12 +66,12 @@ export class AllMembersComponent implements OnInit{
       if (!this.roles || this.roles.length === 0) {
         return 'Unknown';
       }
-      
+
       const role = this.roles.find(r => r.id === roleId);
-      
+
       return role ? role.name : 'Unknown';
     }
-  
+
 
 
     constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
@@ -102,7 +102,7 @@ export class AllMembersComponent implements OnInit{
     });
   }
 
-  
+
 
   switchSortName()
   {
@@ -144,7 +144,7 @@ export class AllMembersComponent implements OnInit{
 
   sortEmails()
   {
-    
+
     if(this.sortByEmail)
     {
       for(let i=0;i<this.filteredMembers.length-1;i++)
@@ -180,7 +180,7 @@ export class AllMembersComponent implements OnInit{
 
   sortDates()
   {
-    
+
     if(this.sortByDate)
     {
       for(let i=0;i<this.filteredMembers.length-1;i++)
