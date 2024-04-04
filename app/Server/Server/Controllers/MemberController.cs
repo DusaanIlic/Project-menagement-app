@@ -227,6 +227,7 @@ namespace Server.Controllers
         }
 
         [HttpGet("{id}/Avatar")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);

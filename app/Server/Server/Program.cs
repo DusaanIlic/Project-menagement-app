@@ -65,7 +65,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AllowAnonymous", policy =>
+    {
+        policy.AuthenticationSchemes.Clear(); // Clear any authentication schemes
+        policy.RequireAssertion(_ => true); // Allow anonymous access
+    });
+});
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
