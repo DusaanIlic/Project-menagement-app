@@ -1,16 +1,14 @@
-import { Component, OnInit, inject} from '@angular/core';
+import { Component } from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
 import { TaskOverviewComponent } from "../task-overview/task-overview.component";
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MemberService } from '../../services/member.service';
 import { Role } from '../../models/role';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
-import { ProjectService } from '../../services/add.project.service';
 import { ProjectServiceGet } from '../../services/project.service';
 import { Project } from '../../models/project';
 
@@ -116,7 +114,6 @@ async getMember()
       this.expanded.push(false);
     }
 
-    console.log(this.projects[0]);
   }
 
 
@@ -131,10 +128,10 @@ hideNshow(i: number)
   
   
 
-  openDialog(id: number): void {
+  openDialog(task: Task): void {
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
-      data: id
+      data: task
     });
 
     dialogRef.afterClosed().subscribe(result => {

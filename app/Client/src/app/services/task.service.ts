@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
+import { Task } from '../models/task';
+import { taskActivity } from '../models/taskActivity';
 
 const TASK_API = 'http://localhost:8000/api/Task';
+const TASKACTIVITY_API = 'http://localhost:8000/api/TaskActivity';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -31,6 +34,11 @@ export class TaskService {
   getTasksByMember(memberId : number): Observable<any[]>
   {
     return this.http.get<any[]>(`${TASK_API}/members/${memberId}/tasks`);
+  }
+
+  getTaskActivities(): Observable<taskActivity[]>
+  {
+    return this.http.get<taskActivity[]>(`${TASKACTIVITY_API}`);
   }
 
 }

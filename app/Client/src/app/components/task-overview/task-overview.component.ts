@@ -5,238 +5,36 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Task } from '../../models/task';
+import { NgxEditorModule, Editor } from 'ngx-editor';
+import { TaskService } from '../../services/task.service';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MemberService } from '../../services/member.service';
+import { Member } from '../../models/member';
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
 export class TaskOverviewComponent{
 
-    taskAct? : taskActivity;
+    members : Member[] = [];
     commentText = "";
   lessThanHour : boolean = false;
   lessThanDay : boolean = false;
   differenceM : number = 0;
   differenceH : number = 0;
-  activities : taskActivity[] = [
-    {
-      "projectId": 1,
-      "taskId": 1,
-      "memberId": 1,
-      "projectName": "Project Delta",
-      "taskName": "Backend Development",
-      "memberName": "Elena Rodriguez",
-      "type": "Update",
-      "dateModified": new Date("April 02, 2024 10:00:00"),
-      "description": "Implemented authentication system."
-  },
-  {
-      "projectId": 1,
-      "taskId": 2,
-      "memberId": 2,
-      "projectName": "Project Delta",
-      "taskName": "Backend Development",
-      "memberName": "Veljko Djurovic",
-      "type": "Bug fix",
-      "dateModified": new Date("April 01, 2024 23:00:00"),
-      "description": "Test1."
-  },
-  {
-      "projectId": 1,
-      "taskId": 3,
-      "memberId": 3,
-      "projectName": "Project Delta",
-      "taskName": "Frontend Development",
-      "memberName": "David Lee",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Integrated API endpoints."
-  },
-  {
-      "projectId": 2,
-      "taskId": 4,
-      "memberId": 4,
-      "projectName": "Project Epsilon",
-      "taskName": "Testing Phase",
-      "memberName": "Maria Garcia",
-      "type": "Bug Fix",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Fixed UI rendering issue."
-  },
-  {
-      "projectId": 2,
-      "taskId": 5,
-      "memberId": 5,
-      "projectName": "Project Epsilon",
-      "taskName": "Deployment",
-      "memberName": "Chris Johnson",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Deployed latest version to production."
-  },
-  {
-      "projectId": 3,
-      "taskId": 6,
-      "memberId": 6,
-      "projectName": "Project Zeta",
-      "taskName": "Documentation",
-      "memberName": "Sophia Kim",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Updated project documentation."
-  },
-  {
-      "projectId": 3,
-      "taskId": 7,
-      "memberId": 7,
-      "projectName": "Project Zeta",
-      "taskName": "Code Review",
-      "memberName": "Emma Wilson",
-      "type": "Review",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Reviewed pull requests."
-  },
-  {
-      "projectId": 4,
-      "taskId": 8,
-      "memberId": 8,
-      "projectName": "Project Theta",
-      "taskName": "Feature Development",
-      "memberName": "Michael Brown",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Implemented new feature."
-  },
-  {
-      "projectId": 4,
-      "taskId": 9,
-      "memberId": 9,
-      "projectName": "Project Theta",
-      "taskName": "Testing",
-      "memberName": "Laura Martinez",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Performed regression testing."
-  },
-  {
-      "projectId": 5,
-      "taskId": 10,
-      "memberId": 10,
-      "projectName": "Project Iota",
-      "taskName": "Database Optimization",
-      "memberName": "William Jones",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Optimized database queries."
-  },
-  {
-      "projectId": 5,
-      "taskId": 11,
-      "memberId": 11,
-      "projectName": "Project Iota",
-      "taskName": "Security Audit",
-      "memberName": "Olivia White",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Conducted security vulnerability assessment."
-  },
-  {
-      "projectId": 6,
-      "taskId": 12,
-      "memberId": 12,
-      "projectName": "Project Kappa",
-      "taskName": "Integration",
-      "memberName": "Daniel Davis",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Integrated third-party services."
-  },
-  {
-      "projectId": 6,
-      "taskId": 13,
-      "memberId": 13,
-      "projectName": "Project Kappa",
-      "taskName": "Bug Fixing",
-      "memberName": "Sophie Brown",
-      "type": "Bug Fix",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Resolved critical bugs."
-  },
-  {
-      "projectId": 7,
-      "taskId": 14,
-      "memberId": 14,
-      "projectName": "Project Lambda",
-      "taskName": "UI Design",
-      "memberName": "Jackson Taylor",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Designed user interface components."
-  },
-  {
-      "projectId": 7,
-      "taskId": 15,
-      "memberId": 15,
-      "projectName": "Project Lambda",
-      "taskName": "Performance Optimization",
-      "memberName": "Amelia Clark",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Optimized application performance."
-  },
-  {
-      "projectId": 8,
-      "taskId": 16,
-      "memberId": 16,
-      "projectName": "Project Mu",
-      "taskName": "Feature Implementation",
-      "memberName": "Liam Brown",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Implemented new feature."
-  },
-  {
-      "projectId": 8,
-      "taskId": 17,
-      "memberId": 17,
-      "projectName": "Project Mu",
-      "taskName": "Testing Phase",
-      "memberName": "Charlotte Evans",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Tested new functionalities."
-  },
-  {
-      "projectId": 9,
-      "taskId": 18,
-      "memberId": 18,
-      "projectName": "Project Nu",
-      "taskName": "Documentation",
-      "memberName": "James Smith",
-      "type": "Update",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Updated project documentation."
-  },
-  {
-      "projectId": 9,
-      "taskId": 19,
-      "memberId": 19,
-      "projectName": "Project Nu",
-      "taskName": "Code Review",
-      "memberName": "Ava Johnson",
-      "type": "Review",
-      "dateModified": new Date("1. 2. 2024."),
-      "description": "Reviewed pull requests."
-  }
-  ];
+  activities : taskActivity[] = [];
+    editor: Editor = new Editor;
+    html: any;
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public taskId: number)
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService)
   {
     this.dateCheck();
-    console.log(taskId);
+    this.getTaskActivities();
   }
 
   closeDialog(): void {
@@ -245,8 +43,8 @@ export class TaskOverviewComponent{
 
   dateCheck()
   {
-    this.differenceM = Math.trunc((new Date().getTime() - this.activities[this.taskId].dateModified?.getTime()) / (1000 * 60)); //racuna minute
-    this.differenceH = Math.trunc((new Date().getTime() - this.activities[this.taskId].dateModified?.getTime()) / (1000 * 3600)); //racuna minute
+    //this.differenceM = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModified?.getTime()) / (1000 * 60)); //racuna minute
+    //this.differenceH = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModified?.getTime()) / (1000 * 3600)); //racuna minute
 
     if(this.differenceM < 60)
       this.lessThanHour = true;
@@ -259,22 +57,24 @@ export class TaskOverviewComponent{
         this.lessThanDay = false;
   }
 
-  saveComment()
+  getTaskActivities()
   {
-    this.taskAct = 
-    {
-        projectId : this.activities[this.taskId].projectId,
-        taskId: this.activities[this.taskId].taskId,
-        memberId: this.activities[this.taskId].memberId,
-        projectName : this.activities[this.taskId].projectName,
-        taskName : this.activities[this.taskId].taskName,
-        memberName : this.activities[this.taskId].memberName,
-        type : this.activities[this.taskId].type,
-        dateModified : new Date(),
-        description : this.commentText,
-    }
-        console.log(this.taskAct);
-    }
+    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
+        this.activities = taskactivities;
+        this.getMembersById();
+    })
+  }
+
+  getMembersById()
+  {
+    for(let i=0;i<this.activities.length;i++)
+        {
+            this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
+                this.members.push(member);
+                console.log(member);
+            })
+        }
+  }
  
 
 }

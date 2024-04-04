@@ -2,11 +2,11 @@ export interface taskActivity
 {
     projectId: number,
     taskId: number,
-    memberId: number,
+    workerId: number,
     projectName : string,
-    taskName? : string,
-    memberName? : string,
-    type? : string,
+    taskName : string,
+    memberName : string,
+    type : string,
     dateModified : Date,
-    description? : string
+    comment : string
 }
