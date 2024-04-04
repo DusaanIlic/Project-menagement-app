@@ -1,7 +1,8 @@
 export interface Member {
     id: number;
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string,
-    role: string,
+    roleId: number,
     dateAdded: string,
 }

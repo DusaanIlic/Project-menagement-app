@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, NavigationStart, Router, RouterOutlet} from '@angular/router';
-import { AddMemberComponent } from './components/add-member/add-member.component';
 import { AllProjectsComponent } from './components/all-projects/all-projects.component';
 import { AllMembersComponent } from './components/all-members/all-members.component';
 import { AddProjectComponent } from './components/add-project/add-project.component';
@@ -8,6 +7,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import { initFlowbite } from 'flowbite';
 import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar.component";
+import { NgxEditorModule } from 'ngx-editor';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +22,7 @@ import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar
     NavbarComponent,
     NgIf,
     ProjectNavbarComponent,
+    NgxEditorModule
   ],
 })
 export class AppComponent implements OnInit{

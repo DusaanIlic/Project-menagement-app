@@ -6,39 +6,53 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.DataTransferObjects.Request.File;
+using Server.Services.File;
 
 namespace Server.Controllers
 {
-    [Authorize(Roles="admin")]
+    [Authorize(Roles="Administrator")]
     [Route("api/[controller]")]
     [ApiController]
-    
     public class MemberController : ControllerBase
     {
-        private readonly LogicTenacityDbContext dbContext;
+        private readonly LogicTenacityDbContext _dbContext;
         private readonly IEmailService _emailService;
+        private readonly IFileService _fileService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService)
         {
-            this.dbContext = dbContext;
-            this._emailService = emailService;
+            _dbContext = dbContext;
+            _emailService = emailService;
+            _fileService = fileService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
-            var members = await dbContext.Members.ToListAsync();
+            var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
+            
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
-                FullName = m.FullName,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
                 Email = m.Email,
-                Role = m.Role,
-                DateAdded = m.DateAdded
+                RoleId = m.RoleId,
+                DateAdded = m.DateAdded,
+                Country = m.Country,
+                City = m.City,
+                Status = m.Status,
+                Github = m.Github,
+                Linkedin = m.Linkedin,
+                PhoneNumber = m.PhoneNumber,
+                DateOfBirth = m.DateOfBirth
             }).ToList();
             return Ok(memberDTOs);
         }
@@ -46,43 +60,62 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(memberDTO.Password);
+            var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
+
+            if (existingMember != null)
+            {
+                return Conflict();
+            }
+            
+            String randomPassword = GenerateRandomPassword(8);
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(randomPassword);
+
+            var role = await _dbContext.Roles.FindAsync(memberDTO.RoleId);
 
             var member = new Member
             {
-                FullName = memberDTO.FullName,
+                FirstName = memberDTO.FirstName,
+                LastName = memberDTO.LastName,
                 Email = memberDTO.Email,
                 Password = hashedPassword,
-                Role = memberDTO.Role,
-                DateAdded = DateTime.UtcNow
+                DateAdded = DateTime.UtcNow,
+                Role = role
             };
 
-            dbContext.Members.Add(member);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Members.Add(member);
+            await _dbContext.SaveChangesAsync();
 
             var memberResponse = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
-                Role = member.Role,
-                DateAdded = member.DateAdded
+                RoleId = role.RoleId,
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Github,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             var request = new EmailDTO
             {
                 To = memberDTO.Email,
-                Subject = "Welcome to LogicTeancity - Your Account Details",
+                Subject = "Welcome to LogicTenacity - Your Account Details",
                 Body = $@"
-                <p>Hello {memberDTO.FullName},</p>
+                <p>Hello {memberDTO.FirstName} {memberDTO.LastName},</p>
                 
-                <p>We are delighted to welcome you to LogicTeancity! Your account has been successfully created, and we're excited to have you on board.</p>
+                <p>We are delighted to welcome you to LogicTenacity! Your account has been successfully created, and we're excited to have you on board.</p>
                 
                 <p>Below are your account details:</p>
                 
                 <ul>
-                    <li><strong>Username/Email:</strong> {memberDTO.Email}</li>
-                    <li><strong>Temporary Password:</strong> {memberDTO.Password}</li>
+                    <li><strong>Email:</strong> {memberDTO.Email}</li>
+                    <li><strong>Temporary Password:</strong> {randomPassword}</li>
                 </ul>
                 
                 <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
@@ -94,7 +127,7 @@ namespace Server.Controllers
                     <li>Follow the prompts to create a new, secure password.</li>
                 </ol>
                                 
-                <p>Once again, welcome to the LogicTeancity family! We look forward to working with you.</p>"
+                <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
             };
 
 
@@ -106,7 +139,10 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMember(int id)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members
+                         .Include(m => m.Role) 
+                         .FirstOrDefaultAsync(m => m.Id == id);
+
 
             if (member == null)
             {
@@ -116,30 +152,59 @@ namespace Server.Controllers
             var memberDTO = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
-                Role = member.Role,
-                DateAdded = member.DateAdded
+                RoleId = member.RoleId,
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Github,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             return Ok(memberDTO);
         }
-
+        
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMember(int id, MemberDTO memberDTO)
+        public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
 
             if (member == null)
             {
                 return NotFound();
             }
 
-            member.FullName = memberDTO.FullName;
-            member.Email = memberDTO.Email;
-            member.Role = memberDTO.Role;
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
 
-            await dbContext.SaveChangesAsync();
+            var emailUsed =
+                await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email && m.Id != member.Id);
+
+            if (emailUsed != null)
+            {
+                return Conflict();
+            }
+
+            member.FirstName = memberDTO.FirstName;
+            member.LastName = memberDTO.LastName;
+            member.Email = memberDTO.Email;
+            member.Country = memberDTO.Country;
+            member.City = memberDTO.City;
+            member.Status = memberDTO.Status;
+            member.Github = memberDTO.Github;
+            member.Linkedin = memberDTO.Linkedin;
+            member.PhoneNumber = memberDTO.PhoneNumber;
+            member.DateOfBirth = memberDTO.DateOfBirth;
+
+            await _dbContext.SaveChangesAsync();
 
             // Return the updated member DTO
             return Ok(memberDTO);
@@ -148,17 +213,110 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMember(int id)
         {
-            var member = await dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members.FindAsync(id);
+        
+            if (member == null)
+            {
+                return NotFound();
+            }
+        
+            _dbContext.Members.Remove(member);
+            await _dbContext.SaveChangesAsync();
+        
+            return Ok();
+        }
+
+        [HttpGet("{id}/Avatar")]
+        public async Task<IActionResult> GetAvatar(int id)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
                 return NotFound();
             }
 
-            dbContext.Members.Remove(member);
-            await dbContext.SaveChangesAsync();
+            if (member.AvatarId == null)
+            {
+                return NotFound();
+            }
+
+            var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
+
+            return File(bytes, mime);
+        }
+
+        [HttpPost("{id}/Avatar")]
+        public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            if (member.AvatarId != null)
+            {
+                await _fileService.DeleteFile(member.AvatarId.Value);
+            }
+
+            var file = await _fileService.PostFileAsync(id, addFileRequest);
+            
+            member.AvatarId = file.FileId;
+            member.Avatar = file;
+
+            await _dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+        
+        [HttpDelete("{id}/Avatar")]
+        public async Task<IActionResult> DeleteAvatar(int id)
+        {
+            var member = await _dbContext.Members.FindAsync(id);
+            var isAdmin = User.IsInRole("admin");
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (member.Id != id && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            if (member.AvatarId != null)
+            {
+                await _fileService.DeleteFile(member.AvatarId.Value);
+                member.AvatarId = null;
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
+        public static string GenerateRandomPassword(int length)
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
+            StringBuilder password = new StringBuilder();
+            
+            byte[] randomBytes = RandomNumberGenerator.GetBytes(length);
+            
+            for (int i = 0; i < length; i++)
+            {
+                password.Append(validChars[randomBytes[i] % validChars.Length]);
+            }
+
+            return password.ToString();
         }
     }
 }

@@ -26,8 +26,9 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Include(p => p.Project)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
                 .ToListAsync();
 
             var tasksDTOs = new List<ProjectTaskDTO>();
@@ -43,11 +44,12 @@ namespace Server.Controllers
                    TaskDescription= t.TaskDescription,
                    TaskId = t.TaskId,
                    TaskName = t.TaskName,
-                   TaskStatus = t.ProjectTaskStatus.Name,
-                   TaskStatusId = t.ProjectTaskStatusId,
+                   TaskStatus = t.TaskStatus.Name,
+                   TaskStatusId = t.TaskStatusId,
                    StartDate = t.StartDate,
                    TaskPriorityId = t.TaskPriorityId,
-                   IsTaskDependentOn = isTaskDependentOn
+                   IsTaskDependentOn = isTaskDependentOn,
+                   TaskCategoryId = t.TaskCategoryId
 
                 });
 
@@ -59,8 +61,9 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
-            var projectTaskStatus = dbContext.ProjectTaskStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
+            var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
             var projectTask = new ProjectTask()
             {
@@ -68,9 +71,9 @@ namespace Server.Controllers
                 ProjectId = addProjectTaskRequest.ProjectId,
                 TaskDescription = addProjectTaskRequest.TaskDescription,
                 TaskName = addProjectTaskRequest.TaskName,
-                ProjectTaskStatus = projectTaskStatus,
-                TaskPriority = taskPriority
-
+                TaskStatus = projectTaskStatus,
+                TaskPriority = taskPriority,
+                TaskCategory = taskCategory
             };
 
             Console.WriteLine(taskPriority.Name);
@@ -87,11 +90,12 @@ namespace Server.Controllers
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
-                TaskStatusId = projectTask.ProjectTaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
+                TaskStatusId = projectTask.TaskStatusId,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
-                IsTaskDependentOn = isTaskDependentOn
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = taskCategory.TaskCategoryID
             };
 
             return Ok(tasksDTO);
@@ -101,8 +105,9 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskRequest updateProjectTaskRequest)
         {
             var projectTask = await dbContext.ProjectTasks
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
                 .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -128,11 +133,12 @@ namespace Server.Controllers
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
-                TaskStatusId = projectTask.ProjectTaskStatusId,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
+                TaskStatusId = projectTask.TaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
-                IsTaskDependentOn = isTaskDependentOn
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = projectTask.TaskCategoryId
             };
 
             return Ok(tasksDTO);
@@ -151,15 +157,16 @@ namespace Server.Controllers
             dbContext.ProjectTasks.Remove(projectTask);
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task is deleted");
+            return Ok(new { message = "Task is deleted" });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
             var projectTask = await dbContext.ProjectTasks
-               .Include(ts => ts.ProjectTaskStatus)
+               .Include(ts => ts.TaskStatus)
                .Include(tp => tp.TaskPriority)
+               .Include(tc => tc.TaskCategory)
                .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -177,11 +184,12 @@ namespace Server.Controllers
                 TaskDescription = projectTask.TaskDescription,
                 TaskId = projectTask.TaskId,
                 TaskName = projectTask.TaskName,
-                TaskStatusId = projectTask.ProjectTaskStatusId,
-                TaskStatus = projectTask.ProjectTaskStatus.Name,
+                TaskStatusId = projectTask.TaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
-                IsTaskDependentOn = isTaskDependentOn
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = projectTask.TaskCategoryId
             };
 
             return Ok(taskDTO); 
@@ -196,10 +204,18 @@ namespace Server.Controllers
                 return NotFound("Specified project does not exist");
             }
 
-            var projectTaskStatus = await dbContext.ProjectTaskStatuses.FindAsync(statusId);
+            var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
             if (projectTaskStatus == null)
             {
                 return NotFound("Specified task status does not exist.");
+            }
+
+            var statusBelongsToProject = await dbContext.ProjectTaskStatuses
+                .AnyAsync(pts => pts.ProjectId == projectTask.ProjectId && pts.TaskStatusId == projectTaskStatus.Id);
+
+            if (!statusBelongsToProject)
+            {
+                return BadRequest("Task Status does not belong to this project.");
             }
 
             if(statusId == 2)
@@ -207,7 +223,7 @@ namespace Server.Controllers
                 projectTask.StartDate = DateTime.Now;
             }
 
-            projectTask.ProjectTaskStatus = projectTaskStatus;
+            projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
             return Ok("Task status is changed successfully!");
@@ -218,8 +234,9 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Where(t => t.ProjectId == projectId)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
                 .ToListAsync();
 
             var taskDTOs = new List<ProjectTaskDTO>();
@@ -235,11 +252,12 @@ namespace Server.Controllers
                     TaskDescription = t.TaskDescription,
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
-                    TaskStatusId = t.ProjectTaskStatusId,
-                    TaskStatus = t.ProjectTaskStatus.Name,
+                    TaskStatusId = t.TaskStatusId,
+                    TaskStatus = t.TaskStatus.Name,
                     StartDate = t.StartDate,
                     TaskPriorityId = t.TaskPriorityId,
-                    IsTaskDependentOn = isTaskDependentOn
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = t.TaskCategoryId
                 });
             }
 
@@ -251,8 +269,9 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Where(t => t.ProjectId == projectId && t.TaskPriorityId == priorityId)
-                .Include(ts => ts.ProjectTaskStatus)
+                .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
                 .ToListAsync();
 
             var taskDTOs = new List<ProjectTaskDTO>();
@@ -268,11 +287,12 @@ namespace Server.Controllers
                     TaskDescription = t.TaskDescription,
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
-                    TaskStatusId = t.ProjectTaskStatusId,
-                    TaskStatus = t.ProjectTaskStatus.Name,
+                    TaskStatusId = t.TaskStatusId,
+                    TaskStatus = t.TaskStatus.Name,
                     StartDate = t.StartDate,
                     TaskPriorityId = t.TaskPriorityId,
-                    IsTaskDependentOn = isTaskDependentOn
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = t.TaskCategoryId
                 });
             }
 
@@ -338,9 +358,11 @@ namespace Server.Controllers
             var memberTasks = await dbContext.MemberTasks
                 .Where(mt => mt.MemberId == memberId)
                 .Include(mt => mt.Task)
-                .ThenInclude(t => t.ProjectTaskStatus)
+                .ThenInclude(t => t.TaskStatus)
                 .Include(mt => mt.Task)
                 .ThenInclude(t => t.TaskPriority)
+                .Include(mt => mt.Task)
+                .ThenInclude(tc => tc.TaskCategory)
                 .ToListAsync();
 
             if (!memberTasks.Any())
@@ -361,11 +383,12 @@ namespace Server.Controllers
                     TaskDescription = mt.Task.TaskDescription,
                     TaskId = mt.Task.TaskId,
                     TaskName = mt.Task.TaskName,
-                    TaskStatusId = mt.Task.ProjectTaskStatusId,
-                    TaskStatus = mt.Task.ProjectTaskStatus.Name,
+                    TaskStatusId = mt.Task.TaskStatusId,
+                    TaskStatus = mt.Task.TaskStatus.Name,
                     StartDate = mt.Task.StartDate,
                     TaskPriorityId = mt.Task.TaskPriorityId,
-                    IsTaskDependentOn = isTaskDependentOn
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = mt.Task.TaskCategoryId
                 });
             }
 
@@ -427,6 +450,41 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok($"Dependency removed between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+        }
+
+        [HttpPost("{taskId}/category/{categoryId}")]
+        public async Task<IActionResult> AddTaskCategory(int taskId, int categoryId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+            var category = await dbContext.TaskCategories.FindAsync(categoryId);
+
+            if (task == null || category == null)
+            {
+                return NotFound("Specified task or category does not exist.");
+            }
+
+            task.TaskCategoryId = categoryId;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Category added to Task ID {taskId}.");
+        }
+
+        [HttpDelete("{taskId}/category")]
+        public async Task<IActionResult> RemoveTaskCategory(int taskId)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+
+            if (task == null)
+            {
+                return NotFound("Specified task does not exist.");
+            }
+
+            task.TaskCategoryId = 1;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Category removed from Task ID {taskId}.");
         }
     }
 }

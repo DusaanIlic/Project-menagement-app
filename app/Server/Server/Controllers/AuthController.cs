@@ -36,7 +36,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            var member = await dbContext.Members.FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
+            var member = await dbContext.Members.Include(m=>m.Role).FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
 
             if (member == null)
             {
@@ -53,10 +53,18 @@ namespace Server.Controllers
              var memberResponse = new MemberDTO
             {
                 Id = member.Id,
-                FullName = member.FullName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 Email = member.Email,
-                Role = member.Role,
-                DateAdded = member.DateAdded
+                RoleId = member.RoleId,
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Status,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth
             };
 
             return Ok(new { Token = token, member = memberResponse });
@@ -71,7 +79,8 @@ namespace Server.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, member.Email),
-                    new Claim(ClaimTypes.Role, member.Role)
+                    new Claim(ClaimTypes.Role, member.Role.RoleName),
+                    new Claim("Id", member.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

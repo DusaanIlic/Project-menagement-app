@@ -1,0 +1,148 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request.ProjectTaskStatus;
+using Server.Models;
+using TaskStatus = Server.Models.TaskStatus;
+
+namespace Server.Controllers;
+
+public partial class ProjectController
+{
+    [HttpGet("{projectId}/TaskStatus")]
+    public async Task<IActionResult> GetTaskStatuses(int projectId)
+    {
+        var taskStatuses = await dbContext.TaskStatuses
+            .Where(ts => ts.ProjectTaskStatuses.Any(pts => pts.ProjectId == projectId))
+            .ToListAsync();
+        
+        var taskStatusDTOS = taskStatuses.Select(ts => new TaskStatusDTO 
+        {
+            Id = ts.Id,
+            Name = ts.Name,
+            IsDefault = ts.IsDefault
+        }).ToList();
+
+        return Ok(taskStatusDTOS);
+    }
+
+    [HttpPost("{projectId}/TaskStatus")]
+    public async Task<IActionResult> AddTaskStatus(int projectId, AddTaskStatusRequest addTaskStatusRequest)
+    {
+        var projectExists = await dbContext.Projects.AnyAsync(p => p.ProjectId == projectId);
+
+        if (!projectExists)
+        {
+            return NotFound("Project with given id not found.");
+        } 
+        
+        var alreadyExists = await dbContext.TaskStatuses
+            .AnyAsync(ts => ts.ProjectTaskStatuses.Any(pts => pts.ProjectId == projectId) &&
+                       ts.Name == addTaskStatusRequest.Name);
+
+        if (alreadyExists)
+        {
+            return Conflict("Task Status with given name already exists.");
+        }
+        
+        var taskStatus = new TaskStatus
+        {
+            Name = addTaskStatusRequest.Name
+        };
+
+        dbContext.TaskStatuses.Add(taskStatus);
+        await dbContext.SaveChangesAsync();
+
+        var projectTaskStatus = new ProjectTaskStatus
+        {
+            ProjectId = projectId,
+            TaskStatusId = taskStatus.Id
+        };
+
+        dbContext.ProjectTaskStatuses.Add(projectTaskStatus);
+        await dbContext.SaveChangesAsync();
+
+        var taskStatusDTO = new TaskStatusDTO
+        {
+            Id = taskStatus.Id,
+            Name = taskStatus.Name,
+            IsDefault = taskStatus.IsDefault
+        };
+
+        return Ok(taskStatusDTO);
+    }
+
+    [HttpDelete("{projectId}/TaskStatus/{taskStatusId}")]
+    public async Task<IActionResult> DeleteTaskStatus(int projectId, int taskStatusId)
+    {
+        var projectTaskStatus = await dbContext.ProjectTaskStatuses
+            .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskStatusId == taskStatusId);
+
+        if (projectTaskStatus == null)
+        {
+            return NotFound("Project with given id does not exist or this task status does not belong to it.");
+        }
+        
+        var taskStatus = await dbContext.TaskStatuses
+            .Include(ts => ts.ProjectTasks)
+            .FirstOrDefaultAsync(ts => ts.Id == taskStatusId);
+
+        if (taskStatus == null)
+        {
+            return NotFound("Task Status with given id does not exist.");
+        }
+
+        if (taskStatus.IsDefault)
+        {
+            return BadRequest("It's forbidden to delete this task status.");
+        }
+
+        if (taskStatus.ProjectTasks.Count > 0)
+        {
+            return BadRequest("There are tasks in given project with this task status.");
+        }
+
+        dbContext.ProjectTaskStatuses.Remove(projectTaskStatus);
+        dbContext.TaskStatuses.Remove(taskStatus);
+
+        await dbContext.SaveChangesAsync();
+        
+        return NoContent();
+    }
+
+    [HttpPut("{projectId}/TaskStatus/{taskStatusId}")]
+    public async Task<IActionResult> UpdateTaskStatus(int projectId, int taskStatusId, UpdateTaskStatusRequest updateTaskStatusRequest)
+    {
+        var projectTaskStatus = await dbContext.ProjectTaskStatuses
+            .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskStatusId == taskStatusId);
+
+        if (projectTaskStatus == null)
+        {
+            return NotFound("Project with given id does not exist or this task status does not belong to it.");
+        }
+        
+        var taskStatus = await dbContext.TaskStatuses
+            .FirstOrDefaultAsync(ts => ts.Id == taskStatusId);
+
+        if (taskStatus == null)
+        {
+            return NotFound("Task Status with given id does not exist.");
+        }
+
+        if (taskStatus.IsDefault)
+        {
+            return Conflict("It's forbidden to change name of this task status.");
+        }
+
+        taskStatus.Name = updateTaskStatusRequest.Name;
+
+        await dbContext.SaveChangesAsync();
+
+        return Ok(new TaskStatusDTO
+        {
+            Id = taskStatus.Id,
+            Name = taskStatus.Name,
+            IsDefault = taskStatus.IsDefault
+        });
+    }
+}
