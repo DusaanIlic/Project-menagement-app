@@ -236,14 +236,20 @@ namespace Server.Controllers
                 return NotFound();
             }
 
+            
             if (member.AvatarId == null)
             {
-                return NotFound();
+               var bytes = await System.IO.File.ReadAllBytesAsync("Files/default_avatar.png");
+               var mime = "image/png";
+               
+               return File(bytes, mime);
             }
-
-            var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
-
-            return File(bytes, mime);
+            else
+            {
+                var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
+                
+                return File(bytes, mime);
+            }
         }
 
         [HttpPost("{id}/Avatar")]
@@ -293,11 +299,13 @@ namespace Server.Controllers
                 return Forbid();
             }
 
-            if (member.AvatarId != null)
+            if (member.AvatarId == null)
             {
-                await _fileService.DeleteFile(member.AvatarId.Value);
-                member.AvatarId = null;
+                return NotFound();
             }
+            
+            await _fileService.DeleteFile(member.AvatarId.Value);
+            member.AvatarId = null;
 
             await _dbContext.SaveChangesAsync();
 
