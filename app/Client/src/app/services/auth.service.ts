@@ -28,8 +28,9 @@ export class AuthService {
 
   logout() {
     console.log('logging out');
+
     localStorage.removeItem('jwt-token');
-    localStorage.removeItem('auth-member');
+    localStorage.removeItem('member-id');
 
     this.router.navigate(['/login']);
   }
@@ -37,7 +38,6 @@ export class AuthService {
   getToken(): string | null{
     return localStorage.getItem('jwt-token');
   }
-
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }

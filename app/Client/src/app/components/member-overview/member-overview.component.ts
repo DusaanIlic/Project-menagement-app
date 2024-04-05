@@ -15,14 +15,14 @@ export class MemberOverviewComponent{
 hideNshow(i: number) {
   this.expanded[i] = !this.expanded[i];
 }
-  
+
   member : Member = {
     id: 1,
     firstName: 'Pera',
     lastName: 'Peric',
     email: 'pera.peric@gmail.com',
     roleId: 1,
-    dateAdded: '1/1/2024'
+    dateAdded: new Date(1, 2, 3)
   };
 
   projects : string[] = [];
@@ -176,7 +176,7 @@ hideNshow(i: number) {
           "dateModified": new Date("1. 2. 2024."),
           "description": "Reviewed pull requests."
       },
-      
+
   ]
   }
 

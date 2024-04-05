@@ -31,20 +31,10 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: data => {
-        const member : Member = {
-          id: data.member.id,
-          firstName: data.member.firstName,
-          lastName: data.member.lastName,
-          email: data.member.email,
-          roleId: data.member.role,
-          dateAdded: data.member.dateAdded
-        };
-
-        console.log(data);
-
         const token = data.token;
+        const id = data.id;
 
-        localStorage.setItem('auth-member', JSON.stringify(member));
+        localStorage.setItem('member-id', id);
         localStorage.setItem('jwt-token', token);
 
         this.router.navigate(['/']);
