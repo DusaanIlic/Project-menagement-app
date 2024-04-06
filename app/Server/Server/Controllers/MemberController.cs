@@ -52,7 +52,8 @@ namespace Server.Controllers
                 Github = m.Github,
                 Linkedin = m.Linkedin,
                 PhoneNumber = m.PhoneNumber,
-                DateOfBirth = m.DateOfBirth
+                DateOfBirth = m.DateOfBirth,
+                RoleName = m.Role.RoleName
             }).ToList();
             return Ok(memberDTOs);
         }
@@ -99,7 +100,8 @@ namespace Server.Controllers
                 Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
-                DateOfBirth = member.DateOfBirth
+                DateOfBirth = member.DateOfBirth,
+                RoleName = role.RoleName
             };
 
             var request = new EmailDTO
@@ -163,7 +165,8 @@ namespace Server.Controllers
                 Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
-                DateOfBirth = member.DateOfBirth
+                DateOfBirth = member.DateOfBirth,
+                RoleName = member.Role.RoleName
             };
 
             return Ok(memberDTO);
