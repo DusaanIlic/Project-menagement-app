@@ -14,10 +14,10 @@ using Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
+using Server.Services.RolePermission;
 
 namespace Server.Controllers
 {
-    [Authorize(Roles="Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     public class MemberController : ControllerBase
@@ -25,17 +25,26 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext _dbContext;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
+        private readonly IRolePermissionService _rolePermissionService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IRolePermissionService rolePermissionService)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
+            _rolePermissionService = rolePermissionService;
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
+
+            if (!User.IsInRole("Administrator"))
+            {
+                return Forbid();
+            }
+
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
             
             var memberDTOs = members.Select(m => new MemberDTO
@@ -58,9 +67,31 @@ namespace Server.Controllers
             return Ok(memberDTOs);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await _rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 1);
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
 
             if (existingMember != null)
@@ -138,6 +169,7 @@ namespace Server.Controllers
             return Ok(memberResponse);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMember(int id)
         {
@@ -171,12 +203,13 @@ namespace Server.Controllers
 
             return Ok(memberDTO);
         }
-        
+
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
@@ -209,13 +242,31 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            // Return the updated member DTO
+         
             return Ok(memberDTO);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMember(int id)
         {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await _rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 2);
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var member = await _dbContext.Members.FindAsync(id);
         
             if (member == null)
@@ -229,6 +280,7 @@ namespace Server.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("{id}/Avatar")]
         public async Task<IActionResult> GetAvatar(int id)
         {
@@ -249,11 +301,12 @@ namespace Server.Controllers
             return File(bytes, mime);
         }
 
+        [Authorize]
         [HttpPost("{id}/Avatar")]
         public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
@@ -279,12 +332,13 @@ namespace Server.Controllers
 
             return Ok();
         }
-        
+
+        [Authorize]
         [HttpDelete("{id}/Avatar")]
         public async Task<IActionResult> DeleteAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {

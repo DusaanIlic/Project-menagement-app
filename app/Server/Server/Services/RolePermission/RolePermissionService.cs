@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 
@@ -13,10 +15,16 @@ namespace Server.Services.RolePermission
             this.dbContext = dbContext;
         }
 
+
         public async Task<bool> CheckRolePermission(int roleId, int permissionId)
         {
             return await dbContext.RolePermissions
                 .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+        }
+
+        Task<int?> IRolePermissionService.CheckRole(int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
