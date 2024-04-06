@@ -22,7 +22,13 @@ hideNshow(i: number) {
     lastName: 'Peric',
     email: 'pera.peric@gmail.com',
     roleId: 1,
-    dateAdded: new Date(1, 2, 3)
+    dateAdded: new Date(1, 2, 3),
+    city: '',
+    github: '',
+    dateOfBirth: new Date(1, 2, 3,),
+    linkedin: '',
+    status: '',
+    phoneNumber: ''
   };
 
   projects : string[] = [];
