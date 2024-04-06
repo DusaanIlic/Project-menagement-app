@@ -33,4 +33,7 @@ export class MemberService {
     return this.http.get<any[]>(`${API_ROLES}`);
   }
 
+  deleteAvatar(memberId: number) {
+    return this.http.delete(`${API}/${memberId}/Avatar`);
+  }
 }
