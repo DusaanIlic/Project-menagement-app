@@ -14,6 +14,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class AddTaskStatusComponent implements OnInit{
   projectId: any;
+  taskStatusName: string | undefined;
+  taskStatusList: any;
 
   constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService){}
 
@@ -27,5 +29,27 @@ export class AddTaskStatusComponent implements OnInit{
 
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+  }
+
+  addTaskStatus() {
+    if (!this.taskStatusName) {
+      this._ngToastService.error({ detail: "Status name can't be empty", summary: "Error", duration: 3000 });
+      return;
+    }
+
+    const addTaskStatusRequest = {
+      Name: this.taskStatusName 
+    };
+
+    this.taskService.addTaskStatus(this.projectId, addTaskStatusRequest).subscribe(
+      response => {
+        this._ngToastService.success({ detail: "Task added successfully", summary: "Success", duration: 3000 });
+        this.taskStatusList.push(response);
+        this.dialogRef.close();
+      },
+      error => {
+        this._ngToastService.error({ detail: error.error, summary: "Error", duration: 3000 });
+      }
+    );
   }
 }

@@ -32,6 +32,7 @@ export class KanbanComponent implements OnInit {
   showDoneList: boolean = true;
 
   projectId: string | undefined;
+taskStatusList: any;
 
   constructor(private taskService: TaskService, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
@@ -134,6 +135,19 @@ export class KanbanComponent implements OnInit {
         );
 }
 
+getTasksByStatus(statusId: number): any[] {
+  switch (statusId) {
+    case 1:
+      return this.todo;
+    case 2:
+      return this.progress;
+    case 3:
+      return this.done;
+    default:
+      return [];
+  }
+}
+
   findTaskIndex(taskId: number, column: string): number {
       let taskList: any[];
 
@@ -210,9 +224,9 @@ export class KanbanComponent implements OnInit {
       width: '500px',
       data: { projectId: this.projectId}
     });
-
-
   }
+
+  
 
 }
 

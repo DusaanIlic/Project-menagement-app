@@ -28,7 +28,6 @@ export class ProjectServiceGet{
   {
     return this.http.delete<any>(`${PROJECT_API}/${id}`);
   }
-
 }
 
 

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 
 const TASK_API = 'http://localhost:8000/api/Task';
+const PROJECT_API = 'http://localhost:8000/api/Project';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -32,6 +33,10 @@ export class TaskService {
     const taskData = { taskStatusId: statusId }; 
 
     return this.http.post<any>(`${TASK_API}/${taskId}/status/${statusId}`, taskData);
+}
+
+addTaskStatus(projectId: number, addTaskStatusRequest: any): Observable<any> {
+  return this.http.post<any>(`${PROJECT_API}/${projectId}/TaskStatus`, addTaskStatusRequest, httpOptions);
 }
 
 }

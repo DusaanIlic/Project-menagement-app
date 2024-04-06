@@ -125,6 +125,32 @@
         </div>
     </div>
 
+    <div *ngFor="let status of taskStatusList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+        <div class="flex flex-row justify-between items-center h-10">
+            <p class="mb-3 text-lg"><b>{{ status.name }}</b></p>
+        </div>
+    
+        <div
+            cdkDropList
+            [cdkDropListData]="getTasksByStatus(status.id)"
+            class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
+            (cdkDropListDropped)="drop($event)">
+            <ng-container *ngIf="getTasksByStatus(status.id).length > 0; else emptyTasks">
+                <div *ngFor="let task of getTasksByStatus(status.id)" class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="task">{{ task.taskName }}
+                    <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
+                    (click)="openConfirmationDialog(status.id, task.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                </div>
+            </ng-container>
+    
+            <ng-template #emptyTasks>
+                <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
+                    No tasks.
+                </div>
+            </ng-template>
+        </div>
+    </div>
+    
+
     <ng-toast></ng-toast>
 
 </div>
