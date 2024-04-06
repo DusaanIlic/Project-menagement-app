@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Inject,
   OnDestroy,
-  OnInit,
   Output,
 } from '@angular/core';
 import { FormsModule, Validators } from '@angular/forms';
@@ -23,13 +22,13 @@ import { ActivatedRoute } from '@angular/router';
   imports: [FormsModule, CommonModule, NgxEditorModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AddProjectComponent implements OnInit, OnDestroy {
+export class AddProjectComponent implements OnDestroy {
   editor: Editor = new Editor();
   html = '';
 
   projectName: string = '';
   projectDescription: string = '';
-  deadLine: Date | null = null;
+  deadLine!: Date;
 
   @Output() projectAdded: EventEmitter<any> = new EventEmitter<any>();
 
@@ -39,9 +38,6 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     private projectService: ProjectService
   ) {}
 
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
   ngOnDestroy(): void {
     this.editor?.destroy();
   }
@@ -50,5 +46,22 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  public onSubmit() {}
+  public onSubmit() {
+    const projectData = {
+      projectName: this.projectName,
+      projectDescription: this.html,
+      deadLine: this.deadLine,
+    };
+
+    this.projectService.createProject(projectData).subscribe(
+      (response) => {
+        console.log('Project saved successfully:', response);
+        this.projectAdded.emit();
+        this.closeDialog();
+      },
+      (error) => {
+        console.error('Project saving task', error);
+      }
+    );
+  }
 }
