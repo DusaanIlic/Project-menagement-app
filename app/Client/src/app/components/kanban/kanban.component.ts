@@ -11,11 +11,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
 
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent],
+  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent],
   templateUrl: './kanban.component.html', 
   styleUrl: './kanban.component.scss',
 })
@@ -84,17 +85,53 @@ export class KanbanComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
+
+      const taskId = event.item.data.taskId;
+      const statusId = this.getStatusIdFromColumnName(event.container.id);
+      const column = event.container.id; 
+      this.taskService.updateTaskStatus(taskId, statusId, column).subscribe(() => {
+        console.log('Task status updated successfully.');
+      }, error => {
+        console.error('Error updating task status:', error);
+      });
+    }
+}
+  getStatusIdFromColumnName(columnName: string): number {
+    switch (columnName) {
+      case 'todo':
+        return 1;
+      case 'progress':
+        return 2;
+      case 'done':
+        return 3;
+      default:
+        return -1;
     }
   }
 
-  drop2(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-        moveItemInArray(this.dropList, event.previousIndex, event.currentIndex);
-    } else {
-        const movedColumn = this.dropList[event.previousIndex];
-        this.dropList.splice(event.previousIndex, 1);
-        this.dropList.splice(event.currentIndex, 0, movedColumn);
+  updateTaskStatus(taskId: number, previousColumn: string, currentColumn: string) {
+    let statusId: number;
+
+    switch (currentColumn) {
+        case 'todo':
+            statusId = 1;
+            break;
+        case 'progress':
+            statusId = 2;
+            break;
+        case 'done':
+            statusId = 3;
+            break;
+        default:
+            return; 
     }
+
+    // Pozivamo servis da ažurira status zadatka
+    this.taskService.updateTaskStatus(taskId, statusId, currentColumn)
+        .subscribe(
+            () => console.log('Task status updated successfully.'),
+            error => console.error('Error updating task status:', error)
+        );
 }
 
   findTaskIndex(taskId: number, column: string): number {
@@ -168,6 +205,14 @@ export class KanbanComponent implements OnInit {
     });
   }
 
+  openTaskStatusDialog(){
+    const dialogRef = this.dialog.open(AddTaskStatusComponent, {
+      width: '500px',
+      data: { projectId: this.projectId}
+    });
+
+
+  }
 
 }
 
