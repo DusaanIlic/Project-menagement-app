@@ -50,37 +50,5 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  public onSubmit() {
-    /*if (this.projectForm.valid) {
-      const formValue = this.projectForm.value;
-      const sanitizedFormValue: ProjectAddRequest = {
-        projectName: formValue.projectName || '',
-        deadLine: formValue.deadLine ? new Date(formValue.deadLine) : undefined,
-        projectDescription: formValue.projectDescription || '',
-      };
-
-      this.projectService
-        .createProject(sanitizedFormValue)
-        .pipe(
-          tap({
-            next: (response) => {
-              // Ako je projekat uspešno dodat
-              console.log('Projekat je uspešno dodat', response);
-              // poruka na korisničkom interfejsu
-              this.showSuccessMessage();
-            },
-            error: (error) => {
-              // Ako se dogodi greška prilikom dodavanja projekta
-              console.error('Greška prilikom dodavanja projekta:', error);
-              // poruka o grešci na korisničkom interfejsu
-              this.showErrorMessage();
-            },
-          })
-        )
-        .subscribe();
-    }
-  }
-
-  }*/
-  }
+  public onSubmit() {}
 }
