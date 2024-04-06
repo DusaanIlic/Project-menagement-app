@@ -7,6 +7,8 @@ import {NgOptimizedImage} from "@angular/common";
 import {ImageCroppedEvent, ImageCropperModule, LoadedImage} from "ngx-image-cropper";
 import { DomSanitizer } from '@angular/platform-browser';
 import {NgToastModule, NgToastService} from "ng-angular-popup";
+import {MatDialog} from "@angular/material/dialog";
+import {UploadAvatarComponent} from "../upload-avatar/upload-avatar.component";
 
 @Component({
   selector: 'app-edit-member',
@@ -26,7 +28,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   imageChangedEvent: any = '';
   croppedImage: any = '';
 
-  constructor(private route: ActivatedRoute, private memberService: MemberService, private ngToastService: NgToastService) { }
+  constructor(private route: ActivatedRoute, private memberService: MemberService,
+                private ngToastService: NgToastService, private matDialog: MatDialog) { }
 
   ngOnInit() {
     this._routeSubscription = this.route.params.pipe(
@@ -59,6 +62,13 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   }
   loadImageFailed() {
     // show message
+  }
+
+  openAvatarDialog() {
+    const dialogRef = this.matDialog.open(UploadAvatarComponent, {
+      width: '500px',
+      data: { memberId: this.member.id }
+    })
   }
 
   deleteAvatar() {
