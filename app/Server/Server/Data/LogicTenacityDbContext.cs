@@ -166,7 +166,12 @@ namespace Server.Data
                 new Permission { PermissionId = 11, PermissionName = "Change task status" },
                 new Permission { PermissionId = 12, PermissionName = "Change project status" }
             );
-            
+
+            modelBuilder.Entity<Member>().HasData(
+                new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com"},
+                new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
+                );
+
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Administrator" },
                 new Role { RoleId = 2, RoleName = "Project Manager"},
