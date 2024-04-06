@@ -21,6 +21,10 @@ export class MemberService {
     return this.http.post<any>(`${API}`, memberData);
   }
 
+  getMember(memberId: number): Observable<any>{
+    return this.http.get<any>(`${API}/${memberId}`);
+  }
+
   getMembers(): Observable<any[]>{
     return this.http.get<any[]>(`${API}`);
   }

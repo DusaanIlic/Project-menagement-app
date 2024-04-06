@@ -1,18 +1,17 @@
 <div class="w-8/12 m-auto">
+  <div>
     <div class="flex flex-col w-full xl:flex-row p-2 justify-between">
         <div class="flex flex-col my-2">
             <h1 class="text-xl font-bold">Public avatar</h1>
             <p>You can change or remove your avatar here.</p>
         </div>
 
-        <div class="flex rounded-full bg-[url('assets/avatar.png')] border-solid border-black border-2  size-40 my-2" (click)="openAvatar()">
-
-        </div>
+        <img ngSrc="http://localhost:8000/api/Member/{{member?.id}}/Avatar" class="flex rounded-full border-solid border-black border-2  size-40 my-2 select-none">
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
             <input type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray  text-sm"/>
-            <p class="flex">The maximum file size allowed is 200KB.</p>
+            <p class="flex">The maximum file size allowed is 512KB.</p>
             <hr class="border-1 border-black w-80">
             <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2">Remove current avatar</button>
         </div>
@@ -28,12 +27,8 @@
 
         <div>
             <label for="status" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">Your status</label>
-            <input type="text" id="status" class="flex mb-2  border border-gray-300  text-sm rounded-md p-2.5  placeholder:text-gray-400" placeholder="Your status..."/>
-            <div class="flex">
-                <input id="busy" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded-md bg-gray-50"/>
-                <label for="busy" class="text-sm font-medium ml-1  text-black">Busy</label>
-            </div>
-            <p class="text-sm ml-3.5">"Busy" will be shown next to your name.</p>
+            <input type="text" id="status" class="flex mb-2  border border-gray-300  text-sm rounded-md p-2.5  placeholder:text-gray-400" placeholder="Your status..." [value]="member?.status"/>
+            <p class="text-sm">Status will show on your profile overview.</p>
         </div>
 
         <div class="w-40"></div>
@@ -48,23 +43,32 @@
         </div>
 
         <div class="mb-2.5">
-            <label for="status" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">Full name</label>
-            <input type="text" id="status" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="Your status..."/>
+            <label for="first-name" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">First Name</label>
+            <input type="text" id="first-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="First name..." [value]="member?.firstName"/>
+            <label for="last-name" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">Last Name</label>
+            <input type="text" id="last-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="Last name..." [value]="member?.lastName"/>
             <div class="flex text-sm">
                 <p>Enter your name so people can recognize you.</p>
             </div>
         </div>
 
+      <div>
         <div class="w-40">
-            <label for="userid" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">User ID</label>
-            <input type="text" id="userid" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" value="123" disabled readonly>
+            <label for="user-id" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">User ID</label>
+            <input type="text" id="user-id" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" [value]="member?.id" disabled readonly>
         </div>
+
+        <div class="w-40">
+          <label for="role-id" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Role ID</label>
+          <input type="text" id="role-id" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" [value]="member?.roleId" value="123" disabled readonly>
+        </div>
+      </div>
     </div>
 
     <div class="flex flex-col p-2 xl:items-center w-full overflow-visible">
         <div class="w-[155px] overflow-visible">
             <label for="email" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Email</label>
-            <input type="text" id="email" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 text-gray-400 w-50" value="peraperic@gmail.com" disabled>
+            <input type="text" id="email" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 text-gray-400 w-50" [value]="member?.email"  disabled>
             <div class="overflow-visible w-96">
                 <p class="flex text-sm mb-2 w-96">Your email was automatically set by your administrator.</p>
             </div>
@@ -92,10 +96,11 @@
     </div>
 
     <hr class="border-1 border-black w-80 ml-2 xl:w-full">
+  </div>
 
-    <div class="flex flex-col justify-between mt-4 xl:flex-row p-2">
-        <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Update profile settings</button>
-        <button type="button" class="flex items-center justify-center w-48 text-white bg-red-700   font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-red-800" routerLink="/members/all">Cancel</button>
-    </div>
+  <div class="flex flex-col justify-between mt-4 xl:flex-row-reverse p-2">
+    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Update profile settings</button>
+    <button type="button" class="flex items-center justify-center w-48 text-white bg-red-700   font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-red-800" routerLink="/members/all">Cancel</button>
+  </div>
 </div>
 
