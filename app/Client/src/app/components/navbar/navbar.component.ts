@@ -1,7 +1,9 @@
-import {Component, ElementRef, OnDestroy, Renderer2} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
+import {Member} from "../../models/member";
+import {MemberService} from "../../services/member.service";
 
 @Component({
   selector: 'app-navbar',
@@ -15,11 +17,23 @@ import {AuthService} from "../../services/auth.service";
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnDestroy {
+export class NavbarComponent implements OnInit, OnDestroy {
   visible: boolean = false;
+  authorizedMember: Member | null = null;
 
-  constructor(private authService: AuthService, private renderer: Renderer2, private elementRef: ElementRef) {
+  constructor(private authService: AuthService, private renderer: Renderer2,
+                private memberService: MemberService, private elementRef: ElementRef) {
     this.addClickOutsideListener();
+  }
+
+  ngOnInit() {
+    this.memberService.getAuthorizedMember().subscribe(authorizedMember => {
+      this.authorizedMember = authorizedMember;
+    })
+  }
+
+  ngOnDestroy() {
+    this.renderer.destroy();
   }
 
   dropdownShow() {
@@ -40,9 +54,5 @@ export class NavbarComponent implements OnDestroy {
 
   isClickedInsideComponent(target: any): boolean {
     return this.elementRef.nativeElement.contains(target);
-  }
-
-  ngOnDestroy() {
-    this.renderer.destroy();
   }
 }

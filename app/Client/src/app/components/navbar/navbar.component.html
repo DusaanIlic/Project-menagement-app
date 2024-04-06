@@ -50,11 +50,11 @@
 
 <div *ngIf="this.visible" id="profile-dropdown" class="flex absolute gap-2 right-[3px] top-[50px] w-60 bg-accent-blue p-2 flex-col justify-evenly
                                   rounded-md text-white select-none">
-  <p class="pl-2 font-bold">Pera Peric</p>
-  <p class="pl-2">Project Manager</p>
+  <p class="pl-2 font-bold">{{authorizedMember?.firstName}} {{authorizedMember?.lastName}}</p>
+  <p class="pl-2">Role ID: {{authorizedMember?.roleId}}</p>
   <hr class="white">
-  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/1" (click)="dropdownShow()">Profile</button>
-  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/edit/1" (click)="dropdownShow()">Edit profile</button>
+  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/{{authorizedMember?.roleId}}" (click)="dropdownShow()">Profile</button>
+  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/edit/{{authorizedMember?.roleId}}" (click)="dropdownShow()">Edit profile</button>
   <button class="flex h-10 grow pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" (click)="dropdownShow(); logout()">Log out</button>
 </div>
 

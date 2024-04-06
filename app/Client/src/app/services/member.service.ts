@@ -24,7 +24,7 @@ export class MemberService {
   }
 
   getAuthorizedMember() {
-    this._authorizedMember.asObservable();
+    return this._authorizedMember.asObservable();
   }
 
   updateAuthorizedMember(updatedAuthorizedMember: Partial<Member>) {
