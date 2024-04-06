@@ -65,34 +65,36 @@
             </div>
 
             <div class="flex justify-center">
-                <div class="w-[75%]">
-                    <div class="table w-full px-2 mt-5 border-2 border-gray-500">
-                        <thead class="text-xl h-14">
-                            <th class="w-5 mb-5"></th>
-                            <th class="w-40 border-b-2 border-b-gray-500">Project name</th>
-                            <th class="w-40 border-b-2 border-b-gray-500">Task</th>
-                            <th class="w-40 border-b-2 border-b-gray-500">Type</th>
-                            <th class="w-40 border-b-2 border-b-gray-500">Date modified</th>
-                            <th class="w-9 border-b-2 border-b-gray-500">Action</th>
-                        </thead>
-    
-                        <tbody class="text-center" *ngFor="let project of projects; index as i">
-                            <tr class="h-8">
-                                <td (click)="hideNshow(i)" *ngIf="!expanded[i]" class="w-5"><img src="assets/icons/arrow.png" class=" hover:cursor-pointer :"></td>
-                                <td (click)="hideNshow(i)" *ngIf="expanded[i]" class="w-5"><img src="assets/icons/arrow.png" class=" rotate-180 hover:cursor-pointer :"></td>
-                                <td>{{project.description}}</td>
-                            </tr>
-                            <tr *ngFor="let task of tasks; index as j">
-                                <td *ngIf="expanded[i] === true"></td>
-                                <td *ngIf="expanded[i] === true"></td>
-                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.taskName}}</td>
-                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.taskStatusId}}</td>
-                                <td *ngIf="expanded[i] === true" class="w-40 border-b-2 border-b-gray-500">{{task.startDate| date}}</td>
-                                <td *ngIf="expanded[i] === true" class="w-9 border-b-2 border-b-gray-500 "><img class="scale-75 block mx-auto hover:cursor-pointer" src="assets/icons/edit_36_jpg.jpg" (click)="openDialog(task)"></td>
-    
-                            </tr>
-                        </tbody>
-                    </div>
+                <div class="w-[90%] mt-10">
+                    <div class="table border-[1px] border-gray-300 rounded-md">
+                        <tr class="">
+                            <th class="text-left p-3 w-60">PROJECT</th>
+                            <th class="text-left w-60">TASK</th>
+                            <th class="text-left w-60">DUE DATE</th>
+                            <th class="text-left w-60">STATUS</th>
+                            <th class="text-left w-60">PRIORITY</th>
+                            <th class="text-left w-20"></th>
+                        </tr>
+
+                        <tr *ngIf="tasks.length == 0">
+                            <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No projects.</td>
+                        </tr>
+
+                        <tr *ngFor="let task of tasks; index as i" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                            <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.projectId}}</td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300 ">{{task.taskName}}</td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300">{{task.deadline | date}}</td>
+                            <td *ngIf="task.taskStatusId == 1" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskStatus}}</div></td>
+                            <td *ngIf="task.taskStatusId == 3" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskStatus}}</div></td>
+                            <td *ngIf="task.taskStatusId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskStatus}}</div></td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300">{{tasksPriority[i].name}}</td>
+                            <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
+                            <mat-menu #menu="matMenu">
+                              <button mat-menu-item>View</button>
+                              <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black">Delete</button>
+                            </mat-menu>
+                        </tr>
+                </div>
                 </div>
             </div>
         </div>

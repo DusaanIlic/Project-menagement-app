@@ -11,6 +11,9 @@ import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
 import { ProjectServiceGet } from '../../services/project.service';
 import { Project } from '../../models/project';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { taskPriority } from '../../models/taskPriority';
 
 
 @Component({
@@ -18,7 +21,7 @@ import { Project } from '../../models/project';
     standalone: true,
     templateUrl: './member-overview.component.html',
     styleUrl: './member-overview.component.scss',
-    imports: [CommonModule, TaskOverviewComponent, MatDialogModule]
+    imports: [CommonModule, TaskOverviewComponent, MatDialogModule, MatButtonModule, MatMenuModule]
 })
 export class MemberOverviewComponent{
 
@@ -43,8 +46,8 @@ export class MemberOverviewComponent{
   projects : Project[] = [];
   activities : taskActivity[] = [];
   tasks : Task[] = [];
-  expanded : boolean[] = [];
   mRole : string = "";
+  tasksPriority : taskPriority[] = [];
 
   async getMemberId()
   {
@@ -72,6 +75,7 @@ export class MemberOverviewComponent{
   {
     this.tasks = tasks;
     this.getProjects();
+    this.getTaskPriority();
   })
 }
 
@@ -83,10 +87,9 @@ getProjects()
         {
           this.p = project;
           this.projects.push(this.p);
+          console.log(this.projects);
         })
     }
-    
-  
 }
 
 async getMember()
@@ -96,12 +99,25 @@ async getMember()
 }
 
 
+getTaskPriority()
+{
+  for(let i=0; i<this.tasks.length;i++)
+    {
+      this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((tPriority : taskPriority) => {
+        this.tasksPriority.push(tPriority);
+      })
+    }
+  
+}
+
+
 
 
   constructor(public dialog: MatDialog, private route: ActivatedRoute, private mService : MemberService, private tService : TaskService, private pService : ProjectServiceGet) {
 
     this.getMember();
     this.getTasks();
+    this.getTaskPriority();
 
     for(let i=0;i<this.activities.length;i++)
     {
@@ -109,22 +125,11 @@ async getMember()
       //this.projects.push(this.activities[i].projectName);
     }
 
-    for(let i=0;i<this.projects.length;i++)
-    {
-      this.expanded.push(false);
-    }
-
   }
 
 
 
   //////////////////////////////////////////////////////
-
-
-hideNshow(i: number) 
-{
-  this.expanded[i] = !this.expanded[i];
-}
   
   
 

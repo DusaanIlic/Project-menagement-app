@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { Task } from '../models/task';
 import { taskActivity } from '../models/taskActivity';
+import { taskPriority } from '../models/taskPriority';
 
 const TASK_API = 'http://localhost:8000/api/Task';
 const TASKACTIVITY_API = 'http://localhost:8000/api/TaskActivity';
+const TASKPRIOROTY_API = 'http://localhost:8000/api/TaskPriority';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -39,6 +41,11 @@ export class TaskService {
   getTaskActivities(): Observable<taskActivity[]>
   {
     return this.http.get<taskActivity[]>(`${TASKACTIVITY_API}`);
+  }
+
+  getTaskPriority(taskId : number) : Observable<taskPriority>
+  {
+    return this.http.get<taskPriority>(`${TASKPRIOROTY_API}/${taskId}`);
   }
 
 }

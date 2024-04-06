@@ -6,6 +6,7 @@ export interface Task
     startDate : Date,
     deadline : Date,
     projectId : number,
+    taskStatus: string,
     taskStatusId : number,
     taskPriorityId : number,
     taskCategoryId : number

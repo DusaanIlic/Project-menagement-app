@@ -51,7 +51,7 @@
                                 </tr>
 
                                 <tr *ngFor="let project of allProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.name}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
                                     <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
@@ -62,7 +62,7 @@
                                     <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
                                     <mat-menu #menu="matMenu">
                                       <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                                      <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.name, project.id, project.status)">Delete</button>
+                                      <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
                                     </mat-menu>
                                 </tr>
                         </div>
@@ -88,7 +88,7 @@
                                 </tr>
 
                                 <tr *ngFor="let project of activeProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.name}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
                                     <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
@@ -99,7 +99,7 @@
                                     <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
                                     <mat-menu #menu="matMenu">
                                       <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                                    <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.name, project.id, project.status)">Delete</button>
+                                    <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
                                     </mat-menu>
                                 </tr>
                         </div>
@@ -123,7 +123,7 @@
                                     <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No finished projects.</td>
                                 </tr>
                                 <tr *ngFor="let project of finishedProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.name}}</td>
+                                    <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
                                     <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
                                     <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
@@ -134,7 +134,7 @@
                                     <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
                                     <mat-menu #menu="matMenu">
                                       <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                                    <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.name, project.id, project.status)">Delete</button>
+                                    <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
                                     </mat-menu>
                                 </tr>
                         </div>
