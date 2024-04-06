@@ -30,10 +30,14 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     ).subscribe(member => {
       this.member = member;
       console.log(this.member);
-    })
+    });
   }
 
   ngOnDestroy() {
     this._routeSubscription.unsubscribe();
+  }
+
+  onFileSelected(event: any) {
+    const avatar: File = event.target.files[0];
   }
 }
