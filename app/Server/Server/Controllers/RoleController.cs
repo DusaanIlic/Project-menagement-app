@@ -26,7 +26,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var roles = await dbContext.Roles.ToListAsync();
@@ -45,7 +45,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
             var role = await dbContext.Roles.FindAsync(roleId);
 
@@ -69,7 +69,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var role = new Role
@@ -95,7 +95,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var role = await dbContext.Roles.FindAsync(roleId);
@@ -121,7 +121,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
             var rolePermissions = await dbContext.RolePermissions
                                                 .Where(rp => rp.RoleId == roleId)
@@ -148,7 +148,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var rolePermission = await dbContext.RolePermissions
@@ -171,7 +171,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
             var existingRolePermission = await dbContext.RolePermissions
                                                       .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);

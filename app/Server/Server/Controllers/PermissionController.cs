@@ -26,7 +26,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var permissions = await dbContext.Permissions.ToListAsync();
@@ -45,7 +45,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
             var permission = await dbContext.Permissions.FindAsync(permissionId);
 
@@ -69,7 +69,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
             var permission = new Permission
             {
@@ -94,7 +94,7 @@ namespace Server.Controllers
         {
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var permission = await dbContext.Permissions.FindAsync(permissionId);

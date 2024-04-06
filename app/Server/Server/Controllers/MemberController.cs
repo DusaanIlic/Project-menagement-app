@@ -413,5 +413,49 @@ namespace Server.Controllers
 
             return Ok("Password changed successfully");
         }
+
+        [Authorize]
+        [HttpPost("{id}/ChangeEmail")]
+        public async Task<IActionResult> ChangeEmail(int id, EmailChangeRequest changeEmailRequest)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            if (userId != id)
+            {
+                return Unauthorized("You can only change your own email address");
+            }
+
+            var member = await _dbContext.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
+            {
+                return BadRequest("Password is incorrect");
+            }
+            
+            var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
+
+            if (existingMember != null)
+            {
+                return Conflict("Email address already exists");
+            }
+
+            
+            member.Email = changeEmailRequest.NewEmail;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Email address changed successfully");
+        }
+
     }
 }
