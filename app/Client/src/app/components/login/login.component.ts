@@ -4,6 +4,7 @@ import {FormsModule} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
 import {Router} from "@angular/router";
+import {MemberService} from "../../services/member.service";
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ export class LoginComponent {
   email: string | undefined;
   password: string | undefined;
 
-  constructor(private authService : AuthService, private router: Router) {}
+  constructor(private authService : AuthService, private memberService: MemberService,
+                private router: Router) {}
 
   onSubmit(): void {
     if (!this.email || !this.password) {
@@ -32,12 +34,29 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: data => {
         const token = data.token;
-        const id = data.id;
+        const dto = data.member;
 
-        localStorage.setItem('member-id', id);
+        localStorage.setItem('member-id', dto.id.toString());
         localStorage.setItem('jwt-token', token);
 
-        this.router.navigate(['/']);
+        const member: Member = {
+          id: dto.id,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          roleId: dto.roleId,
+          email: dto.email,
+          linkedin: dto.linkedin,
+          github: dto.github,
+          status: dto.status,
+          phoneNumber: dto.phoneNumber,
+          city: dto.city,
+          dateOfBirth: new Date(dto.dateOfBirth),
+          dateAdded: new Date(dto.dateAdded)
+        };
+
+        this.memberService.setAuthorizedMember(member);
+
+        this.router.navigate(['/dashboard']);
       },
       error: err => {
         this.errorMessage = '* Wrong email and password combination';

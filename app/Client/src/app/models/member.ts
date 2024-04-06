@@ -4,7 +4,7 @@ export interface Member {
     lastName: string;
     email: string;
     roleId: number;
-    linkedin: string | undefined;
+    linkedin: string;
     github: string;
     status: string;
     phoneNumber: string;
