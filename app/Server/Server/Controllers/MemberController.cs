@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
 using Server.Services.RolePermission;
+using Server.DataTransferObjects.Request.Member;
 
 namespace Server.Controllers
 {
@@ -42,11 +43,11 @@ namespace Server.Controllers
 
             if (!User.IsInRole("Administrator"))
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
-            
+
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
@@ -89,7 +90,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return Unauthorized("Insufficient permissions");
             }
 
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
@@ -98,7 +99,7 @@ namespace Server.Controllers
             {
                 return Conflict();
             }
-            
+
             String randomPassword = GenerateRandomPassword(8);
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(randomPassword);
 
@@ -174,7 +175,7 @@ namespace Server.Controllers
         public async Task<IActionResult> GetMember(int id)
         {
             var member = await _dbContext.Members
-                         .Include(m => m.Role) 
+                         .Include(m => m.Role)
                          .FirstOrDefaultAsync(m => m.Id == id);
 
 
@@ -218,7 +219,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var emailUsed =
@@ -242,7 +243,7 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-         
+
             return Ok(memberDTO);
         }
 
@@ -264,19 +265,19 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return Unauthorized("Insufficient permissions");
             }
 
             var member = await _dbContext.Members.FindAsync(id);
-        
+
             if (member == null)
             {
                 return NotFound();
             }
-        
+
             _dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
-        
+
             return Ok();
         }
 
@@ -315,7 +316,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             if (member.AvatarId != null)
@@ -324,7 +325,7 @@ namespace Server.Controllers
             }
 
             var file = await _fileService.PostFileAsync(id, addFileRequest);
-            
+
             member.AvatarId = file.FileId;
             member.Avatar = file;
 
@@ -347,7 +348,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             if (member.AvatarId != null)
@@ -360,20 +361,57 @@ namespace Server.Controllers
 
             return Ok();
         }
-        
+
         public static string GenerateRandomPassword(int length)
         {
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
             StringBuilder password = new StringBuilder();
-            
+
             byte[] randomBytes = RandomNumberGenerator.GetBytes(length);
-            
+
             for (int i = 0; i < length; i++)
             {
                 password.Append(validChars[randomBytes[i] % validChars.Length]);
             }
 
             return password.ToString();
+        }
+
+        [Authorize]
+        [HttpPost("{id}/ChangePassword")]
+        public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            if (userId != id)
+            {
+                return Unauthorized("You are not authorized to change this password");
+            }
+
+            var member = await _dbContext.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, member.Password))
+            {
+                return BadRequest("Old password is incorrect");
+            }
+
+            string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordRequest.NewPassword);
+
+            member.Password = hashedNewPassword;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Password changed successfully");
         }
     }
 }
