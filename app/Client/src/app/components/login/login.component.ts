@@ -31,36 +31,12 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login(this.email, this.password).subscribe({
-      next: data => {
-        const token = data.token;
-        const dto = data.member;
-
-        localStorage.setItem('member-id', dto.id.toString());
-        localStorage.setItem('jwt-token', token);
-
-        const member: Member = {
-          id: dto.id,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          roleId: dto.roleId,
-          email: dto.email,
-          linkedin: dto.linkedin,
-          github: dto.github,
-          status: dto.status,
-          phoneNumber: dto.phoneNumber,
-          city: dto.city,
-          dateOfBirth: new Date(dto.dateOfBirth),
-          dateAdded: new Date(dto.dateAdded)
-        };
-
-        this.memberService.setAuthorizedMember(member);
-
+    this.authService.login(this.email!, this.password!)
+      .then(() => {
         this.router.navigate(['/dashboard']);
-      },
-      error: err => {
-        this.errorMessage = '* Wrong email and password combination';
-      }
-    });
+      })
+      .catch(err => {
+        this.errorMessage = err
+      });
   }
 }
