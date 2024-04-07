@@ -33,9 +33,9 @@ export class TaskService {
     return this.http.post<any>(`${TASK_API}`, taskData);
   }
 
-  getTasksByMember(memberId : number): Observable<any[]>
+  getTasksByMember(memberId : number): Observable<Task[]>
   {
-    return this.http.get<any[]>(`${TASK_API}/members/${memberId}/tasks`);
+    return this.http.get<Task[]>(`${TASK_API}/members/${memberId}/tasks`);
   }
 
   getTaskActivities(): Observable<taskActivity[]>
@@ -46,6 +46,11 @@ export class TaskService {
   getTaskPriority(taskId : number) : Observable<taskPriority>
   {
     return this.http.get<taskPriority>(`${TASKPRIOROTY_API}/${taskId}`);
+  }
+
+  saveTaskActivity(taskAct : any) : Observable<any>
+  {
+    return this.http.post<any>(`${TASKACTIVITY_API}`, taskAct);
   }
 
 }

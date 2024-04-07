@@ -1,5 +1,6 @@
 export interface taskActivity
 {
+    taskActivityId : number,
     projectId: number,
     taskId: number,
     workerId: number,
@@ -7,6 +8,7 @@ export interface taskActivity
     taskName : string,
     memberName : string,
     type : string,
-    dateModified : Date,
+    dateModify : Date,
     comment : string
+    taskActivityTypeId : number
 }

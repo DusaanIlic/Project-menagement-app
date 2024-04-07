@@ -25,25 +25,23 @@
                                 <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
                                 <ngx-editor [(ngModel)]="html" [editor]="editor" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>
                             </div>
-                            <select class="flex justify-end w-[22%] h-10" name="" id="">
-                            <option value="">Update</option>
-                            <option value="">Bug fix</option>
-                            <option value="">Bug</option>
+                            <select class="flex justify-end w-[22%] h-10" name="" id="" [(ngModel)] = "selectedType" (change)="selectChanged()">
+                            <option value="1">Update</option>
+                            <option value="2">Bug fix</option>
+                            <option value="3">Bug</option>
                             </select>
                         </div>
-                    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]">Save comment</button>
+                    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="saveActivity()">Save activity</button>
                 
                     </div>
                     <div class="mt-2 flex flex-col justify-between gap-1">
                         <div class="flex w-full rounded-md items-center px-1" *ngFor="let taskAct of activities">
                             <img src="assets/avatar.png" class="size-10 mr-1 border-2 border-black rounded-full" alt="">
                             <div>
-                                <div *ngFor="let mem of members;index as i">
-                                    <p *ngIf="mem.id === taskAct.workerId" class="text-lg">{{members[i].firstName}} {{members[i].lastName}} wrote "{{taskAct.comment}}"</p>
-                                </div>
+                                <p class="text-lg">{{taskAct.memberName}} wrote "{{taskAct.comment}}"</p>
                                 <p *ngIf="lessThanHour" class="text-md">Modified {{differenceM}} minutes ago.</p>
                                 <p *ngIf="lessThanDay && !lessThanHour" class="text-md">Modified {{differenceH}} hours ago.</p>
-                                <p *ngIf="!lessThanDay && !lessThanHour" class="text-md">{{taskAct.dateModified| date}}</p>
+                                <p *ngIf="!lessThanDay && !lessThanHour" class="text-md">{{taskAct.dateModify| date}}</p>
                             </div>
                         </div>
 

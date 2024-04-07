@@ -21,6 +21,8 @@ import { Member } from '../../models/member';
 })
 export class TaskOverviewComponent{
 
+
+
     members : Member[] = [];
     commentText = "";
   lessThanHour : boolean = false;
@@ -30,10 +32,10 @@ export class TaskOverviewComponent{
   activities : taskActivity[] = [];
     editor: Editor = new Editor;
     html: any;
+selectedType: any;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService)
   {
-    this.dateCheck();
     this.getTaskActivities();
   }
 
@@ -43,8 +45,8 @@ export class TaskOverviewComponent{
 
   dateCheck()
   {
-    //this.differenceM = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModified?.getTime()) / (1000 * 60)); //racuna minute
-    //this.differenceH = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModified?.getTime()) / (1000 * 3600)); //racuna minute
+    this.differenceM = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModify.getTime()) / (1000 * 60)); //racuna minute
+    this.differenceH = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModify.getTime()) / (1000 * 3600)); //racuna minute
 
     if(this.differenceM < 60)
       this.lessThanHour = true;
@@ -62,6 +64,7 @@ export class TaskOverviewComponent{
     this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
         this.activities = taskactivities;
         this.getMembersById();
+        this.dateCheck();
     })
   }
 
@@ -70,11 +73,26 @@ export class TaskOverviewComponent{
     for(let i=0;i<this.activities.length;i++)
         {
             this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
-                this.members.push(member);
-                console.log(member);
+                this.activities[i].memberName = member.firstName + member.lastName;
             })
         }
   }
  
+  selectChanged() {
+    console.log(this.selectedType);
+  }
 
+
+  saveActivity() {
+    const taskAct: any ={
+        taskId : this.task.taskId,
+        description : "TEST!@#",
+        taskActivityTypeId : this.selectedType,
+    }
+    console.log(this.html);
+    //this.tService.saveTaskActivity(taskAct).subscribe(response => {
+    //  console.log("Succesfully!");
+    //})}
+
+}
 }
