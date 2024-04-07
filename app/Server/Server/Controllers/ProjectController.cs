@@ -448,5 +448,52 @@ namespace Server.Controllers
 
             return Ok("Team leader added successfully");
         }
+
+        [Authorize]
+        [HttpPost("{projectId}/members")]
+        public async Task<IActionResult> AddMembersToProject(int projectId, List<int> memberIds)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
+
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id)).ToListAsync();
+            if (members == null || members.Count != memberIds.Count)
+            {
+                return NotFound("One or more members not found");
+            }
+
+            foreach (var member in members)
+            {
+                if (project.TeamLeaderId == member.Id || project.Members.Any(m => m.Id == member.Id))
+                {
+                    continue;
+                }
+
+                project.Members.Add(member);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Members added to project successfully");
+        }
     }
 }

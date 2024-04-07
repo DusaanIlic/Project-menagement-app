@@ -28,8 +28,10 @@ namespace Server.Models
         public int? TeamLeaderId { get; set; }
         public Member TeamLeader { get; set; }
 
-        public ICollection<ProjectTask> ProjectTasks { get; set; }
+        public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
         
-        public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
+        public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; } = new List<ProjectTaskStatus>();
+
+        public ICollection<Member> Members { get; set; } = new List<Member>();
     }
 }
