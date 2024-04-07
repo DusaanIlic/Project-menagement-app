@@ -4,10 +4,7 @@ import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params} from "@angular/router";
 import {Subscription, switchMap} from "rxjs";
 import {NgOptimizedImage} from "@angular/common";
-import { DomSanitizer } from '@angular/platform-browser';
 import {NgToastModule, NgToastService} from "ng-angular-popup";
-import {MatDialog} from "@angular/material/dialog";
-import {UploadAvatarComponent} from "../upload-avatar/upload-avatar.component";
 
 @Component({
   selector: 'app-edit-member',
@@ -23,11 +20,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
   private _routeSubscription: any;
 
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-
-  constructor(private route: ActivatedRoute, private memberService: MemberService,
-                private ngToastService: NgToastService, private matDialog: MatDialog) { }
+  constructor(private route: ActivatedRoute, private memberService: MemberService, private ngToastService: NgToastService) { }
 
   ngOnInit() {
     this._routeSubscription = this.route.params.pipe(
@@ -46,10 +39,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   }
 
   openAvatarDialog() {
-    const dialogRef = this.matDialog.open(UploadAvatarComponent, {
-      width: '500px',
-      data: { memberId: this.member.id }
-    })
+
   }
 
   deleteAvatar() {
