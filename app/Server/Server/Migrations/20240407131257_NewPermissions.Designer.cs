@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240407131257_NewPermissions")]
+    partial class NewPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -112,14 +115,14 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 14, 31, 1, 345, DateTimeKind.Utc).AddTicks(1954),
+                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 646, DateTimeKind.Utc).AddTicks(3065),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$DV3yQu.XQaTWoEhQUne9aOoFmSP0ZYBubBIjGESj.HZdjLxYiS0J2",
+                            Password = "$2a$10$PbtqDUmB60341JXXWEeaou0bxAauuz.LrmbfBN1b6xYw8v44WNor6",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -129,33 +132,18 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 14, 31, 1, 464, DateTimeKind.Utc).AddTicks(2510),
+                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 758, DateTimeKind.Utc).AddTicks(50),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$rbdugYFDIikRGR46sPyi6OJY9g3ndCSIb.41LI9HkrHcEtgwm..Zy",
+                            Password = "$2a$10$lIcgVn9fM2o23bNJgL9qPO9mDOcXrr9OayflQU790073zMF63eRp2",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
                         });
-                });
-
-            modelBuilder.Entity("Server.Models.MemberProject", b =>
-                {
-                    b.Property<int>("MemberId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("MemberId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("MemberProjects");
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -252,31 +240,6 @@ namespace Server.Migrations
                         {
                             PermissionId = 13,
                             PermissionName = "Change project"
-                        },
-                        new
-                        {
-                            PermissionId = 14,
-                            PermissionName = "Update task priority"
-                        },
-                        new
-                        {
-                            PermissionId = 15,
-                            PermissionName = "Add task dependency"
-                        },
-                        new
-                        {
-                            PermissionId = 16,
-                            PermissionName = "Remove task dependency"
-                        },
-                        new
-                        {
-                            PermissionId = 17,
-                            PermissionName = "Add task category"
-                        },
-                        new
-                        {
-                            PermissionId = 18,
-                            PermissionName = "Remove task category"
                         });
                 });
 
@@ -518,31 +481,6 @@ namespace Server.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 13
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 14
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 15
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 16
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 18
                         });
                 });
 
@@ -770,25 +708,6 @@ namespace Server.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Server.Models.MemberProject", b =>
-                {
-                    b.HasOne("Server.Models.Member", "Member")
-                        .WithMany("MemberProjects")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.Project", "Project")
-                        .WithMany("MemberProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Server.Models.MemberTask", b =>
                 {
                     b.HasOne("Server.Models.Member", "Member")
@@ -946,8 +865,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
-                    b.Navigation("MemberProjects");
-
                     b.Navigation("ProjectsLead");
 
                     b.Navigation("TaskActivities");
@@ -964,8 +881,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
-                    b.Navigation("MemberProjects");
-
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");

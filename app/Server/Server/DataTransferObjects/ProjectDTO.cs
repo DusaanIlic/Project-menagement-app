@@ -13,5 +13,6 @@ namespace Server.DataTransferObjects
         public string Status { get; set; } = string.Empty;
         public ICollection<ProjectTaskDTO> ProjectTasks { get; set; }
         public MemberDTO TeamLider { get; set; }
+        public int NumberOfPeople { get; set; } 
     }
 }

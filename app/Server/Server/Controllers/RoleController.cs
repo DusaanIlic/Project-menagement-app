@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -19,9 +20,15 @@ namespace Server.Controllers
             this.dbContext = dbContext;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetRoles()
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var roles = await dbContext.Roles.ToListAsync();
             var roleDTOs = roles.Select(r => new RoleDTO
             {
@@ -32,9 +39,14 @@ namespace Server.Controllers
             return Ok(roleDTOs);
         }
 
+        [Authorize]
         [HttpGet("{roleId}")]
         public async Task<IActionResult> GetRoleById(int roleId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
             var role = await dbContext.Roles.FindAsync(roleId);
 
             if (role == null)
@@ -51,9 +63,15 @@ namespace Server.Controllers
             return Ok(roleDTO);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddRole(AddRoleRequest addRoleRequest)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var role = new Role
             {
                 RoleName = addRoleRequest.Name
@@ -71,9 +89,15 @@ namespace Server.Controllers
             return Ok(roleDTO);
         }
 
+        [Authorize]
         [HttpDelete("{roleId}")]
         public async Task<IActionResult> RemoveRole(int roleId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var role = await dbContext.Roles.FindAsync(roleId);
             if (role == null)
             {
@@ -91,9 +115,14 @@ namespace Server.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("permissions/{roleId}")]
         public async Task<IActionResult> GetPermissionsByRoleId(int roleId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
             var rolePermissions = await dbContext.RolePermissions
                                                 .Where(rp => rp.RoleId == roleId)
                                                 .Select(rp => rp.Permission)
@@ -113,9 +142,15 @@ namespace Server.Controllers
             return Ok(permissionDTOs);
         }
 
+        [Authorize]
         [HttpDelete("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> RemovePermissionFromRole(int roleId, int permissionId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var rolePermission = await dbContext.RolePermissions
                                               .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
 
@@ -130,9 +165,14 @@ namespace Server.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> AddPermissionToRole(int roleId, int permissionId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
             var existingRolePermission = await dbContext.RolePermissions
                                                       .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
 
