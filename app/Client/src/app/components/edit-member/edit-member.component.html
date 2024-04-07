@@ -44,13 +44,13 @@
 
         <div class="mb-2.5">
             <label for="first-name" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">* First Name</label>
-            <input formControlName="firstName" type="text" id="first-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="First name..."/>
             <p *ngIf="memberForm.get('firstName').errors?.['required']" class="italic text-sm text-red-600">First Name is required.</p>
             <p *ngIf="memberForm.get('firstName').errors?.['minLength']" class="italic text-sm text-red-600">First Name must be at least 2 characters.</p>
+            <input formControlName="firstName" type="text" id="first-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="First name..."/>
             <label for="last-name" class="block mb-2 text-sm font-bold text-gray-900 dark:text-black">* Last Name</label>
-            <input formControlName="lastName" type="text" id="last-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="Last name..."/>
             <p *ngIf="memberForm.get('lastName').errors?.['required']" class="italic text-sm text-red-600">Last Name is required.</p>
             <p *ngIf="memberForm.get('lastName').errors?.['minLength']" class="italic text-sm text-red-600">Last Name must be at least 2 characters.</p>
+            <input formControlName="lastName" type="text" id="last-name" class="flex mb-2 border border-gray-300  text-sm rounded-md p-2.5 placeholder:text-gray-400" placeholder="Last name..."/>
             <div class="flex text-sm">
                 <p>Enter your name so people can recognize you.</p>
             </div>
@@ -83,8 +83,8 @@
 
         <div class="mb-2 w-[155px]">
           <label for="date-of-birth" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Date of Birth</label>
-          <input formControlName="dateOfBirth" type="date" id="date-of-birth" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" placeholder="dd/MM/yyyy" [max]="todayDate()">
           <p *ngIf="memberForm.get('dateOfBirth').errors?.['maxDate']" class="italic text-sm text-red-600">Date of birth can not be in the future.</p>
+          <input formControlName="dateOfBirth" type="date" id="date-of-birth" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" placeholder="dd/MM/yyyy" [max]="todayDate()">
         </div>
 
         <div class="mb-2 w-[155px]">

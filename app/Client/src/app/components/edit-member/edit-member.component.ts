@@ -110,6 +110,28 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   }
 
   saveChanges() {
-    console.log(JSON.stringify(this.member));
+    if (this.memberForm.valid) {
+      const editProfileForm: EditProfileForm = this.memberForm.value;
+
+      this.memberService.editMemberProfile(this.member.id, editProfileForm).subscribe({
+        next: (data: any) => {
+          this.ngToastService.success({
+            detail: 'Success',
+            summary: 'Successfully updated settings.'
+          });
+        },
+        error: error => {
+          this.ngToastService.error({
+            detail: 'Error',
+            summary: error.statusText
+          });
+        }
+      });
+    } else {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'Input validation failed.'
+      });
+    }
   }
 }
