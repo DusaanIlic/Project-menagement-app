@@ -3,7 +3,7 @@ import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params} from "@angular/router";
 import {Subscription, switchMap} from "rxjs";
-import {NgOptimizedImage} from "@angular/common";
+import {DatePipe, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 
 @Component({
@@ -11,7 +11,8 @@ import {NgToastModule, NgToastService} from "ng-angular-popup";
   standalone: true,
   imports: [
     NgOptimizedImage,
-    NgToastModule
+    NgToastModule,
+    DatePipe
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
@@ -36,6 +37,13 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._routeSubscription.unsubscribe();
+  }
+
+  todayDate(): string {
+    const today = new Date();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${today.getFullYear()}-${month}-${day}`;
   }
 
   openAvatarDialog() {

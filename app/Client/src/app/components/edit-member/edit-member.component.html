@@ -10,7 +10,7 @@
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
-            <input type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray text-sm" (change)="fileChangeEvent($event)"/>
+            <input type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray text-sm"/>
             <p class="flex">The maximum file size allowed is 512KB.</p>
             <hr class="border-1 border-black w-80">
             <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2" (click)="deleteAvatar()">Remove current avatar</button>
@@ -74,15 +74,32 @@
             </div>
         </div>
 
+        <div class="w-[155px] overflow-visible">
+          <label for="role" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Role</label>
+          <input type="text" id="role" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 text-gray-400 w-50" [value]="member?.roleName"  disabled>
+          <div class="overflow-visible w-96">
+            <p class="flex text-sm mb-2 w-96">Your role is set by your administrator.</p>
+          </div>
+        </div>
 
         <div class="mb-2 w-[155px]">
-          <label for="location" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Location</label>
-          <input type="text" id="location" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.city" placeholder="City, country">
+          <label for="date-of-birth" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Date of Birth</label>
+          <input type="date" id="date-of-birth" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.dateOfBirth | date : 'dd/MM/yyyy'" placeholder="dd/MM/yyyy" [max]="todayDate()">
+        </div>
+
+        <div class="mb-2 w-[155px]">
+          <label for="country" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Country</label>
+          <input type="text" id="country" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.country" placeholder="Country...">
+        </div>
+
+        <div class="mb-2 w-[155px]">
+          <label for="city" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">City</label>
+          <input type="text" id="city" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.city" placeholder="City...">
         </div>
 
         <div class="mb-2 w-[155px]">
             <label for="phone-number" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Phone Number</label>
-            <input type="text" id="phone-number" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.phoneNumber" placeholder="Your Phone Number...">
+            <input type="tel" pattern="^[0-9]{3}-[0-9]{3}-[0-9]{4}$" id="phone-number" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.phoneNumber" placeholder="Your Phone Number...">
         </div>
 
         <div class="mb-2 w-[155px]">

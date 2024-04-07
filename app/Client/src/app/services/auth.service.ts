@@ -28,11 +28,13 @@ export class AuthService {
             firstName: dto.firstName,
             lastName: dto.lastName,
             roleId: dto.roleId,
+            roleName: dto.roleName,
             email: dto.email,
             linkedin: dto.linkedin,
             github: dto.github,
             status: dto.status,
             phoneNumber: dto.phoneNumber,
+            country: dto.country,
             city: dto.city,
             dateOfBirth: new Date(dto.dateOfBirth),
             dateAdded: new Date(dto.dateAdded)

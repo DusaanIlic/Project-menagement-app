@@ -12,9 +12,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './member-overview.component.scss'
 })
 export class MemberOverviewComponent{
-hideNshow(i: number) {
-  this.expanded[i] = !this.expanded[i];
-}
+  hideNshow(i: number) {
+    this.expanded[i] = !this.expanded[i];
+  }
 
   member : Member = {
     id: 1,
@@ -22,7 +22,9 @@ hideNshow(i: number) {
     lastName: 'Peric',
     email: 'pera.peric@gmail.com',
     roleId: 1,
+    roleName: 'Administrator',
     dateAdded: new Date(1, 2, 3),
+    country: '',
     city: '',
     github: '',
     dateOfBirth: new Date(1, 2, 3,),
