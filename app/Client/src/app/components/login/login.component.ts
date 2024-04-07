@@ -44,7 +44,7 @@ export class LoginComponent {
           status: data.member.status,
           country: data.member.country,
           city: data.member.city,
-          dateOfBirth: data.member.dateOfBirth
+          dateOfBirth: data.member.dateOfBirth,
         };
 
         console.log(data);

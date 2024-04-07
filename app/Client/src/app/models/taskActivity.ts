@@ -10,5 +10,6 @@ export interface taskActivity
     type : string,
     dateModify : Date,
     comment : string
-    taskActivityTypeId : number
+    taskActivityTypeId : number,
+    taskActivityName: string
 }

@@ -5,6 +5,7 @@ export interface Task
     taskDescription : string,
     startDate : Date,
     deadline : Date,
+    projectName : string,
     projectId : number,
     taskStatus: string,
     taskPriority : string,

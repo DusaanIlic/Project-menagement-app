@@ -11,6 +11,10 @@ import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MemberService } from '../../services/member.service';
 import { Member } from '../../models/member';
+import { ProjectService } from '../../services/add.project.service';
+import { ProjectServiceGet } from '../../services/project.service';
+import { Project } from '../../models/project';
+import { taskActivityType } from '../../models/taskActivityType';
 
 @Component({
   selector: 'app-task-overview',
@@ -22,7 +26,16 @@ import { Member } from '../../models/member';
 export class TaskOverviewComponent{
 
 
-
+  project : Project = {
+    id: 0,
+    projectName: '',
+    endDate: new Date(),
+    startDate: new Date(),
+    description: '',
+    details: '',
+    status: '',
+    lead: ''
+  };
     members : Member[] = [];
     commentText = "";
   lessThanHour : boolean = false;
@@ -33,10 +46,31 @@ export class TaskOverviewComponent{
     editor: Editor = new Editor;
     html: any;
 selectedType: any;
+allTypes : taskActivityType[] = [];
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService)
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService, private pService: ProjectServiceGet)
   {
-    this.getTaskActivities();
+    this.selectedType = "Please select option..."
+    this.tService.getTaskActivityType().subscribe((data : any) =>{
+      this.allTypes = data;
+      //console.log(data);
+      this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
+        this.activities = taskactivities;
+        //this.dateCheck();
+        for(let i=0;i<this.activities.length;i++)
+          {
+              this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
+                  this.activities[i].memberName = member.firstName + " " + member.lastName;
+              })
+
+              this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId).subscribe((data : any) =>{
+                this.activities[i].taskActivityName = data.taskActivityTypeName;
+              })
+          }
+        
+    })
+    })
+    
   }
 
   closeDialog(): void {
@@ -58,25 +92,6 @@ selectedType: any;
     else
         this.lessThanDay = false;
   }
-
-  getTaskActivities()
-  {
-    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
-        this.activities = taskactivities;
-        this.getMembersById();
-        this.dateCheck();
-    })
-  }
-
-  getMembersById()
-  {
-    for(let i=0;i<this.activities.length;i++)
-        {
-            this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
-                this.activities[i].memberName = member.firstName + member.lastName;
-            })
-        }
-  }
  
   selectChanged() {
     console.log(this.selectedType);
@@ -86,13 +101,23 @@ selectedType: any;
   saveActivity() {
     const taskAct: any ={
         taskId : this.task.taskId,
-        description : "TEST!@#",
+        description : this.html.content[0].content[0].text,
         taskActivityTypeId : this.selectedType,
     }
-    console.log(this.html);
-    //this.tService.saveTaskActivity(taskAct).subscribe(response => {
-    //  console.log("Succesfully!");
-    //})}
+
+    if(this.html.content[0].content[0].text == "")
+      {
+        confirm("Description cannot be empty!");
+      }
+      else
+      {
+        this.tService.saveTaskActivity(taskAct).subscribe(response => {
+          console.log("Succesfully!");
+          this.closeDialog();
+        })}
+      }
+
+    
 
 }
-}
+

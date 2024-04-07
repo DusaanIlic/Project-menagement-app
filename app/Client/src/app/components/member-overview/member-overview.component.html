@@ -81,7 +81,7 @@
                         </tr>
 
                         <tr *ngFor="let task of tasks; index as i" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                            <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.projectId}}</td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.projectName}}</td>
                             <td class="w-60 border-t-[1px] border-t-gray-300 ">{{task.taskName}}</td>
                             <td class="w-60 border-t-[1px] border-t-gray-300">{{task.deadline | date}}</td>
                             <td *ngIf="task.taskStatusId == 1" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskStatus}}</div></td>

@@ -53,4 +53,14 @@ export class TaskService {
     return this.http.post<any>(`${TASKACTIVITY_API}`, taskAct);
   }
 
+  getTaskActivityName(taskActivityId : number) : Observable<any>
+  {
+    return this.http.get<any>(`${TASKACTIVITY_API}Type/${taskActivityId}`);
+  }
+
+  getTaskActivityType() : Observable<any>
+  {
+    return this.http.get<any>(`${TASKACTIVITY_API}Type`);
+  }
+
 }

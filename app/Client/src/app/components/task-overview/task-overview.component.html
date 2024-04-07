@@ -8,7 +8,7 @@
                     {{task.taskName}}
                 </h1>
                 <h2 class="text-l flex text-gray-900">
-                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{task.projectId}}</p>
+                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
                 </h2>
             </div>
             <!-- Modal body -->
@@ -26,9 +26,7 @@
                                 <ngx-editor [(ngModel)]="html" [editor]="editor" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>
                             </div>
                             <select class="flex justify-end w-[22%] h-10" name="" id="" [(ngModel)] = "selectedType" (change)="selectChanged()">
-                            <option value="1">Update</option>
-                            <option value="2">Bug fix</option>
-                            <option value="3">Bug</option>
+                                <option value="{{type.taskActivityTypeId}}" *ngFor="let type of allTypes">{{type.taskActivityTypeName}}</option>
                             </select>
                         </div>
                     <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="saveActivity()">Save activity</button>
@@ -36,13 +34,17 @@
                     </div>
                     <div class="mt-2 flex flex-col justify-between gap-1">
                         <div class="flex w-full rounded-md items-center px-1" *ngFor="let taskAct of activities">
-                            <img src="assets/avatar.png" class="size-10 mr-1 border-2 border-black rounded-full" alt="">
-                            <div>
+                            <img *ngIf="taskAct.taskId === task.taskId" src="assets/avatar.png" class="size-10 mr-1 border-2 border-black rounded-full" alt="">
+                            <div *ngIf="taskAct.taskId === task.taskId">
                                 <p class="text-lg">{{taskAct.memberName}} wrote "{{taskAct.comment}}"</p>
-                                <p *ngIf="lessThanHour" class="text-md">Modified {{differenceM}} minutes ago.</p>
-                                <p *ngIf="lessThanDay && !lessThanHour" class="text-md">Modified {{differenceH}} hours ago.</p>
-                                <p *ngIf="!lessThanDay && !lessThanHour" class="text-md">{{taskAct.dateModify| date}}</p>
+                                <div class="flex flex-row gap-2">
+                                    <p *ngIf="lessThanHour" class="text-md">Modified {{differenceM}} minutes ago.</p>
+                                    <p *ngIf="lessThanDay && !lessThanHour" class="text-md">Modified {{differenceH}} hours ago.</p>
+                                    <p *ngIf="!lessThanDay && !lessThanHour" class="text-md">{{taskAct.dateModify| date}}</p>
+                                    <p class="font-bold">{{taskAct.taskActivityName}}</p>
+                                </div>
                             </div>
+                            
                         </div>
 
                     </div>

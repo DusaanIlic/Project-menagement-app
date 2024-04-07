@@ -47,7 +47,6 @@ export class MemberOverviewComponent implements OnInit{
 
   p? : Project;
   projects : Project[] = [];
-  activities : taskActivity[] = [];
   tasks : Task[] = [];
   mRole : string = "";
 
@@ -56,24 +55,31 @@ export class MemberOverviewComponent implements OnInit{
   ngOnInit() {
     this.routeSub = this.route.params.subscribe(params => {
       this.member.id = params['id'];
-      console.log("Member id:", this.member.id); // log the value of id
-  
-      this.tService.getTasksByMember(this.member.id).pipe(
-        switchMap((tasks: Task[]) => {
-          this.tasks = tasks;
-          return this.getTaskPriorities();
-        })
-      ).subscribe();
-    });
-  }
-  
-  getTaskPriorities() {
-    const observables = [];
-    for (let i = 0; i < this.tasks.length; i++) {
-      observables.push(this.tService.getTaskPriority(this.tasks[i].taskId));
-    }
-    return forkJoin(observables);
-  }
+
+      this.mService.getRoleById(this.member.id).subscribe((role : any) => {
+        this.mRole = role.name;
+      })
+
+      this.tService.getTasksByMember(this.member.id).subscribe((data : Task[]) =>{
+       this.tasks = data;
+      // console.log(data);
+       for(let i=0;i<this.tasks.length;i++)
+        {
+          
+          this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
+            //console.log(project)
+            this.tasks[i].projectName = project.projectName;
+          })
+         // console.log("i:",i)
+          this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
+           // console.log(data);
+            this.tasks[i].taskPriority = data.name;
+           // console.log("i:",i)
+          })
+        }
+      })
+   })
+}
 
 
 
