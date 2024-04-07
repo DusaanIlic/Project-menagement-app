@@ -1,10 +1,12 @@
 import {Component, OnDestroy, OnInit, Sanitizer} from '@angular/core';
 import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
-import {ActivatedRoute, ParamMap, Params} from "@angular/router";
+import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
 import {Subscription, switchMap} from "rxjs";
 import {DatePipe, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {EditProfileForm} from "../../forms/edit-profile.form";
 
 @Component({
   selector: 'app-edit-member',
@@ -12,18 +14,41 @@ import {NgToastModule, NgToastService} from "ng-angular-popup";
   imports: [
     NgOptimizedImage,
     NgToastModule,
-    DatePipe
+    DatePipe,
+    RouterLink,
+    ReactiveFormsModule
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
 })
 export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
+  memberForm: any;
   private _routeSubscription: any;
 
   constructor(private route: ActivatedRoute, private memberService: MemberService, private ngToastService: NgToastService) { }
 
   ngOnInit() {
+    this.memberForm = new FormGroup({
+      firstName: new FormControl('', [
+        Validators.required,
+        Validators.minLength(2)
+      ]),
+      lastName: new FormControl('', [
+        Validators.required,
+        Validators.minLength(2)
+      ]),
+      linkedin: new FormControl(''),
+      phoneNumber: new FormControl('', [
+        Validators.pattern('^[0-9]{3}-[0-9]{3}-[0-9]{4}$')
+      ]),
+      country: new FormControl(''),
+      city: new FormControl(''),
+      github: new FormControl(''),
+      status: new FormControl(''),
+      dateOfBirth: new FormControl('')
+    });
+
     this._routeSubscription = this.route.params.pipe(
       switchMap(params => {
         const memberID = params['id'];
@@ -31,7 +56,18 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       })
     ).subscribe(member => {
       this.member = member;
-      console.log(this.member);
+
+      this.memberForm.patchValue({
+        firstName: this.member.firstName,
+        lastName: this.member.lastName,
+        linkedin: this.member.linkedin,
+        phoneNumber: this.member.phoneNumber,
+        country: this.member.country,
+        city: this.member.city,
+        github: this.member.github,
+        status: this.member.status,
+        dateOfBirth: this.member.dateOfBirth
+      });
     });
   }
 
@@ -66,5 +102,9 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  saveChanges() {
+    console.log(JSON.stringify(this.member));
   }
 }

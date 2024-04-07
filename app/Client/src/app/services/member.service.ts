@@ -3,6 +3,7 @@ import {Injectable} from "@angular/core";
 import {AddMemberForm} from "../forms/add-member.form";
 import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
 import {Member} from "../models/member";
+import {EditProfileForm} from "../forms/edit-profile.form";
 
 const API = 'http://localhost:8000/api/Member';
 const API_ROLES = 'http://localhost:8000/api/Role';
@@ -31,6 +32,10 @@ export class MemberService {
 
   getRoles(): Observable<any[]> {
     return this.http.get<any[]>(`${API_ROLES}`);
+  }
+
+  editMemberProfile(memberId: number, editProfileForm: EditProfileForm): Observable<any> {
+    return this.http.put<any>(`${API}/${memberId}`, editProfileForm);
   }
 
   deleteAvatar(memberId: number) {

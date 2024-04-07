@@ -1,4 +1,4 @@
-<div class="w-8/12 m-auto">
+<div class="w-8/12 m-auto" [formGroup]="memberForm">
   <div>
     <div class="flex flex-col w-full xl:flex-row p-2 justify-between">
         <div class="flex flex-col my-2">
@@ -6,7 +6,7 @@
             <p>You can change or remove your avatar here.</p>
         </div>
 
-        <img ngSrc="http://localhost:8000/api/Member/{{member?.id}}/Avatar" class="flex rounded-full border-solid border-black border-2  size-40 my-2 select-none">
+        <img src="http://localhost:8000/api/Member/{{member?.id}}/Avatar" class="flex rounded-full border-solid border-black border-2  size-40 my-2 select-none">
 
         <div class="flex flex-col my-2 justify-between">
             <h2 class="text-lg font-bold">Upload new avatar</h2>
@@ -57,11 +57,6 @@
             <label for="user-id" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">User ID</label>
             <input type="text" id="user-id" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" [value]="member?.id" disabled readonly>
         </div>
-
-        <div class="w-40">
-          <label for="role-id" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Role ID</label>
-          <input type="text" id="role-id" aria-label="disabled input 2" class="cursor-not-allowed flex mb-2 border border-gray-300 text-sm rounded-md p-2.5  text-gray-400 w-20" [value]="member?.roleId" value="123" disabled readonly>
-        </div>
       </div>
     </div>
 
@@ -84,7 +79,7 @@
 
         <div class="mb-2 w-[155px]">
           <label for="date-of-birth" class="block mb-2 text-sm text-gray-900 dark:text-black font-bold">Date of Birth</label>
-          <input type="date" id="date-of-birth" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.dateOfBirth | date : 'dd/MM/yyyy'" placeholder="dd/MM/yyyy" [max]="todayDate()">
+          <input type="date" id="date-of-birth" aria-label="disabled input 2" class="flex mb-2 border border-gray-300 text-sm rounded-md p-2.5 w-50" [value]="member?.dateOfBirth | date : 'yyyy-MM-dd'" placeholder="dd/MM/yyyy" [max]="todayDate()">
         </div>
 
         <div class="mb-2 w-[155px]">
@@ -117,7 +112,7 @@
   </div>
 
   <div class="flex flex-col justify-between mt-4 xl:flex-row-reverse p-2">
-    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Update profile settings</button>
+    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]" (click)="saveChanges()">Update profile settings</button>
     <button type="button" class="flex items-center justify-center w-48 text-white bg-red-700   font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-red-800" routerLink="/members/all">Cancel</button>
   </div>
 
