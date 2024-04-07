@@ -7,6 +7,7 @@ import {DatePipe, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
+import {maxDateValidator} from "../../validators/max-date.validator";
 
 @Component({
   selector: 'app-edit-member',
@@ -24,6 +25,7 @@ import {EditProfileForm} from "../../forms/edit-profile.form";
 export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
   memberForm: any;
+  private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
   constructor(private route: ActivatedRoute, private memberService: MemberService, private ngToastService: NgToastService) { }
@@ -46,7 +48,9 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       city: new FormControl(''),
       github: new FormControl(''),
       status: new FormControl(''),
-      dateOfBirth: new FormControl('')
+      dateOfBirth: new FormControl('', [
+        maxDateValidator(this.todayDate())
+      ])
     });
 
     this._routeSubscription = this.route.params.pipe(
@@ -66,7 +70,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         city: this.member.city,
         github: this.member.github,
         status: this.member.status,
-        dateOfBirth: this.member.dateOfBirth
+        dateOfBirth: this.datePipe.transform(this.member.dateOfBirth, 'yyyy-MM-dd')
       });
     });
   }
