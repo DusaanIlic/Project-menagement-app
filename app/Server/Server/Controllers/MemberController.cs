@@ -278,7 +278,7 @@ namespace Server.Controllers
             _dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Member deleted");
         }
 
         [Authorize]

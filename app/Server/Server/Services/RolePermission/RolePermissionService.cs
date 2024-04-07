@@ -22,9 +22,15 @@ namespace Server.Services.RolePermission
                 .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
         }
 
-        Task<int?> IRolePermissionService.CheckRole(int userId)
+        public async Task<int?> CheckRole(int userId)
         {
-            throw new NotImplementedException();
+            var user = await dbContext.Members.FindAsync(userId);
+            if (user == null)
+            {
+                return null; 
+            }
+
+            return user.RoleId;
         }
     }
 }
