@@ -469,6 +469,11 @@ namespace Server.Controllers
 
             var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
 
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
             {
@@ -494,6 +499,54 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok("Members added to project successfully");
+        }
+
+        [Authorize]
+        [HttpDelete("{projectId}/members/{memberId}")]
+        public async Task<IActionResult> RemoveMemberFromProject(int projectId, int memberId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            if (project.TeamLeaderId == memberId || !project.Members.Any(m => m.Id == memberId))
+            {
+                return NotFound("Member not found on project");
+            }
+
+            var memberToRemove = project.Members.FirstOrDefault(m => m.Id == memberId);
+            if (memberToRemove == null)
+            {
+                return NotFound("Member not found on project");
+            }
+
+            project.Members.Remove(memberToRemove);
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Member removed from project successfully");
         }
     }
 }
