@@ -38,6 +38,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
@@ -71,11 +72,8 @@ namespace Server.Controllers
                     };
                 }
 
-                /*int numberOfMembers = dbContext.Projects
-                                   .Where(pr => pr.ProjectId == p.ProjectId)
-                                   .SelectMany(pr => pr.MemberProjects)
-                                   .Count();
-                */
+                int numberOfMembers = p.MemberProjects.Count;
+
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -87,7 +85,7 @@ namespace Server.Controllers
                         ProjectTasks = taskDTOs,
                         TeamLider = teamLeaderDTO,
                         StartDate = p.StartDate,
-                        //NumberOfPeople = numberOfMembers
+                        NumberOfPeople = numberOfMembers
                 });
             }
 
@@ -166,11 +164,8 @@ namespace Server.Controllers
                 RoleName = teamLeader.Role.RoleName
             };
 
-            /*int numberOfMembers = dbContext.Projects
-                                   .Where(pr => pr.ProjectId == project.ProjectId)
-                                   .SelectMany(pr => pr.Members)
-                                   .Count();
-            */
+            int numberOfMembers = project.MemberProjects.Count;
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -181,7 +176,7 @@ namespace Server.Controllers
                 Status = projectStatus.Status,
                 StartDate = project.StartDate,
                 TeamLider = teamLeaderDTO,
-                //NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -232,10 +227,7 @@ namespace Server.Controllers
                 };
             }
 
-            //int numberOfMembers = dbContext.Projects
-              //                     .Where(pr => pr.ProjectId == project.ProjectId)
-                //                   .SelectMany(pr => pr.Members)
-                  //                 .Count();
+            int numberOfMembers = project.MemberProjects.Count;
 
             var projectDTO = new ProjectDTO
             {
@@ -248,7 +240,7 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-                //NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -304,11 +296,8 @@ namespace Server.Controllers
                 };
             }
 
-            /*int numberOfMembers = dbContext.Projects
-                                   .Where(pr => pr.ProjectId == project.ProjectId)
-                                   .SelectMany(pr => pr.Members)
-                                   .Count();
-            */
+            int numberOfMembers = project.MemberProjects.Count;
+
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -320,7 +309,7 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-               // NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
