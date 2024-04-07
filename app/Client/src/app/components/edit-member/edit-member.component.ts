@@ -8,6 +8,7 @@ import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
 import {maxDateValidator} from "../../validators/max-date.validator";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-edit-member',
@@ -29,7 +30,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
-  constructor(private route: ActivatedRoute, private memberService: MemberService, private ngToastService: NgToastService) { }
+  constructor(private route: ActivatedRoute, private memberService: MemberService,
+                private ngToastService: NgToastService, private authService: AuthService) { }
 
   ngOnInit() {
     this.memberForm = new FormGroup({
@@ -115,6 +117,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
       this.memberService.editMemberProfile(this.member.id, editProfileForm).subscribe({
         next: (data: any) => {
+          this.authService.updateAuthenticatedMember(data);
+
           this.ngToastService.success({
             detail: 'Success',
             summary: 'Successfully updated settings.'

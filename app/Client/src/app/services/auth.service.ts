@@ -14,7 +14,12 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private router: Router) {}
+  private authenticatedMemberSubject: BehaviorSubject<any>;
+
+  constructor(private http: HttpClient, private router: Router) {
+    const authenticatedMember = localStorage.getItem('authenticated-member');
+    this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
+  }
 
   login(email: string, password: string) {
     return new Promise<void>((resolve, reject) => {
@@ -44,6 +49,8 @@ export class AuthService {
           localStorage.setItem('authenticated-member-id', member.id.toString());
           localStorage.setItem('authenticated-member', JSON.stringify(member));
 
+          this.authenticatedMemberSubject.next(member);
+
           resolve();
         },
         error: error => {
@@ -64,13 +71,28 @@ export class AuthService {
   }
 
   getAuthenticatedMember() {
-    const authenticatedMember = localStorage.getItem('authenticated-member')
+    return this.authenticatedMemberSubject.asObservable();
+  }
 
-    if (authenticatedMember) {
-      return of(JSON.parse(authenticatedMember));
+  getAuthenticatedMembersId() {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    if (id) {
+      return parseInt(id);
     }
 
-    return of(null);
+    return null;
+  }
+
+  updateAuthenticatedMember(member: Member) {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    console.log('updated member');
+
+    if (id && parseInt(id) == member.id) {
+      localStorage.setItem('authenticated-member', JSON.stringify(member));
+      this.authenticatedMemberSubject.next(member);
+    }
   }
 
   getToken(): string | null{
