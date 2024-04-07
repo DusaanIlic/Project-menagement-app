@@ -512,10 +512,16 @@ namespace Server.Controllers
             foreach (var memberId in memberIds)
             {
 
+                if (project.TeamLeaderId == memberId)
+                {
+                    return Ok("Member is already a team leader of the project");
+                }
+
+
                 var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
                 if (existingMemberProject != null)
                 {
-                    continue;
+                    return Ok("Member already exists in the project");
                 }
 
                 dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
@@ -525,8 +531,8 @@ namespace Server.Controllers
 
             return Ok("Members added to project successfully");
         }
-        
-        /*[Authorize]
+
+        [Authorize]
         [HttpDelete("{projectId}/members/{memberId}")]
         public async Task<IActionResult> RemoveMemberFromProject(int projectId, int memberId)
         {
@@ -544,34 +550,32 @@ namespace Server.Controllers
 
             var roleId = await rolePermissionService.CheckRole(userId);
 
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 10);
 
             if (!hasPermission)
             {
                 return Unauthorized("Insufficient permissions");
             }
 
-            var project = await dbContext.Projects.FindAsync(projectId);
+            var project = await dbContext.Projects
+                .Include(p => p.MemberProjects)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
             if (project == null)
             {
                 return NotFound("Project not found");
             }
 
-            if (project.TeamLeaderId == memberId || !project.Members.Any(m => m.Id == memberId))
+            var memberProject = project.MemberProjects.FirstOrDefault(mp => mp.MemberId == memberId);
+            if (memberProject == null)
             {
                 return NotFound("Member not found on project");
             }
 
-            var memberToRemove = project.Members.FirstOrDefault(m => m.Id == memberId);
-            if (memberToRemove == null)
-            {
-                return NotFound("Member not found on project");
-            }
-
-            project.Members.Remove(memberToRemove);
+            dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();
 
             return Ok("Member removed from project successfully");
-        }*/
+        }
     }
 }
