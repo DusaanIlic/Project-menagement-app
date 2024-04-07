@@ -36,15 +36,10 @@ namespace Server.Controllers
             _rolePermissionService = rolePermissionService;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
-
-            if (!User.IsInRole("Administrator"))
-            {
-                return Unauthorized();
-            }
 
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
 
