@@ -141,10 +141,15 @@ namespace Server.Controllers
 
             project.ProjectTaskStatuses = firstThreeTaskStatuses
                 .Select(status => new ProjectTaskStatus { TaskStatus = status }).ToList();
-            
+
             dbContext.Projects.Add(project);
-            
+
             await dbContext.SaveChangesAsync();
+
+
+            dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId });
+            await dbContext.SaveChangesAsync();
+
 
             var teamLeaderDTO = new MemberDTO
             {
