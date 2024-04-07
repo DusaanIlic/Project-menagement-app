@@ -32,6 +32,6 @@ namespace Server.Models
         
         public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; } = new List<ProjectTaskStatus>();
 
-        public ICollection<Member> Members { get; set; } = new List<Member>();
+        public ICollection<MemberProject> MemberProjects { get; set; } = new List<MemberProject>();
     }
 }

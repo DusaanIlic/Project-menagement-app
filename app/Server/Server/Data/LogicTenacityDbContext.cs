@@ -29,6 +29,7 @@ namespace Server.Data
         public DbSet<TaskActivity> TaskActivities { get; set; }
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
+        public DbSet<MemberProject> MemberProjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -151,6 +152,19 @@ namespace Server.Data
                 .HasOne(a => a.TaskActivityType)
                 .WithMany(t => t.TaskActivities)
                 .HasForeignKey(a => a.TaskActivityTypeId);
+
+            modelBuilder.Entity<MemberProject>()
+                 .HasKey(mp => new { mp.MemberId, mp.ProjectId });
+
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.Member)
+                .WithMany(m => m.MemberProjects)
+                .HasForeignKey(mp => mp.MemberId);
+
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.Project)
+                .WithMany(p => p.MemberProjects)
+                .HasForeignKey(mp => mp.ProjectId);
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Add members" },

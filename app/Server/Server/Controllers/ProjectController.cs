@@ -71,11 +71,11 @@ namespace Server.Controllers
                     };
                 }
 
-                int numberOfMembers = dbContext.Projects
+                /*int numberOfMembers = dbContext.Projects
                                    .Where(pr => pr.ProjectId == p.ProjectId)
-                                   .SelectMany(pr => pr.Members)
+                                   .SelectMany(pr => pr.MemberProjects)
                                    .Count();
-
+                */
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -87,7 +87,7 @@ namespace Server.Controllers
                         ProjectTasks = taskDTOs,
                         TeamLider = teamLeaderDTO,
                         StartDate = p.StartDate,
-                        NumberOfPeople = numberOfMembers
+                        //NumberOfPeople = numberOfMembers
                 });
             }
 
@@ -166,11 +166,11 @@ namespace Server.Controllers
                 RoleName = teamLeader.Role.RoleName
             };
 
-            int numberOfMembers = dbContext.Projects
+            /*int numberOfMembers = dbContext.Projects
                                    .Where(pr => pr.ProjectId == project.ProjectId)
                                    .SelectMany(pr => pr.Members)
                                    .Count();
-
+            */
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -181,7 +181,7 @@ namespace Server.Controllers
                 Status = projectStatus.Status,
                 StartDate = project.StartDate,
                 TeamLider = teamLeaderDTO,
-                NumberOfPeople = numberOfMembers
+                //NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -232,10 +232,10 @@ namespace Server.Controllers
                 };
             }
 
-            int numberOfMembers = dbContext.Projects
-                                   .Where(pr => pr.ProjectId == project.ProjectId)
-                                   .SelectMany(pr => pr.Members)
-                                   .Count();
+            //int numberOfMembers = dbContext.Projects
+              //                     .Where(pr => pr.ProjectId == project.ProjectId)
+                //                   .SelectMany(pr => pr.Members)
+                  //                 .Count();
 
             var projectDTO = new ProjectDTO
             {
@@ -248,7 +248,7 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-                NumberOfPeople = numberOfMembers
+                //NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -304,11 +304,11 @@ namespace Server.Controllers
                 };
             }
 
-            int numberOfMembers = dbContext.Projects
+            /*int numberOfMembers = dbContext.Projects
                                    .Where(pr => pr.ProjectId == project.ProjectId)
                                    .SelectMany(pr => pr.Members)
                                    .Count();
-
+            */
             var projectDTO = new ProjectDTO
             {
                 ProjectId = project.ProjectId,
@@ -320,7 +320,7 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-                NumberOfPeople = numberOfMembers
+               // NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -509,22 +509,24 @@ namespace Server.Controllers
                 return NotFound("One or more members not found");
             }
 
-            foreach (var member in members)
+            foreach (var memberId in memberIds)
             {
-                if (project.TeamLeaderId == member.Id || project.Members.Any(m => m.Id == member.Id))
+
+                var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
+                if (existingMemberProject != null)
                 {
                     continue;
                 }
 
-                project.Members.Add(member);
+                dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
             }
 
             await dbContext.SaveChangesAsync();
 
             return Ok("Members added to project successfully");
         }
-
-        [Authorize]
+        
+        /*[Authorize]
         [HttpDelete("{projectId}/members/{memberId}")]
         public async Task<IActionResult> RemoveMemberFromProject(int projectId, int memberId)
         {
@@ -570,6 +572,6 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok("Member removed from project successfully");
-        }
+        }*/
     }
 }
