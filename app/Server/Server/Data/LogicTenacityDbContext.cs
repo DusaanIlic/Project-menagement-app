@@ -190,9 +190,10 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com"},
+                new Member { Id = 1, FirstName = "Logic", LastName = "Tenacity", RoleId = 1, Password = BCrypt.Net.BCrypt.HashPassword("admin"), Email = "admin@logictenacity.com" },
+                new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
-                );
+            );
 
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Administrator" },

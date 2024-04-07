@@ -7,14 +7,19 @@ namespace Server.DataTransferObjects
 {
     public class MemberDTO
     {
+        [Required]
         public int Id { get; set; }
         
+        [Required]
         public string FirstName { get; set; } = string.Empty;
         
+        [Required]
         public string LastName { get; set; } = string.Empty;
 
+        [Required]
         public string Email { get; set; } = string.Empty;
 
+        [Required]
         public int RoleId { get; set; } 
         
         public String Linkedin { get; set; } = String.Empty;
@@ -29,10 +34,11 @@ namespace Server.DataTransferObjects
         
         public String City { get; set; } = String.Empty;
 
-        public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch; 
+        public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch;
 
-        public DateTime DateAdded { get; set; }
+        public DateTime DateAdded { get; set; } = DateTime.UnixEpoch;
 
+        [Required]
         public string RoleName { get; set; } = String.Empty;
     }
 }

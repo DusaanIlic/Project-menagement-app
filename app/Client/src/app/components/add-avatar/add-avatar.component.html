@@ -1,0 +1,16 @@
+<input type="file" (change)="fileChangeEvent($event)" />
+
+<image-cropper
+  [imageChangedEvent]="imageChangedEvent"
+  [containWithinAspectRatio]="true"
+  [maintainAspectRatio]="true"
+  [roundCropper]="true"
+  [autoCrop]="true"
+  [aspectRatio]="1"
+  (imageCropped)="imageCropped($event)"
+  (imageLoaded)="imageLoaded($event)"
+  (cropperReady)="cropperReady()"
+  (loadImageFailed)="loadImageFailed()"
+></image-cropper>
+
+<img *ngIf="croppedImage" [src]="croppedImage" height="256" width="256"/>

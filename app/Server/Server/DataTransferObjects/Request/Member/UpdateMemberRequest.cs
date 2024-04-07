@@ -9,12 +9,6 @@ public class UpdateMemberRequest
         
     [Required(ErrorMessage = "Last name is required.")]
     public string LastName { get; set; } = string.Empty;
-        
-    [Required(ErrorMessage = "Email address is required.")]
-    [EmailAddress(ErrorMessage = "Invalid email address.")]
-    public string Email { get; set; } = string.Empty;
-    
-    public string Role { get; set; } = string.Empty;
     
     public String Linkedin { get; set; } = String.Empty;
 
@@ -29,6 +23,4 @@ public class UpdateMemberRequest
     public String City { get; set; } = String.Empty;
 
     public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch; 
-    
-    public IFormFile? Avatar { get; set; }
 }

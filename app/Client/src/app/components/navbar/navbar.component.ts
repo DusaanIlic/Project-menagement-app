@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";
-import {ProfileDropdownMenuComponent} from "../profile-dropdown-menu/profile-dropdown-menu.component";
+import {AuthService} from "../../services/auth.service";
+import {Member} from "../../models/member";
+import {MemberService} from "../../services/member.service";
 
 @Component({
   selector: 'app-navbar',
@@ -11,15 +13,54 @@ import {ProfileDropdownMenuComponent} from "../profile-dropdown-menu/profile-dro
     RouterLink,
     RouterLinkActive,
     NgIf,
-    ProfileDropdownMenuComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   visible: boolean = false;
+  member: Member | null | undefined;
+  avatarUrl: string | undefined;
+
+  constructor(private authService: AuthService, private renderer: Renderer2, private elementRef: ElementRef) {
+    this.addClickOutsideListener();
+  }
+
+  ngOnInit() {
+    this.authService.getAuthenticatedMember().subscribe(member => {
+      this.member = member;
+    });
+
+    this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
+      this.avatarUrl = avatarUrl;
+    })
+  }
+
+  ngOnDestroy() {
+    this.renderer.destroy();
+  }
 
   dropdownShow() {
     this.visible = !this.visible;
+  }
+
+  hideDropdown() {
+    this.visible = false;
+  }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  addClickOutsideListener() {
+    this.renderer.listen('document', 'click', (event) => {
+      if (!this.isClickedInsideComponent(event.target)) {
+        this.visible = false;
+      }
+    });
+  }
+
+  isClickedInsideComponent(target: any): boolean {
+    return this.elementRef.nativeElement.contains(target);
   }
 }

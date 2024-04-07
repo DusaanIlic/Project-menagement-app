@@ -204,7 +204,9 @@ namespace Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
-            var member = await _dbContext.Members.FindAsync(id);
+            var member = await _dbContext.Members
+                                            .Include(m => m.Role)
+                                            .FirstOrDefaultAsync(m => m.Id == id);
             var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
@@ -217,17 +219,8 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var emailUsed =
-                await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email && m.Id != member.Id);
-
-            if (emailUsed != null)
-            {
-                return Conflict();
-            }
-
             member.FirstName = memberDTO.FirstName;
             member.LastName = memberDTO.LastName;
-            member.Email = memberDTO.Email;
             member.Country = memberDTO.Country;
             member.City = memberDTO.City;
             member.Status = memberDTO.Status;
@@ -239,7 +232,25 @@ namespace Server.Controllers
             await _dbContext.SaveChangesAsync();
 
 
-            return Ok(memberDTO);
+            var updatedMemberDTO = new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Email = member.Email,
+                RoleId = member.RoleId,
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Github,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth,
+                RoleName = member.Role.RoleName
+            };
+            
+            return Ok(updatedMemberDTO);
         }
 
         [Authorize]
@@ -278,6 +289,7 @@ namespace Server.Controllers
 
         [Authorize]
         [HttpGet("{id}/Avatar")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);
@@ -287,14 +299,20 @@ namespace Server.Controllers
                 return NotFound();
             }
 
+            
             if (member.AvatarId == null)
             {
-                return NotFound();
+               var bytes = await System.IO.File.ReadAllBytesAsync("Files/default_avatar.png");
+               var mime = "image/png";
+               
+               return File(bytes, mime);
             }
-
-            var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
-
-            return File(bytes, mime);
+            else
+            {
+                var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
+                
+                return File(bytes, mime);
+            }
         }
 
         [Authorize]
@@ -346,11 +364,13 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            if (member.AvatarId != null)
+            if (member.AvatarId == null)
             {
-                await _fileService.DeleteFile(member.AvatarId.Value);
-                member.AvatarId = null;
+                return NotFound();
             }
+            
+            await _fileService.DeleteFile(member.AvatarId.Value);
+            member.AvatarId = null;
 
             await _dbContext.SaveChangesAsync();
 
@@ -377,13 +397,14 @@ namespace Server.Controllers
         public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
+            var isAdmin = User.IsInRole("Administrator");
+            
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
                 return BadRequest("Invalid user ID in token");
             }
 
-            if (userId != id)
+            if (userId != id && !isAdmin)
             {
                 return Unauthorized("You are not authorized to change this password");
             }
@@ -414,13 +435,14 @@ namespace Server.Controllers
         public async Task<IActionResult> ChangeEmail(int id, EmailChangeRequest changeEmailRequest)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
                 return BadRequest("Invalid user ID in token");
             }
 
-            if (userId != id)
+            if (userId != id && !isAdmin)
             {
                 return Unauthorized("You can only change your own email address");
             }

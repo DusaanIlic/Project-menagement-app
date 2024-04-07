@@ -226,6 +226,30 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MemberProjects",
+                columns: table => new
+                {
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberProjects", x => new { x.MemberId, x.ProjectId });
+                    table.ForeignKey(
+                        name: "FK_MemberProjects_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MemberProjects_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectTasks",
                 columns: table => new
                 {
@@ -392,7 +416,13 @@ namespace Server.Migrations
                     { 9, "Remove member from task" },
                     { 10, "Remove member from project" },
                     { 11, "Change task status" },
-                    { 12, "Change project status" }
+                    { 12, "Change project status" },
+                    { 13, "Change project" },
+                    { 14, "Update task priority" },
+                    { 15, "Add task dependency" },
+                    { 16, "Remove task dependency" },
+                    { 17, "Add task category" },
+                    { 18, "Remove task category" }
                 });
 
             migrationBuilder.InsertData(
@@ -451,6 +481,16 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Members",
+                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "LastName", "Linkedin", "Password", "PhoneNumber", "RoleId", "Status" },
+                values: new object[,]
+                {
+                    { 1, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 858, DateTimeKind.Utc).AddTicks(687), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", "Tenacity", "", "$2a$10$ogpyJIlOKIhbLUEvooRqKeHLQW2z0w..FxiM3zyQVK06InFEfxFV6", "", 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 921, DateTimeKind.Utc).AddTicks(5382), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", "Peric", "", "$2a$10$ZkW0vS/Brat9FJoa29dpJubnObO26Wy7NXmpkwJlBJYHtAikwY0tG", "", 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 986, DateTimeKind.Utc).AddTicks(758), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", "Tomic", "", "$2a$10$TxomEKiICyOkFBZP8D4.3.LSedBmEukDLw7eBgbI2OZczTtzDr20K", "", 3, "" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "RolePermissions",
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
@@ -465,6 +505,13 @@ namespace Server.Migrations
                     { 8, 2 },
                     { 9, 2 },
                     { 10, 2 },
+                    { 12, 2 },
+                    { 13, 2 },
+                    { 14, 2 },
+                    { 15, 2 },
+                    { 16, 2 },
+                    { 17, 2 },
+                    { 18, 2 },
                     { 11, 3 }
                 });
 
@@ -472,6 +519,11 @@ namespace Server.Migrations
                 name: "IX_Files_UploaderId",
                 table: "Files",
                 column: "UploaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberProjects_ProjectId",
+                table: "MemberProjects",
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Members_AvatarId",
@@ -569,6 +621,9 @@ namespace Server.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Files_Members_UploaderId",
                 table: "Files");
+
+            migrationBuilder.DropTable(
+                name: "MemberProjects");
 
             migrationBuilder.DropTable(
                 name: "MemberTasks");

@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240407143102_UpdateProjectTable")]
-    partial class UpdateProjectTable
+    [Migration("20240407222836_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,17 +112,34 @@ namespace Server.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 1,
+                            City = "",
+                            Country = "",
+                            DateAdded = new DateTime(2024, 4, 7, 22, 28, 35, 858, DateTimeKind.Utc).AddTicks(687),
+                            DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@logictenacity.com",
+                            FirstName = "Logic",
+                            Github = "",
+                            LastName = "Tenacity",
+                            Linkedin = "",
+                            Password = "$2a$10$ogpyJIlOKIhbLUEvooRqKeHLQW2z0w..FxiM3zyQVK06InFEfxFV6",
+                            PhoneNumber = "",
+                            RoleId = 1,
+                            Status = ""
+                        },
+                        new
+                        {
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 14, 31, 1, 345, DateTimeKind.Utc).AddTicks(1954),
+                            DateAdded = new DateTime(2024, 4, 7, 22, 28, 35, 921, DateTimeKind.Utc).AddTicks(5382),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$DV3yQu.XQaTWoEhQUne9aOoFmSP0ZYBubBIjGESj.HZdjLxYiS0J2",
+                            Password = "$2a$10$ZkW0vS/Brat9FJoa29dpJubnObO26Wy7NXmpkwJlBJYHtAikwY0tG",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -132,14 +149,14 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 14, 31, 1, 464, DateTimeKind.Utc).AddTicks(2510),
+                            DateAdded = new DateTime(2024, 4, 7, 22, 28, 35, 986, DateTimeKind.Utc).AddTicks(758),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$rbdugYFDIikRGR46sPyi6OJY9g3ndCSIb.41LI9HkrHcEtgwm..Zy",
+                            Password = "$2a$10$TxomEKiICyOkFBZP8D4.3.LSedBmEukDLw7eBgbI2OZczTtzDr20K",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""

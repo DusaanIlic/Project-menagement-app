@@ -1,4 +1,4 @@
-<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none">
+<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none" (click)="hideDropdown()">
   <ul class="h-10 flex gap-1">
     <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden">
       <a class="flex gap-1 justify-center items-center">
@@ -37,15 +37,24 @@
 <!--    </li>-->
   </ul>
 
-  <ul class="h-10 flex gap-1">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow()">
+  <ul id="dropdown-toggle" class="h-10 flex gap-1">
+    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow(); $event.stopPropagation() ">
       <a class="flex gap-2 justify-center items-center">
-        <img ngSrc="/assets/avatar.png" alt="avatar icon" height="30" width="30">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible">
+        <img [src]="avatarUrl" class="rounded-full" alt="avatar icon" height="32" width="32">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible" (click)="dropdownShow(); $event.stopPropagation()">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible" (click)="dropdownShow(); $event.stopPropagation()">
       </a>
     </li>
   </ul>
 </nav>
 
-<app-profile-dropdown-menu [visible]="visible"></app-profile-dropdown-menu>
+<div *ngIf="this.visible" id="profile-dropdown" class="flex absolute gap-2 right-[3px] top-[50px] w-60 bg-accent-blue p-2 flex-col justify-evenly
+                                  rounded-md text-white select-none">
+  <p class="pl-2 font-bold">{{member?.firstName}} {{member?.lastName}}</p>
+  <p class="pl-2">Role: {{member?.roleName}}</p>
+  <hr class="white">
+  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/{{member?.roleId}}" (click)="dropdownShow()">Profile</button>
+  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/edit/{{member?.roleId}}" (click)="dropdownShow()">Edit profile</button>
+  <button class="flex h-10 grow pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" (click)="dropdownShow(); logout()">Log out</button>
+</div>
+
