@@ -20,6 +20,7 @@ import {MemberService} from "../../services/member.service";
 export class NavbarComponent implements OnInit, OnDestroy {
   visible: boolean = false;
   member: Member | null | undefined;
+  avatarUrl: string | undefined;
 
   constructor(private authService: AuthService, private renderer: Renderer2, private elementRef: ElementRef) {
     this.addClickOutsideListener();
@@ -29,6 +30,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.getAuthenticatedMember().subscribe(member => {
       this.member = member;
     });
+
+    this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
+      this.avatarUrl = avatarUrl;
+    })
   }
 
   ngOnDestroy() {
@@ -37,7 +42,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   dropdownShow() {
     this.visible = !this.visible;
-    console.log(this.member);
+  }
+
+  hideDropdown() {
+    this.visible = false;
   }
 
   logout() {

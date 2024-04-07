@@ -15,10 +15,13 @@ const httpOptions = {
 })
 export class AuthService {
   private authenticatedMemberSubject: BehaviorSubject<any>;
+  private authenticatedMemberAvatarSubject: BehaviorSubject<any>;
 
   constructor(private http: HttpClient, private router: Router) {
     const authenticatedMember = localStorage.getItem('authenticated-member');
+    const avatarUrl = localStorage.getItem('authenticated-member-avatar');
     this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
+    this.authenticatedMemberAvatarSubject = new BehaviorSubject<any>(avatarUrl ? avatarUrl : null);
   }
 
   login(email: string, password: string) {
@@ -48,8 +51,10 @@ export class AuthService {
           localStorage.setItem('jwt-token', token);
           localStorage.setItem('authenticated-member-id', member.id.toString());
           localStorage.setItem('authenticated-member', JSON.stringify(member));
+          localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${member.id}/Avatar`);
 
           this.authenticatedMemberSubject.next(member);
+          this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
 
           resolve();
         },
@@ -66,6 +71,7 @@ export class AuthService {
     localStorage.removeItem('jwt-token');
     localStorage.removeItem('authenticated-member-id');
     localStorage.removeItem('authenticated-member');
+    localStorage.removeItem('authenticated-member-avatar')
 
     this.router.navigate(['/login']);
   }
@@ -84,6 +90,21 @@ export class AuthService {
     return null;
   }
 
+  getAuthenticatedMembersAvatar() {
+    return this.authenticatedMemberAvatarSubject.asObservable();
+  }
+
+  updateAuthenticatedMembersAvatar() {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    console.log('updated member avatar');
+
+    if (id) {
+      localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${parseInt(id)}/Avatar?timestamp=${new Date().getTime()}`);
+      this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
+    }
+  }
+
   updateAuthenticatedMember(member: Member) {
     const id: any = localStorage.getItem('authenticated-member-id');
 
@@ -98,6 +119,7 @@ export class AuthService {
   getToken(): string | null{
     return localStorage.getItem('jwt-token');
   }
+
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }

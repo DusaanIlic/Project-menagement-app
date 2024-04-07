@@ -29,7 +29,7 @@ import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
 export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
   memberForm: any;
-  avatarUrl = '';
+  avatarUrl: string | undefined;
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
@@ -80,7 +80,9 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         dateOfBirth: this.datePipe.transform(this.member.dateOfBirth, 'yyyy-MM-dd')
       });
 
-      this.avatarUrl = `http://localhost:8000/api/Member/${this.member.id}/Avatar`;
+      this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
+        this.avatarUrl = avatarUrl;
+      })
     });
   }
 
@@ -122,7 +124,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
             summary: 'Successfully changed avatar.'
           });
 
-          this.avatarUrl = `http://localhost:8000/api/Member/${this.member.id}/Avatar?timestamp=${new Date().getTime()}`;
+          this.authService.updateAuthenticatedMembersAvatar();
         },
         error: err => {
           this.ngToastService.error({

@@ -1,4 +1,4 @@
-<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none">
+<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none" (click)="hideDropdown()">
   <ul class="h-10 flex gap-1">
     <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden">
       <a class="flex gap-1 justify-center items-center">
@@ -38,11 +38,11 @@
   </ul>
 
   <ul id="dropdown-toggle" class="h-10 flex gap-1">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow()">
+    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow(); $event.stopPropagation() ">
       <a class="flex gap-2 justify-center items-center">
-        <img ngSrc="http://localhost:8000/api/Member/{{member?.roleId}}/Avatar" alt="avatar icon" height="30" width="30">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible">
+        <img [src]="avatarUrl" class="rounded-full" alt="avatar icon" height="32" width="32">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible" (click)="dropdownShow(); $event.stopPropagation()">
+        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible" (click)="dropdownShow(); $event.stopPropagation()">
       </a>
     </li>
   </ul>
