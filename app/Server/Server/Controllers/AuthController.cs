@@ -64,7 +64,8 @@ namespace Server.Controllers
                 Github = member.Status,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
-                DateOfBirth = member.DateOfBirth
+                DateOfBirth = member.DateOfBirth,
+                RoleName = member.Role.RoleName
             };
 
             return Ok(new { Token = token, member = memberResponse });

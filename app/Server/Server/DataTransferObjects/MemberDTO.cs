@@ -32,5 +32,7 @@ namespace Server.DataTransferObjects
         public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch; 
 
         public DateTime DateAdded { get; set; }
+
+        public string RoleName { get; set; } = String.Empty;
     }
 }

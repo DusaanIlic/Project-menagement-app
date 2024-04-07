@@ -14,10 +14,11 @@ using Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
+using Server.Services.RolePermission;
+using Server.DataTransferObjects.Request.Member;
 
 namespace Server.Controllers
 {
-    [Authorize(Roles="Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     public class MemberController : ControllerBase
@@ -25,19 +26,23 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext _dbContext;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
+        private readonly IRolePermissionService _rolePermissionService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IRolePermissionService rolePermissionService)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
+            _rolePermissionService = rolePermissionService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMembers()
         {
+
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
-            
+
             var memberDTOs = members.Select(m => new MemberDTO
             {
                 Id = m.Id,
@@ -52,21 +57,44 @@ namespace Server.Controllers
                 Github = m.Github,
                 Linkedin = m.Linkedin,
                 PhoneNumber = m.PhoneNumber,
-                DateOfBirth = m.DateOfBirth
+                DateOfBirth = m.DateOfBirth,
+                RoleName = m.Role.RoleName
             }).ToList();
             return Ok(memberDTOs);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await _rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 1);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
 
             if (existingMember != null)
             {
                 return Conflict();
             }
-            
+
             String randomPassword = GenerateRandomPassword(8);
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(randomPassword);
 
@@ -99,7 +127,8 @@ namespace Server.Controllers
                 Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
-                DateOfBirth = member.DateOfBirth
+                DateOfBirth = member.DateOfBirth,
+                RoleName = role.RoleName
             };
 
             var request = new EmailDTO
@@ -136,11 +165,12 @@ namespace Server.Controllers
             return Ok(memberResponse);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMember(int id)
         {
             var member = await _dbContext.Members
-                         .Include(m => m.Role) 
+                         .Include(m => m.Role)
                          .FirstOrDefaultAsync(m => m.Id == id);
 
 
@@ -163,17 +193,19 @@ namespace Server.Controllers
                 Github = member.Github,
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
-                DateOfBirth = member.DateOfBirth
+                DateOfBirth = member.DateOfBirth,
+                RoleName = member.Role.RoleName
             };
 
             return Ok(memberDTO);
         }
-        
+
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
@@ -182,7 +214,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             var emailUsed =
@@ -206,26 +238,45 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            // Return the updated member DTO
+
             return Ok(memberDTO);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMember(int id)
         {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await _rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 2);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var member = await _dbContext.Members.FindAsync(id);
-        
+
             if (member == null)
             {
                 return NotFound();
             }
-        
+
             _dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
-        
-            return Ok();
+
+            return Ok("Member deleted");
         }
 
+        [Authorize]
         [HttpGet("{id}/Avatar")]
         public async Task<IActionResult> GetAvatar(int id)
         {
@@ -246,11 +297,12 @@ namespace Server.Controllers
             return File(bytes, mime);
         }
 
+        [Authorize]
         [HttpPost("{id}/Avatar")]
         public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
@@ -259,7 +311,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             if (member.AvatarId != null)
@@ -268,7 +320,7 @@ namespace Server.Controllers
             }
 
             var file = await _fileService.PostFileAsync(id, addFileRequest);
-            
+
             member.AvatarId = file.FileId;
             member.Avatar = file;
 
@@ -276,12 +328,13 @@ namespace Server.Controllers
 
             return Ok();
         }
-        
+
+        [Authorize]
         [HttpDelete("{id}/Avatar")]
         public async Task<IActionResult> DeleteAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("admin");
+            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
@@ -290,7 +343,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Forbid();
+                return Unauthorized();
             }
 
             if (member.AvatarId != null)
@@ -303,14 +356,14 @@ namespace Server.Controllers
 
             return Ok();
         }
-        
+
         public static string GenerateRandomPassword(int length)
         {
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
             StringBuilder password = new StringBuilder();
-            
+
             byte[] randomBytes = RandomNumberGenerator.GetBytes(length);
-            
+
             for (int i = 0; i < length; i++)
             {
                 password.Append(validChars[randomBytes[i] % validChars.Length]);
@@ -318,5 +371,86 @@ namespace Server.Controllers
 
             return password.ToString();
         }
+
+        [Authorize]
+        [HttpPost("{id}/ChangePassword")]
+        public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            if (userId != id)
+            {
+                return Unauthorized("You are not authorized to change this password");
+            }
+
+            var member = await _dbContext.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, member.Password))
+            {
+                return BadRequest("Old password is incorrect");
+            }
+
+            string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordRequest.NewPassword);
+
+            member.Password = hashedNewPassword;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Password changed successfully");
+        }
+
+        [Authorize]
+        [HttpPost("{id}/ChangeEmail")]
+        public async Task<IActionResult> ChangeEmail(int id, EmailChangeRequest changeEmailRequest)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            if (userId != id)
+            {
+                return Unauthorized("You can only change your own email address");
+            }
+
+            var member = await _dbContext.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
+            {
+                return BadRequest("Password is incorrect");
+            }
+            
+            var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
+
+            if (existingMember != null)
+            {
+                return Conflict("Email address already exists");
+            }
+
+            
+            member.Email = changeEmailRequest.NewEmail;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Email address changed successfully");
+        }
+
     }
 }

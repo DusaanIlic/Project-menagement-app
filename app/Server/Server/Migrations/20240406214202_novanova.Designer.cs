@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240406214202_novanova")]
+    partial class novanova
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -112,14 +115,14 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 646, DateTimeKind.Utc).AddTicks(3065),
+                            DateAdded = new DateTime(2024, 4, 6, 21, 42, 1, 298, DateTimeKind.Utc).AddTicks(5452),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$PbtqDUmB60341JXXWEeaou0bxAauuz.LrmbfBN1b6xYw8v44WNor6",
+                            Password = "$2a$10$Ng8RC.3UfhI.Or48wClPPexIPMHhFlCojOiv6NW2lzXmrxod6KaLO",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -129,14 +132,14 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 758, DateTimeKind.Utc).AddTicks(50),
+                            DateAdded = new DateTime(2024, 4, 6, 21, 42, 1, 385, DateTimeKind.Utc).AddTicks(8986),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$lIcgVn9fM2o23bNJgL9qPO9mDOcXrr9OayflQU790073zMF63eRp2",
+                            Password = "$2a$10$D1M.Kk..p1lbyG6S7SSMkO26p2M/VFhmMsKNuauv3erby/r9l2sKm",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -232,11 +235,6 @@ namespace Server.Migrations
                         {
                             PermissionId = 12,
                             PermissionName = "Change project status"
-                        },
-                        new
-                        {
-                            PermissionId = 13,
-                            PermissionName = "Change project"
                         });
                 });
 
@@ -468,16 +466,6 @@ namespace Server.Migrations
                         {
                             RoleId = 3,
                             PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 12
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 13
                         });
                 });
 

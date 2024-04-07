@@ -6,9 +6,11 @@ using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects.Request.TaskCategory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TaskCategoryController : ControllerBase

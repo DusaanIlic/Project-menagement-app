@@ -11,6 +11,7 @@ using System.Security.Claims;
 
 namespace Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TaskActivityController : ControllerBase

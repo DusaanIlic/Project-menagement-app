@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -19,9 +20,15 @@ namespace Server.Controllers
             this.dbContext = dbContext;
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> GetPermissions()
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var permissions = await dbContext.Permissions.ToListAsync();
             var permissionDTOs = permissions.Select(p => new PermissionDTO
             {
@@ -32,9 +39,14 @@ namespace Server.Controllers
             return Ok(permissionDTOs);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet("{permissionId}")]
         public async Task<IActionResult> GetPermissionById(int permissionId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
             var permission = await dbContext.Permissions.FindAsync(permissionId);
 
             if (permission == null)
@@ -51,9 +63,14 @@ namespace Server.Controllers
             return Ok(permissionDTO);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> AddPermission(AddPermissionRequest addPermissionRequest)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
             var permission = new Permission
             {
                 PermissionName = addPermissionRequest.Name
@@ -71,9 +88,15 @@ namespace Server.Controllers
             return Ok(permissionDTO);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{permissionId}")]
         public async Task<IActionResult> RemovePermission(int permissionId)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Unauthorized();
+            }
+
             var permission = await dbContext.Permissions.FindAsync(permissionId);
             if (permission == null)
             {
