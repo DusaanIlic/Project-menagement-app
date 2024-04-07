@@ -165,7 +165,13 @@ namespace Server.Data
                 new Permission { PermissionId = 10, PermissionName = "Remove member from project" },
                 new Permission { PermissionId = 11, PermissionName = "Change task status" },
                 new Permission { PermissionId = 12, PermissionName = "Change project status" },
-                new Permission { PermissionId = 13, PermissionName = "Change project" }
+                new Permission { PermissionId = 13, PermissionName = "Change project" },
+                new Permission { PermissionId = 14, PermissionName = "Update task priority" },
+                new Permission { PermissionId = 15, PermissionName = "Add task dependency" },
+                new Permission { PermissionId = 16, PermissionName = "Remove task dependency" },
+                new Permission { PermissionId = 17, PermissionName = "Add task category" },
+                new Permission { PermissionId = 18, PermissionName = "Remove task category" }
+
 
             );
 
@@ -193,7 +199,14 @@ namespace Server.Data
                 new RolePermission { RoleId = 2, PermissionId = 10 },
                 new RolePermission { RoleId = 3, PermissionId = 11 },
                 new RolePermission { RoleId = 2, PermissionId = 12 },
-                new RolePermission { RoleId = 2, PermissionId = 13 }
+                new RolePermission { RoleId = 2, PermissionId = 13 },
+                new RolePermission { RoleId = 2, PermissionId = 14 },
+                new RolePermission { RoleId = 2, PermissionId = 15 },
+                new RolePermission { RoleId = 2, PermissionId = 16 },
+                new RolePermission { RoleId = 2, PermissionId = 17 },
+                new RolePermission { RoleId = 2, PermissionId = 18 }
+
+
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
