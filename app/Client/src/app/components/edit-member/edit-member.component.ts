@@ -4,7 +4,6 @@ import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params} from "@angular/router";
 import {Subscription, switchMap} from "rxjs";
 import {NgOptimizedImage} from "@angular/common";
-import {ImageCroppedEvent, ImageCropperModule, LoadedImage} from "ngx-image-cropper";
 import { DomSanitizer } from '@angular/platform-browser';
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {MatDialog} from "@angular/material/dialog";
@@ -15,7 +14,6 @@ import {UploadAvatarComponent} from "../upload-avatar/upload-avatar.component";
   standalone: true,
   imports: [
     NgOptimizedImage,
-    ImageCropperModule,
     NgToastModule
   ],
   templateUrl: './edit-member.component.html',
@@ -45,23 +43,6 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._routeSubscription.unsubscribe();
-  }
-
-  fileChangeEvent(event: any): void {
-    this.imageChangedEvent = event;
-  }
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = event.objectUrl;
-    // event.blob can be used to upload the cropped image
-  }
-  imageLoaded(image: LoadedImage) {
-    // show cropper
-  }
-  cropperReady() {
-    // cropper ready
-  }
-  loadImageFailed() {
-    // show message
   }
 
   openAvatarDialog() {

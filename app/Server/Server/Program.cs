@@ -7,7 +7,8 @@ using System.Text; // Added using directive for Encoding
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using Server.Models;
-using Server.Services.File; // Added using directive for UseAuthentication
+using Server.Services.File;
+using Server.Services.RolePermission; // Added using directive for UseAuthentication
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,6 +77,9 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+
+
 
 var app = builder.Build();
 
