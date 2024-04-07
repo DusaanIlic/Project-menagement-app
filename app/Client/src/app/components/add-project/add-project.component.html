@@ -56,7 +56,10 @@
             id="name"
             class="w-1/2 ml-1"
             [(ngModel)]="deadLine"
+            required
+            [min]="todayDate"
           />
+          <div *ngIf="">Datum mora biti u budućnosti.</div>
         </div>
 
         <div class="flex-row justify-between">

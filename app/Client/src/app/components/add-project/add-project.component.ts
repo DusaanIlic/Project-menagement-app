@@ -4,15 +4,25 @@ import {
   EventEmitter,
   Inject,
   OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
-import { FormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProjectService } from '../../services/add.project.service';
 import { NgxEditorModule } from 'ngx-editor';
 import { Editor } from 'ngx-editor';
 import { ActivatedRoute } from '@angular/router';
+import { ProjectAddRequest } from '../../models/project-add';
 
 @Component({
   selector: 'app-add-project',
@@ -23,14 +33,18 @@ import { ActivatedRoute } from '@angular/router';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AddProjectComponent implements OnDestroy {
+  todayDate = new Date().toISOString().split('T')[0];
+
   editor: Editor = new Editor();
   html = '';
 
-  projectName: string = '';
-  projectDescription: string = '';
+  projectName!: string;
+  projectDescription!: string;
   deadLine!: Date;
 
   @Output() projectAdded: EventEmitter<any> = new EventEmitter<any>();
+
+  projectForm!: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<AddProjectComponent>,
@@ -47,11 +61,12 @@ export class AddProjectComponent implements OnDestroy {
   }
 
   public onSubmit() {
-    const projectData = {
-      projectName: this.projectName,
-      projectDescription: this.html,
-      deadLine: this.deadLine,
-    };
+    this.projectForm = new FormGroup({
+      projectName: new FormControl(this.projectName, Validators.required),
+      projectDescription: new FormControl(this.html, Validators.required),
+      deadLine: new FormControl(this.deadLine, Validators.required),
+    });
+    const projectData: ProjectAddRequest = this.projectForm.value;
 
     this.projectService.createProject(projectData).subscribe(
       (response) => {
@@ -60,7 +75,7 @@ export class AddProjectComponent implements OnDestroy {
         this.closeDialog();
       },
       (error) => {
-        console.error('Project saving task', error);
+        console.error('Error saving project', error);
       }
     );
   }
