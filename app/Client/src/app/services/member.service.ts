@@ -38,6 +38,14 @@ export class MemberService {
     return this.http.put<any>(`${API}/${memberId}`, editProfileForm);
   }
 
+  setAvatar(memberId: number, file: any) {
+    const formData: FormData = new FormData();
+    formData.append('fileDetails', file, file.name); // 'FileDetails' should match the property name on the server
+
+
+    return this.http.post(`${API}/${memberId}/Avatar`, formData);
+  }
+
   deleteAvatar(memberId: number) {
     return this.http.delete(`${API}/${memberId}/Avatar`);
   }

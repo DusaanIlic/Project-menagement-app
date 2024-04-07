@@ -9,6 +9,8 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {EditProfileForm} from "../../forms/edit-profile.form";
 import {maxDateValidator} from "../../validators/max-date.validator";
 import {AuthService} from "../../services/auth.service";
+import {MatDialog} from "@angular/material/dialog";
+import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
 
 @Component({
   selector: 'app-edit-member',
@@ -27,11 +29,13 @@ import {AuthService} from "../../services/auth.service";
 export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
   memberForm: any;
+  avatarUrl = '';
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
   constructor(private route: ActivatedRoute, private memberService: MemberService,
-                private ngToastService: NgToastService, private authService: AuthService) { }
+                private ngToastService: NgToastService, private authService: AuthService,
+                  private matDialog: MatDialog) { }
 
   ngOnInit() {
     this.memberForm = new FormGroup({
@@ -75,6 +79,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         status: this.member.status,
         dateOfBirth: this.datePipe.transform(this.member.dateOfBirth, 'yyyy-MM-dd')
       });
+
+      this.avatarUrl = `http://localhost:8000/api/Member/${this.member.id}/Avatar`;
     });
   }
 
@@ -90,7 +96,42 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   }
 
   openAvatarDialog() {
+    const dialogRef = this.matDialog.open(AddAvatarComponent, {
+      data: {
+        memberId: this.member.id
+      }
+    });
+  }
 
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    const maxSize: number = 512 * 1024; // 512KB
+
+    if (file && file.size > maxSize) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'File size exceeds 512KB.'
+      });
+      // Clear the file input field
+      event.target.value = '';
+    } else {
+      this.memberService.setAvatar(this.member.id, file).subscribe({
+        next: data => {
+          this.ngToastService.success({
+            detail: 'Success',
+            summary: 'Successfully changed avatar.'
+          });
+
+          this.avatarUrl = `http://localhost:8000/api/Member/${this.member.id}/Avatar?timestamp=${new Date().getTime()}`;
+        },
+        error: err => {
+          this.ngToastService.error({
+            detail: 'Error',
+            summary: err.statusText
+          });
+        }
+      });
+    }
   }
 
   deleteAvatar() {

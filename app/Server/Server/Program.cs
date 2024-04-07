@@ -101,29 +101,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var dbContext = serviceScope.ServiceProvider.GetService<LogicTenacityDbContext>();
-
-    var role = dbContext.Roles.FirstOrDefault(r => r.RoleId == 1);
-
-    if (!dbContext.Members.Any())
-    {
-        var admin = new Member()
-        {
-            FirstName = "Logic",
-            LastName = "Tenacity",
-            Email = "admin",
-            Password = BCrypt.Net.BCrypt.HashPassword("admin"),
-            DateAdded = DateTime.UtcNow,
-            Role = role 
-        };
-        dbContext.Members.Add(admin);
-        dbContext.SaveChanges();
-    }
-}
-
 app.MapControllers();
 
 app.Run();
