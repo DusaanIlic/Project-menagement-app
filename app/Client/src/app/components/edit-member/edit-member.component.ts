@@ -3,7 +3,7 @@ import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
 import {Subscription, switchMap} from "rxjs";
-import {DatePipe, NgOptimizedImage} from "@angular/common";
+import {DatePipe, NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
@@ -17,7 +17,8 @@ import {maxDateValidator} from "../../validators/max-date.validator";
     NgToastModule,
     DatePipe,
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgIf
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
