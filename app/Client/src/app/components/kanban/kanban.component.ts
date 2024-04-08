@@ -41,6 +41,7 @@ export class KanbanComponent implements OnInit {
   statusName: string = "";
   
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
+  teamLeaderInfo: any;
   
   constructor(private taskService: TaskService, private projectService: ProjectServiceGet, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
@@ -48,6 +49,7 @@ export class KanbanComponent implements OnInit {
     this.loadTasksByProject(1);
     this.getProjectIdFromRoute();
     this.getProjectByIdFromRoute();
+    this.getTeamLeaderInfo(1);
   }
 
   toggleToDoList(){
@@ -80,10 +82,23 @@ export class KanbanComponent implements OnInit {
     }
 }
 
+getTeamLeaderInfo(projectId: number): void {
+  this.projectService.getProjectById(projectId)
+    .subscribe((projectData: any) => {
+      const teamLeader = projectData.teamLider;
+      if (teamLeader) {
+        console.log('Informacije o tim lideru:', teamLeader);
+        this.teamLeaderInfo = teamLeader; 
+      } else {
+        console.error('Nije pronađen tim lider za dati projekat.');
+      }
+    }, error => {
+      console.error('Greška prilikom dobijanja podataka o projektu:', error);
+    });
+}
+
   NewStatusList(statusName: string) {
-    // Proveravamo da li ime statusa postoji u dropList nizu
     if (this.dropList.includes(statusName.toLowerCase())) {
-        // Postavljamo showNewStatusList na true kako bismo prikazali novu kolonu
         this.showNewStatusList = true;
     }
 }
