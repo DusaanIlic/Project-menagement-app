@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -415,32 +416,74 @@ namespace Server.Controllers
             return Ok("Task priority is changed successfully!");
         }
 
-        /*[HttpPut("{taskId}/assign/{memberId}")]
+        [Authorize]
+        [HttpPut("{taskId}/assign/{memberId}")]
         public async Task<IActionResult> AssignMemberToTask(int taskId, int memberId)
         {         
-            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 7);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
             if (projectTask == null)
             {
                 return NotFound("Task not found");
             }
 
+            //nadje membera
             var member = await dbContext.Members.FindAsync(memberId);
+            
             if (member == null)
             {
                 return NotFound("Member not found");
             }
 
+            var project = projectTask.Project;
+
+            if (project == null)
+            {
+                return NotFound("Project not found for the given task");
+            }
+
+            var memberProject = await dbContext.MemberProjects
+                                               .FirstOrDefaultAsync(mp => mp.ProjectId == project.ProjectId && mp.MemberId == memberId);
+
+            if (memberProject == null)
+            {
+                return Unauthorized("User is not a member of the project to which this task belongs");
+            }
+
+            //proveri da li je vec dodeljen
             if (projectTask.Members.Any(mt => mt.MemberId == memberId))
             {
                 return BadRequest("Member is already assigned to this task");
             }
 
+            //doda
             projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
             await dbContext.SaveChangesAsync();
 
             return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
         }
-
+        
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
@@ -488,7 +531,7 @@ namespace Server.Controllers
             }
 
             return Ok(taskDTOs);
-        }*/
+        }
 
         [Authorize]
         [HttpPost("{taskId}/dependency/{dependentTaskId}")]
@@ -668,6 +711,53 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok($"Category removed from Task ID {taskId}.");
+        }
+
+        [Authorize]
+        [HttpDelete("{taskId}/remove/{memberId}")]
+        public async Task<IActionResult> RemoveMemberFromTask(int taskId, int memberId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 9);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                                             .Include(pt => pt.Project)
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound("Task not found");
+            }
+
+            var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == memberId);
+
+            if (memberTask == null)
+            {
+                return NotFound("Member is not assigned to this task");
+            }
+
+            projectTask.Members.Remove(memberTask);
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
         }
     }
 }

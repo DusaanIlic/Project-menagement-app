@@ -14,9 +14,9 @@ namespace Server.Models
 
         [Required]
         public bool IsDefault { get; set; } = false;
-        
-        public ICollection<ProjectTask> ProjectTasks { get; set; }
-        
-        public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
+
+        public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+
+        public ICollection<ProjectTaskStatus> ProjectTaskStatuses { get; set; } = new List<ProjectTaskStatus>();
     }
 }

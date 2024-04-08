@@ -198,6 +198,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -570,6 +571,38 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok("Member removed from project successfully");
+        }
+
+        [Authorize]
+        [HttpGet("{projectId}/members")]
+        public async Task<IActionResult> GetAllMembersOnProject(int projectId)
+        {
+            var project = dbContext.Projects.FindAsync(projectId);
+
+            if(project == null)
+            {
+                return BadRequest("Project not found.");
+            }
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id))
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            var membersDTO = members.Select(member => new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                RoleId = member.RoleId,
+                RoleName = member.Role.RoleName,
+                Email = member.Email,
+                Status = member.Status
+            });
+
+            return Ok(membersDTO);
+
         }
     }
 }
