@@ -35,8 +35,8 @@ export class TaskService {
     return this.http.post<any>(`${TASK_API}/${taskId}/status/${statusId}`, taskData);
 }
 
-addTaskStatus(projectId: number, addTaskStatusRequest: any): Observable<any> {
-  return this.http.post<any>(`${PROJECT_API}/${projectId}/TaskStatus`, addTaskStatusRequest, httpOptions);
-}
-
+  addTaskStatus(projectId: number, taskStatusName: string): Observable<any> {
+    const addTaskStatusRequest = { name: taskStatusName };
+    return this.http.post<any>(`${PROJECT_API}/${projectId}/TaskStatus`, addTaskStatusRequest);
+  }
 }

@@ -1,9 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-add-task-status',
@@ -13,14 +14,21 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './add-task-status.component.scss'
 })
 export class AddTaskStatusComponent implements OnInit{
-  projectId: any;
-  taskStatusName: string | undefined;
-  taskStatusList: any;
+  taskStatusName: string = '';
+  projectId!: number;
 
-  constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService){}
+  @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
+  }
+
+  getProjectIdFromRoute(){
+    this.route.params.subscribe(params => {
+      this.projectId = params['id'];
+    });
   }
 
   closeDialog(): void {
@@ -31,25 +39,22 @@ export class AddTaskStatusComponent implements OnInit{
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
   }
 
-  addTaskStatus() {
-    if (!this.taskStatusName) {
-      this._ngToastService.error({ detail: "Status name can't be empty", summary: "Error", duration: 3000 });
+  saveTaskStatus(): void {
+    if (!this.taskStatusName.trim()) {
+      this._ngToastService.error({ detail: 'Status name cannot be empty.', duration: 3000 });
       return;
     }
 
-    const addTaskStatusRequest = {
-      Name: this.taskStatusName 
-    };
-
-    this.taskService.addTaskStatus(this.projectId, addTaskStatusRequest).subscribe(
-      response => {
-        this._ngToastService.success({ detail: "Task added successfully", summary: "Success", duration: 3000 });
-        this.taskStatusList.push(response);
-        this.dialogRef.close();
+    this.taskService.addTaskStatus(this.projectId, this.taskStatusName).subscribe(
+      (response) => {
+        this.showMessage();
+        this.dialogRef.close(response); 
       },
-      error => {
-        this._ngToastService.error({ detail: error.error, summary: "Error", duration: 3000 });
+      (error) => {
+        console.error('Error adding task status:', error);
+        this._ngToastService.error({ detail: 'Error adding task status. Please try again.', duration: 3000 });
       }
     );
   }
+
 }

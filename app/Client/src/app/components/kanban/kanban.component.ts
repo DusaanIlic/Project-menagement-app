@@ -12,6 +12,8 @@ import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
+import { ProjectServiceGet } from '../../services/project.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-kanban',
@@ -19,6 +21,7 @@ import { AddTaskStatusComponent } from '../add-task-status/add-task-status.compo
   imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent],
   templateUrl: './kanban.component.html', 
   styleUrl: './kanban.component.scss',
+  providers: [DatePipe]
 })
 
 export class KanbanComponent implements OnInit {
@@ -31,14 +34,16 @@ export class KanbanComponent implements OnInit {
   showProgressList: boolean = true;
   showDoneList: boolean = true;
 
-  projectId: string | undefined;
-taskStatusList: any;
+  projectId: number = 0;
+  projectName: string = "";
+  projectDate: Date | undefined;
 
-  constructor(private taskService: TaskService, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
+  constructor(private taskService: TaskService, private projectService: ProjectServiceGet, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void{
     this.loadTasksByProject(1);
     this.getProjectIdFromRoute();
+    this.getProjectByIdFromRoute();
   }
 
   toggleToDoList(){
@@ -51,6 +56,24 @@ taskStatusList: any;
   
   toggleDoneList(){
     this.showDoneList = !this.showDoneList;
+  }
+
+  getProjectByIdFromRoute(): void {
+    this.route.params.subscribe(params => {
+      const projectId = params['id']; 
+      if (projectId) {
+        this.projectService.getProjectById(projectId)
+          .subscribe((data: any) => {
+            console.log('Podaci o projektu:', data);
+            this.projectName = data.projectName;
+            this.projectDate = data.deadline;
+          }, error => {
+            console.error('Greška prilikom dobijanja podataka o projektu:', error);
+          });
+      } else {
+        console.error('ID projekta nije pronađen u URL-u.');
+      }
+    });
   }
 
   loadTasksByProject(projectId: number): void {
@@ -70,7 +93,7 @@ taskStatusList: any;
       .subscribe();
   }
 
-  getProjectIdFromRoute(){
+  getProjectIdFromRoute(): any{
     this.route.params.subscribe(params => {
       this.projectId = params['id'];
     });
@@ -127,7 +150,6 @@ taskStatusList: any;
             return; 
     }
 
-    // Pozivamo servis da ažurira status zadatka
     this.taskService.updateTaskStatus(taskId, statusId, currentColumn)
         .subscribe(
             () => console.log('Task status updated successfully.'),
@@ -219,10 +241,31 @@ getTasksByStatus(statusId: number): any[] {
     });
   }
 
-  openTaskStatusDialog(){
+  openTaskStatusDialog(): void {
     const dialogRef = this.dialog.open(AddTaskStatusComponent, {
       width: '500px',
-      data: { projectId: this.projectId}
+      data: { projectId: this.projectId }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.projectId !== undefined) {
+        const taskStatusName = result.taskStatusName;
+  
+        this.taskService.addTaskStatus(this.projectId, taskStatusName).subscribe({
+          next:(data:any) => {
+            this.dropList.push(taskStatusName.toLowerCase());
+            this.done.push({ taskName: '', taskId: data.id }); 
+            this.cdr.detectChanges();
+            this.loadTasksByProject(this.projectId);
+          },
+          error: (err) => {
+            console.log(err.statusCode);
+            console.error('Greška prilikom dodavanja statusa zadatka:', err);   
+          }
+        });
+      } else {
+        console.error('projectId nije definisan.');
+      }
     });
   }
 
