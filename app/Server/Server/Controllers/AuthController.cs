@@ -87,7 +87,6 @@ namespace Server.Controllers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration["JwtSettings:Audience"],
                 Issuer = _configuration["JwtSettings:Issuer"]
-
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);

@@ -6,8 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text; // Added using directive for Encoding
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
+using Server.Middlewares;
 using Server.Models;
 using Server.Services.File;
+using Server.Services.JwtBlacklistService;
 using Server.Services.RolePermission; // Added using directive for UseAuthentication
 
 
@@ -78,8 +80,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
-
-
+builder.Services.AddScoped<IJwtBlacklistService, JwtBlacklistService>();
 
 var app = builder.Build();
 
@@ -100,6 +101,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<JwtBlacklistMiddleware>();
 
 app.MapControllers();
 
