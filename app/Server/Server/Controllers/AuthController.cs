@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using Server.Services.JwtBlacklistService;
 
 
 namespace Server.Controllers
@@ -24,19 +25,19 @@ namespace Server.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly LogicTenacityDbContext dbContext;
-        private readonly IConfiguration _configuration;
+        private readonly LogicTenacityDbContext _dbContext;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(LogicTenacityDbContext dbContext, IConfiguration configuration)
+        public AuthController(LogicTenacityDbContext dbContext, IJwtService jwtService)
         {
-            this.dbContext = dbContext;
-            this._configuration = configuration;
+            _dbContext = dbContext;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            var member = await dbContext.Members.Include(m=>m.Role).FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
+            var member = await _dbContext.Members.Include(m=>m.Role).FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
 
             if (member == null)
             {
@@ -48,7 +49,7 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var token = GenerateJwtToken(member);
+            var token = await _jwtService.GenerateToken(member);
 
              var memberResponse = new MemberDTO
             {
@@ -70,27 +71,5 @@ namespace Server.Controllers
 
             return Ok(new { Token = token, member = memberResponse });
         }
-
-        private string GenerateJwtToken(Member member)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, member.Email),
-                    new Claim(ClaimTypes.Role, member.Role.RoleName),
-                    new Claim("Id", member.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Audience = _configuration["JwtSettings:Audience"],
-                Issuer = _configuration["JwtSettings:Issuer"]
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-
     }
 }

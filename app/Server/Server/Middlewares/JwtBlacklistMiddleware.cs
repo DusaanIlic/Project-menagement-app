@@ -13,13 +13,13 @@ public class JwtBlacklistMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context, IJwtBlacklistService jwtBlacklistService)
+    public async Task Invoke(HttpContext context, IJwtService jwtService)
     {
         var token = context.Request.Headers["Authorization"]
             .FirstOrDefault()?.Split(" ").Last();
         
         if (!string.IsNullOrEmpty(token)) {
-            if (await jwtBlacklistService.IsTokenBlacklistedAsync(token))
+            if (await jwtService.IsTokenBlacklistedAsync(token))
             {
                 context.Response.StatusCode = 401;
                 return;

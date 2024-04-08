@@ -17,21 +17,6 @@ namespace Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
 
-            modelBuilder.Entity("Server.Models.BlacklistedToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlacklistedTokens");
-                });
-
             modelBuilder.Entity("Server.Models.File", b =>
                 {
                     b.Property<int>("FileId")
@@ -50,6 +35,32 @@ namespace Server.Migrations
                     b.HasIndex("UploaderId");
 
                     b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Server.Models.IssuedToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsBlacklisted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("IssuedTokens");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>
@@ -127,14 +138,14 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 746, DateTimeKind.Utc).AddTicks(7610),
+                            DateAdded = new DateTime(2024, 4, 8, 23, 33, 1, 907, DateTimeKind.Utc).AddTicks(3637),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
                             Github = "",
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$pBiTQr5HRlEJMZ0rYf9WXu/h7qBdezuaSDG.hIhvn/cNLzECKP3Ve",
+                            Password = "$2a$10$OrCc5nFFYGgpWQngG5T/4eW1qIqh12U2WdzZXhjjM49Y7rUQ9w5.S",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -144,14 +155,14 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 809, DateTimeKind.Utc).AddTicks(2517),
+                            DateAdded = new DateTime(2024, 4, 8, 23, 33, 1, 969, DateTimeKind.Utc).AddTicks(7461),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$TCG7FDUmVbmiR/Kg17koCeE8JRp6YzbyGrO13TqoTdlSKs7v65X8S",
+                            Password = "$2a$10$xy4MimbPRz2pnRPO925OS.6E38Nu8fbb3bSmnI64AGz4ikaLl8bnu",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -161,14 +172,14 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 872, DateTimeKind.Utc).AddTicks(2040),
+                            DateAdded = new DateTime(2024, 4, 8, 23, 33, 2, 34, DateTimeKind.Utc).AddTicks(396),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$S3deeOyFuztMx39Rpy8uJegNLHTDY325EiZVUPRnoNkxg9nt0uvqG",
+                            Password = "$2a$10$em9ZKBECoOOOD.EPiWCtCe.l85ol0GLpoY79jdUFee.EBg.rHoHb2",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -788,6 +799,17 @@ namespace Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Uploader");
+                });
+
+            modelBuilder.Entity("Server.Models.IssuedToken", b =>
+                {
+                    b.HasOne("Server.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>
