@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, EventEmitter, NgModule, OnInit, Output } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
@@ -33,11 +33,15 @@ export class KanbanComponent implements OnInit {
   showToDoList: boolean = true;
   showProgressList: boolean = true;
   showDoneList: boolean = true;
+  showNewStatusList: boolean = false;
 
   projectId: number = 0;
   projectName: string = "";
   projectDate: Date | undefined;
-
+  statusName: string = "";
+  
+  @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
+  
   constructor(private taskService: TaskService, private projectService: ProjectServiceGet, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void{
@@ -57,6 +61,14 @@ export class KanbanComponent implements OnInit {
   toggleDoneList(){
     this.showDoneList = !this.showDoneList;
   }
+
+  NewStatusList(statusName: string) {
+    // Proveravamo da li ime statusa postoji u dropList nizu
+    if (this.dropList.includes(statusName.toLowerCase())) {
+        // Postavljamo showNewStatusList na true kako bismo prikazali novu kolonu
+        this.showNewStatusList = true;
+    }
+}
 
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
@@ -229,33 +241,25 @@ getTasksByStatus(statusId: number): any[] {
 
   openTaskStatusDialog(): void {
     const dialogRef = this.dialog.open(AddTaskStatusComponent, {
-      width: '500px',
-      data: { projectId: this.projectId }
+        width: '500px',
+        data: { projectId: this.projectId }
     });
-  
+
+    dialogRef.componentInstance.taskStatusAdded.subscribe((data: any) => {
+      console.log(data);
+      this.handleTaskStatusAdded(this.taskStatusAdded);
+    });
+
     dialogRef.afterClosed().subscribe(result => {
-      if (result && this.projectId !== undefined) {
-        const taskStatusName = result.taskStatusName;
-  
-        this.taskService.addTaskStatus(this.projectId, taskStatusName).subscribe({
-          next:(data:any) => {
-            this.dropList.push(taskStatusName.toLowerCase());
-            this.done.push({ taskName: '', taskId: data.id }); 
-            this.cdr.detectChanges();
-            this.loadTasksByProject(this.projectId);
-          },
-          error: (err) => {
-            console.log(err.statusCode);
-            console.error('Greška prilikom dodavanja statusa zadatka:', err);   
-          }
-        });
-      } else {
-        console.error('projectId nije definisan.');
-      }
+        console.log(result);
     });
+}
+
+  handleTaskStatusAdded(event: any) {
+    this.loadTasksByProject(this.projectId);
+    this.NewStatusList(this.statusName);
   }
 
-  
 
 }
 

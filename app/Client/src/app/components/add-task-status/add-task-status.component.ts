@@ -18,6 +18,7 @@ export class AddTaskStatusComponent implements OnInit{
   projectId!: number;
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
+  @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
 
@@ -48,6 +49,7 @@ export class AddTaskStatusComponent implements OnInit{
     this.taskService.addTaskStatus(this.projectId, this.taskStatusName).subscribe(
       (response) => {
         this.showMessage();
+        this.taskStatusAdded.emit();
         this.dialogRef.close(response); 
       },
       (error) => {
