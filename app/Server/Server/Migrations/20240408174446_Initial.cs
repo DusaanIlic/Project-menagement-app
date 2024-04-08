@@ -14,6 +14,19 @@ namespace Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BlacklistedTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Token = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlacklistedTokens", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -485,9 +498,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "LastName", "Linkedin", "Password", "PhoneNumber", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 858, DateTimeKind.Utc).AddTicks(687), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", "Tenacity", "", "$2a$10$ogpyJIlOKIhbLUEvooRqKeHLQW2z0w..FxiM3zyQVK06InFEfxFV6", "", 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 921, DateTimeKind.Utc).AddTicks(5382), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", "Peric", "", "$2a$10$ZkW0vS/Brat9FJoa29dpJubnObO26Wy7NXmpkwJlBJYHtAikwY0tG", "", 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 7, 22, 28, 35, 986, DateTimeKind.Utc).AddTicks(758), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", "Tomic", "", "$2a$10$TxomEKiICyOkFBZP8D4.3.LSedBmEukDLw7eBgbI2OZczTtzDr20K", "", 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 8, 17, 44, 45, 746, DateTimeKind.Utc).AddTicks(7610), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", "Tenacity", "", "$2a$10$pBiTQr5HRlEJMZ0rYf9WXu/h7qBdezuaSDG.hIhvn/cNLzECKP3Ve", "", 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 8, 17, 44, 45, 809, DateTimeKind.Utc).AddTicks(2517), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", "Peric", "", "$2a$10$TCG7FDUmVbmiR/Kg17koCeE8JRp6YzbyGrO13TqoTdlSKs7v65X8S", "", 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 8, 17, 44, 45, 872, DateTimeKind.Utc).AddTicks(2040), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", "Tomic", "", "$2a$10$S3deeOyFuztMx39Rpy8uJegNLHTDY325EiZVUPRnoNkxg9nt0uvqG", "", 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -505,6 +518,7 @@ namespace Server.Migrations
                     { 8, 2 },
                     { 9, 2 },
                     { 10, 2 },
+                    { 11, 2 },
                     { 12, 2 },
                     { 13, 2 },
                     { 14, 2 },
@@ -621,6 +635,9 @@ namespace Server.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Files_Members_UploaderId",
                 table: "Files");
+
+            migrationBuilder.DropTable(
+                name: "BlacklistedTokens");
 
             migrationBuilder.DropTable(
                 name: "MemberProjects");

@@ -30,6 +30,7 @@ namespace Server.Data
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
         public DbSet<MemberProject> MemberProjects { get; set; }
+        public DbSet<BlacklistedToken> BlacklistedTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

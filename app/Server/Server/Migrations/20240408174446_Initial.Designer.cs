@@ -11,14 +11,29 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240408123502_New Permission3")]
-    partial class NewPermission3
+    [Migration("20240408174446_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
+
+            modelBuilder.Entity("Server.Models.BlacklistedToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BlacklistedTokens");
+                });
 
             modelBuilder.Entity("Server.Models.File", b =>
                 {
@@ -115,14 +130,14 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 12, 35, 0, 422, DateTimeKind.Utc).AddTicks(4949),
+                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 746, DateTimeKind.Utc).AddTicks(7610),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
                             Github = "",
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$FurePKW/whkSfAlKkLy42e0YzwHpvdUQvVMGciooV9BvMPlZ/LxNG",
+                            Password = "$2a$10$pBiTQr5HRlEJMZ0rYf9WXu/h7qBdezuaSDG.hIhvn/cNLzECKP3Ve",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -132,14 +147,14 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 12, 35, 0, 570, DateTimeKind.Utc).AddTicks(6897),
+                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 809, DateTimeKind.Utc).AddTicks(2517),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$Zgt2B0c.gAojpEADzcyYF.jkDvejpFBKvyoygusfVMlMTfcc1nFpy",
+                            Password = "$2a$10$TCG7FDUmVbmiR/Kg17koCeE8JRp6YzbyGrO13TqoTdlSKs7v65X8S",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -149,14 +164,14 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 8, 12, 35, 0, 719, DateTimeKind.Utc).AddTicks(8103),
+                            DateAdded = new DateTime(2024, 4, 8, 17, 44, 45, 872, DateTimeKind.Utc).AddTicks(2040),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$35WN4MwJCrnihRGcaPVPMOYnXsTelZJuP/Taq28Rh77A6RDyiMjqC",
+                            Password = "$2a$10$S3deeOyFuztMx39Rpy8uJegNLHTDY325EiZVUPRnoNkxg9nt0uvqG",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
