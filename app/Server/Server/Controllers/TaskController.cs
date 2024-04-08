@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -455,12 +456,21 @@ namespace Server.Controllers
                 return NotFound("Member not found");
             }
 
-            //proveri da li je u projektu
-            if (!projectTask.Project.MemberProjects.Any(mp => mp.MemberId == memberId))
+            var project = projectTask.Project;
+
+            if (project == null)
+            {
+                return NotFound("Project not found for the given task");
+            }
+
+            var memberProject = await dbContext.MemberProjects
+                                               .FirstOrDefaultAsync(mp => mp.ProjectId == project.ProjectId && mp.MemberId == memberId);
+
+            if (memberProject == null)
             {
                 return Unauthorized("User is not a member of the project to which this task belongs");
             }
-            
+
             //proveri da li je vec dodeljen
             if (projectTask.Members.Any(mt => mt.MemberId == memberId))
             {

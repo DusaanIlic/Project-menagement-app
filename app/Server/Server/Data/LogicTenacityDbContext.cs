@@ -213,6 +213,7 @@ namespace Server.Data
                 new RolePermission { RoleId = 2, PermissionId = 9 },
                 new RolePermission { RoleId = 2, PermissionId = 10 },
                 new RolePermission { RoleId = 3, PermissionId = 11 },
+                new RolePermission { RoleId = 2, PermissionId = 11 },
                 new RolePermission { RoleId = 2, PermissionId = 12 },
                 new RolePermission { RoleId = 2, PermissionId = 13 },
                 new RolePermission { RoleId = 2, PermissionId = 14 },
