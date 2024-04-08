@@ -198,6 +198,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
