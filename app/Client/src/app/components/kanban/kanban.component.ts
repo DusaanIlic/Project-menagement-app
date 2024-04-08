@@ -109,53 +109,39 @@ export class KanbanComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
-
+  
       const taskId = event.item.data.taskId;
-      const statusId = this.getStatusIdFromColumnName(event.container.id);
-      const column = event.container.id; 
-      this.taskService.updateTaskStatus(taskId, statusId, column).subscribe(() => {
-        console.log('Task status updated successfully.');
-      }, error => {
-        console.error('Error updating task status:', error);
-      });
-    }
-}
-  getStatusIdFromColumnName(columnName: string): number {
-    switch (columnName) {
-      case 'todo':
-        return 1;
-      case 'progress':
-        return 2;
-      case 'done':
-        return 3;
-      default:
-        return -1;
+      const newColumn = event.container.id; 
+      const newStatusId = this.getStatusIdFromColumnName(newColumn);
+  
+      this.updateTaskStatus(taskId, newStatusId);
     }
   }
 
-  updateTaskStatus(taskId: number, previousColumn: string, currentColumn: string) {
-    let statusId: number;
+  updateTaskStatus(taskId: number, newStatusId: number) {
+    this.taskService.updateTaskStatus(taskId, { TaskStatusId: newStatusId })
+      .subscribe(
+        () => console.log('Task status updated successfully.'),
+        error => console.error('Error updating task status:', error)
+      );
+  }
 
-    switch (currentColumn) {
-        case 'todo':
-            statusId = 1;
-            break;
-        case 'progress':
-            statusId = 2;
-            break;
-        case 'done':
-            statusId = 3;
-            break;
-        default:
-            return; 
+  getStatusIdFromColumnName(columnName: string): number {
+    const columnMap: { [key: string]: number } = {
+      'todo': 1,
+      'progress': 2,
+      'done': 3,
+    };
+  
+    if (columnName in columnMap) {
+      return columnMap[columnName];
     }
+  
+    const newId = Object.keys(columnMap).length + 1; 
+    columnMap[columnName] = newId; 
+    return newId; 
+  }
 
-    this.taskService.updateTaskStatus(taskId, statusId, currentColumn)
-        .subscribe(
-            () => console.log('Task status updated successfully.'),
-            error => console.error('Error updating task status:', error)
-        );
-}
 
 getTasksByStatus(statusId: number): any[] {
   switch (statusId) {
