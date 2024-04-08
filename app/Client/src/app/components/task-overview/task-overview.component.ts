@@ -1,5 +1,5 @@
-import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
@@ -11,19 +11,18 @@ import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MemberService } from '../../services/member.service';
 import { Member } from '../../models/member';
-import { ProjectService } from '../../services/add.project.service';
-import { ProjectServiceGet } from '../../services/project.service';
 import { Project } from '../../models/project';
 import { taskActivityType } from '../../models/taskActivityType';
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule],
+  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule , NgToastModule],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
 export class TaskOverviewComponent{
+
 
 
   project : Project = {
@@ -38,19 +37,25 @@ export class TaskOverviewComponent{
   };
     members : Member[] = [];
     commentText = "";
-  lessThanHour : boolean = false;
-  lessThanDay : boolean = false;
-  differenceM : number = 0;
-  differenceH : number = 0;
-  activities : taskActivity[] = [];
+    activities : taskActivity[] = [];
     editor: Editor = new Editor;
-    html: any;
-selectedType: any;
-allTypes : taskActivityType[] = [];
+    editor1: Editor = new Editor;
+    taskActivityDesc: any;
+    description: any;
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService, private pService: ProjectServiceGet)
+    selectedType: any;
+    allTypes : taskActivityType[] = [];
+    
+    
+    show: any;
+    showEditorForDesc: boolean = false;
+
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService)
   {
-    this.selectedType = "Please select option..."
+    this.show = 'overview';
+    this.description = task.taskDescription;
+    this.taskActivityDesc = "";
+    this.selectedType = "-1"
     this.tService.getTaskActivityType().subscribe((data : any) =>{
       this.allTypes = data;
       //console.log(data);
@@ -59,6 +64,13 @@ allTypes : taskActivityType[] = [];
         //this.dateCheck();
         for(let i=0;i<this.activities.length;i++)
           {
+            
+            this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
+            this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+
+            //console.log(this.activities[i].differenceH)
+            //console.log(this.activities[i].differenceM)
+
               this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
                   this.activities[i].memberName = member.firstName + " " + member.lastName;
               })
@@ -77,47 +89,81 @@ allTypes : taskActivityType[] = [];
     this.dialogRef.close();
   }
 
-  dateCheck()
-  {
-    this.differenceM = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModify.getTime()) / (1000 * 60)); //racuna minute
-    this.differenceH = Math.trunc((new Date().getTime() - this.activities[this.task.taskId].dateModify.getTime()) / (1000 * 3600)); //racuna minute
-
-    if(this.differenceM < 60)
-      this.lessThanHour = true;
-    else
-      this.lessThanHour = false;
-
-    if(this.differenceH < 24)
-      this.lessThanDay = true;
-    else
-        this.lessThanDay = false;
-  }
- 
-  selectChanged() {
-    console.log(this.selectedType);
-  }
-
-
   saveActivity() {
-    const taskAct: any ={
+    const taskAct ={
         taskId : this.task.taskId,
-        description : this.html.content[0].content[0].text,
+        description : this.taskActivityDesc,
         taskActivityTypeId : this.selectedType,
     }
-
-    if(this.html.content[0].content[0].text == "")
-      {
-        confirm("Description cannot be empty!");
-      }
+    console.log(taskAct)
+      if(taskAct.description.trim() == "")
+        alert("Activity cannot be empty!")
+      else if(taskAct.taskActivityTypeId == -1)
+        alert("Please select activity type.")
       else
       {
-        this.tService.saveTaskActivity(taskAct).subscribe(response => {
-          console.log("Succesfully!");
-          this.closeDialog();
-        })}
+        this.tService.saveTaskActivity(taskAct).subscribe({
+          next : data => {
+            this.showMessage();
+            this.closeDialog();
+          },
+          error : error => {
+            console.log(error.statusText)
+          }
+        })
+        
+      }
+
       }
 
     
+      switchView(tab : string) {
+        if(tab === 'overview')
+          this.show = 'overview'
+        else if(tab === 'dependacies')
+          this.show = 'dependacies';
+        }
 
+        showEditor() {
+          this.showEditorForDesc = true;
+          }
+
+
+          editDescription() {
+            const editTask = {
+              taskName: this.task.taskName,
+              taskDescription: this.description,
+              deadline: this.task.deadline
+            }
+
+            if(editTask.taskDescription.trim() == "")
+              alert("Description cannot be empty!");
+            else
+            {
+              this.tService.changeTaskDescription(editTask, this.task.taskId).subscribe(
+                {
+                  next : data =>
+                    {
+                      console.log(data);
+                      window.location.reload()
+                    },
+                  error : error =>
+                    {
+                      console.log(error);
+                    }
+                }
+              );
+            }
+
+
+
+            }
+            
+
+
+  showMessage()
+  {
+    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+  }
 }
 

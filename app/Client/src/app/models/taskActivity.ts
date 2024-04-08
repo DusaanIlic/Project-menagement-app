@@ -11,5 +11,7 @@ export interface taskActivity
     dateModify : Date,
     comment : string
     taskActivityTypeId : number,
-    taskActivityName: string
+    taskActivityName: string,
+    differenceM : number,
+    differenceH : number
 }

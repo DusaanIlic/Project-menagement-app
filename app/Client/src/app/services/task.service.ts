@@ -63,4 +63,9 @@ export class TaskService {
     return this.http.get<any>(`${TASKACTIVITY_API}Type`);
   }
 
+  changeTaskDescription(task : any, taskId: number) : Observable<any>
+  {
+    return this.http.put<any>(`${TASK_API}/${taskId}`, task);
+  }
+
 }
