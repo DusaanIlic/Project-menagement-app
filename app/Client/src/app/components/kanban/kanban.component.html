@@ -20,16 +20,13 @@
 
 
         <div class="flex flex-row gap-5 ml-10">
-            <form>
-                <input type="checkbox" id="todo" name="todo" value="ToDo" [(ngModel)]="showToDoList" (click)="toggleToDoList()">
-                <label for="vehicle1"> To Do</label><br>
-                <input type="checkbox" id="progress" name="progress" value="InProgress" [(ngModel)]="showProgressList" (click)="toggleProgressList()">
-                <label for="vehicle1"> In Progress</label><br>
-                <input type="checkbox" id="done" name="done" value="Done" [(ngModel)]="showDoneList" (click)="toggleDoneList()">
-                <label for="vehicle1"> Done</label><br>
+            <form *ngFor="let column of dropList">
+                <input type="checkbox" [id]="column" [name]="column" [value]="column" [(ngModel)]="columnVisibility[column]" (click)="toggleColumnVisibility(column)">
+                <label [for]="column">{{ column | titlecase }}</label><br>
             </form>
         </div>
-
+        
+        
         <div class="flex-row justify-end">
             <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 mr-3" (click)="openDialog()">Add task</button>
             <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 ml-3" (click)="openTaskStatusDialog()">Add Column</button>

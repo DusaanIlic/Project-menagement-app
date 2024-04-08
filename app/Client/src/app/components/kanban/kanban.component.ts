@@ -62,6 +62,24 @@ export class KanbanComponent implements OnInit {
     this.showDoneList = !this.showDoneList;
   }
 
+  columnVisibility: { [key: string]: boolean } = {
+    'todo': true,
+    'progress': true,
+    'done': true
+  };
+
+  toggleColumnVisibility(column: string) {
+    if(column == 'todo'){
+      this.toggleToDoList();
+    }
+    else if(column == 'progress'){
+      this.toggleProgressList();
+    }
+    else if(column == 'done'){
+      this.toggleDoneList();
+    }
+}
+
   NewStatusList(statusName: string) {
     // Proveravamo da li ime statusa postoji u dropList nizu
     if (this.dropList.includes(statusName.toLowerCase())) {
