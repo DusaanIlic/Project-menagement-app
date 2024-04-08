@@ -415,13 +415,41 @@ namespace Server.Controllers
             return Ok("Task priority is changed successfully!");
         }
 
-        /*[HttpPut("{taskId}/assign/{memberId}")]
+        [Authorize]
+        [HttpPut("{taskId}/assign/{memberId}")]
         public async Task<IActionResult> AssignMemberToTask(int taskId, int memberId)
         {         
-            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 7);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
             if (projectTask == null)
             {
                 return NotFound("Task not found");
+            }
+
+            if (!projectTask.Project.MemberProjects.Any(mp => mp.MemberId == memberId))
+            {
+                return Unauthorized("User is not a member of the project to which this task belongs");
             }
 
             var member = await dbContext.Members.FindAsync(memberId);
@@ -430,6 +458,7 @@ namespace Server.Controllers
                 return NotFound("Member not found");
             }
 
+            
             if (projectTask.Members.Any(mt => mt.MemberId == memberId))
             {
                 return BadRequest("Member is already assigned to this task");
@@ -440,7 +469,7 @@ namespace Server.Controllers
 
             return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
         }
-
+        /*
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
