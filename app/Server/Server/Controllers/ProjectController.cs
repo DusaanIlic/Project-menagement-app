@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
@@ -72,8 +73,7 @@ namespace Server.Controllers
                     };
                 }
 
-                int numberOfMembers = p.MemberProjects.Count(mp => !mp.Member.IsDisabled);
-
+                int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -127,7 +127,7 @@ namespace Server.Controllers
                 return BadRequest();
             }
             
-            var project = new Project()
+            var project = new Models.Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
@@ -170,7 +170,7 @@ namespace Server.Controllers
                 IsDisabled = teamLeader.IsDisabled
             };
 
-            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -235,7 +235,7 @@ namespace Server.Controllers
                 };
             }
 
-            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -305,7 +305,7 @@ namespace Server.Controllers
                 };
             }
 
-            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {

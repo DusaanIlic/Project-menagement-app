@@ -133,7 +133,6 @@ namespace Server.Controllers
                 DateOfBirth = member.DateOfBirth,
                 RoleName = role.RoleName,
                 IsDisabled = member.IsDisabled
-
             };
 
             var request = new EmailDTO
