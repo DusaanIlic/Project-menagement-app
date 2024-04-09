@@ -43,7 +43,9 @@ namespace Server.Controllers
 
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
 
-            var memberDTOs = members.Select(m => new MemberDTO
+            var memberDTOs = 
+                members.Where(m => !m.IsDisabled)
+                .Select(m => new MemberDTO
             {
                 Id = m.Id,
                 FirstName = m.FirstName,
@@ -58,7 +60,8 @@ namespace Server.Controllers
                 Linkedin = m.Linkedin,
                 PhoneNumber = m.PhoneNumber,
                 DateOfBirth = m.DateOfBirth,
-                RoleName = m.Role.RoleName
+                RoleName = m.Role.RoleName,
+                IsDisabled = m.IsDisabled
             }).ToList();
             return Ok(memberDTOs);
         }
@@ -128,7 +131,8 @@ namespace Server.Controllers
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
                 DateOfBirth = member.DateOfBirth,
-                RoleName = role.RoleName
+                RoleName = role.RoleName,
+                IsDisabled = member.IsDisabled
             };
 
             var request = new EmailDTO
@@ -194,7 +198,8 @@ namespace Server.Controllers
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
                 DateOfBirth = member.DateOfBirth,
-                RoleName = member.Role.RoleName
+                RoleName = member.Role.RoleName,
+                IsDisabled = member.IsDisabled
             };
 
             return Ok(memberDTO);
@@ -247,7 +252,8 @@ namespace Server.Controllers
                 Linkedin = member.Linkedin,
                 PhoneNumber = member.PhoneNumber,
                 DateOfBirth = member.DateOfBirth,
-                RoleName = member.Role.RoleName
+                RoleName = member.Role.RoleName,
+                IsDisabled = member.IsDisabled
             };
             
             return Ok(updatedMemberDTO);
@@ -281,10 +287,12 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            _dbContext.Members.Remove(member);
+            member.IsDisabled = true;
+
+            //_dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Member deleted");
+            return Ok("Member disabled");
         }
 
         [Authorize]
