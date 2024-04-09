@@ -130,5 +130,35 @@ namespace Server.Controllers
             return Ok(taskActivityDTO);
         }
 
+        [HttpGet("Task/{taskId}")]
+        public async Task<IActionResult> GetTaskActivitiesByTaskId(int taskId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTaskId == taskId)
+                .ToListAsync();
+
+            if (taskActivities == null || !taskActivities.Any())
+            {
+                return NotFound("No task activities found for the given task ID.");
+            }
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
+        }
+
     }
 }
