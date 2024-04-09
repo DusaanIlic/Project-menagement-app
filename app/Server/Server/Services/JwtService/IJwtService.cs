@@ -10,5 +10,11 @@ public interface IJwtService
 
     public Task<bool> BlacklistTokenAsync(string token);
 
+    public Task DisableAllUsersTokens(Member member);
+    
+    public Task DisableAllUsersTokensExceptLatest(Member member);
+    
+    public Task DisableAllUsersTokensExceptSpecified(Member member, string token);
+    
     public Task ClearExpiredTokens();
 }

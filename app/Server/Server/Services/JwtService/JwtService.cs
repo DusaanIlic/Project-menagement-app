@@ -62,8 +62,9 @@ public class JwtService : IJwtService
         }
 
         var hashedToken = BCrypt.Net.BCrypt.HashString(token);
-        
-        return await _dbContext.IssuedTokens.AnyAsync(t => t.Token == hashedToken);
+        var issuedToken = await _dbContext.IssuedTokens.Where(it => it.Token == hashedToken).FirstOrDefaultAsync();
+
+        return issuedToken == null || issuedToken.IsBlacklisted;
     }
 
     public async Task<bool> BlacklistTokenAsync(string token)
@@ -73,19 +74,73 @@ public class JwtService : IJwtService
             return false;
         }
         
-        if (await IsTokenBlacklistedAsync(token))
+        var hashedToken = BCrypt.Net.BCrypt.HashString(token);
+        var issuedToken = await _dbContext.IssuedTokens.Where(it => it.Token == hashedToken).FirstOrDefaultAsync();
+
+        if (issuedToken == null)
         {
             return false;
         }
 
-        var blacklistedToken = new IssuedToken { Token = token };
+        issuedToken.IsBlacklisted = true;
        
-        _dbContext.IssuedTokens.Add(blacklistedToken);
+        _dbContext.IssuedTokens.Add(issuedToken);
         await _dbContext.SaveChangesAsync();
 
         return true;
     }
+
+    public async Task DisableAllUsersTokens(Member member)
+    {
+        var memberTokens = await _dbContext.IssuedTokens.Where(it => it.MemberId == member.Id).ToListAsync();
     
+        foreach (var token in memberTokens)
+        {
+            token.IsBlacklisted = true;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DisableAllUsersTokensExceptLatest(Member member)
+    {
+        var memberTokens = await _dbContext.IssuedTokens
+            .Where(it => it.MemberId == member.Id)
+            .OrderByDescending(it => it.ExpiresAt)
+            .ToListAsync();
+
+        if (memberTokens.Count > 1)
+        {
+            for (var i = 1; i < memberTokens.Count; i++)
+            {
+                memberTokens[i].IsBlacklisted = true;
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task DisableAllUsersTokensExceptSpecified(Member member, string token)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            return;
+        }
+
+        var hashedToken = BCrypt.Net.BCrypt.HashString(token);
+        
+        var memberTokens = await _dbContext.IssuedTokens
+            .Where(it => it.MemberId == member.Id && it.Token != token)
+            .ToListAsync();
+
+        foreach (var tokenToDisable in memberTokens)
+        {
+            tokenToDisable.IsBlacklisted = true;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task ClearExpiredTokens()
     {
         var expiredTokens = await _dbContext.IssuedTokens
