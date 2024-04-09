@@ -86,7 +86,7 @@ namespace Server.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("Email", member.Email),
-                    new Claim("RoleId", member.Role.RoleName),
+                    new Claim("RoleId", member.RoleId.ToString()),
                     new Claim("Id", member.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(15), // Token expiration time
