@@ -641,6 +641,47 @@ namespace Server.Controllers
         }
 
         [Authorize]
+        [HttpGet("{id}/DependentTasks")]
+        public async Task<IActionResult> GetDependentTasks(int id)
+        {
+            var dependentTaskIds = await dbContext.TaskDependencies
+                .Where(td => td.TaskId == id)
+                .Select(td => td.DependentTaskId)
+                .ToListAsync();
+
+            if (dependentTaskIds == null || dependentTaskIds.Count == 0)
+            {
+                return NotFound("Specified task has no dependent tasks");
+            }
+
+            var dependentTasks = await dbContext.ProjectTasks
+                .Where(pt => dependentTaskIds.Contains(pt.TaskId))
+                .Include(pt => pt.DependentTasks)
+                .Include(pt => pt.TaskStatus)
+                .Include(pt => pt.TaskCategory)
+                .Include(pt => pt.TaskCategory)
+                .ToListAsync();
+
+            var dependentTaskDTOs = dependentTasks.Select(dt => new ProjectTaskDTO
+            {
+                TaskId = dt.TaskId,
+                TaskName = dt.TaskName,
+                TaskDescription = dt.TaskDescription,
+                StartDate = dt.StartDate,
+                Deadline = dt.Deadline,
+                ProjectId = dt.ProjectId,
+                TaskStatusId = dt.TaskStatusId,
+                TaskStatus = dt.TaskStatus.Name,
+                TaskPriorityId = dt.TaskPriorityId,
+                IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
+                TaskCategoryId = dt.TaskCategoryId
+            }).ToList();
+
+            return Ok(dependentTaskDTOs);
+        }
+
+
+        [Authorize]
         [HttpDelete("{taskId}/dependency/{dependentTaskId}")]
         public async Task<IActionResult> RemoveTaskDependency(int taskId, int dependentTaskId)
         {
