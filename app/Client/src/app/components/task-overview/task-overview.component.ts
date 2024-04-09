@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
@@ -22,7 +22,8 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
-export class TaskOverviewComponent{
+export class TaskOverviewComponent implements OnInit{
+
 
 
 
@@ -53,23 +54,33 @@ export class TaskOverviewComponent{
     showEditorForDesc: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task,
-        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService)
+        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService) { }
+
+  ngOnInit()
   {
     this.show = 'overview';
-    this.description = task.taskDescription;
+    this.description = this.task.taskDescription;
     this.taskActivityDesc = "";
     this.selectedType = "-1"
     this.tService.getTaskActivityType().subscribe((data : any) =>{
       this.allTypes = data;
       //console.log(data);
-      this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => 
+      this.fetchTaskActivities();
+    })
+  }
+
+
+  fetchTaskActivities()
+  {
+    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => 
       {
         this.activities = taskactivities;
+        this.activitiesForThisTask = [];
         
         //this.dateCheck();
         for(let i=0;i<this.activities.length;i++)
           {
-            if(this.activities[i].taskId == task.taskId)
+            if(this.activities[i].taskId == this.task.taskId)
             {
               this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
               this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
@@ -91,8 +102,6 @@ export class TaskOverviewComponent{
             
           }
       })
-    })
-    
   }
 
   closeDialog(): void {
@@ -105,22 +114,26 @@ export class TaskOverviewComponent{
         description : this.taskActivityDesc,
         taskActivityTypeId : this.selectedType,
     }
-    console.log(taskAct)
       if(taskAct.description.trim() == "")
         alert("Activity cannot be empty!")
       else if(taskAct.taskActivityTypeId == -1)
         alert("Please select activity type.")
       else
       {
-        this.tService.saveTaskActivity(taskAct).subscribe({
-          next : data => {
-            console.log(data);
-            this.showMessage();
-            this.closeDialog();
-          },
+        this.tService.saveTaskActivity(taskAct).subscribe(
+          {
+          next : data => {},
           error : error => {
-            //console.log(error.statusText)
-            this.showMessage();
+            if(error.statusText == "OK")
+              {
+                this.showMessage();
+                this.fetchTaskActivities();
+              }
+            else
+            {
+              this.showMessageError();
+            }
+              
           }
         })
         
@@ -175,7 +188,30 @@ export class TaskOverviewComponent{
 
   showMessage()
   {
-    this._ngToastService.success({detail: "Success Message", summary: "Task activity added successfully", duration: 3000});
+    this._ngToastService.success({detail: "Success Message", summary: "Task activity add/delete successfully!", duration: 3000});
   }
+
+  showMessageError()
+  {
+    this._ngToastService.error({detail: "Error Message", summary: "Task activity add/delete failed!", duration: 3000});
+  }
+
+
+  deleteTaskActivity(taskAct: taskActivity) {
+    this.tService.deleteTaskActivity(taskAct.taskActivityId).subscribe(
+      {
+        next : data =>
+          {
+            this.fetchTaskActivities()
+            this.showMessage();
+          },
+        error : error =>
+          {
+            this.showMessageError();
+          }
+      }
+    );
+    }
+
 }
 

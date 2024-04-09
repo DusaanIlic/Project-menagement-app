@@ -68,4 +68,9 @@ export class TaskService {
     return this.http.put<any>(`${TASK_API}/${taskId}`, task);
   }
 
+  deleteTaskActivity(taskActivityId : number) : Observable<any>
+  {
+    return this.http.delete(`${TASKACTIVITY_API}/${taskActivityId}`);
+  }
+
 }

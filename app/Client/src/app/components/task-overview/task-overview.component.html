@@ -58,8 +58,8 @@
                                     <p *ngIf="taskAct.differenceH >= 24" class="text-sm">{{taskAct.dateModify| date}}</p>
                                     <p class="font-semibold text-sm">{{taskAct.taskActivityName}}</p>
                                 </div>
-                                
                             </div>
+                            <div class="size-5 mr-2 hover:cursor-pointer" (click)="deleteTaskActivity(taskAct)"><img src="assets/icons/delete_36_jpg.jpg" alt=""></div>
                         </div>
 
                     </div>
