@@ -142,12 +142,10 @@ export class TaskOverviewComponent implements OnInit{
       }
 
     
-      switchView(tab : string) {
-        if(tab === 'overview')
-          this.show = 'overview'
-        else if(tab === 'dependacies')
-          this.show = 'dependacies';
-        }
+      switchView(tab : string) 
+      {
+        this.show = tab
+      }
 
         showEditor() {
           this.showEditorForDesc = true;
