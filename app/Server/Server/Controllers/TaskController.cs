@@ -105,6 +105,14 @@ namespace Server.Controllers
             {
                 return Unauthorized("Insufficient permissions");
             }
+
+            var project = dbContext.Projects.FirstOrDefault(tp => tp.ProjectId == addProjectTaskRequest.ProjectId);
+
+            if (project == null)
+            {
+                return NotFound("Project with this id not found.");
+            }
+
             var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
@@ -139,6 +147,29 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
+            var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
+
+            var assignedMembers = await dbContext.MemberTasks
+                .Include(mt => mt.Member).ThenInclude(mt => mt.Role)
+                .Where(mt => mt.TaskId == newProjectTask.TaskId)
+                .Select(mt => mt.Member)
+                .ToListAsync();
+
+            var assignedMemberDTOs = assignedMembers.Select(member => new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Email = member.Email,
+                RoleId = member.RoleId,
+                RoleName = member.Role.RoleName,
+                DateAdded = member.DateAdded,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth,
+                IsDisabled = member.IsDisabled
+
+            }).ToList();
+
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
             var tasksDTO = new ProjectTaskDTO
@@ -153,7 +184,8 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = taskCategory.TaskCategoryID
+                TaskCategoryId = taskCategory.TaskCategoryID,
+                AssignedMembers = assignedMemberDTOs
             };
 
             return Ok(tasksDTO);
