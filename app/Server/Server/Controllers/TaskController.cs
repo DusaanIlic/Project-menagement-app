@@ -431,8 +431,8 @@ namespace Server.Controllers
         }
 
         [Authorize]
-        [HttpPut("{taskId}/assign/{memberId}")]
-        public async Task<IActionResult> AssignMemberToTask(int taskId, int memberId)
+        [HttpPut("{taskId}/assign")]
+        public async Task<IActionResult> AssignMemberToTask(int taskId, List<int> memberIds)
         {         
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
@@ -462,47 +462,43 @@ namespace Server.Controllers
                 return NotFound("Task not found");
             }
 
-            //nadje membera
-            var member = await dbContext.Members.FindAsync(memberId);
+            foreach (var memberId in memberIds)
+            {
+                var member = await dbContext.Members.FindAsync(memberId);
+                if (member == null)
+                {
+                    return NotFound($"Member with ID {memberId} not found.");
+                }
+
+                if (member.IsDisabled)
+                {
+                    return BadRequest($"Member with ID {memberId} is disabled.");
+                }
+
+                var memberProject = await dbContext.MemberProjects
+                                                   .FirstOrDefaultAsync(mp => mp.ProjectId == projectTask.Project.ProjectId && mp.MemberId == memberId);
+
+                if (memberProject == null)
+                {
+                    return Unauthorized($"User with ID {memberId} is not a member of the project to which this task belongs");
+                }
+
+                var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == memberId && mt.TaskId == taskId);
+
+                if (existingMemberTask != null)
+                {
+                    return BadRequest($"Member with ID {memberId} is already assigned to this task");
+                }
+
+                projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
             
-            if (member == null)
-            {
-                return NotFound("Member not found.");
             }
 
-            if (member.IsDisabled)
-            {
-                return Ok("This member is disabled.");
-            }
-
-            var project = projectTask.Project;
-
-            if (project == null)
-            {
-                return NotFound("Project not found for the given task.");
-            }
-
-            var memberProject = await dbContext.MemberProjects
-                                               .FirstOrDefaultAsync(mp => mp.ProjectId == project.ProjectId && mp.MemberId == memberId);
-
-            if (memberProject == null)
-            {
-                return Unauthorized("User is not a member of the project to which this task belongs");
-            }
-
-            //proveri da li je vec dodeljen
-            if (projectTask.Members.Any(mt => mt.MemberId == memberId))
-            {
-                return BadRequest("Member is already assigned to this task");
-            }
-
-            //doda
-            projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
+            return Ok("Members assigned to task successfully");
         }
-        
+
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
