@@ -33,6 +33,9 @@ namespace Server.Controllers
             var tasks = await dbContext.ProjectTasks
                 .Include(p => p.Project)
                 .Include(ts => ts.TaskStatus)
+                .Include(p => p.Members)
+                         .ThenInclude(p => p.Member)
+                         .ThenInclude(p => p.Role)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
@@ -42,6 +45,20 @@ namespace Server.Controllers
             foreach (var t in tasks)
             {
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
+
+                var assignedMembers = t.Members.Select(ta => new MemberDTO
+                {
+                    Id = ta.Member.Id,
+                    FirstName = ta.Member.FirstName,
+                    LastName = ta.Member.LastName,
+                    Email = ta.Member.Email,
+                    RoleName = ta.Member.Role.RoleName,
+                    RoleId = ta.Member.RoleId,
+                    IsDisabled = ta.Member.IsDisabled,
+                    DateOfBirth = ta.Member.DateOfBirth,
+                    Status = ta.Member.Status
+
+                }).ToList();
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
@@ -55,8 +72,8 @@ namespace Server.Controllers
                    StartDate = t.StartDate,
                    TaskPriorityId = t.TaskPriorityId,
                    IsTaskDependentOn = isTaskDependentOn,
-                   TaskCategoryId = t.TaskCategoryId
-
+                   TaskCategoryId = t.TaskCategoryId,
+                   AssignedMembers = assignedMembers
                 });
 
             }
@@ -232,6 +249,9 @@ namespace Server.Controllers
                .Include(ts => ts.TaskStatus)
                .Include(tp => tp.TaskPriority)
                .Include(tc => tc.TaskCategory)
+               .Include(ta => ta.Members)
+                        .ThenInclude(tam => tam.Member)
+                        .ThenInclude(tam => tam.Role)
                .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -241,6 +261,19 @@ namespace Server.Controllers
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
+            var assignedMembers = projectTask.Members.Select(ta => new MemberDTO
+            {
+                Id = ta.Member.Id,
+                FirstName = ta.Member.FirstName,
+                LastName = ta.Member.LastName,
+                Email = ta.Member.Email,
+                RoleName = ta.Member.Role.RoleName,
+                RoleId = ta.Member.RoleId,
+                IsDisabled = ta.Member.IsDisabled,
+                DateOfBirth = ta.Member.DateOfBirth,
+                Status = ta.Member.Status
+
+            }).ToList();
 
             var taskDTO = new ProjectTaskDTO
             {
@@ -254,7 +287,8 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = projectTask.TaskCategoryId
+                TaskCategoryId = projectTask.TaskCategoryId,
+                AssignedMembers = assignedMembers
             };
 
             return Ok(taskDTO); 
