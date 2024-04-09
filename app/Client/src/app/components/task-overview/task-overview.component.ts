@@ -48,18 +48,19 @@ export class TaskOverviewComponent implements OnInit{
 
     selectedType: any;
     allTypes : taskActivityType[] = [];
-    
-    
+
+
     show: any;
     showEditorForDesc: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task,
-        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService) { }
+        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService, private sanitizer: DomSanitizer) { }
 
   ngOnInit()
   {
     this.show = 'overview';
     this.description = this.task.taskDescription;
+    this.task.taskDescription = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
     this.taskActivityDesc = "";
     this.selectedType = "-1"
     this.tService.getTaskActivityType().subscribe((data : any) =>{
@@ -72,11 +73,11 @@ export class TaskOverviewComponent implements OnInit{
 
   fetchTaskActivities()
   {
-    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => 
+    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) =>
       {
         this.activities = taskactivities;
         this.activitiesForThisTask = [];
-        
+
         //this.dateCheck();
         for(let i=0;i<this.activities.length;i++)
           {
@@ -95,11 +96,11 @@ export class TaskOverviewComponent implements OnInit{
               this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId).subscribe((data : any) =>{
                 this.activities[i].taskActivityName = data.taskActivityTypeName;
               })
-
+              this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
 
               this.activitiesForThisTask.push(this.activities[i])
-            }  
-            
+            }
+
           }
       })
   }
@@ -133,16 +134,16 @@ export class TaskOverviewComponent implements OnInit{
             {
               this.showMessageError();
             }
-              
+
           }
         })
-        
-      }
 
       }
 
-    
-      switchView(tab : string) 
+      }
+
+
+      switchView(tab : string)
       {
         this.show = tab
       }
@@ -181,7 +182,7 @@ export class TaskOverviewComponent implements OnInit{
 
 
             }
-            
+
 
 
   showMessage()
