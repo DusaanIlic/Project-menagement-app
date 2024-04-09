@@ -482,5 +482,33 @@ namespace Server.Controllers
             return Ok("Email address changed successfully");
         }
 
+        [Authorize]
+        [HttpGet("{id}/Projects")]
+        public async Task<IActionResult> GetMemberProjects(int id)
+        {
+            var member = await _dbContext.Members
+                          .Include(m => m.MemberProjects)
+                              .ThenInclude(pm => pm.Project)
+                              .ThenInclude(pm => pm.ProjectStatus)
+                          .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            var projects = member.MemberProjects.Select(pm => new ProjectDTO
+            {
+                ProjectId = pm.ProjectId,
+                ProjectName = pm.Project.ProjectName,
+                Deadline = pm.Project.Deadline,
+                ProjectDescription = pm.Project.ProjectDescription,
+                ProjectStatusId = pm.Project.ProjectStatusId,
+                Status = pm.Project.ProjectStatus.Status,
+                StartDate = pm.Project.StartDate
+            }).ToList();
+
+            return Ok(projects);
+        }
     }
 }

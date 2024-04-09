@@ -31,12 +31,19 @@ namespace Server.Controllers
                     .ThenInclude(pt => pt.Project)
                 .Include(ta => ta.TaskActivityType)
                 .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
                 .ToListAsync();
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
                 TaskActivityId = ta.TaskActivityId,
                 WorkerId = ta.MemberId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.FirstName,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                Email = ta.Member.Email,
+                RoleName = ta.Member.Role.RoleName,
                 TaskId = ta.ProjectTaskId,
                 ProjectId = ta.ProjectTask.ProjectId,
                 DateModify = ta.ActivityDate,
@@ -107,6 +114,7 @@ namespace Server.Controllers
                 .Include(ta => ta.ProjectTask)
                     .ThenInclude(t => t.Project)
                 .Include(ta => ta.Member)
+                    .ThenInclude(t => t.Role)
                 .Include(ta => ta.TaskActivityType)
                 .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
 
@@ -123,11 +131,54 @@ namespace Server.Controllers
                 ProjectId = taskActivity.ProjectTask.ProjectId,
                 DateModify = taskActivity.ActivityDate,
                 Comment = taskActivity.Description,
-                TaskActivityTypeId = taskActivity.TaskActivityTypeId
+                TaskActivityTypeId = taskActivity.TaskActivityTypeId,
+                Name = taskActivity.Member.FirstName,
+                Lastname = taskActivity.Member.LastName,
+                Country = taskActivity.Member.Country,
+                DateOfBirth = taskActivity.Member.DateOfBirth,
+                Email = taskActivity.Member.Email,
+                RoleName = taskActivity.Member.Role.RoleName
             };
 
             
             return Ok(taskActivityDTO);
+        }
+
+        [HttpGet("Task/{taskId}")]
+        public async Task<IActionResult> GetTaskActivitiesByTaskId(int taskId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTaskId == taskId)
+                .ToListAsync();
+
+            if (taskActivities == null || !taskActivities.Any())
+            {
+                return NotFound("No task activities found for the given task ID.");
+            }
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.LastName,
+                Email = ta.Member.Email,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                RoleName = ta.Member.Role.RoleName
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
         }
 
     }

@@ -33,6 +33,9 @@ namespace Server.Controllers
             var tasks = await dbContext.ProjectTasks
                 .Include(p => p.Project)
                 .Include(ts => ts.TaskStatus)
+                .Include(p => p.Members)
+                         .ThenInclude(p => p.Member)
+                         .ThenInclude(p => p.Role)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
@@ -42,6 +45,20 @@ namespace Server.Controllers
             foreach (var t in tasks)
             {
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
+
+                var assignedMembers = t.Members.Select(ta => new MemberDTO
+                {
+                    Id = ta.Member.Id,
+                    FirstName = ta.Member.FirstName,
+                    LastName = ta.Member.LastName,
+                    Email = ta.Member.Email,
+                    RoleName = ta.Member.Role.RoleName,
+                    RoleId = ta.Member.RoleId,
+                    IsDisabled = ta.Member.IsDisabled,
+                    DateOfBirth = ta.Member.DateOfBirth,
+                    Status = ta.Member.Status
+
+                }).ToList();
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
@@ -55,8 +72,8 @@ namespace Server.Controllers
                    StartDate = t.StartDate,
                    TaskPriorityId = t.TaskPriorityId,
                    IsTaskDependentOn = isTaskDependentOn,
-                   TaskCategoryId = t.TaskCategoryId
-
+                   TaskCategoryId = t.TaskCategoryId,
+                   AssignedMembers = assignedMembers
                 });
 
             }
@@ -88,6 +105,14 @@ namespace Server.Controllers
             {
                 return Unauthorized("Insufficient permissions");
             }
+
+            var project = dbContext.Projects.FirstOrDefault(tp => tp.ProjectId == addProjectTaskRequest.ProjectId);
+
+            if (project == null)
+            {
+                return NotFound("Project with this id not found.");
+            }
+
             var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
@@ -122,6 +147,29 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
+            var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
+
+            var assignedMembers = await dbContext.MemberTasks
+                .Include(mt => mt.Member).ThenInclude(mt => mt.Role)
+                .Where(mt => mt.TaskId == newProjectTask.TaskId)
+                .Select(mt => mt.Member)
+                .ToListAsync();
+
+            var assignedMemberDTOs = assignedMembers.Select(member => new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Email = member.Email,
+                RoleId = member.RoleId,
+                RoleName = member.Role.RoleName,
+                DateAdded = member.DateAdded,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth,
+                IsDisabled = member.IsDisabled
+
+            }).ToList();
+
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
             var tasksDTO = new ProjectTaskDTO
@@ -136,7 +184,8 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = taskCategory.TaskCategoryID
+                TaskCategoryId = taskCategory.TaskCategoryID,
+                AssignedMembers = assignedMemberDTOs
             };
 
             return Ok(tasksDTO);
@@ -232,6 +281,9 @@ namespace Server.Controllers
                .Include(ts => ts.TaskStatus)
                .Include(tp => tp.TaskPriority)
                .Include(tc => tc.TaskCategory)
+               .Include(ta => ta.Members)
+                        .ThenInclude(tam => tam.Member)
+                        .ThenInclude(tam => tam.Role)
                .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -241,6 +293,19 @@ namespace Server.Controllers
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
+            var assignedMembers = projectTask.Members.Select(ta => new MemberDTO
+            {
+                Id = ta.Member.Id,
+                FirstName = ta.Member.FirstName,
+                LastName = ta.Member.LastName,
+                Email = ta.Member.Email,
+                RoleName = ta.Member.Role.RoleName,
+                RoleId = ta.Member.RoleId,
+                IsDisabled = ta.Member.IsDisabled,
+                DateOfBirth = ta.Member.DateOfBirth,
+                Status = ta.Member.Status
+
+            }).ToList();
 
             var taskDTO = new ProjectTaskDTO
             {
@@ -254,7 +319,8 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = projectTask.TaskCategoryId
+                TaskCategoryId = projectTask.TaskCategoryId,
+                AssignedMembers = assignedMembers
             };
 
             return Ok(taskDTO); 
@@ -605,6 +671,47 @@ namespace Server.Controllers
 
             return Ok($"Dependency added between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
         }
+
+        [Authorize]
+        [HttpGet("{id}/DependentTasks")]
+        public async Task<IActionResult> GetDependentTasks(int id)
+        {
+            var dependentTaskIds = await dbContext.TaskDependencies
+                .Where(td => td.TaskId == id)
+                .Select(td => td.DependentTaskId)
+                .ToListAsync();
+
+            if (dependentTaskIds == null || dependentTaskIds.Count == 0)
+            {
+                return NotFound("Specified task has no dependent tasks");
+            }
+
+            var dependentTasks = await dbContext.ProjectTasks
+                .Where(pt => dependentTaskIds.Contains(pt.TaskId))
+                .Include(pt => pt.DependentTasks)
+                .Include(pt => pt.TaskStatus)
+                .Include(pt => pt.TaskCategory)
+                .Include(pt => pt.TaskCategory)
+                .ToListAsync();
+
+            var dependentTaskDTOs = dependentTasks.Select(dt => new ProjectTaskDTO
+            {
+                TaskId = dt.TaskId,
+                TaskName = dt.TaskName,
+                TaskDescription = dt.TaskDescription,
+                StartDate = dt.StartDate,
+                Deadline = dt.Deadline,
+                ProjectId = dt.ProjectId,
+                TaskStatusId = dt.TaskStatusId,
+                TaskStatus = dt.TaskStatus.Name,
+                TaskPriorityId = dt.TaskPriorityId,
+                IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
+                TaskCategoryId = dt.TaskCategoryId
+            }).ToList();
+
+            return Ok(dependentTaskDTOs);
+        }
+
 
         [Authorize]
         [HttpDelete("{taskId}/dependency/{dependentTaskId}")]
