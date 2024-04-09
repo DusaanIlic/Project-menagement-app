@@ -29,6 +29,7 @@ export class KanbanComponent implements OnInit {
   progress: any[] = [];
   done: any[] = [];
   dropList: any[] = ['todo', 'progress', 'done'];
+  newStatuses: any[] = [];
 
   showToDoList: boolean = true;
   showProgressList: boolean = true;
@@ -279,12 +280,17 @@ getTasksByStatus(statusId: number): any[] {
     });
 
     dialogRef.componentInstance.taskStatusAdded.subscribe((data: any) => {
-      console.log(data);
+      //console.log(data);
       this.handleTaskStatusAdded(this.taskStatusAdded);
     });
 
     dialogRef.afterClosed().subscribe(result => {
-        console.log(result);
+        //console.log(result);
+        this.newStatuses.push(result.name);
+        for(let element of this.newStatuses){
+          this.dropList.push(element);
+        }
+        console.log(this.dropList);
     });
 }
 

@@ -72,6 +72,9 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -109,17 +112,36 @@ namespace Server.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 1,
+                            City = "",
+                            Country = "",
+                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 46, 897, DateTimeKind.Utc).AddTicks(4835),
+                            DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@logictenacity.com",
+                            FirstName = "Logic",
+                            Github = "",
+                            IsDisabled = false,
+                            LastName = "Tenacity",
+                            Linkedin = "",
+                            Password = "$2a$10$TFfiG/doikCZJQF5zbK2Qep7ApHzJ3HxZaAExuFEhyOyJLEj1J79G",
+                            PhoneNumber = "",
+                            RoleId = 1,
+                            Status = ""
+                        },
+                        new
+                        {
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 646, DateTimeKind.Utc).AddTicks(3065),
+                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 46, 973, DateTimeKind.Utc).AddTicks(3441),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
+                            IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$PbtqDUmB60341JXXWEeaou0bxAauuz.LrmbfBN1b6xYw8v44WNor6",
+                            Password = "$2a$10$Eptv0KP0u5RnhL3nnT9jpuzalyz.5sRUBv09HPpxSp2wM3r9YL2qa",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -129,18 +151,34 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 7, 13, 12, 55, 758, DateTimeKind.Utc).AddTicks(50),
+                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 47, 38, DateTimeKind.Utc).AddTicks(7184),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
+                            IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$lIcgVn9fM2o23bNJgL9qPO9mDOcXrr9OayflQU790073zMF63eRp2",
+                            Password = "$2a$10$9FAbKv47X1uuLOpvFmL1Ve1YMqIEALBcJSAQR1otkqalnNE9pfGFO",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
                         });
+                });
+
+            modelBuilder.Entity("Server.Models.MemberProject", b =>
+                {
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MemberId", "ProjectId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("MemberProjects");
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -237,6 +275,31 @@ namespace Server.Migrations
                         {
                             PermissionId = 13,
                             PermissionName = "Change project"
+                        },
+                        new
+                        {
+                            PermissionId = 14,
+                            PermissionName = "Update task priority"
+                        },
+                        new
+                        {
+                            PermissionId = 15,
+                            PermissionName = "Add task dependency"
+                        },
+                        new
+                        {
+                            PermissionId = 16,
+                            PermissionName = "Remove task dependency"
+                        },
+                        new
+                        {
+                            PermissionId = 17,
+                            PermissionName = "Add task category"
+                        },
+                        new
+                        {
+                            PermissionId = 18,
+                            PermissionName = "Remove task category"
                         });
                 });
 
@@ -472,12 +535,42 @@ namespace Server.Migrations
                         new
                         {
                             RoleId = 2,
+                            PermissionId = 11
+                        },
+                        new
+                        {
+                            RoleId = 2,
                             PermissionId = 12
                         },
                         new
                         {
                             RoleId = 2,
                             PermissionId = 13
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 14
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 16
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 17
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 18
                         });
                 });
 
@@ -705,6 +798,25 @@ namespace Server.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Server.Models.MemberProject", b =>
+                {
+                    b.HasOne("Server.Models.Member", "Member")
+                        .WithMany("MemberProjects")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Project", "Project")
+                        .WithMany("MemberProjects")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Server.Models.MemberTask", b =>
                 {
                     b.HasOne("Server.Models.Member", "Member")
@@ -862,6 +974,8 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
+                    b.Navigation("MemberProjects");
+
                     b.Navigation("ProjectsLead");
 
                     b.Navigation("TaskActivities");
@@ -878,6 +992,8 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
+                    b.Navigation("MemberProjects");
+
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");

@@ -29,6 +29,7 @@ namespace Server.Data
         public DbSet<TaskActivity> TaskActivities { get; set; }
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
+        public DbSet<MemberProject> MemberProjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -152,6 +153,19 @@ namespace Server.Data
                 .WithMany(t => t.TaskActivities)
                 .HasForeignKey(a => a.TaskActivityTypeId);
 
+            modelBuilder.Entity<MemberProject>()
+                 .HasKey(mp => new { mp.MemberId, mp.ProjectId });
+
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.Member)
+                .WithMany(m => m.MemberProjects)
+                .HasForeignKey(mp => mp.MemberId);
+
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.Project)
+                .WithMany(p => p.MemberProjects)
+                .HasForeignKey(mp => mp.ProjectId);
+
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Add members" },
                 new Permission { PermissionId = 2, PermissionName = "Deactivate members" },
@@ -165,14 +179,21 @@ namespace Server.Data
                 new Permission { PermissionId = 10, PermissionName = "Remove member from project" },
                 new Permission { PermissionId = 11, PermissionName = "Change task status" },
                 new Permission { PermissionId = 12, PermissionName = "Change project status" },
-                new Permission { PermissionId = 13, PermissionName = "Change project" }
+                new Permission { PermissionId = 13, PermissionName = "Change project" },
+                new Permission { PermissionId = 14, PermissionName = "Update task priority" },
+                new Permission { PermissionId = 15, PermissionName = "Add task dependency" },
+                new Permission { PermissionId = 16, PermissionName = "Remove task dependency" },
+                new Permission { PermissionId = 17, PermissionName = "Add task category" },
+                new Permission { PermissionId = 18, PermissionName = "Remove task category" }
+
 
             );
 
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com"},
+                new Member { Id = 1, FirstName = "Logic", LastName = "Tenacity", RoleId = 1, Password = BCrypt.Net.BCrypt.HashPassword("admin"), Email = "admin@logictenacity.com" },
+                new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
-                );
+            );
 
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Administrator" },
@@ -192,8 +213,16 @@ namespace Server.Data
                 new RolePermission { RoleId = 2, PermissionId = 9 },
                 new RolePermission { RoleId = 2, PermissionId = 10 },
                 new RolePermission { RoleId = 3, PermissionId = 11 },
+                new RolePermission { RoleId = 2, PermissionId = 11 },
                 new RolePermission { RoleId = 2, PermissionId = 12 },
-                new RolePermission { RoleId = 2, PermissionId = 13 }
+                new RolePermission { RoleId = 2, PermissionId = 13 },
+                new RolePermission { RoleId = 2, PermissionId = 14 },
+                new RolePermission { RoleId = 2, PermissionId = 15 },
+                new RolePermission { RoleId = 2, PermissionId = 16 },
+                new RolePermission { RoleId = 2, PermissionId = 17 },
+                new RolePermission { RoleId = 2, PermissionId = 18 }
+
+
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(

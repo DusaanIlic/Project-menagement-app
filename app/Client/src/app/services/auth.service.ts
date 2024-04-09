@@ -1,9 +1,10 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable, of, skipWhile} from "rxjs";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {Member} from "../models/member";
 
-const AUTH_API = 'http://localhost:8000/api/Auth'
+const AUTH_API = 'http://localhost:8000/api/Auth';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,23 +14,106 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  private authenticatedMemberSubject: BehaviorSubject<any>;
+  private authenticatedMemberAvatarSubject: BehaviorSubject<any>;
 
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(
-      AUTH_API,
-      {
-        email,
-        password
-      },
-      httpOptions
-    );
+  constructor(private http: HttpClient, private router: Router) {
+    const authenticatedMember = localStorage.getItem('authenticated-member');
+    const avatarUrl = localStorage.getItem('authenticated-member-avatar');
+    this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
+    this.authenticatedMemberAvatarSubject = new BehaviorSubject<any>(avatarUrl ? avatarUrl : null);
+  }
+
+  login(email: string, password: string) {
+    return new Promise<void>((resolve, reject) => {
+      this.http.post(AUTH_API, { email, password }, httpOptions).subscribe({
+        next: (data: any) => {
+          const token = data.token;
+          const dto = data.member;
+
+          const member: Member = {
+            id: dto.id,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            roleId: dto.roleId,
+            roleName: dto.roleName,
+            email: dto.email,
+            linkedin: dto.linkedin,
+            github: dto.github,
+            status: dto.status,
+            phoneNumber: dto.phoneNumber,
+            country: dto.country,
+            city: dto.city,
+            dateOfBirth: new Date(dto.dateOfBirth),
+            dateAdded: new Date(dto.dateAdded)
+          };
+
+          localStorage.setItem('jwt-token', token);
+          localStorage.setItem('authenticated-member-id', member.id.toString());
+          localStorage.setItem('authenticated-member', JSON.stringify(member));
+          localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${member.id}/Avatar`);
+
+          this.authenticatedMemberSubject.next(member);
+          this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
+
+          resolve();
+        },
+        error: error => {
+          reject('Invalid email and password combination.');
+        }
+      });
+    });
   }
 
   logout() {
     console.log('logging out');
+
     localStorage.removeItem('jwt-token');
-    localStorage.removeItem('auth-member');
+    localStorage.removeItem('authenticated-member-id');
+    localStorage.removeItem('authenticated-member');
+    localStorage.removeItem('authenticated-member-avatar')
+
+    this.router.navigate(['/login']);
+  }
+
+  getAuthenticatedMember() {
+    return this.authenticatedMemberSubject.asObservable();
+  }
+
+  getAuthenticatedMembersId() {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    if (id) {
+      return parseInt(id);
+    }
+
+    return null;
+  }
+
+  getAuthenticatedMembersAvatar() {
+    return this.authenticatedMemberAvatarSubject.asObservable();
+  }
+
+  updateAuthenticatedMembersAvatar() {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    console.log('updated member avatar');
+
+    if (id) {
+      localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${parseInt(id)}/Avatar?timestamp=${new Date().getTime()}`);
+      this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
+    }
+  }
+
+  updateAuthenticatedMember(member: Member) {
+    const id: any = localStorage.getItem('authenticated-member-id');
+
+    console.log('updated member');
+
+    if (id && parseInt(id) == member.id) {
+      localStorage.setItem('authenticated-member', JSON.stringify(member));
+      this.authenticatedMemberSubject.next(member);
+    }
   }
 
   getToken(): string | null{

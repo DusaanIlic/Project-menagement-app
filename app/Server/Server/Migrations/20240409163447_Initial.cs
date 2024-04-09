@@ -169,6 +169,7 @@ namespace Server.Migrations
                     LastName = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false),
                     Linkedin = table.Column<string>(type: "TEXT", nullable: false),
                     Github = table.Column<string>(type: "TEXT", nullable: false),
@@ -222,6 +223,30 @@ namespace Server.Migrations
                         column: x => x.ProjectStatusId,
                         principalTable: "ProjectStatuses",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MemberProjects",
+                columns: table => new
+                {
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberProjects", x => new { x.MemberId, x.ProjectId });
+                    table.ForeignKey(
+                        name: "FK_MemberProjects_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MemberProjects_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -392,7 +417,13 @@ namespace Server.Migrations
                     { 9, "Remove member from task" },
                     { 10, "Remove member from project" },
                     { 11, "Change task status" },
-                    { 12, "Change project status" }
+                    { 12, "Change project status" },
+                    { 13, "Change project" },
+                    { 14, "Update task priority" },
+                    { 15, "Add task dependency" },
+                    { 16, "Remove task dependency" },
+                    { 17, "Add task category" },
+                    { 18, "Remove task category" }
                 });
 
             migrationBuilder.InsertData(
@@ -451,6 +482,16 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Members",
+                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PhoneNumber", "RoleId", "Status" },
+                values: new object[,]
+                {
+                    { 1, null, "", "", new DateTime(2024, 4, 9, 16, 34, 46, 897, DateTimeKind.Utc).AddTicks(4835), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$TFfiG/doikCZJQF5zbK2Qep7ApHzJ3HxZaAExuFEhyOyJLEj1J79G", "", 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 9, 16, 34, 46, 973, DateTimeKind.Utc).AddTicks(3441), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$Eptv0KP0u5RnhL3nnT9jpuzalyz.5sRUBv09HPpxSp2wM3r9YL2qa", "", 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 9, 16, 34, 47, 38, DateTimeKind.Utc).AddTicks(7184), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$9FAbKv47X1uuLOpvFmL1Ve1YMqIEALBcJSAQR1otkqalnNE9pfGFO", "", 3, "" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "RolePermissions",
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
@@ -465,6 +506,14 @@ namespace Server.Migrations
                     { 8, 2 },
                     { 9, 2 },
                     { 10, 2 },
+                    { 11, 2 },
+                    { 12, 2 },
+                    { 13, 2 },
+                    { 14, 2 },
+                    { 15, 2 },
+                    { 16, 2 },
+                    { 17, 2 },
+                    { 18, 2 },
                     { 11, 3 }
                 });
 
@@ -472,6 +521,11 @@ namespace Server.Migrations
                 name: "IX_Files_UploaderId",
                 table: "Files",
                 column: "UploaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberProjects_ProjectId",
+                table: "MemberProjects",
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Members_AvatarId",
@@ -569,6 +623,9 @@ namespace Server.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Files_Members_UploaderId",
                 table: "Files");
+
+            migrationBuilder.DropTable(
+                name: "MemberProjects");
 
             migrationBuilder.DropTable(
                 name: "MemberTasks");

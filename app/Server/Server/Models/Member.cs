@@ -23,6 +23,8 @@ namespace Server.Models
         [Required(ErrorMessage = "Password is required.")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; } = string.Empty;
+
+        public bool IsDisabled { get; set; } = false;
         
         public int RoleId { get; set; }
 
@@ -52,6 +54,8 @@ namespace Server.Models
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();
+
+        public ICollection<MemberProject> MemberProjects { get; set; } = new List<MemberProject>();
 
         public ICollection<File> UploadedFiles { get; set; } = new List<File>();
 

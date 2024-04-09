@@ -2,197 +2,101 @@ import { Component, OnInit } from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
+import { TaskOverviewComponent } from "../task-overview/task-overview.component";
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { MemberService } from '../../services/member.service';
+import { TaskService } from '../../services/task.service';
+import { Task } from '../../models/task';
+import { ProjectServiceGet } from '../../services/project.service';
+import { Project } from '../../models/project';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { taskPriority } from '../../models/taskPriority';
+import { switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
-  selector: 'app-member-overview',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './member-overview.component.html',
-  styleUrl: './member-overview.component.scss'
+    selector: 'app-member-overview',
+    standalone: true,
+    templateUrl: './member-overview.component.html',
+    styleUrl: './member-overview.component.scss',
+    imports: [CommonModule, TaskOverviewComponent, MatDialogModule, MatButtonModule, MatMenuModule]
 })
-export class MemberOverviewComponent{
-hideNshow(i: number) {
-  this.expanded[i] = !this.expanded[i];
-}
-  
+export class MemberOverviewComponent implements OnInit{
+  routeSub: any;
+
+  constructor(public dialog: MatDialog, private route: ActivatedRoute,
+                private mService : MemberService, private tService : TaskService,
+                  private pService : ProjectServiceGet) {}
+
   member : Member = {
-    id: 1,
-    firstName: 'Pera',
-    lastName: 'Peric',
-    email: 'pera.peric@gmail.com',
+    id: -1,
+    firstName: '',
+    lastName: '',
+    email: '',
     roleId: 1,
-    dateAdded: '1/1/2024'
+    roleName: 'Administrator',
+    dateAdded: new Date(1, 2, 3),
+    country: '',
+    city: '',
+    github: '',
+    dateOfBirth: new Date(1, 2, 3,),
+    linkedin: '',
+    status: '',
+    phoneNumber: ''
   };
 
-  projects : string[] = [];
-  activities : taskActivity[] = [];
-  expanded : boolean[] = [];
+  p? : Project;
+  projects : Project[] = [];
+  tasks : Task[] = [];
+  mRole : string = "";
 
-  generateData()
-  {
-    this.activities = [
-      {
-          "projectName": "Project Delta",
-          "taskName": "Backend Development",
-          "memberName": "Elena Rodriguez",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Implemented authentication system."
-      },
-      {
-          "projectName": "Project Delta",
-          "taskName": "Frontend Development",
-          "memberName": "David Lee",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Integrated API endpoints."
-      },
-      {
-          "projectName": "Project Epsilon",
-          "taskName": "Testing Phase",
-          "memberName": "Maria Garcia",
-          "type": "Bug Fix",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Fixed UI rendering issue."
-      },
-      {
-          "projectName": "Project Epsilon",
-          "taskName": "Deployment",
-          "memberName": "Chris Johnson",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Deployed latest version to production."
-      },
-      {
-          "projectName": "Project Zeta",
-          "taskName": "Documentation",
-          "memberName": "Sophia Kim",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Updated project documentation."
-      },
-      {
-          "projectName": "Project Zeta",
-          "taskName": "Code Review",
-          "memberName": "Emma Wilson",
-          "type": "Review",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Reviewed pull requests."
-      },
-      {
-          "projectName": "Project Theta",
-          "taskName": "Feature Development",
-          "memberName": "Michael Brown",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Implemented new feature."
-      },
-      {
-          "projectName": "Project Theta",
-          "taskName": "Testing",
-          "memberName": "Laura Martinez",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Performed regression testing."
-      },
-      {
-          "projectName": "Project Iota",
-          "taskName": "Database Optimization",
-          "memberName": "William Jones",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Optimized database queries."
-      },
-      {
-          "projectName": "Project Iota",
-          "taskName": "Security Audit",
-          "memberName": "Olivia White",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Conducted security vulnerability assessment."
-      },
-      {
-          "projectName": "Project Kappa",
-          "taskName": "Integration",
-          "memberName": "Daniel Davis",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Integrated third-party services."
-      },
-      {
-          "projectName": "Project Kappa",
-          "taskName": "Bug Fixing",
-          "memberName": "Sophie Brown",
-          "type": "Bug Fix",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Resolved critical bugs."
-      },
-      {
-          "projectName": "Project Lambda",
-          "taskName": "UI Design",
-          "memberName": "Jackson Taylor",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Designed user interface components."
-      },
-      {
-          "projectName": "Project Lambda",
-          "taskName": "Performance Optimization",
-          "memberName": "Amelia Clark",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Optimized application performance."
-      },
-      {
-          "projectName": "Project Mu",
-          "taskName": "Feature Implementation",
-          "memberName": "Liam Brown",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Implemented new feature."
-      },
-      {
-          "projectName": "Project Mu",
-          "taskName": "Testing Phase",
-          "memberName": "Charlotte Evans",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Tested new functionalities."
-      },
-      {
-          "projectName": "Project Nu",
-          "taskName": "Documentation",
-          "memberName": "James Smith",
-          "type": "Update",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Updated project documentation."
-      },
-      {
-          "projectName": "Project Nu",
-          "taskName": "Code Review",
-          "memberName": "Ava Johnson",
-          "type": "Review",
-          "dateModified": new Date("1. 2. 2024."),
-          "description": "Reviewed pull requests."
-      },
-      
-  ]
-  }
+  ngOnInit() {
+    this.routeSub = this.route.params.subscribe(params => {
+      this.member.id = params['id'];
 
-  constructor() {
-    this.generateData();
+      this.mService.getRoleById(this.member.id).subscribe((role : any) => {
+        this.mRole = role.name;
+      })
 
-    for(let i=0;i<this.activities.length;i++)
-    {
-      if(!this.projects.includes(this.activities[i].projectName))
-      this.projects.push(this.activities[i].projectName);
-    }
+      this.tService.getTasksByMember(this.member.id).subscribe((data : Task[]) =>{
+       this.tasks = data;
+      // console.log(data);
+       for(let i=0;i<this.tasks.length;i++)
+        {
 
-    for(let i=0;i<this.projects.length;i++)
-    {
-      this.expanded.push(false);
-    }
+          this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
+            //console.log(project)
+            this.tasks[i].projectName = project.projectName;
+          })
+         // console.log("i:",i)
+          this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
+           // console.log(data);
+            this.tasks[i].taskPriority = data.name;
+           // console.log("i:",i)
+          })
+        }
+      })
+   })
+}
+
+
+
+  //////////////////////////////////////////////////////
+
+
+
+  openDialog(task: Task): void {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: task
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
 }

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgOptimizedImage} from "@angular/common";
-import {RouterLink, RouterLinkActive} from "@angular/router";
+import {ActivatedRoute, RouterLink, RouterLinkActive} from "@angular/router";
 
 @Component({
   selector: 'app-project-navbar',
@@ -14,5 +14,9 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
   styleUrl: './project-navbar.component.scss'
 })
 export class ProjectNavbarComponent {
-
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe(params => {
+      console.log('Project id is: ', params['id']);
+    })
+  }
 }

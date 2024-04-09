@@ -72,7 +72,7 @@ showDialog: boolean = false;
     {
         return projects.map(item => ({
             id: item.projectId,
-            name: item.projectName,
+            projectName: item.projectName,
             endDate: new Date(item.deadline),
             startDate: new Date(item.startDate),
             description: item.projectDescription,

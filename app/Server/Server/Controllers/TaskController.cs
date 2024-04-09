@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -7,6 +9,7 @@ using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
 using Server.DataTransferObjects.Request.ProjectTask;
 using Server.Models;
+using Server.Services.RolePermission;
 
 namespace Server.Controllers
 {
@@ -15,12 +18,15 @@ namespace Server.Controllers
     public class TaskController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
+        private readonly IRolePermissionService rolePermissionService;
 
-        public TaskController(LogicTenacityDbContext dbContext)
+        public TaskController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService)
         {
             this.dbContext = dbContext;
+            this.rolePermissionService = rolePermissionService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProjectTasks()
         {
@@ -58,9 +64,30 @@ namespace Server.Controllers
             return Ok(tasksDTOs);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 4);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
             var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
@@ -79,6 +106,20 @@ namespace Server.Controllers
             Console.WriteLine(taskPriority.Name);
 
             dbContext.ProjectTasks.Add(projectTask);
+            await dbContext.SaveChangesAsync();
+
+            foreach (var memberId in addProjectTaskRequest.AssignedMemberIds)
+            {
+                var member = await dbContext.Members.FindAsync(memberId);
+                if (member == null)
+                {
+
+                    return NotFound($"Member with ID {memberId} not found");
+                }
+
+                projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
+            }
+
             await dbContext.SaveChangesAsync();
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
@@ -101,6 +142,7 @@ namespace Server.Controllers
             return Ok(tasksDTO);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskRequest updateProjectTaskRequest)
         {
@@ -144,9 +186,31 @@ namespace Server.Controllers
             return Ok(tasksDTO);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProjectTask(int id)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 6);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -160,6 +224,7 @@ namespace Server.Controllers
             return Ok(new { message = "Task is deleted" });
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
@@ -198,6 +263,27 @@ namespace Server.Controllers
         [HttpPut("{taskId}/status/{statusId}")]
         public async Task<IActionResult> UpdateTaskStatus(int taskId, int statusId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 11);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
@@ -229,6 +315,7 @@ namespace Server.Controllers
             return Ok("Task status is changed successfully!");
         }
 
+        [Authorize]
         [HttpGet("project/{projectId}")]
         public async Task<IActionResult> GetTasksByProject(int projectId)
         {
@@ -264,6 +351,7 @@ namespace Server.Controllers
             return Ok(taskDTOs);
         }
 
+        [Authorize]
         [HttpGet("project/{projectId}/priority/{priorityId}")]
         public async Task<IActionResult> GetTasksByProjectAndPriority(int projectId, int priorityId)
         {
@@ -299,9 +387,31 @@ namespace Server.Controllers
             return Ok(taskDTOs);
         }
 
+        [Authorize]
         [HttpPut("{taskId}/priority/{priorityId}")]
         public async Task<IActionResult> UpdateTaskPriority(int taskId, int priorityId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 14);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
@@ -320,30 +430,73 @@ namespace Server.Controllers
             return Ok("Task priority is changed successfully!");
         }
 
-        [HttpPut("{taskId}/assign/{memberId}")]
-        public async Task<IActionResult> AssignMemberToTask(int taskId, int memberId)
+        [Authorize]
+        [HttpPut("{taskId}/assign")]
+        public async Task<IActionResult> AssignMemberToTask(int taskId, List<int> memberIds)
         {         
-            var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 7);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
             if (projectTask == null)
             {
                 return NotFound("Task not found");
             }
 
-            var member = await dbContext.Members.FindAsync(memberId);
-            if (member == null)
+            foreach (var memberId in memberIds)
             {
-                return NotFound("Member not found");
+                var member = await dbContext.Members.FindAsync(memberId);
+                if (member == null)
+                {
+                    return NotFound($"Member with ID {memberId} not found.");
+                }
+
+                if (member.IsDisabled)
+                {
+                    return BadRequest($"Member with ID {memberId} is disabled.");
+                }
+
+                var memberProject = await dbContext.MemberProjects
+                                                   .FirstOrDefaultAsync(mp => mp.ProjectId == projectTask.Project.ProjectId && mp.MemberId == memberId);
+
+                if (memberProject == null)
+                {
+                    return Unauthorized($"User with ID {memberId} is not a member of the project to which this task belongs");
+                }
+
+                var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == memberId && mt.TaskId == taskId);
+
+                if (existingMemberTask != null)
+                {
+                    return BadRequest($"Member with ID {memberId} is already assigned to this task");
+                }
+
+                projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
+            
             }
 
-            if (projectTask.Members.Any(mt => mt.MemberId == memberId))
-            {
-                return BadRequest("Member is already assigned to this task");
-            }
-
-            projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Member with ID {memberId} is assigned to task with ID {taskId}");
+            return Ok("Members assigned to task successfully");
         }
 
         [HttpGet("members/{memberId}/tasks")]
@@ -353,6 +506,11 @@ namespace Server.Controllers
             if (member == null)
             {
                 return NotFound("Member does not exist.");
+            }
+
+            if (member.IsDisabled)
+            {
+                return Ok("This member is disabled.");
             }
 
             var memberTasks = await dbContext.MemberTasks
@@ -395,9 +553,31 @@ namespace Server.Controllers
             return Ok(taskDTOs);
         }
 
+        [Authorize]
         [HttpPost("{taskId}/dependency/{dependentTaskId}")]
         public async Task<IActionResult> AddTaskDependency(int taskId, int dependentTaskId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 15);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
             var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
 
@@ -426,9 +606,31 @@ namespace Server.Controllers
             return Ok($"Dependency added between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
         }
 
+        [Authorize]
         [HttpDelete("{taskId}/dependency/{dependentTaskId}")]
         public async Task<IActionResult> RemoveTaskDependency(int taskId, int dependentTaskId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 16);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
             var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
 
@@ -452,9 +654,32 @@ namespace Server.Controllers
             return Ok($"Dependency removed between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
         }
 
+        [Authorize]
         [HttpPost("{taskId}/category/{categoryId}")]
         public async Task<IActionResult> AddTaskCategory(int taskId, int categoryId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 17);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
             var category = await dbContext.TaskCategories.FindAsync(categoryId);
 
@@ -473,6 +698,27 @@ namespace Server.Controllers
         [HttpDelete("{taskId}/category")]
         public async Task<IActionResult> RemoveTaskCategory(int taskId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 18);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
 
             if (task == null)
@@ -485,6 +731,53 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok($"Category removed from Task ID {taskId}.");
+        }
+
+        [Authorize]
+        [HttpDelete("{taskId}/remove/{memberId}")]
+        public async Task<IActionResult> RemoveMemberFromTask(int taskId, int memberId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 9);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                                             .Include(pt => pt.Project)
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound("Task not found");
+            }
+
+            var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == memberId);
+
+            if (memberTask == null)
+            {
+                return NotFound("Member is not assigned to this task");
+            }
+
+            projectTask.Members.Remove(memberTask);
+            await dbContext.SaveChangesAsync();
+
+            return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
         }
     }
 }

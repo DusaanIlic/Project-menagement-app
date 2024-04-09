@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
@@ -38,6 +39,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
@@ -71,6 +73,7 @@ namespace Server.Controllers
                     };
                 }
 
+                int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -81,7 +84,8 @@ namespace Server.Controllers
                         Status = p.ProjectStatus.Status,
                         ProjectTasks = taskDTOs,
                         TeamLider = teamLeaderDTO,
-                        StartDate = p.StartDate
+                        StartDate = p.StartDate,
+                        NumberOfPeople = numberOfMembers
                 });
             }
 
@@ -123,7 +127,7 @@ namespace Server.Controllers
                 return BadRequest();
             }
             
-            var project = new Project()
+            var project = new Models.Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
@@ -137,10 +141,15 @@ namespace Server.Controllers
 
             project.ProjectTaskStatuses = firstThreeTaskStatuses
                 .Select(status => new ProjectTaskStatus { TaskStatus = status }).ToList();
-            
+
             dbContext.Projects.Add(project);
-            
+
             await dbContext.SaveChangesAsync();
+
+
+            dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId });
+            await dbContext.SaveChangesAsync();
+
 
             var teamLeaderDTO = new MemberDTO
             {
@@ -157,8 +166,11 @@ namespace Server.Controllers
                 Linkedin = teamLeader.Linkedin,
                 PhoneNumber = teamLeader.PhoneNumber,
                 DateOfBirth = teamLeader.DateOfBirth,
-                RoleName = teamLeader.Role.RoleName
+                RoleName = teamLeader.Role.RoleName,
+                IsDisabled = teamLeader.IsDisabled
             };
+
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -169,7 +181,8 @@ namespace Server.Controllers
                 ProjectStatusId = project.ProjectStatus.Id,
                 Status = projectStatus.Status,
                 StartDate = project.StartDate,
-                TeamLider = teamLeaderDTO
+                TeamLider = teamLeaderDTO,
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -186,6 +199,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -216,10 +230,12 @@ namespace Server.Controllers
                     LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     RoleId = project.TeamLeader.RoleId,
-                    RoleName = project.TeamLeader.Role.RoleName
+                    RoleName = project.TeamLeader.Role.RoleName,
+                    IsDisabled = project.TeamLeader.IsDisabled
                 };
             }
-               
+
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -231,7 +247,8 @@ namespace Server.Controllers
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
-                StartDate = project.StartDate
+                StartDate = project.StartDate,
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -283,9 +300,12 @@ namespace Server.Controllers
                     LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     RoleId = project.TeamLeader.RoleId,
-                    RoleName = project.TeamLeader.Role.RoleName
+                    RoleName = project.TeamLeader.Role.RoleName,
+                    IsDisabled = project.TeamLeader.IsDisabled
                 };
             }
+
+            int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -297,7 +317,8 @@ namespace Server.Controllers
                 Status = project.ProjectStatus.Status,
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
-                StartDate = project.StartDate
+                StartDate = project.StartDate,
+                NumberOfPeople = numberOfMembers
             };
 
             return Ok(projectDTO);
@@ -447,6 +468,143 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok("Team leader added successfully");
+        }
+
+        [Authorize]
+        [HttpPost("{projectId}/members")]
+        public async Task<IActionResult> AddMembersToProject(int projectId, List<int> memberIds)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id) && !m.IsDisabled).ToListAsync();
+            
+            if (members == null || members.Count != memberIds.Count)
+            {
+                return NotFound("One or more members not found");
+            }
+
+            foreach (var memberId in memberIds)
+            {  
+                if (project.TeamLeaderId == memberId)
+                {
+                    return Ok("Member is already a team leader of the project");
+                }
+
+                var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
+                if (existingMemberProject != null)
+                {
+                    return Ok("Member already exists in the project");
+                }
+
+                dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Members added to project successfully");
+        }
+
+        [Authorize]
+        [HttpDelete("{projectId}/members/{memberId}")]
+        public async Task<IActionResult> RemoveMemberFromProject(int projectId, int memberId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound("User ID claim not found in token");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID in token");
+            }
+
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 10);
+
+            if (!hasPermission)
+            {
+                return Unauthorized("Insufficient permissions");
+            }
+
+            var project = await dbContext.Projects
+                .Include(p => p.MemberProjects)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            var memberProject = project.MemberProjects.FirstOrDefault(mp => mp.MemberId == memberId);
+            if (memberProject == null)
+            {
+                return NotFound("Member not found on project");
+            }
+
+            dbContext.MemberProjects.Remove(memberProject);
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Member removed from project successfully");
+        }
+
+        [Authorize]
+        [HttpGet("{projectId}/members")]
+        public async Task<IActionResult> GetAllMembersOnProject(int projectId)
+        {
+            var project = dbContext.Projects.FindAsync(projectId);
+
+            if(project == null)
+            {
+                return BadRequest("Project not found.");
+            }
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            var membersDTO = members.Select(member => new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                RoleId = member.RoleId,
+                RoleName = member.Role.RoleName,
+                Email = member.Email,
+                Status = member.Status
+            });
+
+            return Ok(membersDTO);
+
         }
     }
 }

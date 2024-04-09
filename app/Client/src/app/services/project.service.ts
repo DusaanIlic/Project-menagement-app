@@ -3,7 +3,6 @@ import { Observable, catchError, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Project } from '../models/project';
 import { HttpHeaders } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
 
 const PROJECT_API = 'http://localhost:8000/api/Project';
 
@@ -29,9 +28,11 @@ export class ProjectServiceGet{
     return this.http.delete<any>(`${PROJECT_API}/${id}`);
   }
 
-  getProjectById(projectId: number): Observable<Project>{
-    return this.http.get<Project>(`${PROJECT_API}/${projectId}`)
+  getProjectById(id : number): Observable<Project>
+  {
+    return this.http.get<Project>(`${PROJECT_API}/${id}`);
   }
+
 }
 
 
