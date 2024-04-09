@@ -28,6 +28,10 @@ namespace Server.Models
 
         [ForeignKey("RoleId")]
         public Role Role { get; set; }
+        
+        public string? RefreshToken { get; set; }
+        
+        public DateTime RefreshTokenExpiresAt { get; set; }
 
         public String Linkedin { get; set; } = String.Empty;
 

@@ -170,6 +170,8 @@ namespace Server.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RefreshToken = table.Column<string>(type: "TEXT", nullable: true),
+                    RefreshTokenExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Linkedin = table.Column<string>(type: "TEXT", nullable: false),
                     Github = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false),
@@ -482,12 +484,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Members",
-                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "LastName", "Linkedin", "Password", "PhoneNumber", "RoleId", "Status" },
+                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "LastName", "Linkedin", "Password", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 9, 19, 37, 37, 161, DateTimeKind.Utc).AddTicks(582), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", "Tenacity", "", "$2a$10$/.1rMEQpEdfOGnu6c.H2t.rvedhnX48n9vvBNqR9UpmUE6AxoN4Xq", "", 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 9, 19, 37, 37, 227, DateTimeKind.Utc).AddTicks(1822), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", "Peric", "", "$2a$10$Eg4Gd/VCNtEGOzW5LS4lm.UkniApSgazaDZxwTfpp8/IbunvDZIs2", "", 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 9, 19, 37, 37, 294, DateTimeKind.Utc).AddTicks(3158), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", "Tomic", "", "$2a$10$t30aXzEcE6pL.Jlsa2ZAkuI3HO45Un9AZBeWiOWsEWyWcieiDmAoe", "", 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 9, 20, 33, 55, 947, DateTimeKind.Utc).AddTicks(154), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", "Tenacity", "", "$2a$10$ePgLeBjDkuk4mCE/GxcsIeCSdQx5btYghwuhnCUyzBcyMk2bKLI1q", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 9, 20, 33, 56, 10, DateTimeKind.Utc).AddTicks(3577), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", "Peric", "", "$2a$10$CbzI4Y3LqorcVky1hCymAexMM6.zPwLbI5fidq/4DAVdsXsF86a4W", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 9, 20, 33, 56, 75, DateTimeKind.Utc).AddTicks(8728), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", "Tomic", "", "$2a$10$QXJZFbuTxH.w0alfHUoTeeIXlZbOLh82P2ldNewjCN8bT01xn3NOq", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "" }
                 });
 
             migrationBuilder.InsertData(

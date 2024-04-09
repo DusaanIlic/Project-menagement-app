@@ -88,6 +88,12 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RefreshTokenExpiresAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
@@ -112,15 +118,16 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 19, 37, 37, 161, DateTimeKind.Utc).AddTicks(582),
+                            DateAdded = new DateTime(2024, 4, 9, 20, 33, 55, 947, DateTimeKind.Utc).AddTicks(154),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
                             Github = "",
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$/.1rMEQpEdfOGnu6c.H2t.rvedhnX48n9vvBNqR9UpmUE6AxoN4Xq",
+                            Password = "$2a$10$ePgLeBjDkuk4mCE/GxcsIeCSdQx5btYghwuhnCUyzBcyMk2bKLI1q",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 1,
                             Status = ""
                         },
@@ -129,15 +136,16 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 19, 37, 37, 227, DateTimeKind.Utc).AddTicks(1822),
+                            DateAdded = new DateTime(2024, 4, 9, 20, 33, 56, 10, DateTimeKind.Utc).AddTicks(3577),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
                             Github = "",
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$Eg4Gd/VCNtEGOzW5LS4lm.UkniApSgazaDZxwTfpp8/IbunvDZIs2",
+                            Password = "$2a$10$CbzI4Y3LqorcVky1hCymAexMM6.zPwLbI5fidq/4DAVdsXsF86a4W",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 2,
                             Status = ""
                         },
@@ -146,15 +154,16 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 19, 37, 37, 294, DateTimeKind.Utc).AddTicks(3158),
+                            DateAdded = new DateTime(2024, 4, 9, 20, 33, 56, 75, DateTimeKind.Utc).AddTicks(8728),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
                             Github = "",
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$t30aXzEcE6pL.Jlsa2ZAkuI3HO45Un9AZBeWiOWsEWyWcieiDmAoe",
+                            Password = "$2a$10$QXJZFbuTxH.w0alfHUoTeeIXlZbOLh82P2ldNewjCN8bT01xn3NOq",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 3,
                             Status = ""
                         });

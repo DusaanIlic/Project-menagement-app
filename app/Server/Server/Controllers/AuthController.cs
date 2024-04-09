@@ -48,9 +48,15 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var token = GenerateJwtToken(member);
+            var jwtToken = GenerateJwtToken(member);
+            var refreshToken = GenerateRefreshToken();
 
-             var memberResponse = new MemberDTO
+            member.RefreshToken = refreshToken;
+            member.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+
+            await _dbContext.SaveChangesAsync();
+            
+            var memberResponse = new MemberDTO
             {
                 Id = member.Id,
                 FirstName = member.FirstName,
@@ -68,7 +74,7 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName
             };
 
-            return Ok(new { Token = token, member = memberResponse });
+            return Ok(new { JwtToken = jwtToken, RefreshToken = refreshToken, member = memberResponse });
         }
 
         private string GenerateJwtToken(Member member)
@@ -93,5 +99,14 @@ namespace Server.Controllers
             return tokenHandler.WriteToken(token);
         }
 
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
     }
 }
