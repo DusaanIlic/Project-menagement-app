@@ -28,6 +28,8 @@ namespace Server.DataTransferObjects
 
         public String Status { get; set; } = String.Empty;
 
+        public bool IsDisabled { get; set; } = false;
+
         public String PhoneNumber { get; set; } = String.Empty;
         
         public String Country { get; set; } = String.Empty;
