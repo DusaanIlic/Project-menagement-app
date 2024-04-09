@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
-using Server.Services.JwtBlacklistService;
 
 
 namespace Server.Controllers
@@ -26,12 +25,12 @@ namespace Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly LogicTenacityDbContext _dbContext;
-        private readonly IJwtService _jwtService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(LogicTenacityDbContext dbContext, IJwtService jwtService)
+        public AuthController(LogicTenacityDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
-            _jwtService = jwtService;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -49,7 +48,7 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var token = await _jwtService.GenerateToken(member);
+            var token = GenerateJwtToken(member);
 
              var memberResponse = new MemberDTO
             {
@@ -71,5 +70,28 @@ namespace Server.Controllers
 
             return Ok(new { Token = token, member = memberResponse });
         }
+
+        private string GenerateJwtToken(Member member)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("Email", member.Email),
+                    new Claim("RoleId", member.Role.RoleName),
+                    new Claim("Id", member.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(15), // Token expiration time
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Audience = _configuration["JwtSettings:Audience"],
+                Issuer = _configuration["JwtSettings:Issuer"]
+
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
     }
 }

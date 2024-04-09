@@ -30,7 +30,6 @@ namespace Server.Data
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
         public DbSet<MemberProject> MemberProjects { get; set; }
-        public DbSet<IssuedToken> IssuedTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -166,11 +165,6 @@ namespace Server.Data
                 .HasOne(mp => mp.Project)
                 .WithMany(p => p.MemberProjects)
                 .HasForeignKey(mp => mp.ProjectId);
-
-            modelBuilder.Entity<IssuedToken>()
-                .HasOne(it => it.Member)
-                .WithMany()
-                .HasForeignKey(it => it.MemberId);
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Add members" },
