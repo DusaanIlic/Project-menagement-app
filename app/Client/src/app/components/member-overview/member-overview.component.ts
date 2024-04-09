@@ -37,7 +37,7 @@ export class MemberOverviewComponent implements OnInit{
     lastName: '',
     email: '',
     roleId: 1,
-    roleName: 'Administrator',
+    roleName: '',
     dateAdded: new Date(1, 2, 3),
     country: '',
     city: '',
@@ -57,28 +57,41 @@ export class MemberOverviewComponent implements OnInit{
     this.routeSub = this.route.params.subscribe(params => {
       this.member.id = params['id'];
 
-      this.mService.getRoleById(this.member.id).subscribe((role : any) => {
-        this.mRole = role.name;
-      })
-
-      this.tService.getTasksByMember(this.member.id).subscribe((data : Task[]) =>{
-       this.tasks = data;
-      // console.log(data);
-       for(let i=0;i<this.tasks.length;i++)
+      this.mService.getMemberById(this.member.id).subscribe(
         {
-
-          this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
-            //console.log(project)
-            this.tasks[i].projectName = project.projectName;
-          })
-         // console.log("i:",i)
-          this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
-           // console.log(data);
-            this.tasks[i].taskPriority = data.name;
-           // console.log("i:",i)
-          })
+          next : data =>{
+            this.member = data;
+          },
+          error : error =>{
+            console.log("Member not found!")
+          }
         }
-      })
+      )
+
+      this.tService.getTasksByMember(this.member.id).subscribe(
+        {
+          next : data => {
+            this.tasks = data;
+            for(let i=0;i<this.tasks.length;i++)
+              {
+      
+                this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
+                  //console.log(project)
+                  this.tasks[i].projectName = project.projectName;
+                })
+               // console.log("i:",i)
+                this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
+                 // console.log(data);
+                  this.tasks[i].taskPriority = data.name;
+                 // console.log("i:",i)
+                })
+              }
+          },
+          error : error =>{
+            console.log("Empty")
+          }
+        }
+      )
    })
 }
 

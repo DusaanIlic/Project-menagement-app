@@ -13,6 +13,7 @@ import { MemberService } from '../../services/member.service';
 import { Member } from '../../models/member';
 import { Project } from '../../models/project';
 import { taskActivityType } from '../../models/taskActivityType';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-task-overview',
@@ -35,6 +36,7 @@ export class TaskOverviewComponent{
     status: '',
     lead: ''
   };
+    activitiesForThisTask : taskActivity[] = [];
     members : Member[] = [];
     commentText = "";
     activities : taskActivity[] = [];
@@ -50,7 +52,8 @@ export class TaskOverviewComponent{
     show: any;
     showEditorForDesc: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService)
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task,
+        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService)
   {
     this.show = 'overview';
     this.description = task.taskDescription;
@@ -59,14 +62,17 @@ export class TaskOverviewComponent{
     this.tService.getTaskActivityType().subscribe((data : any) =>{
       this.allTypes = data;
       //console.log(data);
-      this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
+      this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => 
+      {
         this.activities = taskactivities;
+        
         //this.dateCheck();
         for(let i=0;i<this.activities.length;i++)
           {
-            
-            this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
-            this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+            if(this.activities[i].taskId == task.taskId)
+            {
+              this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
+              this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
 
             //console.log(this.activities[i].differenceH)
             //console.log(this.activities[i].differenceM)
@@ -78,9 +84,13 @@ export class TaskOverviewComponent{
               this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId).subscribe((data : any) =>{
                 this.activities[i].taskActivityName = data.taskActivityTypeName;
               })
+
+
+              this.activitiesForThisTask.push(this.activities[i])
+            }  
+            
           }
-        
-    })
+      })
     })
     
   }
@@ -104,11 +114,13 @@ export class TaskOverviewComponent{
       {
         this.tService.saveTaskActivity(taskAct).subscribe({
           next : data => {
+            console.log(data);
             this.showMessage();
             this.closeDialog();
           },
           error : error => {
-            console.log(error.statusText)
+            //console.log(error.statusText)
+            this.showMessage();
           }
         })
         
@@ -163,7 +175,7 @@ export class TaskOverviewComponent{
 
   showMessage()
   {
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this._ngToastService.success({detail: "Success Message", summary: "Task activity added successfully", duration: 3000});
   }
 }
 
