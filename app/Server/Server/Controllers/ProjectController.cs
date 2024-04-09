@@ -72,7 +72,7 @@ namespace Server.Controllers
                     };
                 }
 
-                int numberOfMembers = p.MemberProjects.Count;
+                int numberOfMembers = p.MemberProjects.Count(mp => !mp.Member.IsDisabled);
 
                 projectDTOs.Add(new ProjectDTO
                     {
@@ -166,10 +166,11 @@ namespace Server.Controllers
                 Linkedin = teamLeader.Linkedin,
                 PhoneNumber = teamLeader.PhoneNumber,
                 DateOfBirth = teamLeader.DateOfBirth,
-                RoleName = teamLeader.Role.RoleName
+                RoleName = teamLeader.Role.RoleName,
+                IsDisabled = teamLeader.IsDisabled
             };
 
-            int numberOfMembers = project.MemberProjects.Count;
+            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -229,11 +230,12 @@ namespace Server.Controllers
                     LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     RoleId = project.TeamLeader.RoleId,
-                    RoleName = project.TeamLeader.Role.RoleName
+                    RoleName = project.TeamLeader.Role.RoleName,
+                    IsDisabled = project.TeamLeader.IsDisabled
                 };
             }
 
-            int numberOfMembers = project.MemberProjects.Count;
+            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -298,11 +300,12 @@ namespace Server.Controllers
                     LastName = project.TeamLeader.LastName,
                     Email = project.TeamLeader.Email,
                     RoleId = project.TeamLeader.RoleId,
-                    RoleName = project.TeamLeader.Role.RoleName
+                    RoleName = project.TeamLeader.Role.RoleName,
+                    IsDisabled = project.TeamLeader.IsDisabled
                 };
             }
 
-            int numberOfMembers = project.MemberProjects.Count;
+            int numberOfMembers = project.MemberProjects.Count(mp => !mp.Member.IsDisabled);
 
             var projectDTO = new ProjectDTO
             {
@@ -498,20 +501,19 @@ namespace Server.Controllers
                 return NotFound("Project not found");
             }
 
-            var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id)).ToListAsync();
+            var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id) && !m.IsDisabled).ToListAsync();
+            
             if (members == null || members.Count != memberIds.Count)
             {
                 return NotFound("One or more members not found");
             }
 
             foreach (var memberId in memberIds)
-            {
-
+            {  
                 if (project.TeamLeaderId == memberId)
                 {
                     return Ok("Member is already a team leader of the project");
                 }
-
 
                 var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
                 if (existingMemberProject != null)
@@ -586,7 +588,7 @@ namespace Server.Controllers
 
             var members = await dbContext.Members
                               .Where(m => dbContext.MemberProjects
-                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id))
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
                               .Include(m => m.Role)
                               .ToListAsync();
 

@@ -43,7 +43,9 @@ namespace Server.Controllers
 
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
 
-            var memberDTOs = members.Select(m => new MemberDTO
+            var memberDTOs = 
+                members.Where(m => !m.IsDisabled)
+                .Select(m => new MemberDTO
             {
                 Id = m.Id,
                 FirstName = m.FirstName,
