@@ -453,14 +453,19 @@ namespace Server.Controllers
             
             if (member == null)
             {
-                return NotFound("Member not found");
+                return NotFound("Member not found.");
+            }
+
+            if (member.IsDisabled)
+            {
+                return Ok("This member is disabled.");
             }
 
             var project = projectTask.Project;
 
             if (project == null)
             {
-                return NotFound("Project not found for the given task");
+                return NotFound("Project not found for the given task.");
             }
 
             var memberProject = await dbContext.MemberProjects
@@ -491,6 +496,11 @@ namespace Server.Controllers
             if (member == null)
             {
                 return NotFound("Member does not exist.");
+            }
+
+            if (member.IsDisabled)
+            {
+                return Ok("This member is disabled.");
             }
 
             var memberTasks = await dbContext.MemberTasks
