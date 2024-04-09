@@ -108,6 +108,20 @@ namespace Server.Controllers
             dbContext.ProjectTasks.Add(projectTask);
             await dbContext.SaveChangesAsync();
 
+            foreach (var memberId in addProjectTaskRequest.AssignedMemberIds)
+            {
+                var member = await dbContext.Members.FindAsync(memberId);
+                if (member == null)
+                {
+
+                    return NotFound($"Member with ID {memberId} not found");
+                }
+
+                projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
+            }
+
+            await dbContext.SaveChangesAsync();
+
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
             var tasksDTO = new ProjectTaskDTO
