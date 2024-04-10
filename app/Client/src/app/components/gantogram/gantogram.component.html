@@ -1,25 +1,26 @@
-<div id="action-description">
-  <p>
-    This sample visualizes the various phases involved in a manufacturing
-    process of a product which transforms from conceptual model to a sellable
-    product.
-  </p>
-</div>
-
 <div class="control-section">
   <ejs-gantt
     id="ganttDefault"
     height="430px"
     [dataSource]="data"
     [taskFields]="taskSettings"
-    [allowSelection]="true"
-    [labelSettings]="labelSettings"
     [columns]="columns"
+    [timelineSettings]="timelineSettings"
+    [labelSettings]="labelSettings"
     [treeColumnIndex]="1"
-    height="400px"
+    height="450px"
+    [allowSelection]="true"
+    dateFormat="MMM dd, y"
     [projectStartDate]="projectStartDate"
     [projectEndDate]="projectEndDate"
     [highlightWeekends]="true"
+    [gridLines]="gridLines"
+    [eventMarkers]="eventMarkers"
+    [editSettings]="editSettings"
+    [toolbar]="toolbar"
+    [resourceFields]="resourceFields"
+    [resources]="resources"
+    [splitterSettings]="splitterSettings"
   >
   </ejs-gantt>
 </div>
