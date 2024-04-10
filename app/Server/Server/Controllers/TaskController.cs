@@ -103,7 +103,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = dbContext.Projects.FirstOrDefault(tp => tp.ProjectId == addProjectTaskRequest.ProjectId);
@@ -257,7 +257,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(t => t.TaskId == id);
@@ -347,7 +347,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -475,7 +475,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -518,7 +518,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
@@ -546,7 +546,7 @@ namespace Server.Controllers
 
                 if (memberProject == null)
                 {
-                    return Unauthorized($"User with ID {memberId} is not a member of the project to which this task belongs");
+                    return Forbid($"User with ID {memberId} is not a member of the project to which this task belongs");
                 }
 
                 var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == memberId && mt.TaskId == taskId);
@@ -656,7 +656,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -750,7 +750,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -798,7 +798,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
 
@@ -838,7 +838,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -877,7 +877,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks

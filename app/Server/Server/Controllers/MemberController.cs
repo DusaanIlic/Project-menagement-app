@@ -88,7 +88,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
@@ -221,7 +221,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             member.FirstName = memberDTO.FirstName;
@@ -277,7 +277,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var member = await _dbContext.Members.FindAsync(id);
@@ -337,7 +337,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             if (member.AvatarId != null)
@@ -369,7 +369,7 @@ namespace Server.Controllers
 
             if (member.Id != id && !isAdmin)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             if (member.AvatarId == null)
@@ -414,7 +414,7 @@ namespace Server.Controllers
 
             if (userId != id && !isAdmin)
             {
-                return Unauthorized("You are not authorized to change this password");
+                return Forbid("You are not authorized to change this password");
             }
 
             var member = await _dbContext.Members.FindAsync(id);
@@ -452,7 +452,7 @@ namespace Server.Controllers
 
             if (userId != id && !isAdmin)
             {
-                return Unauthorized("You can only change your own email address");
+                return Forbid("You can only change your own email address");
             }
 
             var member = await _dbContext.Members.FindAsync(id);
