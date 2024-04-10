@@ -29,12 +29,12 @@
         <p class="flex items-center justify-center">Roles</p>
       </a>
     </li>
-<!--    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">-->
-<!--      <a class="flex gap-1 justify-center items-center">-->
-<!--        <img ngSrc="assets/navbar/analytics.png" height="30" width="30">-->
-<!--        <p class="flex items-center justify-center">Analytics</p>-->
-<!--      </a>-->
-<!--    </li>-->
+    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
+      <a class="flex gap-1 justify-center items-center">
+        <img ngSrc="assets/navbar/analytics.png" height="30" width="30">
+        <p class="flex items-center justify-center">Analytics</p>
+      </a>
+    </li>
   </ul>
 
   <ul id="dropdown-toggle" class="h-10 flex gap-1">
@@ -54,7 +54,7 @@
   <p class="pl-2">Role: {{member?.roleName}}</p>
   <hr class="white">
   <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/{{member?.roleId}}" (click)="dropdownShow()">Profile</button>
-  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/edit/{{member?.roleId}}" (click)="dropdownShow()">Edit profile</button>
+  <button class="flex h-10 pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" routerLink="/members/{{member?.roleId}}/edit" (click)="dropdownShow()">Edit profile</button>
   <button class="flex h-10 grow pl-2 items-center text-white rounded-md xl:bg-transparent hover:bg-black" (click)="dropdownShow(); logout()">Log out</button>
 </div>
 

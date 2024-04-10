@@ -144,6 +144,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
           detail: 'Success',
           summary: 'Deleted successfully.'
         });
+
+        this.authService.updateAuthenticatedMembersAvatar();
       },
       error: err => {
         this.ngToastService.error({

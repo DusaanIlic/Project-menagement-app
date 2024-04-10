@@ -88,7 +88,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
@@ -164,9 +164,9 @@ namespace Server.Controllers
             };
 
 
-            _emailService.SendEmail(request);
+            var result = _emailService.SendEmail(request);
 
-            return Ok(memberResponse);
+            return !result ? StatusCode(500, "Failed to send welcome email.") : Ok(memberResponse);
         }
 
         [Authorize]

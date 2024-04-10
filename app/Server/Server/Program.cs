@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text; // Added using directive for Encoding
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
+using Server.Middlewares;
 using Server.Models;
 using Server.Services.File;
 using Server.Services.RolePermission; // Added using directive for UseAuthentication
@@ -60,6 +61,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
             ValidIssuer = config["JwtSettings:Issuer"],
             ValidAudience = config["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]))
@@ -78,8 +80,6 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
-
-
 
 var app = builder.Build();
 
@@ -100,6 +100,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<JwtBlacklistMiddleware>();
 
 app.MapControllers();
 
