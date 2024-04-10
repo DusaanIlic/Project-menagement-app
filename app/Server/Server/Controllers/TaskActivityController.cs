@@ -78,7 +78,7 @@ namespace Server.Controllers
             {
                 MemberId = member.Id,
                 ProjectTaskId = addTaskActivityRequest.TaskId,
-                ActivityDate = DateTime.UtcNow,
+                ActivityDate = DateTime.Now,
                 Description = addTaskActivityRequest.Description,
                 TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId
             };

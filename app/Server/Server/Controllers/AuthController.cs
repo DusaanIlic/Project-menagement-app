@@ -45,7 +45,7 @@ namespace Server.Controllers
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, member.Password))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var token = GenerateJwtToken(member);
@@ -83,7 +83,7 @@ namespace Server.Controllers
                     new Claim(ClaimTypes.Role, member.Role.RoleName),
                     new Claim("Id", member.Id.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
+                Expires = DateTime.Now.AddDays(7), // Token expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration["JwtSettings:Audience"],
                 Issuer = _configuration["JwtSettings:Issuer"]

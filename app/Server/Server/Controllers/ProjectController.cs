@@ -408,7 +408,7 @@ namespace Server.Controllers
 
             if(statusId == 1 && project.StartDate == DateTime.MinValue)
             {
-                project.StartDate = DateTime.UtcNow;
+                project.StartDate = DateTime.Now;
             }
 
             project.ProjectStatus = status;

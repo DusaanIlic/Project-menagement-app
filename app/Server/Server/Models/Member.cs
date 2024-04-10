@@ -43,7 +43,7 @@ namespace Server.Models
         
         public String City { get; set; } = String.Empty;
         
-        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+        public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch;
         

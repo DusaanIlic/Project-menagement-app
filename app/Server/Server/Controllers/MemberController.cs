@@ -109,7 +109,7 @@ namespace Server.Controllers
                 LastName = memberDTO.LastName,
                 Email = memberDTO.Email,
                 Password = hashedPassword,
-                DateAdded = DateTime.UtcNow,
+                DateAdded = DateTime.Now,
                 Role = role
             };
 
