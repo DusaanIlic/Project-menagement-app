@@ -88,6 +88,7 @@ showDialog: boolean = false;
     ngOnInit(): void
     {
         this.fetchProjects();
+        
     }
 
 

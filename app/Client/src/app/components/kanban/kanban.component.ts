@@ -14,14 +14,15 @@ import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
+import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
 
 @Component({
-  selector: 'app-kanban',
-  standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent],
-  templateUrl: './kanban.component.html', 
-  styleUrl: './kanban.component.scss',
-  providers: [DatePipe]
+    selector: 'app-kanban',
+    standalone: true,
+    templateUrl: './kanban.component.html',
+    styleUrl: './kanban.component.scss',
+    providers: [DatePipe],
+    imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
 })
 
 export class KanbanComponent implements OnInit {
