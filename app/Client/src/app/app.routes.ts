@@ -27,12 +27,11 @@ export const routes: Routes = [
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
   { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]}, //Umeso 1 treba da bude ID membera koji se edituje
   { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
-  { path: 'projects/add', component: AddProjectComponent, canActivate: [AuthGuard]  },
   { path: 'roles/all', component: AllRolesComponent, canActivate: [AuthGuard] },
   { path: 'roles/:id/edit', component: EditRoleComponent, canActivate: [AuthGuard] },
   { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
   {
-    path: 'projects/:id', // The part causing me a headache
+    path: 'projects/:id',
     component: ProjectComponent,
     canActivate: [AuthGuard],
     children: [
