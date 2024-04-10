@@ -14,18 +14,20 @@ import { Member } from '../../models/member';
 import { Project } from '../../models/project';
 import { taskActivityType } from '../../models/taskActivityType';
 import { DomSanitizer } from '@angular/platform-browser';
+import {MatButton} from "@angular/material/button";
+import {MatMenu, MatMenuItem} from "@angular/material/menu";
+import {EditMemberComponent} from "../edit-member/edit-member.component";
+import {ProjectService} from "../../services/add.project.service";
+import {ProjectServiceGet} from "../../services/project.service";
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule , NgToastModule],
+  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule, NgToastModule, MatButton, MatMenu, MatMenuItem],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
 export class TaskOverviewComponent implements OnInit{
-
-
-
 
   project : Project = {
     id: 0,
@@ -38,13 +40,30 @@ export class TaskOverviewComponent implements OnInit{
     lead: ''
   };
     activitiesForThisTask : taskActivity[] = [];
-    members : Member[] = [];
+    membersOnThisProject : Member[] = [];
     commentText = "";
     activities : taskActivity[] = [];
     editor: Editor = new Editor;
     editor1: Editor = new Editor;
     taskActivityDesc: any;
     description: any;
+    descriptionForP : any;
+    task : Task = {
+      assignedMembers: [],
+      deadline: new Date(),
+      isTaskDependentOn: false,
+      projectId: 0,
+      projectName: "",
+      startDate: new Date(),
+      taskCategoryId: 0,
+      taskDescription: "",
+      taskId: 0,
+      taskName: "",
+      taskPriority: "",
+      taskPriorityId: 0,
+      taskStatus: "",
+      taskStatusId: 0
+    };
 
     selectedType: any;
     allTypes : taskActivityType[] = [];
@@ -53,25 +72,33 @@ export class TaskOverviewComponent implements OnInit{
     show: any;
     showEditorForDesc: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task,
-        private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService, private sanitizer: DomSanitizer) { }
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
+              @Inject(MAT_DIALOG_DATA) public taskId: number,
+              private tService : TaskService,
+              private mService : MemberService,
+              private _ngToastService: NgToastService,
+              private sanitizer: DomSanitizer,
+              private pService: ProjectServiceGet) { }
 
   ngOnInit()
   {
-    this.tService.getTaskById(this.task.taskId).subscribe((data : any) =>{
+    this.tService.getTaskById(this.taskId).subscribe((data : any) => {
       this.task = data;
-      console.log(data)
-    })
-    console.log(this.task)
-    this.show = 'overview';
-    this.description = this.task.taskDescription;
-    this.task.taskDescription = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
-    this.taskActivityDesc = "";
-    this.selectedType = "-1"
-    this.tService.getTaskActivityType().subscribe((data : any) =>{
-      this.allTypes = data;
-      //console.log(data);
-      this.fetchTaskActivities();
+      this.pService.getMembersByProjectId(1).subscribe((data : Member[]) =>{
+        this.membersOnThisProject = data;
+        console.log(data)
+      })
+      //console.log(this.task)
+      this.show = 'overview';
+      this.description = this.task.taskDescription;
+      this.descriptionForP = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
+      this.taskActivityDesc = "";
+      this.selectedType = "-1"
+      this.tService.getTaskActivityType().subscribe((data : any) =>{
+        this.allTypes = data;
+        //console.log(data);
+        this.fetchTaskActivities();
+      })
     })
   }
 
@@ -217,5 +244,45 @@ export class TaskOverviewComponent implements OnInit{
     );
     }
 
+  assignRemove(event : any, memberId: number)
+  {
+    console.log(event.target.checked) // If true - assign if false - remove
+    const membersList = [memberId];
+    console.log(membersList)
+
+
+    if(event.target.checked) // assign
+    {
+      this.tService.assignMembersToTask(this.taskId, membersList).subscribe({
+        next : data =>{
+          console.log("Assigned to task!");
+        },
+        error : error =>{
+          console.log("Error assigning to task!");
+        }
+      })
+    }
+    else //remove
+    {
+      this.tService.removeMemberFromTask(this.taskId, memberId ).subscribe({
+        next : data =>{
+          console.log("Removed from task!");
+        },
+        error : error =>{
+          console.log("Error removing from task!");
+        }
+      })
+    }
+  }
+
+  checkIfAssignedToTask(memberId : number) : boolean
+  {
+    for(let i=0;i<this.task.assignedMembers.length;i++)
+    {
+      if(this.task.assignedMembers[i].id == memberId)
+        return true;
+    }
+    return false;
+  }
 }
 

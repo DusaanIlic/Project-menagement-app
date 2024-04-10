@@ -78,4 +78,14 @@ export class TaskService {
     return this.http.get<any[]>(`${TASK_API}/${taskId}`);
   }
 
+  assignMembersToTask(taskId : number, membersId : number[]) : Observable<any[]>
+  {
+    return this.http.put<any[]>(`${TASK_API}/${taskId}/assign`, membersId);
+  }
+
+  removeMemberFromTask(taskId : number, membersId : number) : Observable<any[]>
+  {
+    return this.http.delete<any[]>(`${TASK_API}/${taskId}/remove/${membersId}`);
+  }
+
 }

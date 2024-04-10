@@ -17,7 +17,7 @@
                     <div class="border-[1px] border-gray-400 rounded-md px-2 pt-2 pb-2">
                         <div class="flex justify-between"><h2 class="text-xl flex font-semibold">Description:</h2><img class="size-5 flex " src="assets/icons/edit_36_jpg.jpg" alt="" (click)="showEditor()"></div>
                         <div *ngIf="!showEditorForDesc">
-                            <div class="text-lg"><div class="inline-block" [innerHTML]="task.taskDescription"></div></div>
+                            <div class="text-lg"><div class="inline-block" [innerHTML]="descriptionForP"></div></div>
                         </div>
                             <div *ngIf="showEditorForDesc">
                                 <div class="NgxEditor__Wrapper h-36" >
@@ -76,16 +76,42 @@
               </div>
 
 
+
               <div *ngIf="show == 'assignes'" class="w-[80%]">
-                  <div class="">
-                      <h1 class="text-xl font-semibold">Assignes:</h1>
-                      <div *ngFor="let assignee of task.assignedMembers" class="mt-2">
-                        <div class="flex flex-row gap-2">
-                          <input type="checkbox" name="" checked class="flex p-0 m-0">
-                          <h1 class="flex">{{assignee.firstName}} {{assignee.lastName}}</h1>
-                        </div>
+                <div class="flex justify-start">
+                  <div class="flex flex-col gap-5">
+                    <div>
+                      <h1 class="font-xl font-semibold">Assigned members:</h1>
+                    </div>
+                    <div class="w-[90%]">
+                      <div class="table border-[1px] border-gray-300 rounded-md">
+                        <tr class="">
+                          <th class="text-left w-10"></th>
+                          <th class="text-left p-2 w-40">ASSIGNEE</th>
+                          <th class="text-left p-2 w-40">STATUS</th>
+                        </tr>
+
+                        <tr *ngIf="membersOnThisProject.length === 0">
+                          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No assigned members.</td>
+                        </tr>
+
+                        <tr *ngFor="let assignee of membersOnThisProject" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" checked (change)="assignRemove($event, assignee.id)"></td>
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                          <td *ngIf="assignee.status != '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                          <td *ngIf="assignee.status === '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                        </tr>
+
+                        <tr *ngFor="let assignee of membersOnThisProject" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" (change)="assignRemove($event, assignee.id)"></td>
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                          <td *ngIf="assignee.status != '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                          <td *ngIf="assignee.status === '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                        </tr>
                       </div>
+                    </div>
                   </div>
+                </div>
 
               </div>
 
