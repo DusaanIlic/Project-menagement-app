@@ -10,6 +10,7 @@ import { AddMemberComponent } from '../add-member/add-member.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { MemberInfoComponent } from '../member-info/member-info.component';
 
 @Component({
     selector: 'app-all-members',
@@ -25,7 +26,8 @@ export class AllMembersComponent implements OnInit{
     roles: Role[] = [];
     members : Member[] = [];
     filteredMembers: Member[] = [];
-    searchQuery: string = '';
+    searchTerm: string = '';
+
 
     ngOnInit(): void {
         this.getMembersFromServer();
@@ -91,15 +93,34 @@ export class AllMembersComponent implements OnInit{
     }
 
     search(): void {
-      if (!this.searchQuery.trim()) {
-          this.filteredMembers = this.members;
-          return;
+      let searchTerm = this.searchTerm.toLowerCase().trim();
+      let filteredMembers = [...this.members]; 
+    
+      if (this.selectedRole) {
+        switch (this.selectedRole) {
+          case 'allMembers':
+            // Ako je izabrana opcija "All members", ne primenjujemo filter po ulozi
+            break;
+          case 'administrators':
+          case 'projectManagers':
+          case 'workers':
+            filteredMembers = filteredMembers.filter(member => this.getRoleName(member.roleId) === this.selectedRole);
+            break;
+          default:
+            break;
+        }
       }
-      const regex = new RegExp(this.searchQuery.trim(), 'i');
-      this.filteredMembers = this.members.filter(member =>
-          regex.test(member.firstName) || regex.test(member.lastName)
-      );
-  }
+    
+      if (searchTerm) {
+        filteredMembers = filteredMembers.filter(member => 
+          member.firstName.toLowerCase().includes(searchTerm) || 
+          member.lastName.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      this.filteredMembers = filteredMembers;
+    }
+    
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddMemberComponent, {
@@ -110,6 +131,16 @@ export class AllMembersComponent implements OnInit{
       this.getMembersFromServer();
     });
   }
+
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+        data: { member } // Prosleđujemo člana u modalni prozor
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+        console.log('Dialog zatvoren');
+    });
+}
 
 
   sortMembersBy(event: any): void {

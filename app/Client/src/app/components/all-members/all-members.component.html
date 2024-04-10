@@ -13,7 +13,7 @@
                         </select>
                     </form>
 
-                    <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Search..." (input)="search()">
+                    <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Search..."  pInputText [(ngModel)]="searchTerm" (input)="search()">
 
                     <span class="grow"></span>
 
@@ -56,7 +56,7 @@
                                 <td class="w-60 border-t-[1px] border-t-gray-300">
                                     <div class="flex justify-center">
                                         <img ngSrc="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
-                                         height="30" width="30" alt="user-avatar">
+                                         height="30" width="30" alt="user-avatar" (click)="openMemberInfoDialog(member)">
                                     </div>
                                 </td>
                                 <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{member.firstName}} {{member.lastName}}</td>
