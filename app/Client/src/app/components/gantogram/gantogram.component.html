@@ -1,7 +1,25 @@
-<smart-gantt-chart
-  #gantt
-  [dataSource]="dataSource"
-  [durationUnit]="durationUnit"
-  [taskColumns]="taskColumns"
->
-</smart-gantt-chart>
+<div id="action-description">
+  <p>
+    This sample visualizes the various phases involved in a manufacturing
+    process of a product which transforms from conceptual model to a sellable
+    product.
+  </p>
+</div>
+
+<div class="control-section">
+  <ejs-gantt
+    id="ganttDefault"
+    height="430px"
+    [dataSource]="data"
+    [taskFields]="taskSettings"
+    [allowSelection]="true"
+    [labelSettings]="labelSettings"
+    [columns]="columns"
+    [treeColumnIndex]="1"
+    height="400px"
+    [projectStartDate]="projectStartDate"
+    [projectEndDate]="projectEndDate"
+    [highlightWeekends]="true"
+  >
+  </ejs-gantt>
+</div>
