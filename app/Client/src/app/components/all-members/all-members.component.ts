@@ -9,16 +9,19 @@ import { Role } from '../../models/role';
 import { AddMemberComponent } from '../add-member/add-member.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-all-members',
     standalone: true,
     templateUrl: './all-members.component.html',
     styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage]
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage],
+  providers: [DatePipe]
 })
 export class AllMembersComponent implements OnInit{
 
+    selectedRole: string = '';
     roles: Role[] = [];
     members : Member[] = [];
     filteredMembers: Member[] = [];
@@ -30,7 +33,22 @@ export class AllMembersComponent implements OnInit{
     ngOnInit(): void {
         this.getMembersFromServer();
         this.getRolesFromServer();
+        this.filterMembersByRole(this.selectedRole);
+        this.selectedRole = 'allMembers';
     }
+
+    filterMembersByRole(role: string): void {
+      if (role === 'allMembers') {
+          this.filteredMembers = this.members;
+      } else {
+          this.filteredMembers = this.members.filter(member => this.getRoleName(member.roleId) === role);
+      }
+  }
+
+  onRoleChange(event: any): void {
+    this.selectedRole = event.target.value;
+    this.filterMembersByRole(this.selectedRole);
+  }
 
     showMessage(){
       this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});

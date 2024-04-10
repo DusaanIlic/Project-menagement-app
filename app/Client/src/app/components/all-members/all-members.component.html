@@ -7,8 +7,9 @@
                         <option disabled selected >Sort by</option>
                         <option value="name">Name</option>
                         <option value="count">Role</option>
-                        <option value="lead">Email</option>
-                        <option value="lead">Tasks</option>
+                        <option value="email">Email</option>
+                        <option value="tasks">Tasks</option>
+                        <option value="date">Date</option>
                         </select>
                     </form>
 
@@ -22,17 +23,17 @@
 
                 <div class="flex flex-row items-center p-2">
                     <h1 class="mr-2">Show only:</h1>
-                    <input type="radio" name="projectShow" id="allProjects" value="t1" class="mr-2" >
-                    <label for="allProjects" class="mr-2">All members</label>
+                    <input type="radio" name="projectShow" id="allMembers" value="allMembers" class="mr-2" (change)="onRoleChange($event)">
+                    <label for="allMembers" class="mr-2">All members</label>
 
-                    <input type="radio" name="projectShow" id="activeProjects" value="t2" class="mr-2">
-                    <label for="activeProjects" class="mr-2">Administrators</label>
+                    <input type="radio" name="projectShow" id="administrators" value="Administrator" class="mr-2" (change)="onRoleChange($event)">
+                    <label for="administrators" class="mr-2">Administrators</label>
 
-                    <input type="radio" name="projectShow" id="finishedProjects" value="t3" class="mr-2">
-                    <label for="activeProjects" class="mr-2">Project managers</label>
+                    <input type="radio" name="projectShow" id="projectManagers" value="Project Manager" class="mr-2" (change)="onRoleChange($event)">
+                    <label for="projectManagers" class="mr-2">Project managers</label>
 
-                    <input type="radio" name="projectShow" id="finishedProjects" value="t3" class="mr-2">
-                    <label for="activeProjects" class="mr-2">Workers</label>
+                    <input type="radio" name="projectShow" id="workers" value="Worker" class="mr-2" (change)="onRoleChange($event)">
+                    <label for="workers" class="mr-2">Workers</label>
                 </div>
 
 
@@ -44,6 +45,7 @@
                                 <th class=" w-60">ROLE</th>
                                 <th class=" w-60">EMAIL</th>
                                 <th class=" w-60">ACTIVE TASKS</th>
+                                <th class=" w-60">DATE OF EMPLOYEMENT</th>
                             </tr>
 
                             <tr *ngIf="members.length === 0">
@@ -61,6 +63,7 @@
                                 <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{ getRoleName(member.roleId) }}</td>
                                 <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{member.email}}</td>
                                 <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{0}}</td>
+                                <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{member.dateAdded | date:'dd-MM-yyyy'}}</td>
                             </tr>
                     </div>
                 </div>
