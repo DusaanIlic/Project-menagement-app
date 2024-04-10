@@ -14,7 +14,7 @@ import {
   styleUrls: ['./gantogram.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent {
+export class GantComponent {
   title = 'smart-app';
 
   @ViewChild('gantt', { read: GanttChartComponent, static: false })

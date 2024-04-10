@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^17.2.0",
     "@angular/platform-browser-dynamic": "^17.2.0",
     "@angular/router": "^17.2.0",
+    "angular-gantt": "^2.0.0-rc.1",
     "flowbite": "^2.3.0",
     "ng-angular-popup": "^0.5.2",
     "rxjs": "~7.8.0",
@@ -28,7 +29,7 @@
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.2.3",
+    "@angular-devkit/build-angular": "^17.0.10",
     "@angular/cli": "^17.2.1",
     "@angular/compiler-cli": "^17.2.0",
     "@types/jasmine": "~5.1.0",
