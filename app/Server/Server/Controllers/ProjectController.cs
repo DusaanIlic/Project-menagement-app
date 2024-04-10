@@ -30,6 +30,7 @@ namespace Server.Controllers
             this.rolePermissionService = rolePermissionService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
@@ -406,7 +407,7 @@ namespace Server.Controllers
             if (status == null)
                 return NotFound("Status not found");
 
-            if(statusId == 1 && project.StartDate == DateTime.MinValue)
+            if(statusId == 3 && project.StartDate == DateTime.MinValue)
             {
                 project.StartDate = DateTime.Now;
             }

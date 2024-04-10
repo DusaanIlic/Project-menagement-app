@@ -565,6 +565,7 @@ namespace Server.Controllers
             return Ok("Members assigned to task successfully");
         }
 
+        [Authorize]
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
@@ -817,6 +818,7 @@ namespace Server.Controllers
             return Ok($"Category added to Task ID {taskId}.");
         }
 
+        [Authorize]
         [HttpDelete("{taskId}/category")]
         public async Task<IActionResult> RemoveTaskCategory(int taskId)
         {
@@ -902,6 +904,7 @@ namespace Server.Controllers
             return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
         }
 
+        [Authorize]
         [HttpGet("membertasks")]
         public async Task<IActionResult> GetAllMemberTasks()
         {
