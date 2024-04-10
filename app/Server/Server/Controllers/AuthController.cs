@@ -45,7 +45,7 @@ namespace Server.Controllers
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, member.Password))
             {
-                return Unauthorized();
+                return BadRequest();
             }
 
             var expireAt = DateTime.UtcNow.AddMinutes(15);
@@ -57,6 +57,8 @@ namespace Server.Controllers
             member.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             await _dbContext.SaveChangesAsync();
+            
+            Console.Write($"AUTHORIZATION: Issuing JWT token to member with id {member.Id}");
             
             var memberResponse = new MemberDTO
             {
@@ -75,8 +77,6 @@ namespace Server.Controllers
                 DateOfBirth = member.DateOfBirth,
                 RoleName = member.Role.RoleName
             };
-
-            Console.WriteLine($"Issuing jwt for user {member.Id}");
             
             var authDto = new AuthDTO
             {
@@ -97,11 +97,13 @@ namespace Server.Controllers
 
             if (member == null)
             {
+                Console.WriteLine($"Failed refreshing token invalid member");
                 return BadRequest("Invalid refresh token");
             }
 
             if (DateTime.UtcNow > member.RefreshTokenExpiresAt)
             {
+                Console.WriteLine($"Failed refreshing token, token expired");
                 return BadRequest("Refresh token has expired");
             }
 
@@ -114,6 +116,8 @@ namespace Server.Controllers
             member.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             await _dbContext.SaveChangesAsync();
+            
+            Console.Write($"AUTHORIZATION: Refreshing JWT token to member with id {member.Id}");
 
             var memberResponse = new MemberDTO
             {
@@ -132,8 +136,6 @@ namespace Server.Controllers
                 DateOfBirth = member.DateOfBirth,
                 RoleName = member.Role.RoleName
             };
-            
-            Console.WriteLine($"Refreshing jwt for user {member.Id}");
             
             var authDto = new AuthDTO
             {
