@@ -48,7 +48,9 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var jwtToken = GenerateJwtToken(member);
+            var expireAt = DateTime.Now.AddMinutes(15);
+            
+            var jwtToken = GenerateJwtToken(member, expireAt);
             var refreshToken = GenerateRefreshToken();
 
             member.RefreshToken = refreshToken;
@@ -74,10 +76,73 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName
             };
 
-            return Ok(new { JwtToken = jwtToken, RefreshToken = refreshToken, member = memberResponse });
+            var authDto = new AuthDTO
+            {
+                JwtToken = jwtToken,
+                JwtTokenExpirationDate = expireAt,
+                RefreshToken = refreshToken,
+                Member = memberResponse
+            };
+            
+            return Ok(authDto);
         }
 
-        private string GenerateJwtToken(Member member)
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+            var member = await _dbContext.Members.Include(m=>m.Role)
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshTokenRequest.RefreshToken);
+
+            if (member == null)
+            {
+                return BadRequest("Invalid refresh token");
+            }
+
+            if (DateTime.Now > member.RefreshTokenExpiresAt)
+            {
+                return BadRequest("Refresh token has expired");
+            }
+
+            var expireAt = DateTime.Now.AddMinutes(15);
+            var jwtToken = GenerateJwtToken(member, expireAt);
+
+            // Generate a new refresh token
+            var newRefreshToken = GenerateRefreshToken();
+            member.RefreshToken = newRefreshToken;
+            member.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+
+            await _dbContext.SaveChangesAsync();
+
+            var memberResponse = new MemberDTO
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Email = member.Email,
+                RoleId = member.RoleId,
+                DateAdded = member.DateAdded,
+                Country = member.Country,
+                City = member.City,
+                Status = member.Status,
+                Github = member.Status,
+                Linkedin = member.Linkedin,
+                PhoneNumber = member.PhoneNumber,
+                DateOfBirth = member.DateOfBirth,
+                RoleName = member.Role.RoleName
+            };
+            
+            var authDto = new AuthDTO
+            {
+                JwtToken = jwtToken,
+                JwtTokenExpirationDate = expireAt,
+                RefreshToken = newRefreshToken,
+                Member = memberResponse
+            };
+            
+            return Ok(authDto);
+        }
+
+        private string GenerateJwtToken(Member member, DateTime expireAt)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
@@ -89,7 +154,7 @@ namespace Server.Controllers
                     new Claim("RoleId", member.RoleId.ToString()),
                     new Claim("Id", member.Id.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(15), // Token expiration time
+                Expires = expireAt, // Token expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration["JwtSettings:Audience"],
                 Issuer = _configuration["JwtSettings:Issuer"]
