@@ -44,6 +44,14 @@ disableSelect: any;
   }
 
   addMember(){
+    if (!this.firstName || !this.lastName || !this.roleId || !this.email) {
+      this._ngToastService.error({
+        detail: 'Please fill up inputs',
+        summary: 'Adding failed: Inputs cannot be empty'
+      });
+      return;
+    }
+
     const memberData = {
       firstName: this.firstName,
       lastName: this.lastName,
@@ -57,6 +65,17 @@ disableSelect: any;
       this.showMessage();
       this.closeDialog();
     }, error => {
+      if (error.status === 400) {
+        this._ngToastService.error({
+          detail: 'Error: Bad Request',
+          summary: 'Adding failed: Bad data form'
+        });
+      } else {
+        this._ngToastService.error({
+          detail: 'Server error',
+          summary: 'Adding failed: Server error'
+        });
+      }
       console.error('Error saving task', error);
     });
   }
