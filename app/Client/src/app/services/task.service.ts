@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Observable, retry} from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { Task } from '../models/task';
 import { taskActivity } from '../models/taskActivity';
@@ -71,6 +71,11 @@ export class TaskService {
   deleteTaskActivity(taskActivityId : number) : Observable<any>
   {
     return this.http.delete(`${TASKACTIVITY_API}/${taskActivityId}`);
+  }
+
+  getTaskById(taskId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_API}/${taskId}`);
   }
 
 }

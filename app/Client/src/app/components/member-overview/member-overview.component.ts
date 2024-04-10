@@ -71,10 +71,11 @@ export class MemberOverviewComponent implements OnInit{
       this.tService.getTasksByMember(this.member.id).subscribe(
         {
           next : data => {
+            console.log((data))
             this.tasks = data;
             for(let i=0;i<this.tasks.length;i++)
               {
-      
+
                 this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
                   //console.log(project)
                   this.tasks[i].projectName = project.projectName;

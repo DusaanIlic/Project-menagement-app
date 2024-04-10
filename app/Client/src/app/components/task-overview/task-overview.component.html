@@ -79,7 +79,12 @@
               <div *ngIf="show == 'assignes'" class="w-[80%]">
                   <div class="">
                       <h1 class="text-xl font-semibold">Assignes:</h1>
-                      <h2 class="text-lg"></h2>
+                      <div *ngFor="let assignee of task.assignedMembers" class="mt-2">
+                        <div class="flex flex-row gap-2">
+                          <input type="checkbox" name="" checked class="flex p-0 m-0">
+                          <h1 class="flex">{{assignee.firstName}} {{assignee.lastName}}</h1>
+                        </div>
+                      </div>
                   </div>
 
               </div>

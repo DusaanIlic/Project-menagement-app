@@ -58,6 +58,11 @@ export class TaskOverviewComponent implements OnInit{
 
   ngOnInit()
   {
+    this.tService.getTaskById(this.task.taskId).subscribe((data : any) =>{
+      this.task = data;
+      console.log(data)
+    })
+    console.log(this.task)
     this.show = 'overview';
     this.description = this.task.taskDescription;
     this.task.taskDescription = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
