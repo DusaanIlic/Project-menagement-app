@@ -3,7 +3,7 @@
             <div class="flex flex-col gap-2">
                 <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5">
                     <form>
-                        <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
+                        <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400" (change)="sortMembersBy($event)">
                         <option disabled selected >Sort by</option>
                         <option value="name">Name</option>
                         <option value="count">Role</option>
@@ -13,7 +13,7 @@
                         </select>
                     </form>
 
-                    <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Search...">
+                    <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Search..." (input)="search()">
 
                     <span class="grow"></span>
 
@@ -23,7 +23,7 @@
 
                 <div class="flex flex-row items-center p-2">
                     <h1 class="mr-2">Show only:</h1>
-                    <input type="radio" name="projectShow" id="allMembers" value="allMembers" class="mr-2" (change)="onRoleChange($event)">
+                    <input type="radio" name="projectShow" id="allMembers" value="allMembers" class="mr-2" (change)="onRoleChange($event)" checked>
                     <label for="allMembers" class="mr-2">All members</label>
 
                     <input type="radio" name="projectShow" id="administrators" value="Administrator" class="mr-2" (change)="onRoleChange($event)">
