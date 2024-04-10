@@ -202,6 +202,8 @@ namespace Server.Controllers
                 IsDisabled = member.IsDisabled
             };
 
+            Console.WriteLine("I RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+            
             return Ok(memberDTO);
         }
 

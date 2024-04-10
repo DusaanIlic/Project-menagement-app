@@ -58,7 +58,7 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
             
-            Console.Write($"AUTHORIZATION: Issuing JWT token to member with id {member.Id}");
+            Console.WriteLine($"AUTHORIZATION: Issuing JWT token to member with id {member.Id}");
             
             var memberResponse = new MemberDTO
             {
@@ -117,7 +117,7 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
             
-            Console.Write($"AUTHORIZATION: Refreshing JWT token to member with id {member.Id}");
+            Console.WriteLine($"AUTHORIZATION: Refreshing JWT token to member with id {member.Id}");
 
             var memberResponse = new MemberDTO
             {
