@@ -21,6 +21,7 @@ export class LoginComponent {
   errorMessage: string | undefined;
   email: string | undefined;
   password: string | undefined;
+  forgotPasswordForm: boolean = false;
 
   constructor(private authService : AuthService, private memberService: MemberService,
                 private router: Router) {}
@@ -38,5 +39,9 @@ export class LoginComponent {
       .catch(err => {
         this.errorMessage = err
       });
+  }
+
+  toggleForgotPasswordForm() {
+    this.forgotPasswordForm = !this.forgotPasswordForm;
   }
 }

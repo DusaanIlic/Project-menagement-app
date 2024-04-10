@@ -9,7 +9,7 @@ import {switchMap} from "rxjs/operators";
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const jwtToken = authService.getJwtToken();
-  
+
   const cloned = req.clone({
     headers: req.headers.set(
       'Authorization',

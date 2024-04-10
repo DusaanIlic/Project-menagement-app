@@ -201,8 +201,6 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName,
                 IsDisabled = member.IsDisabled
             };
-
-            Console.WriteLine("I RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
             
             return Ok(memberDTO);
         }
