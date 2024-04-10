@@ -568,7 +568,8 @@ namespace Server.Controllers
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
-            var member = await dbContext.Members.FindAsync(memberId);
+            var member = await dbContext.Members.Include(m => m.Role).FirstOrDefaultAsync(m => m.Id == memberId);
+
             if (member == null)
             {
                 return NotFound("Member does not exist.");
@@ -600,6 +601,19 @@ namespace Server.Controllers
             {
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == mt.TaskId);
 
+                var assignedMembers = await dbContext.MemberTasks.Include(t => t.Member).Where(t => t.TaskId == mt.TaskId)
+                .Select(t => new MemberDTO
+                 {
+                   Id = t.Member.Id,
+                   FirstName = t.Member.FirstName,
+                   LastName = t.Member.LastName,
+                   Email = t.Member.Email,
+                   DateOfBirth = t.Member.DateOfBirth,
+                   RoleName = t.Member.Role.RoleName,
+                   Status = t.Member.Status,
+                   RoleId = t.Member.RoleId
+                }).ToListAsync();
+
                 taskDTOs.Add(new ProjectTaskDTO
                 {
                     Deadline = mt.Task.Deadline,
@@ -612,7 +626,8 @@ namespace Server.Controllers
                     StartDate = mt.Task.StartDate,
                     TaskPriorityId = mt.Task.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
-                    TaskCategoryId = mt.Task.TaskCategoryId
+                    TaskCategoryId = mt.Task.TaskCategoryId,
+                    AssignedMembers = assignedMembers
                 });
             }
 
