@@ -103,7 +103,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = dbContext.Projects.FirstOrDefault(tp => tp.ProjectId == addProjectTaskRequest.ProjectId);
@@ -257,7 +257,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(t => t.TaskId == id);
@@ -347,7 +347,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -475,7 +475,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -518,7 +518,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
@@ -546,7 +546,7 @@ namespace Server.Controllers
 
                 if (memberProject == null)
                 {
-                    return Unauthorized($"User with ID {memberId} is not a member of the project to which this task belongs");
+                    return Forbid($"User with ID {memberId} is not a member of the project to which this task belongs");
                 }
 
                 var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == memberId && mt.TaskId == taskId);
@@ -565,10 +565,12 @@ namespace Server.Controllers
             return Ok("Members assigned to task successfully");
         }
 
+        [Authorize]
         [HttpGet("members/{memberId}/tasks")]
         public async Task<IActionResult> GetMemberTasks(int memberId)
         {
-            var member = await dbContext.Members.FindAsync(memberId);
+            var member = await dbContext.Members.Include(m => m.Role).FirstOrDefaultAsync(m => m.Id == memberId);
+
             if (member == null)
             {
                 return NotFound("Member does not exist.");
@@ -600,6 +602,19 @@ namespace Server.Controllers
             {
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == mt.TaskId);
 
+                var assignedMembers = await dbContext.MemberTasks.Include(t => t.Member).Where(t => t.TaskId == mt.TaskId)
+                .Select(t => new MemberDTO
+                 {
+                   Id = t.Member.Id,
+                   FirstName = t.Member.FirstName,
+                   LastName = t.Member.LastName,
+                   Email = t.Member.Email,
+                   DateOfBirth = t.Member.DateOfBirth,
+                   RoleName = t.Member.Role.RoleName,
+                   Status = t.Member.Status,
+                   RoleId = t.Member.RoleId
+                }).ToListAsync();
+
                 taskDTOs.Add(new ProjectTaskDTO
                 {
                     Deadline = mt.Task.Deadline,
@@ -612,7 +627,8 @@ namespace Server.Controllers
                     StartDate = mt.Task.StartDate,
                     TaskPriorityId = mt.Task.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
-                    TaskCategoryId = mt.Task.TaskCategoryId
+                    TaskCategoryId = mt.Task.TaskCategoryId,
+                    AssignedMembers = assignedMembers
                 });
             }
 
@@ -641,7 +657,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -735,7 +751,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -783,7 +799,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
 
@@ -802,6 +818,7 @@ namespace Server.Controllers
             return Ok($"Category added to Task ID {taskId}.");
         }
 
+        [Authorize]
         [HttpDelete("{taskId}/category")]
         public async Task<IActionResult> RemoveTaskCategory(int taskId)
         {
@@ -823,7 +840,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -862,7 +879,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTask = await dbContext.ProjectTasks
@@ -886,5 +903,67 @@ namespace Server.Controllers
 
             return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
         }
+
+        [Authorize]
+        [HttpGet("membertasks")]
+        public async Task<IActionResult> GetAllMemberTasks()
+        {
+
+            var memberTasks = await dbContext.MemberTasks
+                .Include(mt => mt.Member)
+                    .ThenInclude(t => t.Role)
+                .Include(mt => mt.Task)
+                    .ThenInclude(t => t.TaskStatus)
+                .Include(mt => mt.Task)
+                    .ThenInclude(t => t.TaskPriority)
+                .Include(mt => mt.Task)
+                    .ThenInclude(tc => tc.TaskCategory)
+                .ToListAsync();
+
+            if (!memberTasks.Any())
+            {
+                return Ok("Member does not have any task.");
+            }
+
+            var taskDTOs = new List<MemberTaskDTO>();
+
+            foreach (var mt in memberTasks)
+            {
+                var isTaskDependent = await dbContext.TaskDependencies.AnyAsync(td => td.TaskId == mt.TaskId);
+
+                taskDTOs.Add(new MemberTaskDTO
+                {
+                    MemberId = mt.MemberId,
+                    TaskId = mt.TaskId,
+                    Member = new MemberDTO
+                    {
+                        Id = mt.Member.Id,
+                        FirstName = mt.Member.FirstName,
+                        LastName = mt.Member.LastName,
+                        Email = mt.Member.Email,
+                        DateOfBirth = mt.Member.DateOfBirth,
+                        RoleName = mt.Member.Role.RoleName,
+                        Status = mt.Member.Status
+                    },
+                    Task = new ProjectTaskDTO
+                    {
+                        Deadline = mt.Task.Deadline,
+                        ProjectId = mt.Task.ProjectId,
+                        TaskDescription = mt.Task.TaskDescription,
+                        TaskId = mt.Task.TaskId,
+                        TaskName = mt.Task.TaskName,
+                        TaskStatusId = mt.Task.TaskStatusId,
+                        TaskStatus = mt.Task.TaskStatus.Name,
+                        StartDate = mt.Task.StartDate,
+                        TaskPriorityId = mt.Task.TaskPriorityId,
+                        TaskCategoryId = mt.Task.TaskCategoryId,
+                        IsTaskDependentOn = isTaskDependent
+                    }
+                });
+            }
+
+            return Ok(taskDTOs);
+        }
+
     }
 }

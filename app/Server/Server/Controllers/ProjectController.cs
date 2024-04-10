@@ -30,6 +30,7 @@ namespace Server.Controllers
             this.rolePermissionService = rolePermissionService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
@@ -115,7 +116,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var teamLeader = await dbContext.Members
@@ -346,7 +347,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = await dbContext.Projects
@@ -390,7 +391,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = await dbContext.Projects
@@ -406,9 +407,9 @@ namespace Server.Controllers
             if (status == null)
                 return NotFound("Status not found");
 
-            if(statusId == 1 && project.StartDate == DateTime.MinValue)
+            if(statusId == 3 && project.StartDate == DateTime.MinValue)
             {
-                project.StartDate = DateTime.UtcNow;
+                project.StartDate = DateTime.Now;
             }
 
             project.ProjectStatus = status;
@@ -492,7 +493,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = await dbContext.Projects.FindAsync(projectId);
@@ -551,7 +552,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Unauthorized("Insufficient permissions");
+                return Forbid("Insufficient permissions");
             }
 
             var project = await dbContext.Projects

@@ -45,7 +45,7 @@ namespace Server.Controllers
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, member.Password))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var expireAt = DateTime.UtcNow.AddMinutes(15);
