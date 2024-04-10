@@ -901,5 +901,66 @@ namespace Server.Controllers
 
             return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
         }
+
+        [HttpGet("membertasks")]
+        public async Task<IActionResult> GetAllMemberTasks()
+        {
+
+            var memberTasks = await dbContext.MemberTasks
+                .Include(mt => mt.Member)
+                    .ThenInclude(t => t.Role)
+                .Include(mt => mt.Task)
+                    .ThenInclude(t => t.TaskStatus)
+                .Include(mt => mt.Task)
+                    .ThenInclude(t => t.TaskPriority)
+                .Include(mt => mt.Task)
+                    .ThenInclude(tc => tc.TaskCategory)
+                .ToListAsync();
+
+            if (!memberTasks.Any())
+            {
+                return Ok("Member does not have any task.");
+            }
+
+            var taskDTOs = new List<MemberTaskDTO>();
+
+            foreach (var mt in memberTasks)
+            {
+                var isTaskDependent = await dbContext.TaskDependencies.AnyAsync(td => td.TaskId == mt.TaskId);
+
+                taskDTOs.Add(new MemberTaskDTO
+                {
+                    MemberId = mt.MemberId,
+                    TaskId = mt.TaskId,
+                    Member = new MemberDTO
+                    {
+                        Id = mt.Member.Id,
+                        FirstName = mt.Member.FirstName,
+                        LastName = mt.Member.LastName,
+                        Email = mt.Member.Email,
+                        DateOfBirth = mt.Member.DateOfBirth,
+                        RoleName = mt.Member.Role.RoleName,
+                        Status = mt.Member.Status
+                    },
+                    Task = new ProjectTaskDTO
+                    {
+                        Deadline = mt.Task.Deadline,
+                        ProjectId = mt.Task.ProjectId,
+                        TaskDescription = mt.Task.TaskDescription,
+                        TaskId = mt.Task.TaskId,
+                        TaskName = mt.Task.TaskName,
+                        TaskStatusId = mt.Task.TaskStatusId,
+                        TaskStatus = mt.Task.TaskStatus.Name,
+                        StartDate = mt.Task.StartDate,
+                        TaskPriorityId = mt.Task.TaskPriorityId,
+                        TaskCategoryId = mt.Task.TaskCategoryId,
+                        IsTaskDependentOn = isTaskDependent
+                    }
+                });
+            }
+
+            return Ok(taskDTOs);
+        }
+
     }
 }
