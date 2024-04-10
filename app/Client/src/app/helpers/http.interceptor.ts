@@ -19,6 +19,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err: any) => {
       if (err instanceof HttpErrorResponse && err.status == 401) {
+        console.log('ERROR 401 CAUGHT!!!!');
+
         authService.refreshJwtToken()
           .then(() => {
             console.log('successfully refreshed token');

@@ -13,19 +13,32 @@ namespace Server.Services.EmailService
         {
             this._configuration = configuration;
         }
-        public void SendEmail(EmailDTO request)
+        public bool SendEmail(EmailDTO request)
         {
-          var email = new MimeMessage();
-          email.From.Add(MailboxAddress.Parse(_configuration["EmailService:EmailUsername"]));
-          email.To.Add(MailboxAddress.Parse(request.To));
-          email.Subject = request.Subject;
-          email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
+            try
+            {
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(_configuration["EmailService:EmailUsername"]));
+                email.To.Add(MailboxAddress.Parse(request.To));
+                email.Subject = request.Subject;
+                email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
 
-          using var smtp = new SmtpClient();
-          smtp.Connect(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
-          smtp.Authenticate(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
-          smtp.Send(email);
-          smtp.Disconnect(true);
+                using var smtp = new SmtpClient();
+                smtp.Connect(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
+                smtp.Send(email);
+                smtp.Disconnect(true);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Handle and log the exception appropriately
+                Console.WriteLine($"An error occurred while sending email: {ex.Message}");
+                // You might want to throw the exception again to propagate it further if needed
+
+                return false;
+            }
         }
     }
 }

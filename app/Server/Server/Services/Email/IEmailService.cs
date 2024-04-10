@@ -4,6 +4,6 @@ namespace Server.Services.EmailService
 
     public interface IEmailService
     {
-        void SendEmail(EmailDTO request);
+        bool SendEmail(EmailDTO request);
     }
 }

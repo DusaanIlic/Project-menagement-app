@@ -48,7 +48,7 @@ namespace Server.Controllers
                 return Unauthorized();
             }
 
-            var expireAt = DateTime.Now.AddMinutes(15);
+            var expireAt = DateTime.UtcNow.AddMinutes(15);
             
             var jwtToken = GenerateJwtToken(member, expireAt);
             var refreshToken = GenerateRefreshToken();
@@ -76,6 +76,8 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName
             };
 
+            Console.WriteLine($"Issuing jwt for user {member.Id}");
+            
             var authDto = new AuthDTO
             {
                 JwtToken = jwtToken,
@@ -98,12 +100,12 @@ namespace Server.Controllers
                 return BadRequest("Invalid refresh token");
             }
 
-            if (DateTime.Now > member.RefreshTokenExpiresAt)
+            if (DateTime.UtcNow > member.RefreshTokenExpiresAt)
             {
                 return BadRequest("Refresh token has expired");
             }
 
-            var expireAt = DateTime.Now.AddMinutes(15);
+            var expireAt = DateTime.UtcNow.AddMinutes(15);
             var jwtToken = GenerateJwtToken(member, expireAt);
 
             // Generate a new refresh token
@@ -130,6 +132,8 @@ namespace Server.Controllers
                 DateOfBirth = member.DateOfBirth,
                 RoleName = member.Role.RoleName
             };
+            
+            Console.WriteLine($"Refreshing jwt for user {member.Id}");
             
             var authDto = new AuthDTO
             {
