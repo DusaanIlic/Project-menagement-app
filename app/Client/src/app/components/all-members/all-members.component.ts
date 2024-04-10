@@ -116,6 +116,9 @@ export class AllMembersComponent implements OnInit{
           member.lastName.toLowerCase().includes(searchTerm)
         );
       }
+      else{
+        filteredMembers = this.members;
+      }
       
       this.filteredMembers = filteredMembers;
     }
@@ -133,7 +136,7 @@ export class AllMembersComponent implements OnInit{
 
   openMemberInfoDialog(member: Member): void {
     const dialogRef = this.dialog.open(MemberInfoComponent, {
-        data: { member } // Prosleđujemo člana u modalni prozor
+        data: { member }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -194,12 +197,6 @@ sortByDate() {
         return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
     });
 }
-
-
-
-
-
-
 
 }
 

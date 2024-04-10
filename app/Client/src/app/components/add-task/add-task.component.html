@@ -16,30 +16,48 @@
             </div>
 
             <!-- Modal body -->
-            <div class="p-4 md:p-5 flex justify-between flex-col">
-                <div class="flex-row justify-between mb-3">
-                    <label for="name" class="pr-10">Name </label>
-                    <input type="text" placeholder="Task name..." id="name"  [(ngModel)]="taskName" class="ml-5 w-1/2">
-                </div>
-
-                <div class="flex-row justify-between mb-3">
-                    <label for="name" class="pr-9">Project ID </label>
-                    <input type="text" [value]="data.projectId" id="projectId" [(ngModel)]="projectId" class="w-1/2">
-                </div>
-
-                <div class="flex-row justify-between mb-3">
-                    <label for="name" class="pr-10">Deadline </label>
-                    <input type="date" id="name" class="w-1/2 ml-1" [(ngModel)]="deadline" [min]="todayDate()">
-                </div>
-                
-                <div class="flex-row justify-between">
-                    <label for="name">Description </label>
-                    <div class="NgxEditor__Wrapper">
-                        <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-                        <ngx-editor [(ngModel)]="html" [editor]="editor" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>
+            <div class="flex flex-row">
+                <div class="p-4 md:p-5 flex justify-between flex-col">
+                    <div class="flex-row justify-between mb-3">
+                        <label for="name" class="pr-10">Name </label>
+                        <input type="text" placeholder="Task name..." id="name"  [(ngModel)]="taskName" class="ml-5 w-1/2">
+                    </div>
+    
+                    <div class="flex-row justify-between mb-3">
+                        <label for="name" class="pr-9">Project ID </label>
+                        <input type="text" [value]="data.projectId" id="projectId" [(ngModel)]="projectId" class="w-1/2">
+                    </div>
+    
+                    <div class="flex-row justify-between mb-3">
+                        <label for="name" class="pr-10">Deadline </label>
+                        <input type="date" id="name" class="w-1/2 ml-1" [(ngModel)]="deadline" [min]="todayDate()">
+                    </div>
+                    
+                    <div class="flex-row justify-between">
+                        <label for="name">Description </label>
+                        <div class="NgxEditor__Wrapper">
+                            <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+                            <ngx-editor [(ngModel)]="html" [editor]="editor" [disabled]="false" [placeholder]="'Type here...'"></ngx-editor>
+                        </div>
                     </div>
                 </div>
+
+                <div class="flex-row justify-between mb-3">
+                    <div class="flex-row justify-between mb-3">
+                        <label for="name" class="pr-10">Priority</label>
+                        <form>
+                            <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
+                            <option disabled selected >Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            </select>
+                        </form>
+                    </div>
+                    
+                </div>
             </div>
+           
             <!-- Modal footer -->
             <div class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button data-modal-hide="default-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" (click)="saveTask()">Save</button>
