@@ -94,12 +94,11 @@ export class AllMembersComponent implements OnInit{
 
     search(): void {
       let searchTerm = this.searchTerm.toLowerCase().trim();
-      let filteredMembers = [...this.members]; 
+      let filteredMembers = [...this.filteredMembers]; 
     
       if (this.selectedRole) {
         switch (this.selectedRole) {
           case 'allMembers':
-            // Ako je izabrana opcija "All members", ne primenjujemo filter po ulozi
             break;
           case 'administrators':
           case 'projectManagers':
