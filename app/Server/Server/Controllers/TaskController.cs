@@ -99,6 +99,14 @@ namespace Server.Controllers
                 return BadRequest("Invalid user ID in token");
             }
 
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 4);
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             var project = dbContext.Projects.FirstOrDefault(tp => tp.ProjectId == addProjectTaskRequest.ProjectId);
 
@@ -576,6 +584,27 @@ namespace Server.Controllers
                 }
 
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
+
+                var request = new EmailDTO
+                {
+                    To = member.Email,
+                    Subject = "New Task Assignment",
+                    Body = $@"
+                        <p>Hello {member.FirstName} {member.LastName},</p>
+                        
+                        <p>You have been assigned a new task.</p>
+                        
+                        <p>Below are your task details:</p>
+                        
+                        <ul>
+                            <li><strong>Name:</strong> {projectTask.TaskName}</li>
+                            <li><strong>Deadline:</strong> {projectTask.Deadline}</li>
+                            <li><strong>Status:</strong> {projectTask.TaskStatus}</li>
+                            <li><strong>Description:</strong> {projectTask.TaskDescription}</li>
+                        </ul>"
+                };
+
+                var result = _emailService.SendEmail(request);
             
             }
 
