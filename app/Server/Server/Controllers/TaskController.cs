@@ -19,11 +19,13 @@ namespace Server.Controllers
     {
         private readonly LogicTenacityDbContext dbContext;
         private readonly IRolePermissionService rolePermissionService;
+        private readonly IEmailService _emailService;
 
-        public TaskController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService)
+        public TaskController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService, IEmailService emailService)
         {
             this.dbContext = dbContext;
             this.rolePermissionService = rolePermissionService;
+            _emailService = emailService;
         }
 
         [Authorize]
@@ -187,6 +189,31 @@ namespace Server.Controllers
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs
             };
+
+            foreach (var assignedMember in assignedMemberDTOs)
+            {
+                var request = new EmailDTO
+                {
+                    To = assignedMember.Email,
+                    Subject = "New Task Assignment",
+                    Body = $@"
+                        <p>Hello {assignedMember.FirstName} {assignedMember.LastName},</p>
+                        
+                        <p>You have been assigned a new task.</p>
+                        
+                        <p>Below are your task details:</p>
+                        
+                        <ul>
+                            <li><strong>Name:</strong> {tasksDTO.TaskName}</li>
+                            <li><strong>Deadline:</strong> {tasksDTO.Deadline}</li>
+                            <li><strong>Status:</strong> {tasksDTO.TaskStatus}</li>
+                            <li><strong>Description:</strong> {tasksDTO.TaskDescription}</li>
+                        </ul>"
+                };
+
+                var result = _emailService.SendEmail(request);
+            }
+
 
             return Ok(tasksDTO);
         }
@@ -557,6 +584,27 @@ namespace Server.Controllers
                 }
 
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
+
+                var request = new EmailDTO
+                {
+                    To = member.Email,
+                    Subject = "New Task Assignment",
+                    Body = $@"
+                        <p>Hello {member.FirstName} {member.LastName},</p>
+                        
+                        <p>You have been assigned a new task.</p>
+                        
+                        <p>Below are your task details:</p>
+                        
+                        <ul>
+                            <li><strong>Name:</strong> {projectTask.TaskName}</li>
+                            <li><strong>Deadline:</strong> {projectTask.Deadline}</li>
+                            <li><strong>Status:</strong> {projectTask.TaskStatus}</li>
+                            <li><strong>Description:</strong> {projectTask.TaskDescription}</li>
+                        </ul>"
+                };
+
+                var result = _emailService.SendEmail(request);
             
             }
 
