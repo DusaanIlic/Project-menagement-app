@@ -13,7 +13,10 @@
         height="100" width="150">
     </div>
     
-    <div class="flex items-center justify-between">
-        <p><strong>Email:</strong> {{ member.email }}</p>
+    <div class="flex flex-row items-center justify-between">
+        <p class="mr-2"><strong>Email:</strong> {{ member.email }}</p>
+        <button [routerLink]="['/members', member.id]" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal" (click)="closeDialog()">
+            <img ngSrc="assets/project-navbar/members.png" alt="Member info" height="25" width="25">
+        </button>    
     </div>
 </div>
