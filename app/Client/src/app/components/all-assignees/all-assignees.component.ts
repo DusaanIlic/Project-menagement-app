@@ -51,18 +51,23 @@ export class AllAssigneesComponent implements OnInit{
   {
     this.routeSub = this.route.params.subscribe((params : any) => {
       this.projectId = params['id'];
-      this.pService.getProjectMembers(params['id']).subscribe((data : Member[])=>{
-        this.assignees = data;
-        console.log(data);
+      this.fetchMembersOnProject();
+    })
+  }
 
-        for(let i=0;i<this.assignees.length;i++)
-        {
-          if(this.assignees[i].status === 'Active')
-            this.activeAssignees.push(this.assignees[i]);
-          else
-            this.inactiveAssignees.push(this.assignees[i])
-        }
-      })
+  fetchMembersOnProject()
+  {
+    this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
+      this.assignees = data;
+      console.log(data);
+
+      for(let i=0;i<this.assignees.length;i++)
+      {
+        if(this.assignees[i].status === 'Active')
+          this.activeAssignees.push(this.assignees[i]);
+        else
+          this.inactiveAssignees.push(this.assignees[i])
+      }
     })
   }
 
@@ -78,6 +83,7 @@ export class AllAssigneesComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe((result : any) => {
       console.log('The dialog was closed');
+      this.fetchMembersOnProject()
     });
   }
 
@@ -93,7 +99,7 @@ export class AllAssigneesComponent implements OnInit{
           },
           error : error =>{
             console.log("Error removing");
-
+            this.fetchMembersOnProject()
           }
         })
       }

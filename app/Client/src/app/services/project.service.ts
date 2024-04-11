@@ -39,9 +39,9 @@ export class ProjectServiceGet{
     return this.http.get<Member[]>(`${PROJECT_API}/${projectId}/members`);
   }
 
-  assignMemberToProject(memberId : number) : Observable<any>
+  assignMemberToProject(membersId : any, projectId : number) : Observable<any>
   {
-    return this.http.post<Member>(`${PROJECT_API}/members`, memberId);
+    return this.http.post<Member>(`${PROJECT_API}/${projectId}/members`, membersId);
   }
 
   removeMemberFromProject(memberId : number, projectId: number) : Observable<any>
