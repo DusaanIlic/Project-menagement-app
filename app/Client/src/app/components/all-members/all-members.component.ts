@@ -9,65 +9,120 @@ import { Role } from '../../models/role';
 import { AddMemberComponent } from '../add-member/add-member.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
+import { MemberInfoComponent } from '../member-info/member-info.component';
 
 @Component({
-    selector: 'app-all-members',
-    standalone: true,
-    templateUrl: './all-members.component.html',
-    styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage]
+  selector: 'app-all-members',
+  standalone: true,
+  templateUrl: './all-members.component.html',
+  styleUrl: './all-members.component.scss',
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage],
+  providers: [DatePipe]
 })
 export class AllMembersComponent implements OnInit{
 
-    roles: Role[] = [];
-    members : Member[] = [];
-    filteredMembers: Member[] = [];
-    searchQuery: string = '';
-    sortByName = true;
-    sortByEmail = true;
-    sortByDate = true;
-
-    ngOnInit(): void {
-        this.getMembersFromServer();
-    }
-
-    showMessage(){
-      this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
-    }
-
-    getMembersFromServer(): void {
-      this.memberService.getMembers().subscribe(
-        (data: Member[]) => {
-          this.members = data;
-          this.filteredMembers = data;
-          this.sortNames();
-          this.sortEmails();
-          this.sortDates();
-        },
-        (error) => {
-          console.log('Error fetching members:', error);
-        }
-      );
-    }
+  selectedRole: string = '';
+  roles: Role[] = [];
+  members : Member[] = [];
+  filteredMembers: Member[] = [];
+  searchTerm: string = '';
 
 
-    constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
-        this.filteredMembers = this.members;
-        this.sortNames();
-        this.sortEmails();
-        this.sortDates();
-    }
-
-    search(): void {
-      if (!this.searchQuery.trim()) {
-        this.filteredMembers = this.members;
-        return;
-      }
-      const regex = new RegExp(this.searchQuery.trim(), 'i');
-      this.filteredMembers = this.members.filter(member =>
-        regex.test(member.firstName) || regex.test(member.lastName)
-      );
+  ngOnInit(): void {
+    this.getMembersFromServer();
+    this.getRolesFromServer();
+    this.filterMembersByRole(this.selectedRole);
+    this.selectedRole = 'allMembers';
   }
+
+  filterMembersByRole(role: string): void {
+    if (role === 'allMembers') {
+      this.filteredMembers = this.members;
+    } else {
+      this.filteredMembers = this.members.filter(member => this.getRoleName(member.roleId) === role);
+    }
+  }
+
+  onRoleChange(event: any): void {
+    this.selectedRole = event.target.value;
+    this.filterMembersByRole(this.selectedRole);
+  }
+
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
+  }
+
+  getMembersFromServer(): void {
+    this.memberService.getMembers().subscribe(
+      (data: Member[]) => {
+        this.members = data;
+        this.filteredMembers = data;
+      },
+      (error) => {
+        console.log('Error fetching members:', error);
+      }
+    );
+  }
+
+  getRolesFromServer(): void {
+    this.memberService.getRoles().subscribe(
+      (data: Role[]) => {
+        this.roles = data;
+      },
+      (error) => {
+        console.log('Error fetching roles:', error);
+      }
+    );
+  }
+
+  getRoleName(roleId: number): any {
+    if (!this.roles || this.roles.length === 0) {
+      return 'Unknown';
+    }
+
+    const role = this.roles.find(r => r.id === roleId);
+
+    return role ? role.name : 'Unknown';
+  }
+
+
+
+  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
+    this.filteredMembers = this.members;
+  }
+
+  search(): void {
+    let searchTerm = this.searchTerm.toLowerCase().trim();
+    let filteredMembers = [...this.filteredMembers];
+
+    if (this.selectedRole) {
+      switch (this.selectedRole) {
+        case 'allMembers':
+          break;
+        case 'administrators':
+        case 'projectManagers':
+        case 'workers':
+          filteredMembers = filteredMembers.filter(member => this.getRoleName(member.roleId) === this.selectedRole);
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (searchTerm) {
+      filteredMembers = filteredMembers.filter(member =>
+        member.firstName.toLowerCase().includes(searchTerm) ||
+        member.lastName.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredMembers = this.members;
+    }
+
+    this.filteredMembers = filteredMembers;
+  }
+
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddMemberComponent, {
@@ -79,115 +134,69 @@ export class AllMembersComponent implements OnInit{
     });
   }
 
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
 
-
-  switchSortName()
-  {
-    this.sortByName = !this.sortByName;
-    this.sortNames();
-  }
-
-  switchSortEmail()
-  {
-    this.sortByEmail = !this.sortByEmail;
-    this.sortEmails();
-  }
-
-  switchSortDate()
-  {
-    this.sortByDate = !this.sortByDate;
-    this.sortDates();
-  }
-
-  sortNames() {
-    if (this.sortByName) {
-      this.filteredMembers.sort((a, b) => {
-        if (a.firstName !== b.firstName) {
-          return a.firstName.localeCompare(b.firstName);
-        }
-        return a.lastName.localeCompare(b.lastName);
-      });
-    } else {
-      this.filteredMembers.sort((a, b) => {
-        if (a.firstName !== b.firstName) {
-          return b.firstName.localeCompare(a.firstName);
-        }
-        return b.lastName.localeCompare(a.lastName);
-      });
-    }
-}
-
-
-
-  sortEmails()
-  {
-
-    if(this.sortByEmail)
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].email <= this.filteredMembers[i].email)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
-    else
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].email > this.filteredMembers[i].email)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
   }
 
 
-  sortDates()
-  {
-
-    if(this.sortByDate)
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].dateAdded <= this.filteredMembers[i].dateAdded)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
-    else
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].dateAdded > this.filteredMembers[i].dateAdded)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
+  sortMembersBy(event: any): void {
+    const option = event.target.value;
+    switch(option) {
+      case 'name':
+        this.sortByName();
+        break;
+      case 'role':
+        this.sortByRole();
+        break;
+      case 'email':
+        this.sortByEmail();
+        break;
+      // case 'tasks':
+      //   this.sortByTasks();
+      //   break;
+      case 'date':
+        this.sortByDate();
+        break;
+      default:
+        break;
     }
   }
+
+  sortByName() {
+    this.filteredMembers.sort((a, b) => {
+      return (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName);
+    });
+  }
+
+  sortByRole() {
+    this.filteredMembers.sort((a, b) => {
+      return this.getRoleName(a.roleId).localeCompare(this.getRoleName(b.roleId));
+    });
+  }
+
+  sortByEmail() {
+    this.filteredMembers.sort((a, b) => {
+      return a.email.localeCompare(b.email);
+    });
+  }
+
+  // sortByTasks() {
+  //   this.filteredMembers.sort((a, b) => {
+  //     return a?.numberOfTasks - b?.numberOfTasks;
+  //   });
+  // }
+
+  sortByDate() {
+    this.filteredMembers.sort((a, b) => {
+      return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
+    });
+  }
+
 }
 

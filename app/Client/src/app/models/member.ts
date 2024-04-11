@@ -1,3 +1,5 @@
+import { Task } from "./task";
+
 export interface Member {
     id: number;
     roleId: number;
@@ -13,4 +15,5 @@ export interface Member {
     city: string;
     dateOfBirth: Date;
     dateAdded: Date;
+    numberOfTasks?: number;
 }

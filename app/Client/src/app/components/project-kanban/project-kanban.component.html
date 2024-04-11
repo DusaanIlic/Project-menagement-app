@@ -1,43 +1,39 @@
-<div class="mt-5 ml-10 mr-10 p-5 bg-background">
+<div class="mt-5 ml-10 mr-10 p-5 bg-white items-center">
 
-    <div class="flex flex-row gap-5 items-center">
-        <div class="flex flex-col w-1/6 mb-5">
+    <div class="flex flex-row gap-5 items-center b">
+        <div class="flex flex-col mb-5">
             <div>
-                <p class="text-4xl mb-3">Project 123</p>
+                <p class="text-4xl pb-3">{{projectName}}</p>
             </div>
-    
-            <div class="flex flex-row gap-5 justify-between">
+
+            <div class="flex flex-row gap-5 justify-between items-center">
                 <div class="flex flex-col">
-                    <p><b>03-February-2024</b></p>
-                    <p>Starting date</p>
+                    <p><b>{{projectDate | date:'yyyy-MM-dd'}}</b></p>
+                    <p>Deadline</p>
                 </div>
-                <div class="flex flex-row items-center">
-                    <img src="assets/avatar.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-1 xl:table-cell">
-                    <p>+20</p>
+
+                <img src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-1 xl:table-cell">
+                <div class="flex-col ml-3 justify-center">
+                    <p class="text-xl pl-2" *ngIf="teamLeaderInfo"><b>{{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</b></p>
+                    <p>{{teamLeaderInfo?.roleName}}</p>
                 </div>
+
+                <form *ngFor="let column of dropList">
+                    <input type="checkbox" [id]="column" [name]="column" [value]="column" [(ngModel)]="columnVisibility[column]" (click)="toggleColumnVisibility(column)">
+                    <label [for]="column" class="pl-1">{{ column | titlecase }}</label><br>
+                </form>
             </div>
         </div>
 
 
-        <div class="flex flex-row gap-5 ml-10">
-            <form>
-                <input type="checkbox" id="todo" name="todo" value="ToDo" [(ngModel)]="showToDoList" (click)="toggleToDoList()">
-                <label for="vehicle1"> To Do</label><br>
-                <input type="checkbox" id="progress" name="progress" value="InProgress" [(ngModel)]="showProgressList" (click)="toggleProgressList()">
-                <label for="vehicle1"> In Progress</label><br>
-                <input type="checkbox" id="done" name="done" value="Done" [(ngModel)]="showDoneList" (click)="toggleDoneList()">
-                <label for="vehicle1"> Done</label><br>
-            </form>
-        </div>
-
-        <div class="flex-row justify-end">
+        <div class="flex-row justify-end ml-auto mt-4">
             <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 mr-3" (click)="openDialog()">Add task</button>
-            <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 ml-3" >Add Column</button>
+            <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 ml-3" (click)="openTaskStatusDialog()">Add Column</button>
         </div>
     </div>
 
 
-    <div class="w-full flex flex-row gap-20 p-10" cdkDropListGroup cdkDropList (cdkDropListDropped)="drop2($event)">
+    <div class="w-full flex flex-row gap-20 p-10" cdkDropListGroup>
         <div *ngIf="showToDoList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" >
 
             <div class="flex flex-row justify-between items-center h-10">
@@ -49,14 +45,14 @@
                 [cdkDropListData]="todo"
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white"
                 (cdkDropListDropped)="drop($event)">
-                
+
                 <ng-container *ngIf="todo.length > 0; else emptyTodo">
                     <ng-container *ngFor="let item of todo; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                                 (click)="openConfirmationDialog('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
-                    </ng-container> 
+                    </ng-container>
                 </ng-container>
 
                 <ng-template #emptyTodo>
@@ -66,12 +62,12 @@
                 </ng-template>
             </div>
 
-            
+
         </div>
 
 
         <div *ngIf="showProgressList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
-            
+
             <div class="flex flex-row justify-between items-center h-10">
                 <p class="mb-3 text-lg"><b>In Progress</b></p>
             </div>
@@ -83,11 +79,11 @@
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngIf="progress.length > 0; else emptyProgress">
                     <ng-container *ngFor="let item of progress; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                             (click)="openConfirmationDialog('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
-                    </ng-container> 
+                    </ng-container>
                 </ng-container>
 
                 <ng-template #emptyProgress>
@@ -110,11 +106,11 @@
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngIf="done.length > 0; else emptyDone">
                 <ng-container *ngFor="let item of done; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move" cdkDrag>{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                             (click)="openConfirmationDialog('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
-                    </ng-container> 
+                    </ng-container>
                 </ng-container>
 
                 <ng-template #emptyDone>
@@ -122,10 +118,15 @@
                         No tasks.
                     </div>
                 </ng-template>
+            </div>
+        </div>
+
+        <div *ngIf="showNewStatusList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+            <p>Ja sam</p>
         </div>
     </div>
+
 
     <ng-toast></ng-toast>
 
 </div>
-

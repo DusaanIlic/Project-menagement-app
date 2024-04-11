@@ -7,6 +7,7 @@ import { taskActivity } from '../models/taskActivity';
 import { taskPriority } from '../models/taskPriority';
 
 const TASK_API = 'http://localhost:8000/api/Task';
+const PROJECT_API = 'http://localhost:8000/api/Project';
 const TASKACTIVITY_API = 'http://localhost:8000/api/TaskActivity';
 const TASKPRIOROTY_API = 'http://localhost:8000/api/TaskPriority';
 
@@ -31,6 +32,19 @@ export class TaskService {
 
   saveTask(taskData: any): Observable<any>{
     return this.http.post<any>(`${TASK_API}`, taskData);
+  }
+
+  updateTaskStatus(taskId: number, updatedTask: any): Observable<any> {
+    return this.http.put<any>(`${TASK_API}/${taskId}`, updatedTask, httpOptions);
+  }
+
+  addTaskStatus(projectId: number, taskStatusName: string): Observable<any> {
+    const addTaskStatusRequest = { name: taskStatusName };
+    return this.http.post<any>(`${PROJECT_API}/${projectId}/TaskStatus`, addTaskStatusRequest);
+  }
+
+  getProjectMembers(projectId: number): Observable<any>{
+    return this.http.get<any>(`${PROJECT_API}/${projectId}/members`);
   }
 
   getTasksByMember(memberId : number): Observable<Task[]>

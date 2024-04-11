@@ -9,6 +9,7 @@ import {
   RouterLinkActive
 } from "@angular/router";
 
+
 @Component({
   selector: 'app-project-navbar',
   standalone: true,

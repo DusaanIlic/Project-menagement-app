@@ -13,6 +13,7 @@ import {ProjectComponent} from "./components/project/project.component";
 import {KanbanComponent} from "smart-webcomponents-angular/kanban";
 import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.component";
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
+import {ProjectKanbanComponent} from "./components/project-kanban/project-kanban.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -33,7 +34,7 @@ export const routes: Routes = [
     component: ProjectComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'kanban', component: KanbanComponent, canActivate: [AuthGuard] },
+      { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
       { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
       { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
       { path: 'gantt', component: GantComponent, canActivate: [AuthGuard] }

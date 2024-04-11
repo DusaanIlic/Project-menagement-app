@@ -42,10 +42,11 @@ export class MemberOverviewComponent implements OnInit{
     country: '',
     city: '',
     github: '',
-    dateOfBirth: new Date(1, 2, 3,),
+    dateOfBirth: new Date(1, 2, 3),
     linkedin: '',
     status: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    numberOfTasks: 0
   };
 
   p? : Project;

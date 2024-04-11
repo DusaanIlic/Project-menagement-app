@@ -49,7 +49,8 @@ export class AuthService {
             country: dto.country,
             city: dto.city,
             dateOfBirth: new Date(dto.dateOfBirth),
-            dateAdded: new Date(dto.dateAdded)
+            dateAdded: new Date(dto.dateAdded),
+            numberOfTasks: 0
           };
 
           localStorage.setItem('jwt-token', jwtToken);
@@ -170,7 +171,7 @@ export class AuthService {
             country: dto.country,
             city: dto.city,
             dateOfBirth: new Date(dto.dateOfBirth),
-            dateAdded: new Date(dto.dateAdded)
+            dateAdded: new Date(dto.dateAdded),
           };
 
           localStorage.setItem('jwt-token', jwtToken);

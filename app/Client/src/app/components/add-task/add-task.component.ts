@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { Member } from '../../models/member';
 
 @Component({
   selector: 'app-add-task',
@@ -21,6 +22,10 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   taskDescription: string = '';
   deadline: Date | null = null;
   projectId: number | null = null;
+  taskPriority: number | null = null;
+  projectMembers: Member[] = [];
+  selectedMember: number | null = null;
+  addedMembers: string[] = [];
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
@@ -28,6 +33,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.projectId = this.data.projectId;
+    this.getProjectMembers();
   }
 
   ngOnDestroy(): void {
@@ -67,4 +73,30 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
   }
+
+  getProjectMembers() {
+    if (this.projectId) {
+      this.taskService.getProjectMembers(this.projectId).subscribe(
+        (data: Member[]) => {
+          this.projectMembers = data;
+          console.log(data);
+        },
+        (error) => {
+          console.log('Error fetching project members:', error);
+        }
+      );
+    }
+  }
+
+  addSelectedMember() {
+    // Pronalazimo odabranog člana iz niza projectMembers
+    const member = this.projectMembers.find(member => member.id === this.selectedMember);
+    // Ako smo pronašli člana
+    if (member) {
+        // Dodajemo ime i prezime odabranog člana u niz addedMembers
+        console.log(this.addedMembers);
+        this.addedMembers.push(`${member.firstName} ${member.lastName}`);
+
+    }
+}
 }
