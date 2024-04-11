@@ -112,6 +112,15 @@ namespace Server.Controllers
                 return BadRequest("Invalid user ID in token");
             }
 
+            var roleId = await rolePermissionService.CheckRole(userId);
+
+            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 3);
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var teamLeader = await dbContext.Members
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
