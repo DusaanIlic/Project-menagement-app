@@ -13,6 +13,7 @@ import {ProjectComponent} from "./components/project/project.component";
 import {KanbanComponent} from "smart-webcomponents-angular/kanban";
 import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.component";
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
+import {AddAssigneeComponent} from "./components/add-assignee/add-assignee.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'

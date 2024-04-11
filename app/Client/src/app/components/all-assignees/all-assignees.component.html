@@ -20,7 +20,7 @@
         <span class="grow"></span>
 
         <div class="flex gap-1">
-          <button class="rounded-xl bg-accent-blue text-l text-white w-[150px]">Add new Assignee</button>
+          <button class="rounded-xl bg-accent-blue text-l text-white w-[150px]" (click)="openDialog()">Add new Assignee</button>
         </div>
       </div>
     </div>
@@ -31,24 +31,24 @@
       <p class="text-accent-blue font-bold">Show only:</p>
 
       <div class="flex items-center justify-center gap-1 ">
-        <input type="radio" id="radio-all" name="radio-filter">
+        <input type="radio" id="radio-all" name="radio-filter" value="t1" [(ngModel)] = 'selectedTable'>
         <label for="radio-all">All</label>
       </div>
 
       <div class="flex items-center justify-center gap-1">
-        <input type="radio" id="radio-in-progress" name="radio-filter">
+        <input type="radio" id="radio-in-progress" name="radio-filter" value="t2" [(ngModel)] = 'selectedTable'>
         <label for="radio-in-progress">Active</label>
       </div>
 
       <div class="flex items-center justify-center gap-1">
-        <input type="radio" id="radio-completed" name="radio-filter">
+        <input type="radio" id="radio-completed" name="radio-filter" value="t3" [(ngModel)] = 'selectedTable'>
         <label for="radio-completed">Inactive</label>
       </div>
     </div>
 
     <hr class="border-accent-blue">
 
-    <div class="flex justify-center">
+    <div class="flex justify-center" *ngIf="selectedTable === 't1'">
       <div class="table border-[1px] border-gray-300 rounded-md">
         <tr class="">
           <th class="text-left p-3 w-20"></th>
@@ -68,6 +68,67 @@
           <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
           <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl">Remove</button></td>
+
+        </tr>
+      </div>
+    </div>
+
+
+    <div class="flex justify-center" *ngIf="selectedTable === 't2'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-20"></th>
+          <th class="text-left p-3 w-60">ASSIGNE</th>
+          <th class="text-left w-60">ROLE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">DATE ADDED</th>
+          <th class="text-left w-20"></th>
+        </tr>
+
+        <tr *ngIf="activeAssignees.length === 0">
+          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No active assignees.</td>
+        </tr>
+
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of activeAssignees">
+          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="['/members', assignee.id]">View</button>
+            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod()">Delete</button>
+          </mat-menu>
+        </tr>
+      </div>
+    </div>
+
+
+    <div class="flex justify-center" *ngIf="selectedTable === 't3'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-20"></th>
+          <th class="text-left p-3 w-60">ASSIGNE</th>
+          <th class="text-left w-60">ROLE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">DATE ADDED</th>
+          <th class="text-left w-20"></th>
+        </tr>
+
+        <tr *ngIf="inactiveAssignees.length === 0">
+          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No inactive assignees.</td>
+        </tr>
+
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of inactiveAssignees">
+          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
           <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
           <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
