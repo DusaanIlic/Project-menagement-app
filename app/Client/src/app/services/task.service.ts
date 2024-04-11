@@ -88,4 +88,9 @@ export class TaskService {
     return this.http.delete<any[]>(`${TASK_API}/${taskId}/remove/${membersId}`);
   }
 
+  getTasksDependentOnTaskId(taskId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_API}/${taskId}/DependentTasks`);
+  }
+
 }

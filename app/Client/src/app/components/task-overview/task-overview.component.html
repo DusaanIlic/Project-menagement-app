@@ -13,7 +13,7 @@
             </div>
             <!-- Modal body -->
             <div class="p-4 md:p-5 space-y-4 flex gap-5">
-                <div *ngIf="show == 'overview'">
+                <div *ngIf="show == 'overview'" class="w-[80%]">
                     <div class="border-[1px] border-gray-400 rounded-md px-2 pt-2 pb-2">
                         <div class="flex justify-between"><h2 class="text-xl flex font-semibold">Description:</h2><img class="size-5 flex " src="assets/icons/edit_36_jpg.jpg" alt="" (click)="showEditor()"></div>
                         <div *ngIf="!showEditorForDesc">
@@ -66,14 +66,50 @@
 
 
 
+
+
+
+
+
+
                   </div>
               </div>
 
               <div *ngIf="show == 'dependacies'" class="w-[80%]">
                   <h2 class="text-lg font-semibold">Dependacies:</h2>
-                  <p *ngIf="task.isTaskDependentOn">Task is dependant on:</p>
 
+                <div class="w-[90%]">
+                  <div class="table border-[1px] border-gray-300 rounded-md">
+                    <tr class="">
+                      <th class="text-left w-10"></th>
+                      <th class="text-left p-2 w-40">TASK</th>
+                      <th class="text-left p-2 w-40">DEPENDANT ON</th>
+                    </tr>
+
+                    <tr>
+                      <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No task dependencies.</td>
+                    </tr>
+
+
+                  </div>
+                </div>
               </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

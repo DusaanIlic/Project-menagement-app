@@ -65,6 +65,8 @@ export class TaskOverviewComponent implements OnInit{
       taskStatusId: 0
     };
 
+    depTasks : Task[] = [];
+
     selectedType: any;
     allTypes : taskActivityType[] = [];
 
@@ -86,6 +88,10 @@ export class TaskOverviewComponent implements OnInit{
       this.task = data;
       this.pService.getProjectById(this.task.projectId).subscribe((project : Project) =>{
         this.project = project;
+      })
+      this.tService.getTasksDependentOnTaskId(this.task.taskId).subscribe((depTasks : Task[]) =>{
+        this.depTasks = depTasks;
+        console.log(depTasks);
       })
       this.fetchMembersOnProject();
       //console.log(this.task)
@@ -185,7 +191,7 @@ export class TaskOverviewComponent implements OnInit{
 
       switchView(tab : string)
       {
-        this.show = tab
+        this.show = tab;
       }
 
         showEditor() {
