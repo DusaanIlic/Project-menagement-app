@@ -22,7 +22,7 @@ import {ForgotPasswordCompleteForm} from "../../forms/forgot-password-complete.f
   styleUrl: './forgot-password.component.scss'
 })
 export class ForgotPasswordComponent implements OnInit {
-  form: FormGroup;
+  form: any;
   passwordMismatch: boolean = false;
 
   constructor(private authService: AuthService, private route: ActivatedRoute,
