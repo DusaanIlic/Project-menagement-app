@@ -16,7 +16,7 @@ import { ConfirmationComponent } from '../confirmation/confirmation.component';
   selector: 'app-kanban',
   standalone: true,
   imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent],
-  templateUrl: './kanban.component.html', 
+  templateUrl: './kanban.component.html',
   styleUrl: './kanban.component.scss',
 })
 
@@ -42,11 +42,11 @@ export class KanbanComponent implements OnInit {
   toggleToDoList(){
     this.showToDoList = !this.showToDoList;
   }
-  
+
   toggleProgressList(){
     this.showProgressList = !this.showProgressList;
   }
-  
+
   toggleDoneList(){
     this.showDoneList = !this.showDoneList;
   }
@@ -62,7 +62,7 @@ export class KanbanComponent implements OnInit {
         }),
         catchError(error => {
           console.error('Error fetching tasks:', error);
-          throw error; 
+          throw error;
         })
       )
       .subscribe();
@@ -111,14 +111,14 @@ export class KanbanComponent implements OnInit {
           taskList = this.done;
           break;
         default:
-          return -1; 
+          return -1;
       }
 
       const taskIndex = taskList.findIndex(task => task.taskId === taskId);
       return taskIndex;
   }
 
-  deleteTask(column: string, index: number) {    
+  deleteTask(column: string, index: number) {
     if (column === 'todo') {
       this.todo.splice(this.findTaskIndex(index, column), 1);
       this.showMessage();
@@ -151,7 +151,7 @@ export class KanbanComponent implements OnInit {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(1); 
+      this.loadTasksByProject(1);
     });
   }
 

@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
-import {RouterLink, RouterLinkActive} from "@angular/router";
+import {ActivatedRoute, RouterLink, RouterLinkActive} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
 import {MemberService} from "../../services/member.service";

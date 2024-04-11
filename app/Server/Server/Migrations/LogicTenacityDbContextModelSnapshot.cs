@@ -91,6 +91,12 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RefreshTokenExpiresAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
@@ -115,7 +121,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 46, 897, DateTimeKind.Utc).AddTicks(4835),
+                            DateAdded = new DateTime(2024, 4, 10, 23, 0, 24, 485, DateTimeKind.Local).AddTicks(8415),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -123,8 +129,9 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$TFfiG/doikCZJQF5zbK2Qep7ApHzJ3HxZaAExuFEhyOyJLEj1J79G",
+                            Password = "$2a$10$OM89cXsX1PZ3xSlfEs.b5OGxq7j777ifqL1HDHidviB1rJjGCTtSC",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 1,
                             Status = ""
                         },
@@ -133,7 +140,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 46, 973, DateTimeKind.Utc).AddTicks(3441),
+                            DateAdded = new DateTime(2024, 4, 10, 23, 0, 24, 620, DateTimeKind.Local).AddTicks(9035),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -141,8 +148,9 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$Eptv0KP0u5RnhL3nnT9jpuzalyz.5sRUBv09HPpxSp2wM3r9YL2qa",
+                            Password = "$2a$10$wSpMxZ9E29M3vVNqbpGpJOr4K4Lrmhh6iVQCHWEv2sq7XUhljw8nu",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 2,
                             Status = ""
                         },
@@ -151,7 +159,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 9, 16, 34, 47, 38, DateTimeKind.Utc).AddTicks(7184),
+                            DateAdded = new DateTime(2024, 4, 10, 23, 0, 24, 756, DateTimeKind.Local).AddTicks(3340),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -159,8 +167,9 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$9FAbKv47X1uuLOpvFmL1Ve1YMqIEALBcJSAQR1otkqalnNE9pfGFO",
+                            Password = "$2a$10$HnXKaUR2UhL0NNURfViGnOp0gDEUAvZINNCiO5.9Pp/eZzccqQKR.",
                             PhoneNumber = "",
+                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 3,
                             Status = ""
                         });

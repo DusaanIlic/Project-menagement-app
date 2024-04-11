@@ -30,6 +30,10 @@ namespace Server.Models
 
         [ForeignKey("RoleId")]
         public Role Role { get; set; }
+        
+        public string? RefreshToken { get; set; }
+        
+        public DateTime RefreshTokenExpiresAt { get; set; }
 
         public String Linkedin { get; set; } = String.Empty;
 
@@ -43,7 +47,7 @@ namespace Server.Models
         
         public String City { get; set; } = String.Empty;
         
-        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+        public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public DateTime DateOfBirth { get; set; } = DateTime.UnixEpoch;
         

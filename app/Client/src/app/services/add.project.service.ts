@@ -3,7 +3,6 @@ import { Observable, catchError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ProjectAddRequest } from '../models/project-add';
 import { HttpHeaders } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
 
 const ADD_P_API = 'http://localhost:8000/api/Project';
 
