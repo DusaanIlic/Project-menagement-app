@@ -23,11 +23,13 @@ namespace Server.Controllers
     {
         private readonly LogicTenacityDbContext dbContext;
         private readonly IRolePermissionService rolePermissionService;
+        private readonly IEmailService _emailService;
 
-        public ProjectController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService)
+        public ProjectController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService, IEmailService emailService)
         {
             this.dbContext = dbContext;
             this.rolePermissionService = rolePermissionService;
+            _emailService = emailService;
         }
 
         [Authorize]
@@ -108,15 +110,6 @@ namespace Server.Controllers
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
                 return BadRequest("Invalid user ID in token");
-            }
-
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 3);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
             }
 
             var teamLeader = await dbContext.Members
@@ -523,6 +516,29 @@ namespace Server.Controllers
                 }
 
                 dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
+
+                var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+                var request = new EmailDTO
+                {
+                    To = member.Email,
+                    Subject = "New Task Assignment",
+                    Body = $@"
+                        <p>Hello {member.FirstName} {member.LastName},</p>
+                        
+                        <p>You have been assigned to a new project.</p>
+                        
+                        <p>Below are your project details:</p>
+                        
+                        <ul>
+                            <li><strong>Name:</strong> {project.ProjectName}</li>
+                            <li><strong>Deadline:</strong> {project.Deadline}</li>
+                            <li><strong>Status:</strong> {project.ProjectStatus}</li>
+                            <li><strong>Description:</strong> {project.ProjectDescription}</li>
+                        </ul>"
+                };
+
+                var result = _emailService.SendEmail(request);
             }
 
             await dbContext.SaveChangesAsync();
