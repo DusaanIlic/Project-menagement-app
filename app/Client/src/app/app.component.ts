@@ -27,15 +27,13 @@ import { NgxEditorModule } from 'ngx-editor';
 })
 export class AppComponent implements OnInit{
   showNavbar: boolean = true;
-  showProjectNavbar: boolean = false;
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;
 
-        this.showNavbar = url !== '/login';
-        this.showProjectNavbar = url.includes('/projects/') && url !== '/projects/all' &&  url !== '/projects/add';
+        this.showNavbar = !url.includes('/login') && !url.includes('/forgot');
       }
     });
   }

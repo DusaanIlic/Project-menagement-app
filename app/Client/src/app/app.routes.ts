@@ -15,6 +15,7 @@ import { KanbanComponent } from './components/kanban/kanban.component';
 import { MemberOverviewComponent } from './components/member-overview/member-overview.component';
 import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.component";
 import {ProjectComponent} from "./components/project/project.component";
+import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -22,6 +23,7 @@ export const routerConfig: RouterConfigOptions = {
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'forgot/:token', component: ForgotPasswordComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },

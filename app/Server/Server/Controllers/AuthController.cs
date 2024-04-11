@@ -211,7 +211,7 @@ namespace Server.Controllers
 
                 <p><strong>If this wasn't issued by you, please disregard this email.</strong></p>
                 
-                <a href=""http://localhost:4200/forgot_password/{member.PasswordToken}"">Click here to reset your password<a/>.
+                <a href=""http://localhost:4200/forgot/{member.PasswordToken}"">Click here to reset your password<a/>.
                 "
             };
 
