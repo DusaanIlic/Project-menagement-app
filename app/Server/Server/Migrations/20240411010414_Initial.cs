@@ -172,7 +172,7 @@ namespace Server.Migrations
                     IsDisabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false),
                     RefreshToken = table.Column<string>(type: "TEXT", nullable: true),
-                    RefreshTokenExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    RefreshTokenExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Linkedin = table.Column<string>(type: "TEXT", nullable: false),
                     Github = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false),
@@ -181,7 +181,9 @@ namespace Server.Migrations
                     City = table.Column<string>(type: "TEXT", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AvatarId = table.Column<int>(type: "INTEGER", nullable: true)
+                    AvatarId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PasswordToken = table.Column<string>(type: "TEXT", nullable: true),
+                    PasswordTokenExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -485,12 +487,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Members",
-                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
+                columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 10, 15, 9, 7, 497, DateTimeKind.Utc).AddTicks(4046), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$IO86Iq97sFQydcpSFpX1XeEMXtfkLLlbk22D9tD1j5ydfMZmbmnvO", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 10, 15, 9, 7, 560, DateTimeKind.Utc).AddTicks(8493), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$0giuXA8pJfa7LzchEaHmrOm2HfTNhklpO63bkaBbTCrcflDPILDKe", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 10, 15, 9, 7, 625, DateTimeKind.Utc).AddTicks(4796), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$9b1SMtQvI5krm9lKwqBNduEzdNePAb2y4qg6YwDYXW/WRYgAcfBDy", "", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 11, 1, 4, 13, 66, DateTimeKind.Utc).AddTicks(8358), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$58EG0ZT9/OeV1FfLH4A1h.5JLk0S.w5poSNU87hR6VdwTCCH6gVdC", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 11, 1, 4, 13, 200, DateTimeKind.Utc).AddTicks(1051), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$P0dLcZlajZWrlzXkHKob5.Xt1lFlqgyZ.QYhbHWe2a774jUcDZsF2", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 11, 1, 4, 13, 333, DateTimeKind.Utc).AddTicks(8016), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$qoSNj/kkoijHClSqrIpCk.3IDhRg1BMhAc/CxU0dRoDtKRpae/.XG", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(

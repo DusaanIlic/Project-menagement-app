@@ -101,7 +101,7 @@ namespace Server.Controllers
                 return BadRequest("Invalid refresh token");
             }
 
-            if (DateTime.UtcNow > member.RefreshTokenExpiresAt)
+            if (member.RefreshTokenExpiresAt != null && DateTime.UtcNow > member.RefreshTokenExpiresAt)
             {
                 Console.WriteLine($"Failed refreshing token, token expired");
                 return BadRequest("Refresh token has expired");
@@ -158,6 +158,7 @@ namespace Server.Controllers
                 {
                     new Claim("Email", member.Email),
                     new Claim("RoleId", member.RoleId.ToString()),
+                    new Claim(ClaimTypes.Role, member.Role.RoleName),
                     new Claim("Id", member.Id.ToString())
                 }),
                 Expires = expireAt, // Token expiration time

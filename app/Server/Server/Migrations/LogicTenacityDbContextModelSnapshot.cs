@@ -87,6 +87,12 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PasswordToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("PasswordTokenExpiresAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -94,7 +100,7 @@ namespace Server.Migrations
                     b.Property<string>("RefreshToken")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("RefreshTokenExpiresAt")
+                    b.Property<DateTime?>("RefreshTokenExpiresAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("RoleId")
@@ -121,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 10, 15, 9, 7, 497, DateTimeKind.Utc).AddTicks(4046),
+                            DateAdded = new DateTime(2024, 4, 11, 1, 4, 13, 66, DateTimeKind.Utc).AddTicks(8358),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -129,9 +135,8 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$IO86Iq97sFQydcpSFpX1XeEMXtfkLLlbk22D9tD1j5ydfMZmbmnvO",
+                            Password = "$2a$10$58EG0ZT9/OeV1FfLH4A1h.5JLk0S.w5poSNU87hR6VdwTCCH6gVdC",
                             PhoneNumber = "",
-                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 1,
                             Status = ""
                         },
@@ -140,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 10, 15, 9, 7, 560, DateTimeKind.Utc).AddTicks(8493),
+                            DateAdded = new DateTime(2024, 4, 11, 1, 4, 13, 200, DateTimeKind.Utc).AddTicks(1051),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -148,9 +153,8 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$0giuXA8pJfa7LzchEaHmrOm2HfTNhklpO63bkaBbTCrcflDPILDKe",
+                            Password = "$2a$10$P0dLcZlajZWrlzXkHKob5.Xt1lFlqgyZ.QYhbHWe2a774jUcDZsF2",
                             PhoneNumber = "",
-                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 2,
                             Status = ""
                         },
@@ -159,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 10, 15, 9, 7, 625, DateTimeKind.Utc).AddTicks(4796),
+                            DateAdded = new DateTime(2024, 4, 11, 1, 4, 13, 333, DateTimeKind.Utc).AddTicks(8016),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -167,9 +171,8 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$9b1SMtQvI5krm9lKwqBNduEzdNePAb2y4qg6YwDYXW/WRYgAcfBDy",
+                            Password = "$2a$10$qoSNj/kkoijHClSqrIpCk.3IDhRg1BMhAc/CxU0dRoDtKRpae/.XG",
                             PhoneNumber = "",
-                            RefreshTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RoleId = 3,
                             Status = ""
                         });
