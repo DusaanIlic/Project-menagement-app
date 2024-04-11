@@ -33,10 +33,10 @@
 
   <div *ngIf="showForgotPasswordForm" class="grow flex flex-col justify-center items-center gap-10">
     <div class="flex flex-col min-w-80 items-center justify-between gap-10">
-      <form [formGroup]="forgotPasswordForm" class="flex flex-col gap-2 w-full">
+      <form [formGroup]="forgotForm" class="flex flex-col gap-2 w-full">
         <label class="text-xl select-none" for="femail">Email</label>
-        <p *ngIf="forgotPasswordForm.get('email').errors?.['required'] && forgotPasswordForm.get('email').touched" class="italic text-sm text-red-600">Email is required.</p>
-        <p *ngIf="forgotPasswordForm.get('email').errors?.['email'] && forgotPasswordForm.get('email').touched" class="italic text-sm text-red-600">Email is in wrong format.</p>
+        <p *ngIf="forgotForm.get('email').errors?.['required'] && forgotForm.get('email').touched" class="italic text-sm text-red-600">Email is required.</p>
+        <p *ngIf="forgotForm.get('email').errors?.['email'] && forgotForm.get('email').touched" class="italic text-sm text-red-600">Email is in wrong format.</p>
         <input formControlName="email" class="min-h-9 text-xl border-2 rounded-xl p-1.5"
                type="email" name="femail" id="femail" required placeholder="test@gmail.com">
       </form>
