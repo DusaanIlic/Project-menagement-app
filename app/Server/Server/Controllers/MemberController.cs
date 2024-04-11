@@ -509,57 +509,5 @@ namespace Server.Controllers
 
             return Ok(projects);
         }
-
-        [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPasswordRequest(ForgotPasswordRequest forgotPasswordRequest)
-        {
-            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == forgotPasswordRequest.Email);
-
-            if (member == null)
-            {
-                return BadRequest("Member with given email not found.");
-            }
-            
-            if (member.RefreshTokenExpiresAt != null && member.PasswordTokenExpiresAt < DateTime.UtcNow)
-            {
-                return BadRequest("You already have an ongoing forgot password request.");
-            }
-
-            var passwordToken = Guid.NewGuid().ToString();
-            var expiresAt = DateTime.UtcNow.AddHours(1);
-
-            member.PasswordToken = passwordToken;
-            member.PasswordTokenExpiresAt = expiresAt;
-
-            await _dbContext.SaveChangesAsync();
-            
-            var request = new EmailDTO
-            {
-                To = member.Email,
-                Subject = "LogicTenacity - Forgot Password Request",
-                Body = $@"
-                <p>Hello {member.FirstName} {member.LastName},</p>
-                
-                <p>You have issued a forgot password request.</p>
-                
-                <p>You have one hour to reset your password.</p>
-
-                <p><strong>If this wasn't issued by you, please disregard this email.</strong></p>
-                
-                <a href=""http://localhost:4200/forgot_password/{member.PasswordToken}"">Click here to reset your password<a/>.
-                "
-            };
-
-
-            var result = _emailService.SendEmail(request);
-
-            if (result) return Ok("Check your email on instructions.");
-            
-            member.PasswordToken = null;
-            member.PasswordTokenExpiresAt = null;
-            await _dbContext.SaveChangesAsync();
-
-            return BadRequest("Failed sending email, try again.");
-        }
     }
 }

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgIf, NgOptimizedImage} from "@angular/common";
-import {FormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
 import {Router} from "@angular/router";
 import {MemberService} from "../../services/member.service";
+import {NgToastModule, NgToastService} from "ng-angular-popup";
 
 @Component({
   selector: 'app-login',
@@ -12,19 +13,32 @@ import {MemberService} from "../../services/member.service";
   imports: [
     NgOptimizedImage,
     NgIf,
-    FormsModule
+    FormsModule,
+    NgToastModule,
+    ReactiveFormsModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   errorMessage: string | undefined;
   email: string | undefined;
   password: string | undefined;
-  forgotPasswordForm: boolean = false;
+  showForgotPasswordForm: boolean = false;
+
+  forgotPasswordForm: any;
 
   constructor(private authService : AuthService, private memberService: MemberService,
-                private router: Router) {}
+                private router: Router, private _ngToastService: NgToastService) {}
+
+  ngOnInit() {
+    this.forgotPasswordForm = new FormGroup({
+      email: new FormControl('', [
+        Validators.required,
+        Validators.email
+      ])
+    });
+  }
 
   onSubmit(): void {
     if (!this.email || !this.password) {
@@ -42,6 +56,18 @@ export class LoginComponent {
   }
 
   toggleForgotPasswordForm() {
-    this.forgotPasswordForm = !this.forgotPasswordForm;
+    this.showForgotPasswordForm = !this.showForgotPasswordForm;
+  }
+
+  forgotPasswordSubmit() {
+    if (this.forgotPasswordForm.valid) {
+
+    } else {
+      this._ngToastService.error({
+        detail: 'Form is not valid',
+        summary: 'Please enter a correct email',
+        duration: 2000
+      });
+    }
   }
 }
