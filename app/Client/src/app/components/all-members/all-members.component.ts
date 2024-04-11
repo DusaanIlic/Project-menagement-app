@@ -29,7 +29,6 @@ export class AllMembersComponent implements OnInit{
 
     ngOnInit(): void {
         this.getMembersFromServer();
-        this.getRolesFromServer();
     }
 
     showMessage(){
@@ -50,28 +49,6 @@ export class AllMembersComponent implements OnInit{
         }
       );
     }
-
-    getRolesFromServer(): void {
-      this.memberService.getRoles().subscribe(
-        (data: Role[]) => {
-          this.roles = data;
-        },
-        (error) => {
-          console.log('Error fetching roles:', error);
-        }
-      );
-    }
-
-    getRoleName(roleId: number): any {
-      if (!this.roles || this.roles.length === 0) {
-        return 'Unknown';
-      }
-
-      const role = this.roles.find(r => r.id === roleId);
-
-      return role ? role.name : 'Unknown';
-    }
-
 
 
     constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {

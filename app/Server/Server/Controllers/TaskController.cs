@@ -883,8 +883,9 @@ namespace Server.Controllers
             }
 
             var projectTask = await dbContext.ProjectTasks
-                                             .Include(pt => pt.Project)
-                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+                                             .Include(pt => pt.Project).Include(pt => pt.Members)
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId)
+                                             ;
 
             if (projectTask == null)
             {

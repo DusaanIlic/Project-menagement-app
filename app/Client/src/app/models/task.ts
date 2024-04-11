@@ -1,3 +1,5 @@
+import {Member} from "./member";
+
 export interface Task
 {
     taskId : number,
@@ -13,4 +15,5 @@ export interface Task
     taskStatusId : number,
     taskPriorityId : number,
     taskCategoryId : number
+    assignedMembers: Member[]
 }

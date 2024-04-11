@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
@@ -13,17 +13,21 @@ import { MemberService } from '../../services/member.service';
 import { Member } from '../../models/member';
 import { Project } from '../../models/project';
 import { taskActivityType } from '../../models/taskActivityType';
+import { DomSanitizer } from '@angular/platform-browser';
+import {MatButton} from "@angular/material/button";
+import {MatMenu, MatMenuItem} from "@angular/material/menu";
+import {EditMemberComponent} from "../edit-member/edit-member.component";
+import {ProjectService} from "../../services/add.project.service";
+import {ProjectServiceGet} from "../../services/project.service";
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule , NgToastModule],
+  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule, NgToastModule, MatButton, MatMenu, MatMenuItem],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
-export class TaskOverviewComponent{
-
-
+export class TaskOverviewComponent implements OnInit{
 
   project : Project = {
     id: 0,
@@ -35,38 +39,98 @@ export class TaskOverviewComponent{
     status: '',
     lead: ''
   };
-    members : Member[] = [];
+    activitiesForThisTask : taskActivity[] = [];
+    membersOnThisProject : Member[] = [];
     commentText = "";
     activities : taskActivity[] = [];
     editor: Editor = new Editor;
     editor1: Editor = new Editor;
     taskActivityDesc: any;
     description: any;
+    descriptionForP : any;
+    task : Task = {
+      assignedMembers: [],
+      deadline: new Date(),
+      isTaskDependentOn: false,
+      projectId: 0,
+      projectName: "",
+      startDate: new Date(),
+      taskCategoryId: 0,
+      taskDescription: "",
+      taskId: 0,
+      taskName: "",
+      taskPriority: "",
+      taskPriorityId: 0,
+      taskStatus: "",
+      taskStatusId: 0
+    };
+
+    depTasks : Task[] = [];
 
     selectedType: any;
     allTypes : taskActivityType[] = [];
-    
-    
+
+
     show: any;
     showEditorForDesc: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>, @Inject(MAT_DIALOG_DATA) public task: Task, private tService : TaskService, private mService : MemberService, private _ngToastService: NgToastService)
+  constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
+              @Inject(MAT_DIALOG_DATA) public taskId: number,
+              private tService : TaskService,
+              private mService : MemberService,
+              private _ngToastService: NgToastService,
+              private sanitizer: DomSanitizer,
+              private pService: ProjectServiceGet) { }
+
+  ngOnInit()
   {
-    this.show = 'overview';
-    this.description = task.taskDescription;
-    this.taskActivityDesc = "";
-    this.selectedType = "-1"
-    this.tService.getTaskActivityType().subscribe((data : any) =>{
-      this.allTypes = data;
-      //console.log(data);
-      this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) => {
+    this.tService.getTaskById(this.taskId).subscribe((data : any) => {
+      this.task = data;
+      this.pService.getProjectById(this.task.projectId).subscribe((project : Project) =>{
+        this.project = project;
+      })
+      this.tService.getTasksDependentOnTaskId(this.task.taskId).subscribe((depTasks : Task[]) =>{
+        this.depTasks = depTasks;
+        console.log(depTasks);
+      })
+      this.fetchMembersOnProject();
+      //console.log(this.task)
+      this.show = 'overview';
+      this.description = this.task.taskDescription;
+      this.descriptionForP = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
+      this.taskActivityDesc = "";
+      this.selectedType = "-1"
+      this.tService.getTaskActivityType().subscribe((data : any) =>{
+        this.allTypes = data;
+        //console.log(data);
+        this.fetchTaskActivities();
+      })
+    })
+  }
+
+  fetchMembersOnProject()
+  {
+    this.pService.getMembersByProjectId(this.task.projectId).subscribe((data : Member[]) =>{
+      this.membersOnThisProject = data;
+      console.log(data)
+    })
+  }
+
+
+  fetchTaskActivities()
+  {
+    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) =>
+      {
         this.activities = taskactivities;
+        this.activitiesForThisTask = [];
+
         //this.dateCheck();
         for(let i=0;i<this.activities.length;i++)
           {
-            
-            this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
-            this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+            if(this.activities[i].taskId == this.task.taskId)
+            {
+              this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
+              this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
 
             //console.log(this.activities[i].differenceH)
             //console.log(this.activities[i].differenceM)
@@ -78,11 +142,13 @@ export class TaskOverviewComponent{
               this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId).subscribe((data : any) =>{
                 this.activities[i].taskActivityName = data.taskActivityTypeName;
               })
+              this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
+
+              this.activitiesForThisTask.push(this.activities[i])
+            }
+
           }
-        
-    })
-    })
-    
+      })
   }
 
   closeDialog(): void {
@@ -95,34 +161,38 @@ export class TaskOverviewComponent{
         description : this.taskActivityDesc,
         taskActivityTypeId : this.selectedType,
     }
-    console.log(taskAct)
       if(taskAct.description.trim() == "")
         alert("Activity cannot be empty!")
       else if(taskAct.taskActivityTypeId == -1)
         alert("Please select activity type.")
       else
       {
-        this.tService.saveTaskActivity(taskAct).subscribe({
-          next : data => {
-            this.showMessage();
-            this.closeDialog();
-          },
+        this.tService.saveTaskActivity(taskAct).subscribe(
+          {
+          next : data => {},
           error : error => {
-            console.log(error.statusText)
+            if(error.statusText == "OK")
+              {
+                this.showMessage();
+                this.fetchTaskActivities();
+              }
+            else
+            {
+              this.showMessageError();
+            }
+
           }
         })
-        
-      }
 
       }
 
-    
-      switchView(tab : string) {
-        if(tab === 'overview')
-          this.show = 'overview'
-        else if(tab === 'dependacies')
-          this.show = 'dependacies';
-        }
+      }
+
+
+      switchView(tab : string)
+      {
+        this.show = tab;
+      }
 
         showEditor() {
           this.showEditorForDesc = true;
@@ -158,12 +228,75 @@ export class TaskOverviewComponent{
 
 
             }
-            
+
 
 
   showMessage()
   {
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this._ngToastService.success({detail: "Success Message", summary: "Task activity add/delete successfully!", duration: 3000});
+  }
+
+  showMessageError()
+  {
+    this._ngToastService.error({detail: "Error Message", summary: "Task activity add/delete failed!", duration: 3000});
+  }
+
+
+  deleteTaskActivity(taskAct: taskActivity) {
+    this.tService.deleteTaskActivity(taskAct.taskActivityId).subscribe(
+      {
+        next : data =>
+          {
+            this.fetchTaskActivities()
+            this.showMessage();
+          },
+        error : error =>
+          {
+            this.showMessageError();
+          }
+      }
+    );
+    }
+
+  assignRemove(event : any, memberId: number)
+  {
+    console.log(event.target.checked) // If true - assign if false - remove
+    const membersList = [memberId];
+    console.log(membersList)
+
+
+    if(event.target.checked) // assign
+    {
+      this.tService.assignMembersToTask(this.taskId, membersList).subscribe({
+        next : data =>{
+          console.log("Assigned to task!");
+        },
+        error : error =>{
+          console.log("Error assigning to task!");
+        }
+      })
+    }
+    else //remove
+    {
+      this.tService.removeMemberFromTask(this.taskId, memberId ).subscribe({
+        next : data =>{
+          console.log("Removed from task!");
+        },
+        error : error =>{
+          console.log("Error removing from task!");
+        }
+      })
+    }
+  }
+
+  checkIfAssignedToTask(memberId : number) : boolean
+  {
+    for(let i=0;i<this.task.assignedMembers.length;i++)
+    {
+      if(this.task.assignedMembers[i].id == memberId)
+        return true;
+    }
+    return false;
   }
 }
 

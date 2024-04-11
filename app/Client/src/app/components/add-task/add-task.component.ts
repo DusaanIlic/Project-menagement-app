@@ -50,7 +50,8 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       taskName: this.taskName,
       taskDescription: this.html,
       projectId: this.projectId,
-      deadline: this.deadline
+      deadline: this.deadline,
+      assignedMemberIds : []
     };
 
     this.taskService.saveTask(taskData).subscribe(response => {

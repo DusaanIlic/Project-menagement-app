@@ -8,82 +8,168 @@
                     {{task.taskName}}
                 </h1>
                 <h2 class="text-l flex text-gray-900">
-                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
+                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{project.projectName}}</p>
                 </h2>
             </div>
             <!-- Modal body -->
             <div class="p-4 md:p-5 space-y-4 flex gap-5">
-                <div *ngIf="show == 'overview'">
+                <div *ngIf="show == 'overview'" class="w-[80%]">
                     <div class="border-[1px] border-gray-400 rounded-md px-2 pt-2 pb-2">
-                        <div class="flex justify-between"><h2 class="text-xl flex font-bold">Description:</h2><img class="size-5 flex " src="assets/icons/edit_36_jpg.jpg" alt="" (click)="showEditor()"></div>
+                        <div class="flex justify-between"><h2 class="text-xl flex font-semibold">Description:</h2><img class="size-5 flex " src="assets/icons/edit_36_jpg.jpg" alt="" (click)="showEditor()"></div>
                         <div *ngIf="!showEditorForDesc">
-                            <div class="text-lg"><div class="inline-block" [innerHTML]="task.taskDescription"></div></div>
+                            <div class="text-lg"><div class="inline-block" [innerHTML]="descriptionForP"></div></div>
                         </div>
                             <div *ngIf="showEditorForDesc">
                                 <div class="NgxEditor__Wrapper h-36" >
-                                    <ngx-editor-menu [editor]="editor1"> </ngx-editor-menu>
-                                    <ngx-editor [(ngModel)]="description" [editor]="editor1" [disabled]="false"></ngx-editor>
-                                </div>
-                                <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043] mt-2" (click)="editDescription()">Edit description</button>
-                            </div>
-                    
+                                  <ngx-editor-menu [editor]="editor1"> </ngx-editor-menu>
+                                  <ngx-editor [(ngModel)]="description" [editor]="editor1" [disabled]="false"></ngx-editor>
+                              </div>
+                              <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043] mt-2" (click)="editDescription()">Edit description</button>
+                          </div>
+
+              </div>
+              <div class="border-[1px] border-gray-400 rounded-md px-2 pt-2 pb-2 mt-2">
+                  <h2 class="text-xl font-semibold">Activity:</h2>
+                  <div class="flex flex-col gap-2">
+                      <div class="flex flex-row justify-between w-[700px]">
+                          <div class="NgxEditor__Wrapper w-[80%] h-36">
+                              <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+                              <ngx-editor [(ngModel)]="taskActivityDesc" [editor]="editor" [disabled]="false"></ngx-editor>
+                          </div>
+                          <select class="flex justify-end w-[20%] h-10 rounded-md" name="" id="" [(ngModel)] = "selectedType">
+                              <option value="-1" disabled>Select type</option>
+                              <option value="{{type.taskActivityTypeId}}" *ngFor="let type of allTypes">{{type.taskActivityTypeName}}</option>
+                          </select>
+                      </div>
+                  <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="saveActivity()">Save activity</button>
+
+                  </div>
+                  <div class="mt-2 flex flex-col gap-1 border-t-[1px] border-t-gray-400 h-[200px] overflow-y-scroll">
+                      <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="activitiesForThisTask.length === 0">
+                          <p>No task activities yet.</p>
+                      </div>
+                      <div class="flex w-full rounded-md items-center px-1 border-b-[1px] border-b-gray-400" *ngFor="let taskAct of activitiesForThisTask">
+                          <img src="http://localhost:8000/api/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
+                          <div class="grow">
+                               <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>"</div>
+                              <div class="flex flex-row gap-2">
+                                  <p *ngIf="taskAct.differenceM < 60 && taskAct.differenceH < 1" class="text-sm">{{taskAct.differenceM}} minutes ago.</p>
+                                  <p *ngIf="taskAct.differenceH < 24 && taskAct.differenceM >= 60" class="text-sm">{{taskAct.differenceH}} hours ago.</p>
+                                  <p *ngIf="taskAct.differenceH >= 24" class="text-sm">{{taskAct.dateModify| date}}</p>
+                                  <p class="font-semibold text-sm">{{taskAct.taskActivityName}}</p>
+                              </div>
+                          </div>
+                          <div class="size-5 mr-2 hover:cursor-pointer" (click)="deleteTaskActivity(taskAct)"><img src="assets/icons/delete_36_jpg.jpg" alt=""></div>
+                      </div>
+
+                  </div>
+
+
+
+
+
+
+
+
+
+                  </div>
+              </div>
+
+              <div *ngIf="show == 'dependacies'" class="w-[80%]">
+                  <h2 class="text-lg font-semibold">Dependacies:</h2>
+
+                <div class="w-[90%]">
+                  <div class="table border-[1px] border-gray-300 rounded-md">
+                    <tr class="">
+                      <th class="text-left w-10"></th>
+                      <th class="text-left p-2 w-40">TASK</th>
+                      <th class="text-left p-2 w-40">DEPENDANT ON</th>
+                    </tr>
+
+                    <tr>
+                      <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No task dependencies.</td>
+                    </tr>
+
+
+                  </div>
                 </div>
-                <div class="border-[1px] border-gray-400 rounded-md px-2 pt-2 pb-2 mt-2">
-                    <h2 class="text-xl font-bold">Activity:</h2>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex flex-row justify-between w-[700px]">
-                            <div class="NgxEditor__Wrapper w-[80%] h-36">
-                                <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-                                <ngx-editor [(ngModel)]="taskActivityDesc" [editor]="editor" [disabled]="false"></ngx-editor>
-                            </div>
-                            <select class="flex justify-end w-[20%] h-10 rounded-md" name="" id="" [(ngModel)] = "selectedType">
-                                <option value="-1" disabled>Select type</option>
-                                <option value="{{type.taskActivityTypeId}}" *ngFor="let type of allTypes">{{type.taskActivityTypeName}}</option>
-                            </select>
-                        </div>
-                    <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="saveActivity()">Save activity</button>
-                
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <div *ngIf="show == 'assignes'" class="w-[80%]">
+                <div class="flex justify-start">
+                  <div class="flex flex-col gap-5">
+                    <div>
+                      <h1 class="font-xl font-semibold">Assigned members:</h1>
                     </div>
-                    <div class="mt-2 flex flex-col justify-between gap-1 border-t-[1px] border-t-gray-400 pt-2 h-[200px] overflow-y-scroll">
-                        <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="activities.length === 0">
-                            <p>No task activities yet.</p>
-                        </div>
-                        <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngFor="let taskAct of activities">
-                            <img *ngIf="taskAct.taskId === task.taskId" src="http://localhost:8000/api/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
-                            <div *ngIf="taskAct.taskId === task.taskId">
-                                <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>"</div>
-                                <div class="flex flex-row gap-2">
-                                    <p *ngIf="taskAct.differenceM < 60 && taskAct.differenceH < 1" class="text-sm">{{taskAct.differenceM}} minutes ago.</p>
-                                    <p *ngIf="taskAct.differenceH < 24 && taskAct.differenceM >= 60" class="text-sm">{{taskAct.differenceH}} hours ago.</p>
-                                    <p *ngIf="taskAct.differenceH >= 24" class="text-sm">{{taskAct.dateModify| date}}</p>
-                                    <p class="font-semibold text-sm">{{taskAct.taskActivityName}}</p>
-                                </div>
-                                
-                            </div>
-                        </div>
+                    <div class="w-[90%]">
+                      <div class="table border-[1px] border-gray-300 rounded-md">
+                        <tr class="">
+                          <th class="text-left w-10"></th>
+                          <th class="text-left p-2 w-40">ASSIGNEE</th>
+                          <th class="text-left p-2 w-40">STATUS</th>
+                          <th class="text-left p-2 w-40">ROLE</th>
+                        </tr>
 
+                        <tr *ngIf="membersOnThisProject.length === 0">
+                          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No assigned members.</td>
+                        </tr>
+
+                        <tr *ngFor="let assignee of membersOnThisProject" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" checked (change)="assignRemove($event, assignee.id)"></td>
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                          <td *ngIf="assignee.status != '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                          <td *ngIf="assignee.status === '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                        </tr>
+
+                        <tr *ngFor="let assignee of membersOnThisProject" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" (change)="assignRemove($event, assignee.id)"></td>
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                          <td *ngIf="assignee.status != '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                          <td *ngIf="assignee.status === '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                        </tr>
+                      </div>
                     </div>
-
-
-
-                    </div>
+                  </div>
                 </div>
 
-                <div *ngIf="show == 'dependacies'" class="w-[80%]">
-                    <h2 class="text-lg">Dependacies:</h2>
-                    <p *ngIf="task.isTaskDependentOn">Task is dependant on:</p>
+              </div>
 
-                </div>
 
-                <div class="w-40 flex flex-col gap-5 border-l-[1px] border-l-black pl-2">
-                    <button type="button" class="flex items-center justify-center w-40 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="switchView('overview')">Overview</button>
-                    <button type="button" class="flex items-center justify-center w-40 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="switchView('dependacies')">Dependacies</button>
-                </div>
-            </div>
-            <!-- Modal footer -->
+              <div class="w-40 flex flex-col gap-5 border-l-[1px] border-l-black pl-2">
+                  <button type="button" class="flex items-center justify-center w-40 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="switchView('overview')">Overview</button>
+
+                  <button type="button" class="flex items-center justify-center w-40 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="switchView('dependacies')">Dependacies</button>
+
+                  <button type="button" class="flex items-center justify-center w-40 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="switchView('assignes')">Assignes</button>
+              </div>
+          </div>
+          <!-- Modal footer -->
             <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button data-modal-hide="default-modal" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 xl:hover:bg-[#0B2043]" (click)="closeDialog()">Close</button>
             </div>
         </div>
     </div>
+
+    <ng-toast></ng-toast>
+
 </div>

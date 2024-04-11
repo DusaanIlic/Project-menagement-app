@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Observable, retry} from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { Task } from '../models/task';
 import { taskActivity } from '../models/taskActivity';
@@ -66,6 +66,31 @@ export class TaskService {
   changeTaskDescription(task : any, taskId: number) : Observable<any>
   {
     return this.http.put<any>(`${TASK_API}/${taskId}`, task);
+  }
+
+  deleteTaskActivity(taskActivityId : number) : Observable<any>
+  {
+    return this.http.delete(`${TASKACTIVITY_API}/${taskActivityId}`);
+  }
+
+  getTaskById(taskId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_API}/${taskId}`);
+  }
+
+  assignMembersToTask(taskId : number, membersId : number[]) : Observable<any[]>
+  {
+    return this.http.put<any[]>(`${TASK_API}/${taskId}/assign`, membersId);
+  }
+
+  removeMemberFromTask(taskId : number, membersId : number) : Observable<any[]>
+  {
+    return this.http.delete<any[]>(`${TASK_API}/${taskId}/remove/${membersId}`);
+  }
+
+  getTasksDependentOnTaskId(taskId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_API}/${taskId}/DependentTasks`);
   }
 
 }
