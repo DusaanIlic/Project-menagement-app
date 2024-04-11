@@ -84,10 +84,10 @@ export class TaskOverviewComponent implements OnInit{
   {
     this.tService.getTaskById(this.taskId).subscribe((data : any) => {
       this.task = data;
-      this.pService.getMembersByProjectId(1).subscribe((data : Member[]) =>{
-        this.membersOnThisProject = data;
-        console.log(data)
+      this.pService.getProjectById(this.task.projectId).subscribe((project : Project) =>{
+        this.project = project;
       })
+      this.fetchMembersOnProject();
       //console.log(this.task)
       this.show = 'overview';
       this.description = this.task.taskDescription;
@@ -99,6 +99,14 @@ export class TaskOverviewComponent implements OnInit{
         //console.log(data);
         this.fetchTaskActivities();
       })
+    })
+  }
+
+  fetchMembersOnProject()
+  {
+    this.pService.getMembersByProjectId(this.task.projectId).subscribe((data : Member[]) =>{
+      this.membersOnThisProject = data;
+      console.log(data)
     })
   }
 

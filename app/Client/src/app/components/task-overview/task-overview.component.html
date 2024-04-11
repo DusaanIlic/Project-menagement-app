@@ -8,7 +8,7 @@
                     {{task.taskName}}
                 </h1>
                 <h2 class="text-l flex text-gray-900">
-                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
+                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{project.projectName}}</p>
                 </h2>
             </div>
             <!-- Modal body -->
@@ -89,6 +89,7 @@
                           <th class="text-left w-10"></th>
                           <th class="text-left p-2 w-40">ASSIGNEE</th>
                           <th class="text-left p-2 w-40">STATUS</th>
+                          <th class="text-left p-2 w-40">ROLE</th>
                         </tr>
 
                         <tr *ngIf="membersOnThisProject.length === 0">
@@ -100,6 +101,7 @@
                           <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
                           <td *ngIf="assignee.status != '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
                           <td *ngIf="assignee.status === '' && checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                          <td *ngIf="checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
                         </tr>
 
                         <tr *ngFor="let assignee of membersOnThisProject" class="border-[1px] border-gray-500 hover:bg-gray-300">
@@ -107,6 +109,7 @@
                           <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
                           <td *ngIf="assignee.status != '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
                           <td *ngIf="assignee.status === '' && !checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                          <td *ngIf="!checkIfAssignedToTask(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
                         </tr>
                       </div>
                     </div>
