@@ -4,6 +4,8 @@ import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {Member} from "../models/member";
 import {tap} from "rxjs/internal/operators/tap";
+import {ForgotPasswordForm} from "../forms/forgot-password.form";
+import {ForgotPasswordCompleteForm} from "../forms/forgot-password-complete.form";
 
 const AUTH_API = 'http://localhost:8000/api/Auth';
 
@@ -148,49 +150,15 @@ export class AuthService {
       refreshToken: this.getRefreshToken()
     };
 
-    return new Promise<void>((resolve, reject) => {
-      this.http.post(`${AUTH_API}/Refresh`, refreshToken, httpOptions).subscribe({
-        next: (data: any) => {
-          const jwtToken = data.jwtToken;
-          const jwtTokenExpirationDate = data.jwtTokenExpirationDate;
-          const refreshToken = data.refreshToken;
+   return this.http.post<any>(`${AUTH_API}/Refresh`, refreshToken);
+  }
 
-          const dto = data.member;
+  forgotPasswordRequest(forgotPasswordForm: ForgotPasswordForm) {
+    return this.http.post<any>(`${AUTH_API}/ForgotPassword`, forgotPasswordForm);
+  }
 
-          const member: Member = {
-            id: dto.id,
-            firstName: dto.firstName,
-            lastName: dto.lastName,
-            roleId: dto.roleId,
-            roleName: dto.roleName,
-            email: dto.email,
-            linkedin: dto.linkedin,
-            github: dto.github,
-            status: dto.status,
-            phoneNumber: dto.phoneNumber,
-            country: dto.country,
-            city: dto.city,
-            dateOfBirth: new Date(dto.dateOfBirth),
-            dateAdded: new Date(dto.dateAdded),
-          };
-
-          localStorage.setItem('jwt-token', jwtToken);
-          localStorage.setItem('jwt-token-expiration-date', jwtTokenExpirationDate);
-          localStorage.setItem('refresh-token', refreshToken);
-          localStorage.setItem('authenticated-member-id', member.id.toString());
-          localStorage.setItem('authenticated-member', JSON.stringify(member));
-          localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${member.id}/Avatar`);
-
-          this.authenticatedMemberSubject.next(member);
-          this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
-
-          resolve();
-        },
-        error: error => {
-          reject('Failed refeshing jwt token.');
-        }
-      });
-    });
+  completeForgotPasswordRequest(forgotPasswordCompleteForm: ForgotPasswordCompleteForm) {
+    return this.http.post<any>(`${AUTH_API}/ForgotPassword/Complete`, forgotPasswordCompleteForm);
   }
 }
 

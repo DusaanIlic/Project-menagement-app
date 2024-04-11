@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text; // Added using directive for Encoding
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
-using Server.Middlewares;
 using Server.Models;
 using Server.Services.File;
 using Server.Services.RolePermission; // Added using directive for UseAuthentication
@@ -100,7 +99,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<JwtBlacklistMiddleware>();
 
 app.MapControllers();
 

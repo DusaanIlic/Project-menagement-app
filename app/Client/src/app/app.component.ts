@@ -33,7 +33,7 @@ export class AppComponent implements OnInit{
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;
 
-        this.showNavbar = url !== '/login';
+        this.showNavbar = !url.includes('/login') && !url.includes('/forgot');
       }
     });
   }

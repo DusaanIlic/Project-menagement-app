@@ -10,10 +10,10 @@ import {EditMemberComponent} from "./components/edit-member/edit-member.componen
 import {AllRolesComponent} from "./components/all-roles/all-roles.component";
 import {EditRoleComponent} from "./components/edit-role/edit-role.component";
 import {ProjectComponent} from "./components/project/project.component";
-import {KanbanComponent} from "smart-webcomponents-angular/kanban";
 import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.component";
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
 import {ProjectKanbanComponent} from "./components/project-kanban/project-kanban.component";
+import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -21,6 +21,7 @@ export const routerConfig: RouterConfigOptions = {
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'forgot/:token', component: ForgotPasswordComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },

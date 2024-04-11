@@ -33,7 +33,7 @@ namespace Server.Models
         
         public string? RefreshToken { get; set; }
         
-        public DateTime RefreshTokenExpiresAt { get; set; }
+        public DateTime? RefreshTokenExpiresAt { get; set; }
 
         public String Linkedin { get; set; } = String.Empty;
 
@@ -64,5 +64,9 @@ namespace Server.Models
         public ICollection<File> UploadedFiles { get; set; } = new List<File>();
 
         public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
+
+        public string? PasswordToken { get; set; }
+
+        public DateTime? PasswordTokenExpiresAt { get; set; }
     }
 }

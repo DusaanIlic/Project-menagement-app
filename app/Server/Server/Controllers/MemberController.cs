@@ -83,7 +83,7 @@ namespace Server.Controllers
             }
 
             var roleId = await _rolePermissionService.CheckRole(userId);
-
+            
             var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 1);
 
             if (!hasPermission)
@@ -201,7 +201,7 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName,
                 IsDisabled = member.IsDisabled
             };
-
+            
             return Ok(memberDTO);
         }
 
@@ -405,14 +405,13 @@ namespace Server.Controllers
         public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            var isAdmin = User.IsInRole("Administrator");
             
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
                 return BadRequest("Invalid user ID in token");
             }
 
-            if (userId != id && !isAdmin)
+            if (userId != id)
             {
                 return Forbid("You are not authorized to change this password");
             }
@@ -462,7 +461,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
+            if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
             {
                 return BadRequest("Password is incorrect");
             }
