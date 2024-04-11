@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {Member} from "../models/member";
 import {tap} from "rxjs/internal/operators/tap";
 import {ForgotPasswordForm} from "../forms/forgot-password.form";
+import {ForgotPasswordCompleteForm} from "../forms/forgot-password-complete.form";
 
 const AUTH_API = 'http://localhost:8000/api/Auth';
 
@@ -153,6 +154,10 @@ export class AuthService {
 
   forgotPasswordRequest(forgotPasswordForm: ForgotPasswordForm) {
     return this.http.post<any>(`${AUTH_API}/ForgotPassword`, forgotPasswordForm);
+  }
+
+  completeForgotPasswordRequest(forgotPasswordCompleteForm: ForgotPasswordCompleteForm) {
+    return this.http.post<any>(`${AUTH_API}/ForgotPassword/Complete`, forgotPasswordCompleteForm);
   }
 }
 
