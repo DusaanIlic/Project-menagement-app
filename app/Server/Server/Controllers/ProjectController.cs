@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
@@ -513,13 +514,13 @@ namespace Server.Controllers
             {  
                 if (project.TeamLeaderId == memberId)
                 {
-                    return Ok("Member is already a team leader of the project");
+                    return BadRequest("Member is already a team leader of the project");
                 }
 
                 var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
                 if (existingMemberProject != null)
                 {
-                    return Ok("Member already exists in the project");
+                    return BadRequest("Member already exists in the project");
                 }
 
                 dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
@@ -527,7 +528,7 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok("Members added to project successfully");
+            return Ok(new {Message = "Members added to project successfully"});
         }
 
         [Authorize]
