@@ -66,16 +66,16 @@ export class LoginComponent implements OnInit {
 
       this.authService.forgotPasswordRequest(data).subscribe({
         next: data => {
-          this._ngToastService.error({
+          this._ngToastService.success({
             detail: 'Successfully sent request',
-            summary: 'Check your email for instructions',
+            summary: data.message,
             duration: 2000,
           });
         },
         error: error => {
           this._ngToastService.error({
             detail: 'Error sending request',
-            summary: error,
+            summary: 'Failed sending request',
             duration: 2000,
           });
         }

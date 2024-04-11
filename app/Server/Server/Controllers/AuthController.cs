@@ -181,13 +181,13 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return BadRequest("Member with given email not found.");
+                return BadRequest(new { message = "Member with given email not found." });
             }
             
             if (member.PasswordTokenExpiresAt != null && DateTime.UtcNow < member.PasswordTokenExpiresAt)
                 
             {
-                return BadRequest("You already have an ongoing forgot password request.");
+                return BadRequest(new { message = "You already have an ongoing forgot password request." } );
             }
 
             var passwordToken = Guid.NewGuid().ToString();
@@ -218,13 +218,13 @@ namespace Server.Controllers
 
             var result = _emailService.SendEmail(request);
 
-            if (result) return Ok("Check your email on instructions.");
+            if (result) return Ok(new { message = "Check your email on instructions." });
             
             member.PasswordToken = null;
             member.PasswordTokenExpiresAt = null;
             await _dbContext.SaveChangesAsync();
 
-            return BadRequest("Failed sending email, try again.");
+            return BadRequest(new { message = "Failed sending email, try again." } );
         }
 
         private string GenerateRefreshToken()

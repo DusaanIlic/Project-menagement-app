@@ -26,9 +26,7 @@ namespace Server.Services.EmailService
                 using var smtp = new SmtpClient();
                 smtp.Connect(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
                 smtp.Authenticate(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
-                smtp.Send(email);
-                smtp.Disconnect(true);
-
+                
                 return true;
             }
             catch (Exception ex)
