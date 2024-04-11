@@ -229,8 +229,10 @@ namespace Server.Controllers
         }
         
         [HttpPost("ForgotPassword/Complete")]
-        public async Task<IActionResult> ResetPassword(CompleteForgotPasswordRequest resetPasswordRequest)
+        public async Task<IActionResult> CompletedForgetPassword(CompleteForgotPasswordRequest resetPasswordRequest)
         {
+            Console.WriteLine("Radi!");
+            
             var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.PasswordToken == resetPasswordRequest.PasswordToken);
 
             if (member == null)

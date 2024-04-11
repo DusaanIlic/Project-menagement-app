@@ -31,11 +31,11 @@ export class ForgotPasswordComponent implements OnInit {
       passwordToken: new FormControl('', [
         Validators.required
       ]),
-      newPassword1: new FormControl('', [
+      newPassword: new FormControl('', [
         Validators.required,
         Validators.minLength(6)
       ]),
-      newPassword2: new FormControl('', [
+      newPassword1: new FormControl('', [
         Validators.required,
         Validators.minLength(6)
       ])
@@ -46,6 +46,8 @@ export class ForgotPasswordComponent implements OnInit {
     this.route.params.subscribe(params => {
       const refreshToken = params['token'];
 
+      console.log(refreshToken);
+
       this.form.patchValue({passwordToken: refreshToken});
     });
   }
@@ -53,7 +55,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.get('newPassword1')?.value !== this.form.get('newPassword2')?.value) {
+      if (this.form.get('newPassword')?.value !== this.form.get('newPassword1')?.value) {
         this.passwordMismatch = true;
         return;
       }
@@ -63,7 +65,7 @@ export class ForgotPasswordComponent implements OnInit {
       const data: ForgotPasswordCompleteForm = this.form.value;
 
       this.authService.completeForgotPasswordRequest(data).subscribe({
-        next: response => {
+        next: data => {
           // Handle success response
           this.ngToastService.success({
             detail: 'Password reset successfully.',
@@ -82,7 +84,7 @@ export class ForgotPasswordComponent implements OnInit {
           // Handle error response
           this.ngToastService.error({
             detail: 'Failed to reset password. Please try again later.',
-            summary: 'Error',
+            summary: 'Something went wrong with your request',
           });
         }
       });
