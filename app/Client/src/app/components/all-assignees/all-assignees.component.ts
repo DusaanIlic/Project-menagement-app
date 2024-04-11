@@ -80,4 +80,25 @@ export class AllAssigneesComponent implements OnInit{
       console.log('The dialog was closed');
     });
   }
+
+  removeAssignee(assignee: Member)
+  {
+    console.log("DELETING...")
+
+      if(confirm("Are you sure you want to remove member?"))
+      {
+        this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
+          next : data =>{
+            console.log("Removed successfully.");
+          },
+          error : error =>{
+            console.log("Error removing");
+
+          }
+        })
+      }
+    }
+
+
+
 }

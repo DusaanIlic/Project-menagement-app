@@ -51,8 +51,7 @@
     <div class="flex justify-center" *ngIf="selectedTable === 't1'">
       <div class="table border-[1px] border-gray-300 rounded-md">
         <tr class="">
-          <th class="text-left p-3 w-20"></th>
-          <th class="text-left p-3 w-60">ASSIGNE</th>
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
           <th class="text-left w-60">ROLE</th>
           <th class="text-left w-60">STATUS</th>
           <th class="text-left w-60">DATE ADDED</th>
@@ -64,14 +63,13 @@
         </tr>
 
         <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
           <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
           <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
           <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
           <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl">Remove</button></td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
 
         </tr>
       </div>
@@ -81,8 +79,7 @@
     <div class="flex justify-center" *ngIf="selectedTable === 't2'">
       <div class="table border-[1px] border-gray-300 rounded-md">
         <tr class="">
-          <th class="text-left p-3 w-20"></th>
-          <th class="text-left p-3 w-60">ASSIGNE</th>
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
           <th class="text-left w-60">ROLE</th>
           <th class="text-left w-60">STATUS</th>
           <th class="text-left w-60">DATE ADDED</th>
@@ -97,14 +94,10 @@
           <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
           <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
           <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item [routerLink]="['/members', assignee.id]">View</button>
-            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod()">Delete</button>
-          </mat-menu>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
         </tr>
       </div>
     </div>
@@ -113,8 +106,7 @@
     <div class="flex justify-center" *ngIf="selectedTable === 't3'">
       <div class="table border-[1px] border-gray-300 rounded-md">
         <tr class="">
-          <th class="text-left p-3 w-20"></th>
-          <th class="text-left p-3 w-60">ASSIGNE</th>
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
           <th class="text-left w-60">ROLE</th>
           <th class="text-left w-60">STATUS</th>
           <th class="text-left w-60">DATE ADDED</th>
@@ -126,17 +118,12 @@
         </tr>
 
         <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of inactiveAssignees">
-          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
           <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
           <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
           <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item [routerLink]="['/members', assignee.id]">View</button>
-            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod()">Delete</button>
-          </mat-menu>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
         </tr>
       </div>
     </div>
