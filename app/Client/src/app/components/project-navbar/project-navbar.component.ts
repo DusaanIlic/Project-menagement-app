@@ -16,7 +16,7 @@ import { routes } from '../../app.routes';
 })
 export class ProjectNavbarComponent {
 
-  projectId: number = 2;
+  projectId: number = 0;
 
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe(params => {

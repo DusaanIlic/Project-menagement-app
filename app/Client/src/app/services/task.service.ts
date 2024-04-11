@@ -42,6 +42,11 @@ export class TaskService {
     const addTaskStatusRequest = { name: taskStatusName };
     return this.http.post<any>(`${PROJECT_API}/${projectId}/TaskStatus`, addTaskStatusRequest);
   }
+
+  getProjectMembers(projectId: number): Observable<any>{
+    return this.http.get<any>(`${PROJECT_API}/${projectId}/members`);
+  }
+
   getTasksByMember(memberId : number): Observable<Task[]>
   {
     return this.http.get<Task[]>(`${TASK_API}/members/${memberId}/tasks`);

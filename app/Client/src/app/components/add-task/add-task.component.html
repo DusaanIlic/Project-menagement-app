@@ -24,13 +24,19 @@
                     </div>
     
                     <div class="flex-row justify-between mb-3">
-                        <label for="name" class="pr-9">Project ID </label>
-                        <input type="text" [value]="data.projectId" id="projectId" [(ngModel)]="projectId" class="w-1/2">
+                        <label for="name" class="pr-10">Priority</label>
+                        
+                            <select id="sort" class="rounded-md ml-4 w-1/2 bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
+                            <option disabled selected >Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            </select>
                     </div>
     
                     <div class="flex-row justify-between mb-3">
                         <label for="name" class="pr-10">Deadline </label>
-                        <input type="date" id="name" class="w-1/2 ml-1" [(ngModel)]="deadline" [min]="todayDate()">
+                        <input type="date" id="name" class="w-1/2 " [(ngModel)]="deadline" [min]="todayDate()">
                     </div>
                     
                     <div class="flex-row justify-between">
@@ -42,19 +48,18 @@
                     </div>
                 </div>
 
-                <div class="flex-row justify-between mb-3">
-                    <div class="flex-row justify-between mb-3">
-                        <label for="name" class="pr-10">Priority</label>
-                        <form>
-                            <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
-                            <option disabled selected >Select priority</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
+                <div class="flex flex-col w-1/2">
+                    <div class="flex-row justify-between mb-1 py-4">
+                        <label for="members">Add Members </label>
+                            <select id="members" class="rounded-md ml-4 w-1/2 bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400" [(ngModel)]="selectedMember" (change)="addSelectedMember()">
+                                <option disabled selected >Select members</option>
+                                <option *ngFor="let member of projectMembers" [value]="member.id">{{ member.firstName }} {{ member.lastName }}</option>
                             </select>
-                        </form>
                     </div>
-                    
+                    <div class="flex flex-col mb-4">
+                        <label for="selMembers">Selected Members</label>
+                        <textarea class="min-h-48" id="selMembers"[(ngModel)]="addedMembers" readonly></textarea>
+                    </div>
                 </div>
             </div>
            
