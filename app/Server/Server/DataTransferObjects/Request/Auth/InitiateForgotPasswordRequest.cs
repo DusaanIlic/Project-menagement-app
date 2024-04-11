@@ -2,7 +2,7 @@
 
 namespace Server.DataTransferObjects.Request.Member;
 
-public class ForgotPasswordRequest
+public class InitiateForgotPasswordRequest
 {
     [Required]
     [EmailAddress]

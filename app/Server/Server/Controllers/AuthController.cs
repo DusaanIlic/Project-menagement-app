@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using Server.DataTransferObjects.Request.Auth;
 using Server.DataTransferObjects.Request.Member;
 
 
@@ -175,9 +176,9 @@ namespace Server.Controllers
         }
         
         [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPasswordRequest(ForgotPasswordRequest forgotPasswordRequest)
+        public async Task<IActionResult> ForgotPasswordRequest(InitiateForgotPasswordRequest initiateForgotPasswordRequest)
         {
-            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == forgotPasswordRequest.Email);
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == initiateForgotPasswordRequest.Email);
 
             if (member == null)
             {
@@ -225,6 +226,47 @@ namespace Server.Controllers
             await _dbContext.SaveChangesAsync();
 
             return BadRequest(new { message = "Failed sending email, try again." } );
+        }
+        
+        [HttpPost("ForgotPassword/Complete")]
+        public async Task<IActionResult> ResetPassword(CompleteForgotPasswordRequest resetPasswordRequest)
+        {
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.PasswordToken == resetPasswordRequest.PasswordToken);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Invalid password reset token." });
+            }
+
+            if (DateTime.UtcNow > member.PasswordTokenExpiresAt)
+            {
+                return BadRequest(new { message = "Password reset token has expired." });
+            }
+
+            member.Password = BCrypt.Net.BCrypt.HashPassword(resetPasswordRequest.NewPassword);
+
+            // Clear password token and expiration
+            member.PasswordToken = null;
+            member.PasswordTokenExpiresAt = null;
+            member.RefreshToken = null;
+            member.RefreshTokenExpiresAt = null;
+            
+            await _dbContext.SaveChangesAsync();
+            
+            var request = new EmailDTO
+            {
+                To = member.Email,
+                Subject = "LogicTenacity - Changed Password Successfully",
+                Body = $@"
+                <p>Hello {member.FirstName} {member.LastName},</p>
+                
+                <p>Your password has been successfully reset. If you did not initiate this action, please contact one of your administrators immediately.</p>
+                "
+            };
+            
+            var result = _emailService.SendEmail(request);
+
+            return Ok(result ? new { message = "Successfully completed password reset." } : new { message = "Failed sending email, but successfully changed password." });
         }
 
         private string GenerateRefreshToken()
