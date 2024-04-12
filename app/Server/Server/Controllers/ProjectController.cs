@@ -368,7 +368,8 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok("Project deleted successfully");
+            return Ok(new { message = "Project deleted successfully." });
+
         }
 
 
@@ -418,7 +419,8 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
-            return Ok("Project status updated successfully");
+            return Ok(new { message = "Project status updated successfully." });
+
         }
 
         [Authorize]
@@ -471,7 +473,8 @@ namespace Server.Controllers
             project.TeamLeaderId = memberId;
             await dbContext.SaveChangesAsync();
 
-            return Ok("Team leader added successfully");
+            return Ok(new { message = "Team leader added successfully." });
+
         }
 
         [Authorize]
@@ -599,7 +602,8 @@ namespace Server.Controllers
             dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();
 
-            return Ok("Member removed from project successfully");
+            return Ok(new { message = "Member removed from project successfully." });
+
         }
 
         [Authorize]
