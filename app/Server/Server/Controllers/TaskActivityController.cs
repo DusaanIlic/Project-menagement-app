@@ -86,7 +86,8 @@ namespace Server.Controllers
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task activity added successfully.");
+            return Ok(new { message = "Task activity added successfully." });
+
         }
 
 
@@ -104,7 +105,8 @@ namespace Server.Controllers
             dbContext.TaskActivities.Remove(taskActivity);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Task activity deleted successfully." });
+
         }
 
         [HttpGet("{taskActivityId}")]
