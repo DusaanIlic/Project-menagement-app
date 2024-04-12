@@ -2,7 +2,7 @@ import { Component, EventEmitter, NgModule, OnInit, Output } from '@angular/core
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { FormsModule, NgModel } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
@@ -15,7 +15,6 @@ import { AddTaskStatusComponent } from '../add-task-status/add-task-status.compo
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
-
 
 @Component({
   selector: 'app-project-kanban',
@@ -103,6 +102,8 @@ getTeamLeaderInfo(projectId: number): void {
     }
 }
 
+
+
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
       const projectId = params['id'];
@@ -135,7 +136,9 @@ getTeamLeaderInfo(projectId: number): void {
           throw error;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.cdr.detectChanges();
+      });
   }
 
   getProjectIdFromRoute(): any{
@@ -150,29 +153,36 @@ getTeamLeaderInfo(projectId: number): void {
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+        const taskId = event.item.data.taskId;
+        const newColumn = event.container.id; 
+        const newStatusId = this.getStatusIdFromColumnName(newColumn);
 
-      const taskId = event.item.data.taskId;
-      const newColumn = event.container.id;
-      const newStatusId = this.getStatusIdFromColumnName(newColumn);
+        if (event.container.data.length === 0) {
+            event.container.data.push(event.previousContainer.data[event.previousIndex]);
+        } else {
+            transferArrayItem(
+                event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex,
+            );
+        }
 
-      this.updateTaskStatus(taskId, newStatusId);
+        this.updateTaskStatus(taskId, newStatusId)
+            .subscribe(
+                () => {
+                  this.loadTasksByProject(this.projectId);
+                  console.log('Task status updated successfully.')     
+                },
+                error => console.error('Error updating task status:', error)
+            );
     }
-  }
+}
 
-  updateTaskStatus(taskId: number, newStatusId: number) {
-    this.taskService.updateTaskStatus(taskId, { TaskStatusId: newStatusId })
-      .subscribe(
-        () => console.log('Task status updated successfully.'),
-        error => console.error('Error updating task status:', error)
-      );
+  updateTaskStatus(taskId: number, newStatusId: number): Observable<any> {
+    return this.taskService.updateTaskStatus(taskId, newStatusId);
   }
 
   getStatusIdFromColumnName(columnName: string): number {
