@@ -292,7 +292,8 @@ namespace Server.Controllers
             //_dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Member disabled");
+            return Ok(new { message = "Success." });
+
         }
 
         [Authorize]
@@ -352,7 +353,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Avatar posted successfully." });
+
         }
 
         [Authorize]
@@ -382,7 +384,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
+
         }
 
         public static string GenerateRandomPassword(int length)
@@ -434,7 +437,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Password changed successfully");
+            return Ok(new { message = "Password changed successfully." });
+
         }
 
         [Authorize]
@@ -478,7 +482,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Email address changed successfully");
+            return Ok(new { message = "Email changed successfully." });
+
         }
 
         [Authorize]
