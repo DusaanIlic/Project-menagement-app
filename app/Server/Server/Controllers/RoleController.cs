@@ -112,7 +112,7 @@ namespace Server.Controllers
             dbContext.Roles.Remove(role);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         [Authorize]
@@ -162,7 +162,8 @@ namespace Server.Controllers
             dbContext.RolePermissions.Remove(rolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
+
         }
 
         [Authorize]
@@ -190,7 +191,7 @@ namespace Server.Controllers
             dbContext.RolePermissions.Add(newRolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
     }
