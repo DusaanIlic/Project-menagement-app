@@ -126,10 +126,10 @@ getTeamLeaderInfo(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
-          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
-          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
-          return data;
+          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+        this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+        this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+        return data;
         }),
         catchError(error => {
           console.error('Error fetching tasks:', error);
