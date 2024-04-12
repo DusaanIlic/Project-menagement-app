@@ -1,36 +1,32 @@
-<div *ngIf="saveChanges" class="alert alert-success">
-  Izmena uspešno obavljena.
-</div>
-<div class="flex justify-center text-accent-blue">
-  <table class="table-fixed">
-    <thead class="text-xs xl:text-xl">
-      <th></th>
-      <th class="xl:w-60 xl:text-2xl">Role</th>
-      <th class="xl:w-60 xl:text-2xl">Member</th>
-      <th class="xl:w-60 xl:text-2xl">Actions</th>
-    </thead>
-    <tbody>
-      <tr>
-        <td colspan="4">
-          <button class="rounded-lg border-dashed border-black border-2 w-full xl:text-xl xl:mb-3 xl:mt-3 xl:h-16">Add new</button>
-        </td>
-      </tr>
-      <tr class="xl:mb-3 border-b-black border-2 xl:h-16" *ngFor="let role of roles">
-        <td>
-          <img ngSrc="assets/admin.png" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-2 xl:table-cell"
-               height="32" width="32" alt="Role icon">
-        </td>
-        <td class="text-center text-xs xl:w-60 xl:text-xl">{{role.name}}</td>
-        <td class="text-center text-xs xl:w-60 xl:text-xl">{{role.count}}</td>
-        <td class="text-center text-xs xl:w-60 xl:text-xl">
-          <button class="inline-flex w-5 h-5 xl:mr-4"><img ngSrc="assets/icons/details_36_jpg.jpg" alt="Role details icon"
-                                                           height="36" width="36"></button>
-          <button [routerLink]="['/roles', role.id, 'edit']"  class="hidden w-5 h-5 xl:mr-4 xl:inline-flex"><img ngSrc="assets/icons/edit_36_jpg.jpg" alt="Role edit icon"
-                                                                     height="37" width="37"></button>
-          <button class="hidden w-5 h-5 xl:inline-flex"><img ngSrc="assets/icons/delete_36_jpg.jpg" alt="Role delete icon"
-                                                             height="36" width="32"></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="flex justify-center mt-5">
+  <div class="flex w-[90%] justify-center">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5">
+        <form>
+          <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
+            <option disabled selected >Sort by</option>
+            <option value="name">Name</option>
+          </select>
+        </form>
+
+        <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Filter by name...">
+
+        <span class="grow"></span>
+
+        <button type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 me-2  xl:hover:bg-[#0B2043]">New role</button>
+
+      </div>
+
+
+      <div class="flex justify-center">
+        <div class="table border-[1px] border-gray-300 rounded-md">
+          <tr class="">
+            <th class="text-center p-3 w-60">NAME</th>
+            <th class="text-center w-60">NUMBER OF MEMBERS</th>
+            <th class="text-center w-60">ACTIONS</th>
+          </tr>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

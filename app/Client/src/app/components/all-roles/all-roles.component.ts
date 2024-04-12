@@ -4,6 +4,9 @@ import { RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {Role} from "../../models/role";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatButton} from "@angular/material/button";
+import {MatMenu, MatMenuItem} from "@angular/material/menu";
 
 @Component({
   selector: 'app-all-roles',
@@ -12,7 +15,12 @@ import {Role} from "../../models/role";
     NgForOf,
     NgOptimizedImage,
     RouterModule,
-    CommonModule
+    CommonModule,
+    FormsModule,
+    MatButton,
+    MatMenu,
+    MatMenuItem,
+    ReactiveFormsModule
   ],
   templateUrl: './all-roles.component.html',
   styleUrl: './all-roles.component.scss'
