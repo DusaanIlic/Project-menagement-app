@@ -86,7 +86,7 @@ namespace Server.Controllers
             dbContext.TaskActivityTypes.Remove(taskActivityType);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
     }
 

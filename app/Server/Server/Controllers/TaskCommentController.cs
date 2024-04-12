@@ -102,7 +102,7 @@ namespace Server.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = "Success." });
         }
 
         [HttpDelete("{id}")]
@@ -117,7 +117,7 @@ namespace Server.Controllers
             _context.TaskComments.Remove(taskComment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Success." });
         }
 
         private bool TaskCommentExists(int id)
