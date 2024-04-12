@@ -35,7 +35,7 @@ namespace Server.Controllers
 
             await _fileService.PostFileAsync(int.Parse(uploaderId.Value), addFileRequest);
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         // [HttpPost("Multiple")]
@@ -106,7 +106,7 @@ namespace Server.Controllers
 
             await _fileService.DeleteFile(id);
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
     }
 }
