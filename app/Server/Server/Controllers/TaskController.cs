@@ -405,7 +405,8 @@ namespace Server.Controllers
             projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task status is changed successfully!");
+            return Ok(new { message = "Task status updated successfully." });
+
         }
 
         [Authorize]
@@ -520,7 +521,8 @@ namespace Server.Controllers
             projectTask.TaskPriority = taskPriority;
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task priority is changed successfully!");
+            return Ok(new { message = "Task priority changed successfully." });
+
         }
 
         [Authorize]
@@ -610,7 +612,8 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok("Members assigned to task successfully");
+            return Ok(new { message = "Member assigned to task successfully." });
+            
         }
 
         [Authorize]
@@ -626,7 +629,8 @@ namespace Server.Controllers
 
             if (member.IsDisabled)
             {
-                return Ok("This member is disabled.");
+                return Ok(new { message = "This member is disabled." });
+
             }
 
             var memberTasks = await dbContext.MemberTasks
@@ -641,7 +645,8 @@ namespace Server.Controllers
 
             if (!memberTasks.Any())
             {
-                return Ok("Member does not have any task.");
+                return Ok(new { message = "Member does not have any task." });
+
             }
 
             var taskDTOs = new List<ProjectTaskDTO>();
@@ -733,7 +738,8 @@ namespace Server.Controllers
             dbContext.TaskDependencies.Add(newDependency);
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Dependency added between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+            return Ok(new { message = "Task dependency added successfully." });
+
         }
 
         [Authorize]
@@ -822,7 +828,8 @@ namespace Server.Controllers
             dbContext.TaskDependencies.Remove(existingDependency);
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Dependency removed between Task ID {taskId} and Dependent Task ID {dependentTaskId}.");
+            return Ok(new { message = "Task dependency deleted." });
+
         }
 
         [Authorize]
@@ -863,7 +870,8 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Category added to Task ID {taskId}.");
+            return Ok(new { message = "Category added successfully." });
+
         }
 
         [Authorize]
@@ -902,7 +910,8 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Category removed from Task ID {taskId}.");
+            return Ok(new { message = "Category removed successfully" });
+
         }
 
         [Authorize]
@@ -932,8 +941,7 @@ namespace Server.Controllers
 
             var projectTask = await dbContext.ProjectTasks
                                              .Include(pt => pt.Project).Include(pt => pt.Members)
-                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId)
-                                             ;
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
 
             if (projectTask == null)
             {
@@ -950,7 +958,8 @@ namespace Server.Controllers
             projectTask.Members.Remove(memberTask);
             await dbContext.SaveChangesAsync();
 
-            return Ok($"Member with ID {memberId} is removed from task with ID {taskId}");
+            return Ok(new { message = "Member is removed from task successfully." });
+
         }
 
         [Authorize]
@@ -971,7 +980,8 @@ namespace Server.Controllers
 
             if (!memberTasks.Any())
             {
-                return Ok("Member does not have any task.");
+                return Ok(new { message = "Member does not have any task." });
+
             }
 
             var taskDTOs = new List<MemberTaskDTO>();
