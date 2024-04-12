@@ -106,7 +106,7 @@ namespace Server.Controllers
             dbContext.Permissions.Remove(permission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
     }
