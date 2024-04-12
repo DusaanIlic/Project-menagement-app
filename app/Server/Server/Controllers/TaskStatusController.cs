@@ -106,8 +106,9 @@ public partial class ProjectController
         dbContext.TaskStatuses.Remove(taskStatus);
 
         await dbContext.SaveChangesAsync();
-        
-        return NoContent();
+
+        return Ok(new { message = "Success." });
+
     }
 
     [HttpPut("{projectId}/TaskStatus/{taskStatusId}")]
