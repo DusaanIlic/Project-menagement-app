@@ -48,7 +48,11 @@
 
                 <ng-container *ngIf="todo.length > 0; else emptyTodo">
                     <ng-container *ngFor="let item of todo; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
+                            'low-priority': item.taskPriorityId === 1,
+                            'medium-priority': item.taskPriorityId === 2,
+                            'high-priority': item.taskPriorityId === 3
+                          }">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                                 (click)="openConfirmationDialog('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
@@ -79,7 +83,12 @@
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngIf="progress.length > 0; else emptyProgress">
                     <ng-container *ngFor="let item of progress; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item"[ngClass]="{
+                            'low-priority': item.taskPriorityId === 1,
+                            'medium-priority': item.taskPriorityId === 2,
+                            'high-priority': item.taskPriorityId === 3
+                          }"
+                          >{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                             (click)="openConfirmationDialog('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
@@ -106,7 +115,11 @@
                 (cdkDropListDropped)="drop($event)">
                 <ng-container *ngIf="done.length > 0; else emptyDone">
                 <ng-container *ngFor="let item of done; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move"  cdkDrag [cdkDragData]="item">{{item.taskName}}
+                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
+                            'low-priority': item.taskPriorityId === 1,
+                            'medium-priority': item.taskPriorityId === 2,
+                            'high-priority': item.taskPriorityId === 3
+                          }">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                             (click)="openConfirmationDialog('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>

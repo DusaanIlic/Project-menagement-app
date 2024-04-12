@@ -126,9 +126,9 @@ getTeamLeaderInfo(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          this.todo = data.filter(task => task.taskStatusId === 1);
-          this.progress = data.filter(task => task.taskStatusId === 2);
-          this.done = data.filter(task => task.taskStatusId === 3);
+          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
+          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
+          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => a.taskPriorityId - b.taskPriorityId);
           return data;
         }),
         catchError(error => {
@@ -174,7 +174,7 @@ getTeamLeaderInfo(projectId: number): void {
             .subscribe(
                 () => {
                   this.loadTasksByProject(this.projectId);
-                  console.log('Task status updated successfully.')     
+                  //console.log('Task status updated successfully.')     
                 },
                 error => console.error('Error updating task status:', error)
             );
