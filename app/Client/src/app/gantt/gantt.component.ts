@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 @Component({
   selector: 'app-gantt',
   standalone: true,
-  imports: [],
+  imports: [GoogleChartsModule],
   templateUrl: './gantt.component.html',
-  styleUrl: './gantt.component.scss'
+  styleUrl: './gantt.component.scss',
 })
-export class GanttComponent {
-
-}
+export class GanttComponent {}
