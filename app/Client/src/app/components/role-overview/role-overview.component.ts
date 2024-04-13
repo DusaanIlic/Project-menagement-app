@@ -9,6 +9,10 @@ import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
 import {NgForOf, NgIf} from "@angular/common";
 import {MatTab, MatTabGroup} from "@angular/material/tabs";
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatFormField, MatLabel, MatSelect} from "@angular/material/select";
+import {MatInput} from "@angular/material/input";
 
 @Component({
   selector: 'app-role-overview',
@@ -26,13 +30,23 @@ import {MatTab, MatTabGroup} from "@angular/material/tabs";
     NgForOf,
     NgIf,
     MatTabGroup,
-    MatTab
+    MatTab,
+    MatCard,
+    MatCardContent,
+    MatOption,
+    MatSelect,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatCardHeader,
+    MatCardTitle,
   ],
   templateUrl: './role-overview.component.html',
   styleUrl: './role-overview.component.scss'
 })
 export class RoleOverviewComponent implements OnInit {
   roles: Role[] = [];
+  selectedRole: any;
 
   constructor(public dialogRef: MatDialogRef<RoleOverviewComponent>, public roleService: RoleService) { }
 
@@ -50,5 +64,9 @@ export class RoleOverviewComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  selectRole(role: Role) {
+    this.selectedRole = role;
   }
 }
