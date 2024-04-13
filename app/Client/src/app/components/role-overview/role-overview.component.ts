@@ -7,7 +7,8 @@ import {MatListItem, MatNavList} from "@angular/material/list";
 import {MatDialogRef} from "@angular/material/dialog";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
+import {MatTab, MatTabGroup} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-role-overview',
@@ -22,7 +23,10 @@ import {NgForOf} from "@angular/common";
     MatNavList,
     MatListItem,
     MatButton,
-    NgForOf
+    NgForOf,
+    NgIf,
+    MatTabGroup,
+    MatTab
   ],
   templateUrl: './role-overview.component.html',
   styleUrl: './role-overview.component.scss'

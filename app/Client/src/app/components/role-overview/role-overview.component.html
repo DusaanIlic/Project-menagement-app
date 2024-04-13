@@ -2,22 +2,35 @@
   <mat-toolbar class="flex justify-between">
     <h1>Roles Overview</h1>
 
-    <button mat-button type="button" (click)="closeDialog()">
-      <mat-icon>close</mat-icon>
+    <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+      <div class="flex items-center justify-center">
+        <mat-icon>close</mat-icon>
+      </div>
     </button>
   </mat-toolbar>
 
   <mat-sidenav-container class="grow">
     <mat-sidenav #sidenav mode="side" opened="true">
       <mat-nav-list>
-        <mat-list-item>New Role</mat-list-item>
-        <hr>
-        <mat-list-item *ngFor="let role of roles">{{role.name}}</mat-list-item>
+        <mat-list-item *ngFor="let role of roles">
+          <div class="flex items-center justify-content-between">
+            <mat-icon *ngIf="role.isDefault" class="scale-75">lock</mat-icon>
+            <p>{{role.name}}</p>
+          </div>
+        </mat-list-item>
+        <mat-list-item >
+          <div class="flex items-center justify-content-between">
+            <p>custom role</p>
+          </div>
+        </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <p>Testasdasd</p>
+      <mat-tab-group>
+        <mat-tab label="Permissions"></mat-tab>
+        <mat-tab label="Members"></mat-tab>
+      </mat-tab-group>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
