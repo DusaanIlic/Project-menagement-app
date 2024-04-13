@@ -51,7 +51,7 @@ namespace Server.Controllers
 
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
             var roleDTO = new RoleDTO
@@ -101,12 +101,12 @@ namespace Server.Controllers
             var role = await dbContext.Roles.FindAsync(roleId);
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
             if(role.RoleId == 1 || role.RoleId == 2 || role.RoleId == 3)
             {
-                return BadRequest("Cannot delete this role.");
+                return BadRequest(new { message = "Cannot delete this role." });
             }
 
             dbContext.Roles.Remove(role);
@@ -130,7 +130,7 @@ namespace Server.Controllers
 
             if (rolePermissions == null || rolePermissions.Count == 0)
             {
-                return NotFound("Permissions for this role not found.");
+                return NotFound(new { message = "Permissions for this role not found." });
             }
 
             var permissionDTOs = rolePermissions.Select(p => new PermissionDTO
@@ -156,7 +156,7 @@ namespace Server.Controllers
 
             if (rolePermission == null)
             {
-                return NotFound("Role permission not found.");
+                return NotFound(new { message = "Role permission not found." });
             }
 
             dbContext.RolePermissions.Remove(rolePermission);
@@ -179,7 +179,7 @@ namespace Server.Controllers
 
             if (existingRolePermission != null)
             {
-                return Conflict("Role already has this permission.");
+                return Conflict(new { message = "Role already has this permission." });
             }
 
             var newRolePermission = new RolePermission

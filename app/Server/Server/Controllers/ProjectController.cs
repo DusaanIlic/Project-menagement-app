@@ -105,12 +105,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -128,7 +128,7 @@ namespace Server.Controllers
 
             if (teamLeader == null)
             {
-                return BadRequest();
+                return BadRequest(new {message = "Member not found"});
             }
             
             var project = new Models.Project()
@@ -208,7 +208,7 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound(); 
+                return NotFound(new {message = "Project not found"}); 
             }
 
             var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
@@ -272,7 +272,7 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Project not found"});
             }
 
             project.ProjectName = updateProjectRequest.ProjectName;
@@ -336,12 +336,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -361,7 +361,7 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Project not found."});
             }
          
             dbContext.Projects.Remove(project);
@@ -381,12 +381,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -405,11 +405,11 @@ namespace Server.Controllers
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
-                return NotFound("Project not found");
+                return NotFound(new { message = "Project not found" });
 
             var status = await dbContext.ProjectStatuses.FindAsync(statusId);
             if (status == null)
-                return NotFound("Status not found");
+                return NotFound(new { message = "Status not found" });
 
             if(statusId == 3 && project.StartDate == DateTime.MinValue)
             {
@@ -431,7 +431,7 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound("Project not found");
+                return NotFound(new { message = "Project not found" });
             }
 
             var tasks = await dbContext.ProjectTasks
@@ -461,13 +461,13 @@ namespace Server.Controllers
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
             {
-                return NotFound("Project not found");
+                return NotFound(new { message = "Project not found" });
             }
 
             var person = await dbContext.Members.FindAsync(memberId);
             if (person == null)
             {
-                return NotFound("Member not found");
+                return NotFound(new { message = "Member not found" });
             }
 
             project.TeamLeaderId = memberId;
@@ -485,12 +485,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -505,27 +505,27 @@ namespace Server.Controllers
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
             {
-                return NotFound("Project not found");
+                return NotFound(new { message = "Project not found" });
             }
 
             var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id) && !m.IsDisabled).ToListAsync();
             
             if (members == null || members.Count != memberIds.Count)
             {
-                return NotFound("One or more members not found");
+                return NotFound(new { message = "One or more members not found" });
             }
 
             foreach (var memberId in memberIds)
             {  
                 if (project.TeamLeaderId == memberId)
                 {
-                    return BadRequest("Member is already a team leader of the project");
+                    return BadRequest(new { message = "Member is already a team leader of the project" });
                 }
 
                 var existingMemberProject = await dbContext.MemberProjects.FirstOrDefaultAsync(mp => mp.ProjectId == projectId && mp.MemberId == memberId);
                 if (existingMemberProject != null)
                 {
-                    return BadRequest("Member already exists in the project");
+                    return BadRequest(new { message = "Member already exists in the project" });
                 }
 
                 dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
@@ -567,12 +567,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -590,13 +590,13 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound("Project not found");
+                return NotFound(new { message = "Project not found" });
             }
 
             var memberProject = project.MemberProjects.FirstOrDefault(mp => mp.MemberId == memberId);
             if (memberProject == null)
             {
-                return NotFound("Member not found on project");
+                return NotFound(new { message = "Member not found on project" });
             }
 
             dbContext.MemberProjects.Remove(memberProject);
@@ -614,7 +614,7 @@ namespace Server.Controllers
 
             if(project == null)
             {
-                return BadRequest("Project not found.");
+                return BadRequest(new { message = "Project not found." });
             }
 
             var members = await dbContext.Members
