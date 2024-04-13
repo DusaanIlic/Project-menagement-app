@@ -91,12 +91,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -112,7 +112,7 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound("Project with this id not found.");
+                return NotFound(new { message = "Project with this id not found." });
             }
 
             var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
@@ -141,7 +141,7 @@ namespace Server.Controllers
                 if (member == null)
                 {
 
-                    return NotFound($"Member with ID {memberId} not found");
+                    return NotFound(new { message = $"Member with ID {memberId} not found" });
                 }
 
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
@@ -230,7 +230,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Task not found"});
             }
 
             projectTask.Deadline = updateProjectTaskRequest.Deadline;
@@ -270,12 +270,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -291,7 +291,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound(); 
+                return NotFound(new { message = "Task not found" });
             }
 
             dbContext.ProjectTasks.Remove(projectTask);
@@ -315,7 +315,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound("Specified project does not exist"); 
+                return NotFound(new { message = "Specified project does not exist" }); 
             }
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
@@ -360,12 +360,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -380,13 +380,13 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
-                return NotFound("Specified project does not exist");
+                return NotFound(new { message = "Specified project does not exist" });
             }
 
             var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
             if (projectTaskStatus == null)
             {
-                return NotFound("Specified task status does not exist.");
+                return NotFound(new { message = "Specified task status does not exist." });
             }
 
             var statusBelongsToProject = await dbContext.ProjectTaskStatuses
@@ -394,7 +394,7 @@ namespace Server.Controllers
 
             if (!statusBelongsToProject)
             {
-                return BadRequest("Task Status does not belong to this project.");
+                return BadRequest(new { message = "Task Status does not belong to this project." });
             }
 
             if(statusId == 2)
@@ -489,12 +489,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -509,13 +509,13 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
-                return NotFound("Specified task does not exist");
+                return NotFound(new { message = "Specified task does not exist" });
             }
 
             var taskPriority = await dbContext.TaskPriority.FindAsync(priorityId);
             if (taskPriority == null)
             {
-                return NotFound("Specified task priority does not exist.");
+                return NotFound(new { message = "Specified task priority does not exist." });
             }
 
             projectTask.TaskPriority = taskPriority;
@@ -533,12 +533,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -554,7 +554,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound("Task not found");
+                return NotFound(new { message = "Task not found" });
             }
 
             foreach (var memberId in memberIds)
@@ -562,12 +562,12 @@ namespace Server.Controllers
                 var member = await dbContext.Members.FindAsync(memberId);
                 if (member == null)
                 {
-                    return NotFound($"Member with ID {memberId} not found.");
+                    return NotFound(new { message = $"Member with ID {memberId} not found." });
                 }
 
                 if (member.IsDisabled)
                 {
-                    return BadRequest($"Member with ID {memberId} is disabled.");
+                    return BadRequest(new { message = $"Member with ID {memberId} is disabled." });
                 }
 
                 var memberProject = await dbContext.MemberProjects
@@ -582,7 +582,7 @@ namespace Server.Controllers
 
                 if (existingMemberTask != null)
                 {
-                    return BadRequest($"Member with ID {memberId} is already assigned to this task");
+                    return BadRequest(new { message = $"Member with ID {memberId} is already assigned to this task" });
                 }
 
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = taskId });
@@ -624,7 +624,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound("Member does not exist.");
+                return NotFound(new { message = "Member does not exist." });
             }
 
             if (member.IsDisabled)
@@ -696,12 +696,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -718,7 +718,7 @@ namespace Server.Controllers
 
             if (task == null || dependentTask == null)
             {
-                return NotFound("Specified task or dependent task does not exist.");
+                return NotFound(new { message = "Specified task or dependent task does not exist." });
             }
 
             var existingDependency = await dbContext.TaskDependencies
@@ -726,7 +726,7 @@ namespace Server.Controllers
 
             if (existingDependency != null)
             {
-                return BadRequest("Dependency already exists for the specified tasks.");
+                return BadRequest(new { message = "Dependency already exists for the specified tasks." });
             }
 
             var newDependency = new TaskDependency
@@ -753,7 +753,7 @@ namespace Server.Controllers
 
             if (dependentTaskIds == null || dependentTaskIds.Count == 0)
             {
-                return NotFound("Specified task has no dependent tasks");
+                return NotFound(new { message = "Specified task has no dependent tasks" });
             }
 
             var dependentTasks = await dbContext.ProjectTasks
@@ -791,12 +791,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -813,7 +813,7 @@ namespace Server.Controllers
 
             if (task == null || dependentTask == null)
             {
-                return NotFound("Specified task or dependent task does not exist.");
+                return NotFound(new { message = "Specified task or dependent task does not exist." });
             }
 
             var existingDependency = await dbContext.TaskDependencies
@@ -821,7 +821,7 @@ namespace Server.Controllers
 
             if (existingDependency == null)
             {
-                return NotFound("Dependency does not exist between the specified tasks.");
+                return NotFound(new { message = "Dependency does not exist between the specified tasks." });
             }
 
             
@@ -840,12 +840,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -863,7 +863,7 @@ namespace Server.Controllers
 
             if (task == null || category == null)
             {
-                return NotFound("Specified task or category does not exist.");
+                return NotFound(new { message = "Specified task or category does not exist." });
             }
 
             task.TaskCategoryId = categoryId;
@@ -882,12 +882,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -903,7 +903,7 @@ namespace Server.Controllers
 
             if (task == null)
             {
-                return NotFound("Specified task does not exist.");
+                return NotFound(new { message = "Specified task does not exist." });
             }
 
             task.TaskCategoryId = 1;
@@ -922,12 +922,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await rolePermissionService.CheckRole(userId);
@@ -945,14 +945,14 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound("Task not found");
+                return NotFound(new { message = "Task not found" });
             }
 
             var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == memberId);
 
             if (memberTask == null)
             {
-                return NotFound("Member is not assigned to this task");
+                return NotFound(new { message = "Member is not assigned to this task" });
             }
 
             projectTask.Members.Remove(memberTask);
