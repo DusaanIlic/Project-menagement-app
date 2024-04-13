@@ -120,6 +120,10 @@ namespace Server.Data
                 .WithOne(rp => rp.Role)
                 .HasForeignKey(rp => rp.RoleId);
 
+            modelBuilder.Entity<Role>()
+                .HasIndex(r => r.RoleName)
+                .IsUnique();
+
             modelBuilder.Entity<Permission>()
                 .HasMany(p => p.RolePermissions)
                 .WithOne(rp => rp.Permission)
@@ -194,11 +198,11 @@ namespace Server.Data
                 new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
             );
-
+            
             modelBuilder.Entity<Role>().HasData(
-                new Role { RoleId = 1, RoleName = "Administrator" },
-                new Role { RoleId = 2, RoleName = "Project Manager"},
-                new Role { RoleId = 3, RoleName = "Worker" }
+                new Role { RoleId = 1, RoleName = "Administrator", IsDefault = true },
+                new Role { RoleId = 2, RoleName = "Project Manager", IsDefault = true },
+                new Role { RoleId = 3, RoleName = "Worker", IsDefault = true }
             );
 
             modelBuilder.Entity<RolePermission>().HasData(

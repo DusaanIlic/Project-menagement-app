@@ -33,7 +33,8 @@ namespace Server.Controllers
             var roleDTOs = roles.Select(r => new RoleDTO
             {
                 Id = r.RoleId,
-                Name = r.RoleName
+                Name = r.RoleName,
+                IsDefault = r.IsDefault
             }).ToList();
 
             return Ok(roleDTOs);
@@ -57,7 +58,8 @@ namespace Server.Controllers
             var roleDTO = new RoleDTO
             {
                 Id = role.RoleId,
-                Name = role.RoleName
+                Name = role.RoleName,
+                IsDefault = role.IsDefault
             };
 
             return Ok(roleDTO);
@@ -83,7 +85,8 @@ namespace Server.Controllers
             var roleDTO = new RoleDTO
             {
                 Id = role.RoleId,
-                Name = role.RoleName
+                Name = role.RoleName,
+                IsDefault = role.IsDefault
             };
 
             return Ok(roleDTO);

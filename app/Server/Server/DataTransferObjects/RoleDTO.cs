@@ -1,8 +1,16 @@
-﻿namespace Server.DataTransferObjects
+﻿using Microsoft.Build.Framework;
+
+namespace Server.DataTransferObjects
 {
     public class RoleDTO
     {
+        [Required]
         public int Id { get; set; }
+        
+        [Required]
         public string  Name { get; set; }
+        
+        [Required]
+        public bool IsDefault { get; set; }
     }
 }

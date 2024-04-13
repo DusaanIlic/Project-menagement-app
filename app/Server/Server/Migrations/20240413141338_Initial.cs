@@ -45,7 +45,8 @@ namespace Server.Migrations
                 {
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    RoleName = table.Column<string>(type: "TEXT", nullable: false)
+                    RoleName = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -442,12 +443,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Roles",
-                columns: new[] { "RoleId", "RoleName" },
+                columns: new[] { "RoleId", "IsDefault", "RoleName" },
                 values: new object[,]
                 {
-                    { 1, "Administrator" },
-                    { 2, "Project Manager" },
-                    { 3, "Worker" }
+                    { 1, true, "Administrator" },
+                    { 2, true, "Project Manager" },
+                    { 3, true, "Worker" }
                 });
 
             migrationBuilder.InsertData(
@@ -490,9 +491,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 11, 16, 42, 26, 854, DateTimeKind.Local).AddTicks(5510), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$THZJ2JAdrqfSRwmx.U4Jvea1WsEzQsKqRhQNn2CoOdTAFFJUm9ap2", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 11, 16, 42, 26, 988, DateTimeKind.Local).AddTicks(6385), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$r4U3d.nMo2d43ZitEwashO/Wd4YTSBdgpMUkKG.LTtNQYrRKlj8r.", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 11, 16, 42, 27, 122, DateTimeKind.Local).AddTicks(6226), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$42UDzs48MWTL0aTz/FtH2e2s21QSMlK23a3LyAvpO9q01slNqUMQm", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 13, 16, 13, 37, 42, DateTimeKind.Local).AddTicks(1800), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$1isETpwcK/BLV4PF43oeneJLX59Yu/5AL8vFNbvUucBVD.3Y/Qtne", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 13, 16, 13, 37, 107, DateTimeKind.Local).AddTicks(2155), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$hnMpHxFPemg1EcHu1L6fIe/0bNOUeb5QIhJSe8augzigcUmxNUdMK", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 13, 16, 13, 37, 171, DateTimeKind.Local).AddTicks(477), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$YWw11xBzaNFzVX3j85STm.HjCduOBczrWHMkkThKJOMRzPXcHkHnG", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -591,6 +592,12 @@ namespace Server.Migrations
                 name: "IX_RolePermissions_PermissionId",
                 table: "RolePermissions",
                 column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_RoleName",
+                table: "Roles",
+                column: "RoleName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskActivities_MemberId",
