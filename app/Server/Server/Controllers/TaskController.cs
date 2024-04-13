@@ -348,7 +348,8 @@ namespace Server.Controllers
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
-                AssignedMembers = assignedMembers
+                AssignedMembers = assignedMembers,
+                TaskPriorityName = projectTask.TaskPriority.Name
             };
 
             return Ok(taskDTO); 
