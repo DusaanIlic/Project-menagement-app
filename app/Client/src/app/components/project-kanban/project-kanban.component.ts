@@ -100,9 +100,7 @@ getTeamLeaderInfo(projectId: number): void {
     if (this.dropList.includes(statusName.toLowerCase())) {
         this.showNewStatusList = true;
     }
-}
-
-
+  }
 
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
