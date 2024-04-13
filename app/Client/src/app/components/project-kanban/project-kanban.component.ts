@@ -8,6 +8,10 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
@@ -22,7 +26,7 @@ import { ProjectNavbarComponent } from "../project-navbar/project-navbar.compone
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList, CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
+  imports: [CdkDropList, MatDividerModule,MatIconModule, MatButtonModule ,MatButtonToggleModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -70,16 +74,8 @@ export class ProjectKanbanComponent implements OnInit {
   };
 
   toggleColumnVisibility(column: string) {
-    if(column == 'todo'){
-      this.toggleToDoList();
-    }
-    else if(column == 'progress'){
-      this.toggleProgressList();
-    }
-    else if(column == 'done'){
-      this.toggleDoneList();
-    }
-}
+    this.columnVisibility[column] = !this.columnVisibility[column];
+  }
 
 getTeamLeaderInfo(projectId: number): void {
   this.projectService.getProjectById(projectId)

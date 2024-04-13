@@ -18,10 +18,13 @@
                     <p>{{teamLeaderInfo?.roleName}}</p>
                 </div>
 
-                <form *ngFor="let column of dropList">
-                    <input type="checkbox" [id]="column" [name]="column" [value]="column" [(ngModel)]="columnVisibility[column]" (click)="toggleColumnVisibility(column)">
-                    <label [for]="column" class="pl-1">{{ column | titlecase }}</label><br>
-                </form>
+                <mat-button-toggle-group name="fontStyle" aria-label="Font Style" multiple class="p-0">
+                    <mat-button-toggle *ngFor="let column of dropList" [value]="column" (click)="toggleColumnVisibility(column.titlecase)">
+                      {{ column | titlecase }}
+                    </mat-button-toggle>
+                  </mat-button-toggle-group>
+                  
+                  
             </div>
         </div>
 
@@ -31,6 +34,8 @@
             <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 ml-3" (click)="openTaskStatusDialog()">Add Column</button>
         </div>
     </div>
+
+    <mat-divider></mat-divider>
 
 
     <div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
@@ -54,7 +59,7 @@
                             'high-priority': item.taskPriorityId === 3
                           }">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                                (click)="openConfirmationDialog(column, item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                                (click)="openConfirmationDialog(column, item.taskId)"><mat-icon>delete</mat-icon></button>
                         </div>
                     </ng-container>
                 </ng-container>
