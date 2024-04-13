@@ -38,7 +38,7 @@ export class AllProjectsComponent implements OnInit{
 
     dialogRef
       .afterClosed()
-      .subscribe((data) => console.log('Dialog output:', data));
+      .subscribe((data) => this.fetchProjects());
   }
 
 
