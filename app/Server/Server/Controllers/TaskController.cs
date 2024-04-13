@@ -47,7 +47,7 @@ namespace Server.Controllers
             foreach (var t in tasks)
             {
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
-
+                var taskPriority = await dbContext.TaskPriority.FirstOrDefaultAsync(tp => tp.TaskPriorityId == t.TaskPriorityId);
                 var assignedMembers = t.Members.Select(ta => new MemberDTO
                 {
                     Id = ta.Member.Id,
@@ -64,18 +64,19 @@ namespace Server.Controllers
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
-                   Deadline = t.Deadline,
-                   ProjectId = t.ProjectId,
-                   TaskDescription= t.TaskDescription,
-                   TaskId = t.TaskId,
-                   TaskName = t.TaskName,
-                   TaskStatus = t.TaskStatus.Name,
-                   TaskStatusId = t.TaskStatusId,
-                   StartDate = t.StartDate,
-                   TaskPriorityId = t.TaskPriorityId,
-                   IsTaskDependentOn = isTaskDependentOn,
-                   TaskCategoryId = t.TaskCategoryId,
-                   AssignedMembers = assignedMembers
+                    Deadline = t.Deadline,
+                    ProjectId = t.ProjectId,
+                    TaskDescription = t.TaskDescription,
+                    TaskId = t.TaskId,
+                    TaskName = t.TaskName,
+                    TaskStatus = t.TaskStatus.Name,
+                    TaskStatusId = t.TaskStatusId,
+                    StartDate = t.StartDate,
+                    TaskPriorityId = t.TaskPriorityId,
+                    IsTaskDependentOn = isTaskDependentOn,
+                    TaskCategoryId = t.TaskCategoryId,
+                    AssignedMembers = assignedMembers,
+                    TaskPriorityName = taskPriority.Name
                 });
 
             }

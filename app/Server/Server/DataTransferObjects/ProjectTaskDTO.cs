@@ -14,5 +14,6 @@
         public bool IsTaskDependentOn { get; set; }
         public int TaskCategoryId {  get; set; }
         public List<MemberDTO> AssignedMembers { get; set; }
+        public string TaskPriorityName { get; set; }
     }
 }
