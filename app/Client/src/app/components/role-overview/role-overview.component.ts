@@ -15,6 +15,8 @@ import {MatFormField, MatLabel, MatSelect} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
 import {Permission} from "../../models/permission";
 import {MatCheckbox} from "@angular/material/checkbox";
+import {forkJoin, map} from "rxjs";
+import {switchMap} from "rxjs/operators";
 
 @Component({
   selector: 'app-role-overview',
@@ -48,30 +50,57 @@ import {MatCheckbox} from "@angular/material/checkbox";
   styleUrl: './role-overview.component.scss'
 })
 export class RoleOverviewComponent implements OnInit {
-  roles: Role[] = [];
-  permissions: Permission[] = [];
+  roles: any[] = [];
+  permissions: any[] = [];
+  rolePermissions: any[] = [];
   selectedRole: any;
 
   constructor(public dialogRef: MatDialogRef<RoleOverviewComponent>, public roleService: RoleService) { }
 
   ngOnInit() {
-    this.roleService.getAllRoles().subscribe({
-      next: data => {
-        this.roles = data;
-      },
-      error: error => {
+    const roles$ = this.roleService.getAllRoles();
+    const permissions$ = this.roleService.getAllPermissions();
 
-      }
+    forkJoin([roles$, permissions$]).pipe(
+      switchMap(([roles, permissions]) => {
+        this.roles = roles;
+        this.permissions = permissions;
+
+        const rolePermissionRequests = roles.map(role => {
+          return this.roleService.getRoleWithPermissions(role.id).pipe(
+            map((permissions) => ({ roleId: role.id, permissions }))
+          );
+        });
+
+        return forkJoin(rolePermissionRequests);
+      })
+    ).subscribe(rolePermissions => {
+      this.rolePermissions = rolePermissions;
+
+
+      console.log(this.rolePermissions);
     });
+  }
 
-    this.roleService.getAllPermissions().subscribe({
-      next: data => {
-        this.permissions = data;
-      },
-      error: error => {
+  isPermissionAssigned(roleId: number, permissionId: number): boolean {
+    const rolePermission = this.rolePermissions.find(rp => rp.roleId === roleId);
 
-      }
-    });
+    console.log('rolePermission:', rolePermission); // Debugging
+
+    if (rolePermission) {
+      console.log('rolePermission.permissions:', rolePermission.permissions); // Debugging
+
+      const hasPermission = rolePermission.permissions.some((p: { permissionId: number; }) => {
+        console.log('Checking permissionId:', p.permissionId, ' if matches with :', permissionId); // Debugging
+        return p.permissionId === permissionId;
+      });
+
+      console.log('hasPermission:', hasPermission); // Debugging
+
+      return hasPermission;
+    }
+
+    return false;
   }
 
   closeDialog(): void {
