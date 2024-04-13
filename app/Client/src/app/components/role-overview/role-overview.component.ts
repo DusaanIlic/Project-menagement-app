@@ -13,7 +13,6 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/mat
 import {MatOption} from "@angular/material/autocomplete";
 import {MatFormField, MatLabel, MatSelect} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
-import {Permission} from "../../models/permission";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {forkJoin, map} from "rxjs";
 import {switchMap} from "rxjs/operators";
@@ -76,28 +75,16 @@ export class RoleOverviewComponent implements OnInit {
       })
     ).subscribe(rolePermissions => {
       this.rolePermissions = rolePermissions;
-
-
-      console.log(this.rolePermissions);
     });
   }
 
   isPermissionAssigned(roleId: number, permissionId: number): boolean {
     const rolePermission = this.rolePermissions.find(rp => rp.roleId === roleId);
 
-    console.log('rolePermission:', rolePermission); // Debugging
-
     if (rolePermission) {
-      console.log('rolePermission.permissions:', rolePermission.permissions); // Debugging
-
-      const hasPermission = rolePermission.permissions.some((p: { permissionId: number; }) => {
-        console.log('Checking permissionId:', p.permissionId, ' if matches with :', permissionId); // Debugging
+      return rolePermission.permissions.some((p: { permissionId: number; }) => {
         return p.permissionId === permissionId;
       });
-
-      console.log('hasPermission:', hasPermission); // Debugging
-
-      return hasPermission;
     }
 
     return false;
