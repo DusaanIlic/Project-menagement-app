@@ -22,8 +22,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  getTasksByProject(projectId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${TASK_API}/project/${projectId}`);
+  getTasksByProject(projectId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${TASK_API}/project/${projectId}`);
   }
 
   deleteTask(id: number): Observable<any> {

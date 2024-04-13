@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -7,6 +7,10 @@ import { catchError, map } from 'rxjs/operators';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { ActivatedRoute } from '@angular/router';
 import { Task } from '../../models/task';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { FormsModule } from '@angular/forms';
+import { TaskOverviewComponent } from '../task-overview/task-overview.component';
 
 
 @Component({
@@ -17,7 +21,10 @@ import { Task } from '../../models/task';
     NgIf,
     MatDialogModule,
     NgToastModule,
-    CommonModule
+    CommonModule,
+    MatButtonModule,
+    MatMenuModule,
+    FormsModule
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -29,11 +36,14 @@ export class AllTasksComponent {
   progress: Task[] = [];
   done: Task[] = [];
   projectId: number = 0;
+  allTasks: Task[] = []
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
               private _ngToastService: NgToastService,
-              private route: ActivatedRoute){}
+              private route: ActivatedRoute,
+              private cdr: ChangeDetectorRef,
+              private tService : TaskService){}
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
@@ -54,19 +64,22 @@ export class AllTasksComponent {
   loadTasksByProject(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
-        map((data: Task[]) => {
-          console.log("Tasts: " + data)
-          this.todo = data.filter(task => task.taskStatusId === 1);
-          this.progress = data.filter(task => task.taskStatusId === 2);
-          this.done = data.filter(task => task.taskStatusId === 3);
-          return data;
+        map((data: any[]) => {
+          console.log(data)
+          this.allTasks = data
+          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+        return data;
         }),
         catchError(error => {
           console.error('Error fetching tasks:', error);
-          throw error; 
+          throw error;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.cdr.detectChanges();
+      });
   }
 
   getProjectIdFromRoute(){
@@ -77,5 +90,25 @@ export class AllTasksComponent {
 
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+  }
+
+  openDialogOverview(taskId : number)
+  {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId
+    });
+  }
+
+  deleteTask(taskId : number)
+  {
+    this.tService.deleteTask(taskId).subscribe({
+      next : data =>{
+        this.loadTasksByProject(this.projectId);
+      },
+      error : error =>{
+        console.log("Error deleting task!")
+      }
+    });
   }
 }

@@ -61,17 +61,32 @@
         </tr>
 
         <tr>
-          <td *ngIf="todo.length == 0" class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No finished projects.</td>
+          <td *ngIf="allTasks.length == 0" class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No finished projects.</td>
         </tr>
-        <tr *ngFor="let task of todo" class="border-[1px] border-gray-500 hover:bg-gray-300">
+        <tr *ngFor="let task of allTasks" class="border-[1px] border-gray-500 hover:bg-gray-300">
           <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.taskName}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{task.startDate | date}}</td>
           <td class="w-60 border-t-[1px] border-t-gray-300">{{task.deadline | date}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskStatus}}</td>
+          <td *ngIf="task.taskStatusId == 1" class="w-60 border-t-[1px] border-t-gray-300 text-[#EE9322]">
+            {{task.taskStatus}}
+          </td>
+          <td *ngIf="task.taskStatusId == 2" class="w-60 border-t-[1px] border-t-gray-300 text-[#0029a3]">
+            {{task.taskStatus}}
+          </td>
+          <td *ngIf="task.taskStatusId == 3" class="w-60 border-t-[1px] border-t-gray-300 text-[#002d00]">
+            {{task.taskStatus}}
+          </td>
           <td *ngIf="task.taskPriorityId == 0" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriority}}</div></td>
           <td *ngIf="task.taskPriorityId == 1" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriority}}</div></td>
           <td *ngIf="task.taskPriorityId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskPriority}}</div></td>
           <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300">
+            <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
+          </td>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+              <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="deleteTask(task.taskId)">Delete</button>
+            </mat-menu>
         </tr>
       </div>
     </div>
