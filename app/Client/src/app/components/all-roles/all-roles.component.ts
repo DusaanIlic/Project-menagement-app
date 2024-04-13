@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForOf, NgOptimizedImage} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import { RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import {Role} from "../../models/role";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatButton} from "@angular/material/button";
-import {MatMenu, MatMenuItem} from "@angular/material/menu";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {RoleService} from "../../services/role.service";
 
 @Component({
   selector: 'app-all-roles',
@@ -15,33 +15,35 @@ import {MatMenu, MatMenuItem} from "@angular/material/menu";
     NgForOf,
     NgOptimizedImage,
     RouterModule,
-    CommonModule,
     FormsModule,
     MatButton,
     MatMenu,
     MatMenuItem,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgIf,
+    MatMenuTrigger,
+    DatePipe
   ],
   templateUrl: './all-roles.component.html',
   styleUrl: './all-roles.component.scss'
 })
 
 export class AllRolesComponent implements OnInit {
-  saveChanges: boolean = false;
+  roles: Role[] = [];
 
-  constructor(private route: ActivatedRoute){}
+  constructor(private roleService: RoleService) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.saveChanges = params['saved'] == 'true';
+    this.roleService.getAllRoles().subscribe({
+      next: data => {
+        this.roles = data;
+
+        console.log(this.roles);
+      },
+      error: error => {
+
+      }
     });
   }
-
-  roles: Role[] = [
-    { id: 1, name: 'Administrator', count: 1 },
-    { id: 2, name: 'Project Manager', count: 2 },
-    { id: 3, name: 'Worker', count: 3 },
-    { id: 4, name: 'Guest', count: 4 }
-  ];
 }
 

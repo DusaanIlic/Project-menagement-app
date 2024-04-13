@@ -20,10 +20,24 @@
 
       <div class="flex justify-center">
         <div class="table border-[1px] border-gray-300 rounded-md">
-          <tr class="">
+          <tr>
             <th class="text-center p-3 w-60">NAME</th>
             <th class="text-center w-60">NUMBER OF MEMBERS</th>
-            <th class="text-center w-60">ACTIONS</th>
+            <th class="text-center w-10"></th>
+          </tr>
+
+          <tr *ngIf="roles?.length === 0">
+            <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No roles.</td>
+          </tr>
+
+          <tr *ngFor="let role of roles" class="border-[1px] border-gray-500 hover:bg-gray-300">
+            <td class="text-center w-60 border-t-[1px] border-t-gray-300 p-2">{{role.name}}</td>
+            <td class="text-center w-60 border-t-[1px] border-t-gray-300">{{role.id}}</td>
+            <td class="text-center w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item>View</button>
+              <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black">Delete</button>
+            </mat-menu>
           </tr>
         </div>
       </div>
