@@ -637,5 +637,30 @@ namespace Server.Controllers
             return Ok(membersDTO);
 
         }
+
+        [HttpGet("project/{projectId}/categories")]
+        public async Task<IActionResult> GetCategoriesForProject(int projectId)
+        {
+            var project = await dbContext.Projects
+                .Include(p => p.ProjectTasks)
+                    .ThenInclude(ptc => ptc.TaskCategory)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found" });
+            }
+
+            var categories = project.ProjectTasks
+                .Select(ptc => new TaskAndCategoryDTO
+                {
+                    ProjectTaskId = ptc.TaskId,
+                    TaskCategoryId = ptc.TaskCategoryId,
+                    TaskCategoryName = ptc.TaskCategory.CategoryName
+                })
+                .ToList();
+
+            return Ok(categories);
+        }
     }
 }
