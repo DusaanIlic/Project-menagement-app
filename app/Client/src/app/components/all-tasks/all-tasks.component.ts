@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import {NgIf, NgOptimizedImage} from "@angular/common";
+import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskService } from '../../services/task.service';
 import { catchError, map } from 'rxjs/operators';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { ActivatedRoute } from '@angular/router';
+import { Task } from '../../models/task';
+
 
 @Component({
   selector: 'app-all-tasks',
@@ -14,7 +16,8 @@ import { ActivatedRoute } from '@angular/router';
     NgOptimizedImage,
     NgIf,
     MatDialogModule,
-    NgToastModule
+    NgToastModule,
+    CommonModule
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -22,27 +25,20 @@ import { ActivatedRoute } from '@angular/router';
 export class AllTasksComponent {
   showStandalone: boolean = true;
   standaloneTasks: string = '- None';
-  todo: any[] = [];
-  progress: any[] = [];
-  done: any[] = [];
-  projectId: string | undefined;
+  todo: Task[] = [];
+  progress: Task[] = [];
+  done: Task[] = [];
+  projectId: number = 0;
 
-  constructor(public dialog: MatDialog, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
+  constructor(public dialog: MatDialog,
+              private taskService: TaskService,
+              private _ngToastService: NgToastService,
+              private route: ActivatedRoute){}
 
   ngOnInit(): void{
-    this.loadTasksByProject(1);
     this.getProjectIdFromRoute();
+    this.loadTasksByProject(this.projectId);
   }
-
-  toggleUncategorized() {
-    this.showStandalone = !this.showStandalone;
-
-    if (this.showStandalone)
-      this.standaloneTasks = '- None';
-    else
-      this.standaloneTasks = '+ None';
-  }
-
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
@@ -51,14 +47,15 @@ export class AllTasksComponent {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(1); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+      this.loadTasksByProject(this.projectId); // Ponovo učitava zadatke nakon dodavanja novog zadatka
     });
   }
 
   loadTasksByProject(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
-        map((data: any[]) => {
+        map((data: Task[]) => {
+          console.log("Tasts: " + data)
           this.todo = data.filter(task => task.taskStatusId === 1);
           this.progress = data.filter(task => task.taskStatusId === 2);
           this.done = data.filter(task => task.taskStatusId === 3);

@@ -48,227 +48,34 @@
 
     <hr class="border-accent-blue">
 
-    <table>
-      <thead class="text-left">
-        <tr class="text-accent-blue h-12 select-none">
-          <th class="text-xl font-bold">SUBPROJECT</th>
-          <th class="text-xl">TASK</th>
-          <th class="text-xl">PRIORITY</th>
-          <th class="text-xl">STATUS</th>
-          <th class="text-xl">ASSIGNEES</th>
-          <th class="text-xl">PROGRESS</th>
-          <th class="text-center text-xl">DUE DATE</th>
-          <th></th>
+    <div class="flex justify-center">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-60">TASK</th>
+          <th class="text-left w-60">START DATE</th>
+          <th class="text-left w-60">DUE DATE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">PRIORITY</th>
+          <th class="text-left w-52">ASSIGNEES</th>
+          <th class="text-left w-20"></th>
         </tr>
-      </thead>
 
-      <tbody class="overflow-auto">
         <tr>
-          <td class="text-xl text-accent-blue font-bold border-b border-accent-blue" colspan="8" (click)="toggleUncategorized()">{{standaloneTasks}}</td>
+          <td *ngIf="todo.length == 0" class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No finished projects.</td>
         </tr>
-
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
+        <tr *ngFor="let task of todo" class="border-[1px] border-gray-500 hover:bg-gray-300">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.taskName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{task.startDate | date}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{task.deadline | date}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskStatus}}</td>
+          <td *ngIf="task.taskPriorityId == 0" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriority}}</div></td>
+          <td *ngIf="task.taskPriorityId == 1" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriority}}</div></td>
+          <td *ngIf="task.taskPriorityId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskPriority}}</div></td>
+          <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
         </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      </div>
+    </div>
+    
   </div>
 
 
