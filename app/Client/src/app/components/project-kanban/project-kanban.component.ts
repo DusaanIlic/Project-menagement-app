@@ -290,27 +290,15 @@ getTasksByStatus(statusId: number): any[] {
         data: { projectId: this.projectId }
     });
 
-    dialogRef.componentInstance.taskStatusAdded.subscribe((data: any) => {
-      //console.log(data);
-      this.handleTaskStatusAdded(this.taskStatusAdded);
-    });
-
     dialogRef.afterClosed().subscribe(result => {
-        //console.log(result);
-        this.newStatuses.push(result.name);
-        for(let element of this.newStatuses){
-          this.dropList.push(element);
+        if (result) {
+            this.newStatuses.push(result.name);
+            // Ažuriranje dropList-a sa novim statusom
+            this.dropList.push(result.name.toLowerCase());
+            console.log(this.dropList);
         }
-        console.log(this.dropList);
     });
 }
 
-  handleTaskStatusAdded(event: any) {
-    this.loadTasksByProject(this.projectId);
-    this.NewStatusList(this.statusName);
-  }
-
 
 }
-
-

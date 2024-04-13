@@ -33,100 +33,33 @@
     </div>
 
 
-    <div class="w-full flex flex-row gap-20 p-10" cdkDropListGroup>
-        <div *ngIf="showToDoList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" >
-
+    <div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
+        <!-- Iterirajte kroz dropList i prikažite kolone -->
+        <div *ngFor="let column of dropList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
             <div class="flex flex-row justify-between items-center h-10">
-                <p class="mb-3 text-lg"><b>To Do</b></p>
+                <!-- Koristite vrednost column za naziv kolone -->
+                <p class="mb-3 text-lg"><b>{{ column | titlecase }}</b></p>
             </div>
 
             <div
                 cdkDropList
-                [cdkDropListData]="todo"
-                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" id="todo"
+                [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
+                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" [id]="column.toLowerCase()"
                 (cdkDropListDropped)="drop($event)">
-
-                <ng-container *ngIf="todo.length > 0; else emptyTodo">
-                    <ng-container *ngFor="let item of todo; let i = index">
+                <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
+                    <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
                         <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
                             'low-priority': item.taskPriorityId === 1,
                             'medium-priority': item.taskPriorityId === 2,
                             'high-priority': item.taskPriorityId === 3
                           }">{{item.taskName}}
                             <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                                (click)="openConfirmationDialog('todo', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
+                                (click)="openConfirmationDialog(column, item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
                         </div>
                     </ng-container>
                 </ng-container>
 
-                <ng-template #emptyTodo>
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
-                        No tasks.
-                    </div>
-                </ng-template>
-            </div>
-
-
-        </div>
-
-
-        <div *ngIf="showProgressList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
-
-            <div class="flex flex-row justify-between items-center h-10">
-                <p class="mb-3 text-lg"><b>In Progress</b></p>
-            </div>
-
-            <div
-                cdkDropList
-                [cdkDropListData]="progress.length > 0 ? progress : []"
-                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" id="progress"
-                (cdkDropListDropped)="drop($event)">
-                <ng-container *ngIf="progress.length > 0; else emptyProgress">
-                    <ng-container *ngFor="let item of progress; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item"[ngClass]="{
-                            'low-priority': item.taskPriorityId === 1,
-                            'medium-priority': item.taskPriorityId === 2,
-                            'high-priority': item.taskPriorityId === 3
-                          }"
-                          >{{item.taskName}}
-                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                            (click)="openConfirmationDialog('progress', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
-                        </div>
-                    </ng-container>
-                </ng-container>
-
-                <ng-template #emptyProgress>
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
-                        No tasks.
-                    </div>
-                </ng-template>
-            </div>
-        </div>
-
-        <div *ngIf="showDoneList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
-            <div class="flex flex-row justify-between items-center h-10">
-                <p class="mb-3 text-lg"><b>Completed</b></p>
-            </div>
-
-            <div
-                cdkDropList
-                [cdkDropListData]="done.length > 0 ? done : []"
-                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" id="done"
-                (cdkDropListDropped)="drop($event)">
-                <ng-container *ngIf="done.length > 0; else emptyDone">
-                <ng-container *ngFor="let item of done; let i = index">
-                        <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
-                            'low-priority': item.taskPriorityId === 1,
-                            'medium-priority': item.taskPriorityId === 2,
-                            'high-priority': item.taskPriorityId === 3
-                          }">{{item.taskName}}
-                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                            (click)="openConfirmationDialog('done', item.taskId)"><img src="assets/icons/delete_36_jpg.jpg"></button>
-                        </div>
-                    </ng-container>
-                </ng-container>
-
-                <ng-template #emptyDone>
+                <ng-template #emptyList>
                     <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
                         No tasks.
                     </div>

@@ -26,6 +26,10 @@ export class TaskService {
     return this.http.get<any[]>(`${TASK_API}/project/${projectId}`);
   }
 
+  getTaskStatusesByProject(projectId: number): Observable<any[]>{
+    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/TaskStatus`);
+  }
+
   deleteTask(id: number): Observable<any> {
     return this.http.delete<any>(`${TASK_API}/${id}`);
   }
