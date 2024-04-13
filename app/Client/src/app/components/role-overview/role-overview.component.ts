@@ -13,6 +13,8 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/mat
 import {MatOption} from "@angular/material/autocomplete";
 import {MatFormField, MatLabel, MatSelect} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
+import {Permission} from "../../models/permission";
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
   selector: 'app-role-overview',
@@ -40,12 +42,14 @@ import {MatInput} from "@angular/material/input";
     MatLabel,
     MatCardHeader,
     MatCardTitle,
+    MatCheckbox,
   ],
   templateUrl: './role-overview.component.html',
   styleUrl: './role-overview.component.scss'
 })
 export class RoleOverviewComponent implements OnInit {
   roles: Role[] = [];
+  permissions: Permission[] = [];
   selectedRole: any;
 
   constructor(public dialogRef: MatDialogRef<RoleOverviewComponent>, public roleService: RoleService) { }
@@ -53,8 +57,16 @@ export class RoleOverviewComponent implements OnInit {
   ngOnInit() {
     this.roleService.getAllRoles().subscribe({
       next: data => {
-        console.log('runs');
         this.roles = data;
+      },
+      error: error => {
+
+      }
+    });
+
+    this.roleService.getAllPermissions().subscribe({
+      next: data => {
+        this.permissions = data;
       },
       error: error => {
 
