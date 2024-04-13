@@ -32,7 +32,7 @@ namespace Server.Controllers
 
             if (taskComment == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Task comment not found" });
             }
 
             return taskComment;
@@ -47,7 +47,7 @@ namespace Server.Controllers
 
             if (taskComments == null || taskComments.Count == 0)
             {
-                return NotFound();
+                return NotFound(new { message = "Task comment not found" });
             }
 
             return taskComments;
@@ -65,7 +65,7 @@ namespace Server.Controllers
             var memberTaskExists = await _context.MemberTasks.AnyAsync(mt => mt.TaskId == taskComment.MemberTaskId && mt.MemberId == userIdInt);
             if (!memberTaskExists)
             {
-                return BadRequest("Member is not assigned to the specified task.");
+                return BadRequest(new { message = "Member is not assigned to the specified task." });
             }
 
             taskComment.MemberId = userIdInt;
@@ -81,7 +81,7 @@ namespace Server.Controllers
         {
             if (id != taskComment.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "Bad task id"});
             }
 
             _context.Entry(taskComment).State = EntityState.Modified;
@@ -94,7 +94,7 @@ namespace Server.Controllers
             {
                 if (!TaskCommentExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Task comment not found" });
                 }
                 else
                 {
@@ -102,7 +102,7 @@ namespace Server.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = "Success." });
         }
 
         [HttpDelete("{id}")]
@@ -111,13 +111,13 @@ namespace Server.Controllers
             var taskComment = await _context.TaskComments.FindAsync(id);
             if (taskComment == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Task comment not found" });
             }
 
             _context.TaskComments.Remove(taskComment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Success." });
         }
 
         private bool TaskCommentExists(int id)

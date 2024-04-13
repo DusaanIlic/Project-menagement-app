@@ -38,7 +38,7 @@ namespace Server.Controllers
 
             if ( taskPriority == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Task priority not found."});
             }
 
             var taskPriorityDTO = new TaskPriorityDTO

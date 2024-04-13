@@ -44,12 +44,13 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return BadRequest(new { message = "Member with given email not found." });
+
             }
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, member.Password))
             {
-                return BadRequest();
+                return BadRequest(new { message = "Wrong password" });
             }
 
             var expireAt = DateTime.UtcNow.AddMinutes(15);

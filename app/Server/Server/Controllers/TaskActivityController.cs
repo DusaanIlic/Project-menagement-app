@@ -63,7 +63,7 @@ namespace Server.Controllers
             
             if (idClaim == null)
             {
-                return BadRequest("Member id claim is missing in jwt token");
+                return BadRequest(new { message = "Member id claim is missing in jwt token" });
             }
 
             var memberId = int.Parse(idClaim.Value);
@@ -71,7 +71,7 @@ namespace Server.Controllers
             var member = await dbContext.Members.FindAsync(memberId);
             if (member == null)
             {
-                return BadRequest("Member not found");
+                return BadRequest(new { message = "Member not found" });
             }
 
             var taskActivity = new TaskActivity
@@ -86,7 +86,8 @@ namespace Server.Controllers
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
 
-            return Ok("Task activity added successfully.");
+            return Ok(new { message = "Task activity added successfully." });
+
         }
 
 
@@ -97,14 +98,15 @@ namespace Server.Controllers
           
             if (taskActivity == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Task activity not found"});
             }
 
          
             dbContext.TaskActivities.Remove(taskActivity);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Task activity deleted successfully." });
+
         }
 
         [HttpGet("{taskActivityId}")]
@@ -120,9 +122,9 @@ namespace Server.Controllers
 
             if (taskActivity == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Task activity not found"});
             }
-           
+
             var taskActivityDTO = new TaskActivityDTO
             {
                 TaskActivityId = taskActivity.TaskActivityId,
@@ -158,7 +160,7 @@ namespace Server.Controllers
 
             if (taskActivities == null || !taskActivities.Any())
             {
-                return NotFound("No task activities found for the given task ID.");
+                return NotFound(new { message = "Task activity not found" });
             }
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
