@@ -61,7 +61,7 @@ namespace Server.Controllers
 
             if (taskActivityType == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Task activity type not found" });
             }
 
             var taskActivityTypeDTO = new TaskActivityTypeDTO
@@ -80,13 +80,13 @@ namespace Server.Controllers
 
             if (taskActivityType == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Task activitytype not found" });
             }
 
             dbContext.TaskActivityTypes.Remove(taskActivityType);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
     }
 

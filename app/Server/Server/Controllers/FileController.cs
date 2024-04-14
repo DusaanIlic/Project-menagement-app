@@ -29,13 +29,13 @@ namespace Server.Controllers
 
             if (uploaderId == null)
             {
-                return BadRequest("Member id claim is missing in jwt token");
+                return BadRequest(new {message =  "Member id claim is missing in jwt token"});
             }
             
 
             await _fileService.PostFileAsync(int.Parse(uploaderId.Value), addFileRequest);
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         // [HttpPost("Multiple")]
@@ -58,7 +58,7 @@ namespace Server.Controllers
         {
             if (id < 1)
             {
-                return BadRequest();
+                return BadRequest(new {message = "Bad id."});
             }
             
             try
@@ -68,7 +68,7 @@ namespace Server.Controllers
             }
             catch (FileNotFoundException)
             {
-                return NotFound();
+                return NotFound(new {message = "File not found."});
             }
             catch (Exception)
             {
@@ -81,14 +81,15 @@ namespace Server.Controllers
         {
             if (id < 1)
             {
-                return BadRequest();
+                return BadRequest(new {message = "Bad id."});
+
             }
-            
+
             var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
             if (idClaim == null)
             {
-                return BadRequest("Member id claim is missing in jwt token");
+                return BadRequest(new { message = "Member id claim is missing in jwt token" });
             }
 
             var uploaderId = Int32.Parse(idClaim.Value);
@@ -96,7 +97,7 @@ namespace Server.Controllers
 
             if (file == null)
             {
-                return NotFound();
+                return NotFound(new {message = "File not found"});
             }
 
             if (file.UploaderId != uploaderId)
@@ -106,7 +107,7 @@ namespace Server.Controllers
 
             await _fileService.DeleteFile(id);
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
     }
 }

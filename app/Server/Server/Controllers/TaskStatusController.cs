@@ -33,7 +33,7 @@ public partial class ProjectController
 
         if (!projectExists)
         {
-            return NotFound("Project with given id not found.");
+            return NotFound(new { message = "Project with given id not found." });
         } 
         
         var alreadyExists = await dbContext.TaskStatuses
@@ -42,7 +42,7 @@ public partial class ProjectController
 
         if (alreadyExists)
         {
-            return Conflict("Task Status with given name already exists.");
+            return Conflict(new { message = "Task Status with given name already exists." });
         }
         
         var taskStatus = new TaskStatus
@@ -80,7 +80,7 @@ public partial class ProjectController
 
         if (projectTaskStatus == null)
         {
-            return NotFound("Project with given id does not exist or this task status does not belong to it.");
+            return NotFound(new { message = "Project with given id does not exist or this task status does not belong to it." });
         }
         
         var taskStatus = await dbContext.TaskStatuses
@@ -89,25 +89,26 @@ public partial class ProjectController
 
         if (taskStatus == null)
         {
-            return NotFound("Task Status with given id does not exist.");
+            return NotFound(new { message = "Task Status with given id does not exist." });
         }
 
         if (taskStatus.IsDefault)
         {
-            return BadRequest("It's forbidden to delete this task status.");
+            return BadRequest(new { message = "It's forbidden to delete this task status." });
         }
 
         if (taskStatus.ProjectTasks.Count > 0)
         {
-            return BadRequest("There are tasks in given project with this task status.");
+            return BadRequest(new { message = "There are tasks in given project with this task status." });
         }
 
         dbContext.ProjectTaskStatuses.Remove(projectTaskStatus);
         dbContext.TaskStatuses.Remove(taskStatus);
 
         await dbContext.SaveChangesAsync();
-        
-        return NoContent();
+
+        return Ok(new { message = "Success." });
+
     }
 
     [HttpPut("{projectId}/TaskStatus/{taskStatusId}")]
@@ -118,7 +119,7 @@ public partial class ProjectController
 
         if (projectTaskStatus == null)
         {
-            return NotFound("Project with given id does not exist or this task status does not belong to it.");
+            return NotFound(new { message = "Project with given id does not exist or this task status does not belong to it." });
         }
         
         var taskStatus = await dbContext.TaskStatuses
@@ -126,12 +127,12 @@ public partial class ProjectController
 
         if (taskStatus == null)
         {
-            return NotFound("Task Status with given id does not exist.");
+            return NotFound(new { message = "Task Status with given id does not exist." });
         }
 
         if (taskStatus.IsDefault)
         {
-            return Conflict("It's forbidden to change name of this task status.");
+            return Conflict(new { message = "It's forbidden to change name of this task status." });
         }
 
         taskStatus.Name = updateTaskStatusRequest.Name;
