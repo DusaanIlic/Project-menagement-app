@@ -115,6 +115,19 @@ namespace Server.Controllers
                 return BadRequest("Cannot delete this role.");
             }
 
+            var members = await dbContext.Members.Where(m => m.RoleId == role.RoleId).ToListAsync();
+            var fallbackRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.IsFallback);
+
+            if (fallbackRole == null)
+            {
+                return NotFound("Fallback role not found");
+            }
+
+            foreach (var member in members)
+            {
+                member.RoleId = fallbackRole.RoleId;
+            }
+
             dbContext.Roles.Remove(role);
             await dbContext.SaveChangesAsync();
 
@@ -213,8 +226,6 @@ namespace Server.Controllers
         [HttpPost("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> AddPermissionToRole(int roleId, int permissionId)
         {
-            Console.WriteLine("test");
-            
             if (!User.IsInRole("Administrator"))
             {
                 return Forbid();
