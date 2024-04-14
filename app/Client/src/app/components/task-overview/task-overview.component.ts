@@ -59,7 +59,7 @@ export class TaskOverviewComponent implements OnInit{
       taskDescription: "",
       taskId: 0,
       taskName: "",
-      taskPriority: "",
+      taskPriorityName: "",
       taskPriorityId: 0,
       taskStatus: "",
       taskStatusId: 0

@@ -21,13 +21,13 @@
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Role</h1>
                             <p class=" w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none">{{member.roleName}}</p>
                         </div>
-    
+
                         <div class="rounded-md shadow-2xl">
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Phone number</h1>
                             <p *ngIf="member.phoneNumber != ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">{{member.phoneNumber}}</p>
                             <p *ngIf="member.phoneNumber == ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">Not set.</p>
                         </div>
-    
+
                         <div class="rounded-md shadow-2xl">
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">City</h1>
                             <p *ngIf="member.city != ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">{{member.city}}</p>
@@ -40,20 +40,20 @@
                             <p *ngIf="member.country == ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">Not set.</p>
                         </div>
                     </div>
-    
+
                     <div class="flex flex-col justify-between h-60 w-64">
                         <div class="rounded-md shadow-2xl">
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Status</h1>
                             <p *ngIf="member.status != ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">{{member.status}}</p>
                             <p *ngIf="member.status == ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">Not set.</p>
                         </div>
-    
+
                         <div class="rounded-md shadow-2xl">
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">GitHub</h1>
                             <p *ngIf="member.github != ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">{{member.github}}</p>
                             <p *ngIf="member.github == ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">Not set.</p>
                         </div>
-    
+
                         <div class="rounded-md shadow-2xl">
                             <h1 class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none">Linkedin</h1>
                             <p *ngIf="member.linkedin != ''" class=" w-full px-2 py-1 rounded-md rounded-b-none">{{member.linkedin}}</p>
@@ -63,8 +63,8 @@
             </div>
 
         </div>
-    
-    
+
+
         <div class="w-4/5">
             <div class="border-b-8 border-gray-600 text-2xl p-2 pl-5">
                 <h1>Activity</h1>
@@ -93,7 +93,7 @@
                             <td *ngIf="task.taskStatusId == 1" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskStatus}}</div></td>
                             <td *ngIf="task.taskStatusId == 3" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskStatus}}</div></td>
                             <td *ngIf="task.taskStatusId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskStatus}}</div></td>
-                            <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskPriority}}</td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskPriorityName}}</td>
                             <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
                             <mat-menu #menu="matMenu">
                               <button mat-menu-item (click)="openDialog(task)">View</button>
@@ -104,9 +104,9 @@
                 </div>
             </div>
         </div>
-    
+
     </div>
 
-    
+
 
 </div>

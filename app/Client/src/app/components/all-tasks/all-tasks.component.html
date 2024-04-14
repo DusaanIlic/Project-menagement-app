@@ -76,10 +76,14 @@
           <td *ngIf="task.taskStatusId == 3" class="w-60 border-t-[1px] border-t-gray-300 text-[#002d00]">
             {{task.taskStatus}}
           </td>
-          <td *ngIf="task.taskPriorityId == 0" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriority}}</div></td>
-          <td *ngIf="task.taskPriorityId == 1" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriority}}</div></td>
-          <td *ngIf="task.taskPriorityId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskPriority}}</div></td>
-          <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
+          <td *ngIf="task.taskPriorityId == 0" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></td>
+          <td *ngIf="task.taskPriorityId == 1" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriorityName}}</div></td>
+          <td *ngIf="task.taskPriorityId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskPriorityName}}</div></td>
+          <td class="w-52 border-t-[1px] border-t-gray-300 h-[41px]">
+            <div *ngFor="let assignee of task.assignedMembers" class="relative size-4 m-0 p-0 bg-[url'('assets/admin.png']">
+
+            </div>
+          </td>
           <td class="w-10 border-t-[1px] border-t-gray-300">
             <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
           </td>
@@ -90,7 +94,7 @@
         </tr>
       </div>
     </div>
-    
+
   </div>
 
 

@@ -84,7 +84,7 @@ export class MemberOverviewComponent implements OnInit{
                // console.log("i:",i)
                 this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
                  // console.log(data);
-                  this.tasks[i].taskPriority = data.name;
+                  this.tasks[i].taskPriorityName = data.name;
                  // console.log("i:",i)
                 })
               }

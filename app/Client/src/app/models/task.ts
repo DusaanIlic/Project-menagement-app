@@ -11,7 +11,7 @@ export interface Task
     projectId : number,
     taskStatus: string,
     isTaskDependentOn : boolean,
-    taskPriority : string,
+    taskPriorityName : string,
     taskStatusId : number,
     taskPriorityId : number,
     taskCategoryId : number
