@@ -171,6 +171,7 @@ namespace Server.Data
                 .HasForeignKey(mp => mp.ProjectId);
 
             modelBuilder.Entity<Permission>().HasData(
+                new Permission { PermissionId = -1, PermissionName = "Edit roles" },
                 new Permission { PermissionId = 1, PermissionName = "Add members" },
                 new Permission { PermissionId = 2, PermissionName = "Deactivate members" },
                 new Permission { PermissionId = 3, PermissionName = "Create project" },
@@ -194,7 +195,7 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 1, FirstName = "Logic", LastName = "Tenacity", RoleId = 1, Password = BCrypt.Net.BCrypt.HashPassword("admin"), Email = "admin@logictenacity.com" },
+                new Member { Id = 1, FirstName = "Logic", LastName = "Tenacity", RoleId = 1, Password = BCrypt.Net.BCrypt.HashPassword("admin"), Email = "admin" },
                 new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
             );
@@ -206,6 +207,7 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<RolePermission>().HasData(
+                new RolePermission { RoleId = 1, PermissionId = -1 },
                 new RolePermission { RoleId = 1, PermissionId = 1 },
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 2, PermissionId = 3 },

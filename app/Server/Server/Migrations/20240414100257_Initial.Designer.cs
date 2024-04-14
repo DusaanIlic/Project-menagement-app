@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240413141338_Initial")]
+    [Migration("20240414100257_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,15 +130,15 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 13, 16, 13, 37, 42, DateTimeKind.Local).AddTicks(1800),
+                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 152, DateTimeKind.Local).AddTicks(69),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@logictenacity.com",
+                            Email = "admin",
                             FirstName = "Logic",
                             Github = "",
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$1isETpwcK/BLV4PF43oeneJLX59Yu/5AL8vFNbvUucBVD.3Y/Qtne",
+                            Password = "$2a$10$vofS0q7XQ2eLNIaZja/aTuv9iGuKIVK2LoFYUf7tHn5qzWbY9kss6",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 13, 16, 13, 37, 107, DateTimeKind.Local).AddTicks(2155),
+                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 218, DateTimeKind.Local).AddTicks(8772),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$hnMpHxFPemg1EcHu1L6fIe/0bNOUeb5QIhJSe8augzigcUmxNUdMK",
+                            Password = "$2a$10$mWo.TA4wYD4vFi2GAl0qteu4EcjvmhsUGVhjleF7zqkFgMOSOi4T6",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 13, 16, 13, 37, 171, DateTimeKind.Local).AddTicks(477),
+                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 286, DateTimeKind.Local).AddTicks(7171),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$YWw11xBzaNFzVX3j85STm.HjCduOBczrWHMkkThKJOMRzPXcHkHnG",
+                            Password = "$2a$10$/JIUNWIknDvgGRm7dVa9L.x0hrdbw4AFOCi//Pq1RDp70qJx2qrFy",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -226,6 +226,11 @@ namespace Server.Migrations
                     b.ToTable("Permissions");
 
                     b.HasData(
+                        new
+                        {
+                            PermissionId = -1,
+                            PermissionName = "Edit roles"
+                        },
                         new
                         {
                             PermissionId = 1,
@@ -501,6 +506,11 @@ namespace Server.Migrations
                     b.ToTable("RolePermissions");
 
                     b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = -1
+                        },
                         new
                         {
                             RoleId = 1,

@@ -131,10 +131,10 @@ namespace Server.Controllers
                                                 .Select(rp => rp.Permission)
                                                 .ToListAsync();
 
-            if (rolePermissions == null || rolePermissions.Count == 0)
-            {
-                return NotFound("Permissions for this role not found.");
-            }
+            // if (rolePermissions == null || rolePermissions.Count == 0)
+            // {
+            //     return NotFound("Permissions for this role not found.");
+            // }
 
             var permissionDTOs = rolePermissions.Select(p => new PermissionDTO
             {
@@ -143,6 +143,43 @@ namespace Server.Controllers
             }).ToList();
 
             return Ok(permissionDTOs);
+        }
+
+        [Authorize]
+        [HttpPut("{roleId}")]
+        public async Task<IActionResult> ChangeRoleName(int roleId, UpdateRoleRequest request)
+        {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Forbid();
+            }
+            
+            var role = await dbContext.Roles.FindAsync(roleId);
+
+            if (role == null)
+            {
+                return NotFound("Role not found");
+            }
+            
+            // Check if role name is unique
+            if (await dbContext.Roles.AnyAsync(r => r.RoleName == request.Name && r.RoleId != roleId))
+            {
+                return BadRequest("Role name must be unique");
+            }
+
+            // Update role name
+            role.RoleName = request.Name;
+
+            await dbContext.SaveChangesAsync();
+
+            var roleDto = new RoleDTO()
+            {
+                Id = role.RoleId,
+                Name = role.RoleName,
+                IsDefault = role.IsDefault
+            };
+
+            return Ok(roleDto);
         }
 
         [Authorize]

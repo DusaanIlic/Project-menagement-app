@@ -3,6 +3,9 @@ import {Observable} from "rxjs";
 import {Role} from "../models/role";
 import {Injectable} from "@angular/core";
 import {Permission} from "../models/permission";
+import {AddRoleForm} from "../forms/add-role.form";
+import {UpdateRoleForm} from "../forms/update-role.form";
+import {update} from "@angular-devkit/build-angular/src/tools/esbuild/angular/compilation/parallel-worker";
 
 const ROLE_API: string = 'http://localhost:8000/api/Role';
 const PERM_API: string = 'http://localhost:8000/api/Permission';
@@ -21,7 +24,15 @@ export class RoleService {
     return this.http.get(`${ROLE_API}/permissions/${roleId}`);
   }
 
+  updateRole(roleId: number, updateRoleForm: UpdateRoleForm) {
+    return this.http.put(`${ROLE_API}/${roleId}`, updateRoleForm);
+  }
+
   getAllPermissions(): Observable<Permission[]> {
     return this.http.get<Permission[]>(PERM_API);
+  }
+
+  addRole(addRoleForm: AddRoleForm) {
+    return this.http.post(ROLE_API, addRoleForm);
   }
 }
