@@ -14,7 +14,8 @@ const PERM_API: string = 'http://localhost:8000/api/Permission';
   providedIn: 'root'
 })
 export class RoleService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   getAllRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(ROLE_API);
@@ -34,5 +35,13 @@ export class RoleService {
 
   addRole(addRoleForm: AddRoleForm) {
     return this.http.post(ROLE_API, addRoleForm);
+  }
+
+  addPermissionToRole(roleId: number, permissionId: number) {
+    return this.http.post(`${ROLE_API}/${roleId}/permissions/${permissionId}`, null);
+  }
+
+  removePermissionFromRole(roleId: number, permissionId: number) {
+    return this.http.delete(`${ROLE_API}/${roleId}/permissions/${permissionId}`);
   }
 }

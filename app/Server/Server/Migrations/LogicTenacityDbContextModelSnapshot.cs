@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 152, DateTimeKind.Local).AddTicks(69),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 702, DateTimeKind.Local).AddTicks(8778),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$vofS0q7XQ2eLNIaZja/aTuv9iGuKIVK2LoFYUf7tHn5qzWbY9kss6",
+                            Password = "$2a$10$KFxBgyFURo1NQtutAO0dnuo8pkvR9fYF5hyyUSHEoKZp7NHz/ADJ6",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 218, DateTimeKind.Local).AddTicks(8772),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 765, DateTimeKind.Local).AddTicks(2855),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$mWo.TA4wYD4vFi2GAl0qteu4EcjvmhsUGVhjleF7zqkFgMOSOi4T6",
+                            Password = "$2a$10$V6dxZARfslfFy/T4HXaMv.8OHYMvGGF.2p3llfOHTmJT28hS.jsBq",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 14, 12, 2, 57, 286, DateTimeKind.Local).AddTicks(7171),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 828, DateTimeKind.Local).AddTicks(414),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$/JIUNWIknDvgGRm7dVa9L.x0hrdbw4AFOCi//Pq1RDp70qJx2qrFy",
+                            Password = "$2a$10$GVczRpbNGxmHsh/sSDWx1O244Qnnfv1AXxYhKqqBJCcoKWXpp6Tsm",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -456,6 +456,9 @@ namespace Server.Migrations
                     b.Property<bool>("IsDefault")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsFallback")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -472,18 +475,21 @@ namespace Server.Migrations
                         {
                             RoleId = 1,
                             IsDefault = true,
+                            IsFallback = false,
                             RoleName = "Administrator"
                         },
                         new
                         {
                             RoleId = 2,
                             IsDefault = true,
+                            IsFallback = false,
                             RoleName = "Project Manager"
                         },
                         new
                         {
                             RoleId = 3,
                             IsDefault = true,
+                            IsFallback = true,
                             RoleName = "Worker"
                         });
                 });

@@ -198,4 +198,48 @@ export class RoleOverviewComponent implements OnInit {
       }
     });
   }
+
+  togglePermission(checked: boolean, roleId: number, permissionId: number): void {
+    if (checked) {
+      this.addPermission(roleId, permissionId);
+    } else {
+      this.removePermission(roleId, permissionId);
+    }
+  }
+
+  addPermission(roleId: number, permissionId: number) {
+    console.log(roleId, permissionId);
+    this.roleService.addPermissionToRole(roleId, permissionId).subscribe({
+      next: data => {
+        const rolePermissionIndex = this.rolePermissions.findIndex(rp => rp.roleId === roleId);
+        if (rolePermissionIndex !== -1) {
+          this.rolePermissions[rolePermissionIndex].permissions.push({ permissionId: permissionId });
+        }
+
+        this.snackBar.open(`Successfully added permission!`, 'Close', { duration: 1500 });
+      },
+      error: error => {
+        this.snackBar.open(`Failed adding permission`, 'Close', { duration: 1500 });
+      }
+    });
+  }
+
+  removePermission(roleId: number, permissionId: number) {
+    this.roleService.removePermissionFromRole(roleId, permissionId).subscribe({
+      next: data => {
+        const rolePermissionIndex = this.rolePermissions.findIndex(rp => rp.roleId === roleId);
+        if (rolePermissionIndex !== -1) {
+          const permissionIndex = this.rolePermissions[rolePermissionIndex].permissions.findIndex((p: { permissionId: number; }) => p.permissionId === permissionId);
+          if (permissionIndex !== -1) {
+            this.rolePermissions[rolePermissionIndex].permissions.splice(permissionIndex, 1);
+          }
+        }
+
+          this.snackBar.open(`Successfully removed permission!`, 'Close', { duration: 1500 });
+      },
+      error: error => {
+        this.snackBar.open('Failed removing permission', 'Close', { duration: 1500 });
+      }
+    });
+  }
 }

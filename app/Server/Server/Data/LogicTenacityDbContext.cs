@@ -190,8 +190,6 @@ namespace Server.Data
                 new Permission { PermissionId = 16, PermissionName = "Remove task dependency" },
                 new Permission { PermissionId = 17, PermissionName = "Add task category" },
                 new Permission { PermissionId = 18, PermissionName = "Remove task category" }
-
-
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -203,7 +201,7 @@ namespace Server.Data
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Administrator", IsDefault = true },
                 new Role { RoleId = 2, RoleName = "Project Manager", IsDefault = true },
-                new Role { RoleId = 3, RoleName = "Worker", IsDefault = true }
+                new Role { RoleId = 3, RoleName = "Worker", IsDefault = true, IsFallback = true }
             );
 
             modelBuilder.Entity<RolePermission>().HasData(

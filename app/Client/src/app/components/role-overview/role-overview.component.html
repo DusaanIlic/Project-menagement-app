@@ -1,7 +1,7 @@
 <div class="h-full flex flex-col select-none">
   <mat-toolbar>
     <div class="flex w-full gap-2 items-center min-h-16">
-      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}}</h1>
+      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}} <span *ngIf="selectedRole.isFallback">(Fallback Role)</span></h1>
       <h1 *ngIf="!selectedRole">Role Overview</h1>
 
       <span class="grow"></span>
@@ -24,9 +24,12 @@
     <mat-sidenav mode="side" opened="true">
       <mat-nav-list>
         <mat-list-item *ngFor="let role of roles" (click)="selectRole(role)" [disabled]="role==selectedRole">
-          <div class="flex items-center justify-content-between">
-            <mat-icon *ngIf="role.isDefault" class="scale-75">lock</mat-icon>
+          <div class="flex items-center justify-between gap-2">
             <p>{{role.name}}</p>
+            <div class="flex items-center justify-center">
+              <mat-icon *ngIf="role.isFallback" class="scale-75">api</mat-icon>
+              <mat-icon *ngIf="role.isDefault" class="scale-75">lock</mat-icon>
+            </div>
           </div>
         </mat-list-item>
       </mat-nav-list>
@@ -71,8 +74,10 @@
                   </mat-card-header>
                   <mat-card-content>
                     <div *ngFor="let permission of permissions">
-                      <mat-checkbox [checked]="isPermissionAssigned(selectedRole.id, permission.permissionId)"
-                                      [disabled]="selectedRole.isDefault">
+                      <mat-checkbox
+                        [checked]="isPermissionAssigned(selectedRole.id, permission.permissionId)"
+                        [disabled]="selectedRole.isDefault"
+                        (change)="togglePermission($event.checked, selectedRole.id, permission.permissionId)">
                         {{ permission.permissionName }}
                       </mat-checkbox>
                     </div>

@@ -34,7 +34,8 @@ namespace Server.Controllers
             {
                 Id = r.RoleId,
                 Name = r.RoleName,
-                IsDefault = r.IsDefault
+                IsDefault = r.IsDefault,
+                IsFallback = r.IsFallback
             }).ToList();
 
             return Ok(roleDTOs);
@@ -59,7 +60,8 @@ namespace Server.Controllers
             {
                 Id = role.RoleId,
                 Name = role.RoleName,
-                IsDefault = role.IsDefault
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
             };
 
             return Ok(roleDTO);
@@ -86,7 +88,8 @@ namespace Server.Controllers
             {
                 Id = role.RoleId,
                 Name = role.RoleName,
-                IsDefault = role.IsDefault
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
             };
 
             return Ok(roleDTO);
@@ -107,7 +110,7 @@ namespace Server.Controllers
                 return NotFound("Role with this id does not exist");
             }
 
-            if(role.RoleId == 1 || role.RoleId == 2 || role.RoleId == 3)
+            if(role.IsDefault)
             {
                 return BadRequest("Cannot delete this role.");
             }
@@ -176,7 +179,8 @@ namespace Server.Controllers
             {
                 Id = role.RoleId,
                 Name = role.RoleName,
-                IsDefault = role.IsDefault
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
             };
 
             return Ok(roleDto);
@@ -209,6 +213,8 @@ namespace Server.Controllers
         [HttpPost("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> AddPermissionToRole(int roleId, int permissionId)
         {
+            Console.WriteLine("test");
+            
             if (!User.IsInRole("Administrator"))
             {
                 return Forbid();

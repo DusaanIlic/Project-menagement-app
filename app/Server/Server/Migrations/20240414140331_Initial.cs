@@ -46,7 +46,8 @@ namespace Server.Migrations
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     RoleName = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsFallback = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -444,12 +445,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Roles",
-                columns: new[] { "RoleId", "IsDefault", "RoleName" },
+                columns: new[] { "RoleId", "IsDefault", "IsFallback", "RoleName" },
                 values: new object[,]
                 {
-                    { 1, true, "Administrator" },
-                    { 2, true, "Project Manager" },
-                    { 3, true, "Worker" }
+                    { 1, true, false, "Administrator" },
+                    { 2, true, false, "Project Manager" },
+                    { 3, true, true, "Worker" }
                 });
 
             migrationBuilder.InsertData(
@@ -492,9 +493,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 14, 12, 2, 57, 152, DateTimeKind.Local).AddTicks(69), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin", "Logic", "", false, "Tenacity", "", "$2a$10$vofS0q7XQ2eLNIaZja/aTuv9iGuKIVK2LoFYUf7tHn5qzWbY9kss6", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 14, 12, 2, 57, 218, DateTimeKind.Local).AddTicks(8772), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$mWo.TA4wYD4vFi2GAl0qteu4EcjvmhsUGVhjleF7zqkFgMOSOi4T6", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 14, 12, 2, 57, 286, DateTimeKind.Local).AddTicks(7171), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$/JIUNWIknDvgGRm7dVa9L.x0hrdbw4AFOCi//Pq1RDp70qJx2qrFy", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 14, 16, 3, 30, 702, DateTimeKind.Local).AddTicks(8778), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin", "Logic", "", false, "Tenacity", "", "$2a$10$KFxBgyFURo1NQtutAO0dnuo8pkvR9fYF5hyyUSHEoKZp7NHz/ADJ6", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 14, 16, 3, 30, 765, DateTimeKind.Local).AddTicks(2855), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$V6dxZARfslfFy/T4HXaMv.8OHYMvGGF.2p3llfOHTmJT28hS.jsBq", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 14, 16, 3, 30, 828, DateTimeKind.Local).AddTicks(414), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$GVczRpbNGxmHsh/sSDWx1O244Qnnfv1AXxYhKqqBJCcoKWXpp6Tsm", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(

@@ -12,5 +12,8 @@ namespace Server.DataTransferObjects
         
         [Required]
         public bool IsDefault { get; set; }
+        
+        [Required]
+        public bool IsFallback { get; set; }
     }
 }
