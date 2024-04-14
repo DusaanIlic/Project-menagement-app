@@ -18,12 +18,10 @@
                     <p>{{teamLeaderInfo?.roleName}}</p>
                 </div>
 
-                <mat-button-toggle-group name="fontStyle" aria-label="Font Style" multiple class="p-0">
-                    <mat-button-toggle *ngFor="let column of dropList" [value]="column" (click)="toggleColumnVisibility(column.titlecase)">
-                      {{ column | titlecase }}
-                    </mat-button-toggle>
-                  </mat-button-toggle-group>
-                  
+                <form *ngFor="let column of dropList">
+                    <input type="checkbox" [id]="column" [name]="column" [value]="column"  [(ngModel)]="columnVisibility[column]">
+                    <label [for]="column" class="pl-1">{{ column | titlecase }}</label><br>
+                </form>
                   
             </div>
         </div>
@@ -39,10 +37,8 @@
 
 
     <div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
-        <!-- Iterirajte kroz dropList i prikažite kolone -->
-        <div *ngFor="let column of dropList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5">
+        <div *ngFor="let column of dropList" class="flex flex-col bg-gray-200 border-2 border-solid border-black rounded-lg w-1/3 p-5" [style.display]="columnVisibility[column] ? 'block' : 'none'">
             <div class="flex flex-row justify-between items-center h-10">
-                <!-- Koristite vrednost column za naziv kolone -->
                 <p class="mb-3 text-lg"><b>{{ column | titlecase }}</b></p>
             </div>
 
@@ -50,7 +46,7 @@
                 cdkDropList
                 [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
                 class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" [id]="column.toLowerCase()"
-                (cdkDropListDropped)="drop($event)">
+                (cdkDropListDropped)="drop($event)" >
                 <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
                     <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
                         <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
@@ -58,7 +54,7 @@
                             'medium-priority': item.taskPriorityId === 2,
                             'high-priority': item.taskPriorityId === 3
                           }">{{item.taskName}}
-                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
+                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex" 
                                 (click)="openConfirmationDialog(column, item.taskId)"><mat-icon>delete</mat-icon></button>
                         </div>
                     </ng-container>

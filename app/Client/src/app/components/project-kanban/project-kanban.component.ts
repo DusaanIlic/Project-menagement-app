@@ -36,15 +36,11 @@ export class ProjectKanbanComponent implements OnInit {
   dropList: any[] = ['todo', 'progress', 'done'];
   newStatuses: any[] = [];
 
-  showToDoList: boolean = true;
-  showProgressList: boolean = true;
-  showDoneList: boolean = true;
-  showNewStatusList: boolean = false;
+  columnVisibility: { [key: string]: boolean } = {};
 
   projectId: number = 0;
   projectName: string = "";
   projectDate: Date | undefined;
-  statusName: string = "";
 
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;
@@ -53,29 +49,11 @@ export class ProjectKanbanComponent implements OnInit {
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
+    this.dropList.forEach(column => {
+      this.columnVisibility[column] = true;
+  });
   }
 
-  toggleToDoList(){
-    this.showToDoList = !this.showToDoList;
-  }
-
-  toggleProgressList(){
-    this.showProgressList = !this.showProgressList;
-  }
-
-  toggleDoneList(){
-    this.showDoneList = !this.showDoneList;
-  }
-
-  columnVisibility: { [key: string]: boolean } = {
-    'todo': true,
-    'progress': true,
-    'done': true
-  };
-
-  toggleColumnVisibility(column: string) {
-    this.columnVisibility[column] = !this.columnVisibility[column];
-  }
 
 getTeamLeaderInfo(projectId: number): void {
   this.projectService.getProjectById(projectId)
@@ -91,12 +69,6 @@ getTeamLeaderInfo(projectId: number): void {
       console.error('Greška prilikom dobijanja podataka o projektu:', error);
     });
 }
-
-  NewStatusList(statusName: string) {
-    if (this.dropList.includes(statusName.toLowerCase())) {
-        this.showNewStatusList = true;
-    }
-  }
 
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
