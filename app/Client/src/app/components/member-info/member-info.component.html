@@ -3,7 +3,7 @@
         <div class="flex items-center justify-start">
             <p class="mr-2"><strong>{{ member.firstName }} {{ member.lastName }}</strong></p> 
             <button [routerLink]="['/members', member.id]" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal" (click)="closeDialog()">
-                <mat-icon aria-hidden="false" aria-label="Profile" fontIcon="account_circle"></mat-icon>
+                <mat-icon >person</mat-icon>
             </button> 
         </div>    
         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal" (click)="closeDialog()">
