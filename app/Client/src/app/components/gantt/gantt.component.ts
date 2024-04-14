@@ -11,7 +11,7 @@ import { ChartType } from 'angular-google-charts';
 })
 export class GanttComponent {
   chartData = {
-    type: ChartType.Gantt, // Koristite ChartType.Gantt umesto 'Gantt'
+    type: ChartType.Gantt,
     data: [
       [
         '2014Spring',
@@ -23,7 +23,6 @@ export class GanttComponent {
         100,
         null,
       ],
-      // Dodajte više redova prema potrebi
     ],
     columnNames: [
       'Task ID',
