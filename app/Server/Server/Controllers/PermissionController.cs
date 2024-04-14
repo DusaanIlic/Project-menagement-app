@@ -51,7 +51,7 @@ namespace Server.Controllers
 
             if (permission == null)
             {
-                return NotFound("Permission with this id does not exist");
+                return NotFound(new { message = "Permission with this id does not exist" });
             }
 
             var permissionDTO = new PermissionDTO
@@ -100,13 +100,13 @@ namespace Server.Controllers
             var permission = await dbContext.Permissions.FindAsync(permissionId);
             if (permission == null)
             {
-                return NotFound("Permission with this id does not exist");
+                return NotFound(new { message = "Permission with this id does not exist" });
             }
 
             dbContext.Permissions.Remove(permission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
     }

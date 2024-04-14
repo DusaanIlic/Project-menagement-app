@@ -41,7 +41,8 @@ namespace Server.Controllers
             
             if(taskCategory == null)
             {
-                return NotFound("Category with this id does not exist");
+                return NotFound(new { message = "Task category not found" });
+
             }
 
             var taskCategoryDTO = new TaskCategoryDTO 
@@ -79,13 +80,13 @@ namespace Server.Controllers
             var taskCategory = await dbContext.TaskCategories.FindAsync(taskCategoryId);
             if(taskCategory == null)
             {
-                return NotFound("This task category does not exist");
+                return NotFound(new { message = "Task category not found" });
             }
 
             dbContext.TaskCategories.Remove(taskCategory);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
     }

@@ -53,7 +53,7 @@ namespace Server.Controllers
 
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
             var roleDTO = new RoleDTO
@@ -107,12 +107,12 @@ namespace Server.Controllers
             var role = await dbContext.Roles.FindAsync(roleId);
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
             if(role.IsDefault)
             {
-                return BadRequest("Cannot delete this role.");
+                return BadRequest(new { message = "Cannot delete this role." });
             }
 
             var members = await dbContext.Members.Where(m => m.RoleId == role.RoleId).ToListAsync();
@@ -131,7 +131,7 @@ namespace Server.Controllers
             dbContext.Roles.Remove(role);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         [Authorize]
@@ -213,13 +213,14 @@ namespace Server.Controllers
 
             if (rolePermission == null)
             {
-                return NotFound("Role permission not found.");
+                return NotFound(new { message = "Role permission not found." });
             }
 
             dbContext.RolePermissions.Remove(rolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
+
         }
 
         [Authorize]
@@ -235,7 +236,7 @@ namespace Server.Controllers
 
             if (existingRolePermission != null)
             {
-                return Conflict("Role already has this permission.");
+                return Conflict(new { message = "Role already has this permission." });
             }
 
             var newRolePermission = new RolePermission
@@ -247,7 +248,7 @@ namespace Server.Controllers
             dbContext.RolePermissions.Add(newRolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         [Authorize]
