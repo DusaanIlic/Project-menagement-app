@@ -9,7 +9,6 @@ import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {MatDividerModule} from '@angular/material/divider';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import { AddTaskComponent } from '../add-task/add-task.component';
@@ -19,6 +18,7 @@ import { AddTaskStatusComponent } from '../add-task-status/add-task-status.compo
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @Component({
   selector: 'app-project-kanban',
@@ -26,7 +26,7 @@ import { ProjectNavbarComponent } from "../project-navbar/project-navbar.compone
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList, MatDividerModule,MatIconModule, MatButtonModule ,MatButtonToggleModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
+  imports: [CdkDropList, MatExpansionModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -173,7 +173,7 @@ getTasksByStatus(statusId: number): any[] {
     case 1:
       return this.todo;
     case 2:
-      return this.progress;
+      return this.progress
     case 3:
       return this.done;
     default:
@@ -215,7 +215,7 @@ getTasksByStatus(statusId: number): any[] {
       this.taskService.deleteTask(index).subscribe(
         (error) => console.log("error", error)
       );
-    } else if (column === 'done') {
+    } else if (column === 'completed') {
       this.done.splice(this.findTaskIndex(index, column), 1);
       this.showMessage();
       this.taskService.deleteTask(index).subscribe(
