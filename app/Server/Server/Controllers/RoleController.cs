@@ -239,5 +239,20 @@ namespace Server.Controllers
             return Ok();
         }
 
+        [Authorize]
+        [HttpGet("{roleId}/Members")]
+        public async Task<IActionResult> GetAllMembersWithRole(int roleId)
+        {
+            var members = await dbContext.Members.Where(m => m.RoleId == roleId).ToListAsync();
+
+            var roleMemberDtos = members.Select(m => new RoleMemberDTO()
+            {
+                Id = m.Id,
+                FirstName = m.FirstName,
+                LastName = m.LastName
+            });
+
+            return Ok(roleMemberDtos);
+        }
     }
 }

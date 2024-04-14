@@ -5,7 +5,7 @@ import {Injectable} from "@angular/core";
 import {Permission} from "../models/permission";
 import {AddRoleForm} from "../forms/add-role.form";
 import {UpdateRoleForm} from "../forms/update-role.form";
-import {update} from "@angular-devkit/build-angular/src/tools/esbuild/angular/compilation/parallel-worker";
+import {RoleMember} from "../models/role-member";
 
 const ROLE_API: string = 'http://localhost:8000/api/Role';
 const PERM_API: string = 'http://localhost:8000/api/Permission';
@@ -43,5 +43,9 @@ export class RoleService {
 
   removePermissionFromRole(roleId: number, permissionId: number) {
     return this.http.delete(`${ROLE_API}/${roleId}/permissions/${permissionId}`);
+  }
+
+  getAllRoleMembers(roleId: number) {
+    return this.http.get<RoleMember[]>(`${ROLE_API}/${roleId}/Members`);
   }
 }

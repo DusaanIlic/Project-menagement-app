@@ -1,13 +1,13 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MatToolbar} from "@angular/material/toolbar";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatAnchor, MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/material/sidenav";
 import {MatListItem, MatNavList} from "@angular/material/list";
 import {MatDialogRef} from "@angular/material/dialog";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
-import {NgForOf, NgIf} from "@angular/common";
+import {KeyValue, KeyValuePipe, NgForOf, NgIf} from "@angular/common";
 import {MatTab, MatTabGroup} from "@angular/material/tabs";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatOption} from "@angular/material/autocomplete";
@@ -29,6 +29,8 @@ import {
   Validators
 } from "@angular/forms";
 import {UpdateRoleForm} from "../../forms/update-role.form";
+import {RoleMember} from "../../models/role-member";
+import {Member} from "../../models/member";
 
 @Component({
   selector: 'app-role-overview',
@@ -59,7 +61,9 @@ import {UpdateRoleForm} from "../../forms/update-role.form";
     MatCheckbox,
     MatDivider,
     MatError,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    KeyValuePipe,
+    MatAnchor
   ],
   templateUrl: './role-overview.component.html',
   styleUrl: './role-overview.component.scss'
@@ -91,15 +95,30 @@ export class RoleOverviewComponent implements OnInit {
         });
 
         const rolePermissionRequests = roles.map(role => {
-          return this.roleService.getRoleWithPermissions(role.id).pipe(
+          // Fetch role with permissions
+          const roleWithPermissions$ = this.roleService.getRoleWithPermissions(role.id).pipe(
             map((permissions) => ({ roleId: role.id, permissions }))
+          );
+
+          // Fetch all role members
+          const roleMembers$ = this.roleService.getAllRoleMembers(role.id).pipe(
+            map((members) => ({ roleId: role.id, members }))
+          );
+
+          // Combining both requests
+          return forkJoin([roleWithPermissions$, roleMembers$]).pipe(
+            map(([roleWithPermissions, roleMembers]) => ({
+              ...roleWithPermissions,
+              roleMembers
+            }))
           );
         });
 
         return forkJoin(rolePermissionRequests);
       })
-    ).subscribe(rolePermissions => {
-      this.rolePermissions = rolePermissions;
+    ).subscribe(roleData => {
+      this.rolePermissions = roleData;
+      console.log(this.rolePermissions);
     });
   }
 
@@ -142,6 +161,10 @@ export class RoleOverviewComponent implements OnInit {
     this.roleForm.markAsPristine();
   }
 
+  trackByRole(index: number, role: Role): number {
+    return role.id; // Assuming each role has a unique ID
+  }
+
   saveGeneral() {
     if (this.roleForm.valid) {
       this.roleForm.patchValue({
@@ -170,7 +193,7 @@ export class RoleOverviewComponent implements OnInit {
         }
       });
     } else {
-      this.snackBar.open('Failed to change settings, input is invalid!', 'Close', { duration: 3000 });
+      this.snackBar.open('Please fill out all required fields', 'Close', { duration: 3000 });
     }
   }
 
@@ -242,4 +265,11 @@ export class RoleOverviewComponent implements OnInit {
       }
     });
   }
+
+  getRoleMembers(roleId: number): Member[] {
+    const rolePermission = this.rolePermissions.find(rp => rp.roleId === roleId);
+    return rolePermission ? rolePermission.roleMembers.members : [];
+  }
+
+  protected readonly close = close;
 }
