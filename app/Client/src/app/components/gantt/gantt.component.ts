@@ -14,22 +14,12 @@ export class GanttComponent {
     type: ChartType.Gantt, // Koristite ChartType.Gantt umesto 'Gantt'
     data: [
       [
-        'Task ID',
-        'Task Name',
-        'Resource',
-        'Start Date',
-        'End Date',
-        'Duration',
-        'Percent Complete',
-        'Dependencies',
-      ],
-      [
         '2014Spring',
         'Spring 2014',
         'spring',
         new Date(2014, 2, 22),
         new Date(2014, 5, 20),
-        null,
+        5,
         100,
         null,
       ],
