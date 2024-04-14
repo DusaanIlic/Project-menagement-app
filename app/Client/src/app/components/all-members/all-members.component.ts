@@ -11,6 +11,7 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { MemberInfoComponent } from '../member-info/member-info.component';
+import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 
 @Component({
   selector: 'app-all-members',
@@ -124,13 +125,20 @@ export class AllMembersComponent implements OnInit{
   }
 
 
-  openDialog(): void{
+  openMemberDialog(): void{
     const dialogRef = this.dialog.open(AddMemberComponent, {
       width: '500px',
     });
 
     dialogRef.componentInstance.memberAdded.subscribe(() => {
       this.getMembersFromServer();
+    });
+  }
+
+  openRoleDialog() {
+    const dialogRef = this.dialog.open(RoleOverviewComponent, {
+      width: '800px',
+      height: '600px'
     });
   }
 

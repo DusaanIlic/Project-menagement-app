@@ -127,15 +127,15 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 11, 16, 42, 26, 854, DateTimeKind.Local).AddTicks(5510),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 702, DateTimeKind.Local).AddTicks(8778),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@logictenacity.com",
+                            Email = "admin",
                             FirstName = "Logic",
                             Github = "",
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$THZJ2JAdrqfSRwmx.U4Jvea1WsEzQsKqRhQNn2CoOdTAFFJUm9ap2",
+                            Password = "$2a$10$KFxBgyFURo1NQtutAO0dnuo8pkvR9fYF5hyyUSHEoKZp7NHz/ADJ6",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 11, 16, 42, 26, 988, DateTimeKind.Local).AddTicks(6385),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 765, DateTimeKind.Local).AddTicks(2855),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$r4U3d.nMo2d43ZitEwashO/Wd4YTSBdgpMUkKG.LTtNQYrRKlj8r.",
+                            Password = "$2a$10$V6dxZARfslfFy/T4HXaMv.8OHYMvGGF.2p3llfOHTmJT28hS.jsBq",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 11, 16, 42, 27, 122, DateTimeKind.Local).AddTicks(6226),
+                            DateAdded = new DateTime(2024, 4, 14, 16, 3, 30, 828, DateTimeKind.Local).AddTicks(414),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$42UDzs48MWTL0aTz/FtH2e2s21QSMlK23a3LyAvpO9q01slNqUMQm",
+                            Password = "$2a$10$GVczRpbNGxmHsh/sSDWx1O244Qnnfv1AXxYhKqqBJCcoKWXpp6Tsm",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -223,6 +223,11 @@ namespace Server.Migrations
                     b.ToTable("Permissions");
 
                     b.HasData(
+                        new
+                        {
+                            PermissionId = -1,
+                            PermissionName = "Edit roles"
+                        },
                         new
                         {
                             PermissionId = 1,
@@ -448,11 +453,20 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsFallback")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("RoleId");
+
+                    b.HasIndex("RoleName")
+                        .IsUnique();
 
                     b.ToTable("Roles");
 
@@ -460,16 +474,22 @@ namespace Server.Migrations
                         new
                         {
                             RoleId = 1,
+                            IsDefault = true,
+                            IsFallback = false,
                             RoleName = "Administrator"
                         },
                         new
                         {
                             RoleId = 2,
+                            IsDefault = true,
+                            IsFallback = false,
                             RoleName = "Project Manager"
                         },
                         new
                         {
                             RoleId = 3,
+                            IsDefault = true,
+                            IsFallback = true,
                             RoleName = "Worker"
                         });
                 });
@@ -489,6 +509,11 @@ namespace Server.Migrations
                     b.ToTable("RolePermissions");
 
                     b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = -1
+                        },
                         new
                         {
                             RoleId = 1,
