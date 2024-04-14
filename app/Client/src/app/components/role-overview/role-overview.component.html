@@ -1,7 +1,10 @@
 <div class="h-full flex flex-col select-none">
   <mat-toolbar>
     <div class="flex w-full gap-2 items-center min-h-16">
-      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}} <span *ngIf="selectedRole.isFallback">(Fallback Role)</span></h1>
+      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}}
+        <span *ngIf="selectedRole.isDefault" class="text-red-700">[LOCKED]</span>
+        <span *ngIf="selectedRole.isFallback" class="text-yellow-700"> [DEFAULT]</span>
+      </h1>
       <h1 *ngIf="!selectedRole">Role Overview</h1>
 
       <span class="grow"></span>
@@ -12,7 +15,7 @@
         </div>
       </button>
 
-      <button mat-stroked-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
         <div class="flex items-center justify-center">
           <mat-icon>close</mat-icon>
         </div>
@@ -62,7 +65,7 @@
                       </mat-form-field>
                       <div class="flex flex-row-reverse gap-2">
                         <button mat-raised-button color="primary" [disabled]="selectedRole.isDefault || !roleForm.valid || roleForm.pristine" class="mt-4" (click)="saveGeneral()">Update</button>
-                        <button mat-raised-button color="warn" [disabled]="selectedRole.isDefault" class="mt-4">Delete</button>
+                        <button mat-raised-button color="warn" [disabled]="selectedRole.isDefault" class="mt-4" (click)="deleteRole(selectedRole.id)">Delete</button>
                       </div>
                     </div>
                   </mat-card-content>

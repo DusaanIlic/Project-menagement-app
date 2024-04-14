@@ -4,7 +4,7 @@ import {MatAnchor, MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/material/sidenav";
 import {MatListItem, MatNavList} from "@angular/material/list";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
 import {KeyValue, KeyValuePipe, NgForOf, NgIf} from "@angular/common";
@@ -31,6 +31,7 @@ import {
 import {UpdateRoleForm} from "../../forms/update-role.form";
 import {RoleMember} from "../../models/role-member";
 import {Member} from "../../models/member";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-role-overview',
@@ -76,7 +77,7 @@ export class RoleOverviewComponent implements OnInit {
   roleForm: any;
 
   constructor(public dialogRef: MatDialogRef<RoleOverviewComponent>, public roleService: RoleService,
-                private snackBar: MatSnackBar, private cdRef: ChangeDetectorRef) { }
+                private snackBar: MatSnackBar, private cdRef: ChangeDetectorRef, private matDialog: MatDialog) { }
 
   ngOnInit() {
     const roles$ = this.roleService.getAllRoles();
@@ -212,8 +213,22 @@ export class RoleOverviewComponent implements OnInit {
     }
 
     this.roleService.addRole(addRoleForm).subscribe({
-      next: data => {
+      next: (data: any) => {
         this.roles = [...this.roles, data]; // Add the new role locally
+
+        // Create new role permissions and members structure
+        const newRolePermission = {
+          roleId: data.id,
+          permissions: [
+          ],
+          roleMembers: {
+            roleId: data.id,
+            members: []
+          }
+        };
+
+        this.rolePermissions = [...this.rolePermissions, newRolePermission];
+
         this.snackBar.open('Role added successfully!', 'Close', { duration: 3000 });
       },
       error: error => {
@@ -269,6 +284,50 @@ export class RoleOverviewComponent implements OnInit {
   getRoleMembers(roleId: number): Member[] {
     const rolePermission = this.rolePermissions.find(rp => rp.roleId === roleId);
     return rolePermission ? rolePermission.roleMembers.members : [];
+  }
+
+
+  deleteRole(roleId: number): void {
+    const roleToDelete = this.roles.find(role => role.id === roleId);
+
+    if (!roleToDelete) {
+      this.snackBar.open('Role not found!', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const dialogRef = this.matDialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm Deletion',
+        message1: `Are you sure you want to delete ${roleToDelete.name}?`,
+        message2: `All of it's members will be assigned to the default role!`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.roleService.deleteRole(roleId).subscribe({
+          next: () => {
+            // Remove role from local array
+            this.roles = this.roles.filter(role => role.id !== roleId);
+            this.rolePermissions = this.rolePermissions.filter(rp => rp.roleId !== roleId);
+
+            // Remove role from selected role if it matches
+            if (this.selectedRole && this.selectedRole.id === roleId) {
+              this.selectedRole = null;
+            }
+
+            // Refresh change detection
+            this.cdRef.detectChanges();
+
+            this.snackBar.open('Role deleted successfully!', 'Close', { duration: 3000 });
+          },
+          error: () => {
+            this.snackBar.open('Failed to delete role!', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   protected readonly close = close;

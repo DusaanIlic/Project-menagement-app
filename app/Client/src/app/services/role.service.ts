@@ -48,4 +48,8 @@ export class RoleService {
   getAllRoleMembers(roleId: number) {
     return this.http.get<RoleMember[]>(`${ROLE_API}/${roleId}/Members`);
   }
+
+  deleteRole(roleId: number) {
+    return this.http.delete(`${ROLE_API}/${roleId}`);
+  }
 }
