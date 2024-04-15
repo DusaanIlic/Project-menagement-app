@@ -6,8 +6,9 @@ import {Member} from "../models/member";
 import {tap} from "rxjs/internal/operators/tap";
 import {ForgotPasswordForm} from "../forms/forgot-password.form";
 import {ForgotPasswordCompleteForm} from "../forms/forgot-password-complete.form";
+import { environment } from "../../environments/environment";
 
-const AUTH_API = 'http://localhost:8000/api/Auth';
+const AUTH_API = `${environment.apiUrl}/Auth`;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -60,7 +61,7 @@ export class AuthService {
           localStorage.setItem('refresh-token', refreshToken);
           localStorage.setItem('authenticated-member-id', member.id.toString());
           localStorage.setItem('authenticated-member', JSON.stringify(member));
-          localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${member.id}/Avatar`);
+          localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
 
           this.authenticatedMemberSubject.next(member);
           this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
@@ -111,7 +112,7 @@ export class AuthService {
     console.log('updated member avatar');
 
     if (id) {
-      localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${parseInt(id)}/Avatar?timestamp=${new Date().getTime()}`);
+      localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${parseInt(id)}/Avatar?timestamp=${new Date().getTime()}`);
       this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
     }
   }

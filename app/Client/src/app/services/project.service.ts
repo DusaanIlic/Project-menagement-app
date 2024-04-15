@@ -4,8 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Project } from '../models/project';
 import { HttpHeaders } from '@angular/common/http';
 import {Member} from "../models/member";
+import {environment} from "../../environments/environment";
 
-const PROJECT_API = 'http://localhost:8000/api/Project';
+const PROJECT_API = `${environment.apiUrl}/Project`;
 
 const httpOptions = {
   headers: new HttpHeaders({

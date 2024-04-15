@@ -56,7 +56,7 @@
           <tr *ngFor="let member of filteredMembers" class="border-[1px] border-gray-500 hover:bg-gray-300 align-middle">
             <td class="w-60 border-t-[1px] border-t-gray-300">
               <div class="flex justify-center">
-                <img ngSrc="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
+                <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
                      height="30" width="30" alt="user-avatar" (click)="openMemberInfoDialog(member)">
               </div>
             </td>

@@ -49,7 +49,7 @@
                           <p>No task activities yet.</p>
                       </div>
                       <div class="flex w-full rounded-md items-center px-1 border-b-[1px] border-b-gray-400" *ngFor="let taskAct of activitiesForThisTask">
-                          <img src="http://localhost:8000/api/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
+                          <img src="{{environment.apiUrl}}/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
                           <div class="grow">
                                <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>"</div>
                               <div class="flex flex-row gap-2">
