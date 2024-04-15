@@ -13,6 +13,23 @@ Da bi se aplikacija uspešno pokrenula, potrebno je imati sledeće:
 - Angular, verzija: 17.x.x
 - .NET, verzija: 8.x.x
 
+# Pokretanje aplikacije na serveru
+
+Ovo je automatizavno putem skripti `build-and-deploy.sh`, `start-server.sh`, `stop-server.sh`.
+
+## build-and-deploy.sh
+
+Ova skripta updejtuje i builda angular na lokalnom računaru, potom ga ubacuje u dotnet server.
+Nakon toga se updejtuje dotnet, builda u produkcionu verziju, i uploaduje na server.
+
+## start-server.sh
+
+Pokreće dotnet server na beku.
+
+## stop-server.sh
+
+Zaustavlja dotnet server na beku.
+
 # Lokalno pokretanje aplikacije
 
 ## FrontEnd
