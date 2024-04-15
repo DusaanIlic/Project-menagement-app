@@ -1,8 +1,8 @@
-import { Component, EventEmitter, NgModule, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
-import { Observable, throwError } from 'rxjs';
+import { Observable} from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { FormsModule, NgModel } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
@@ -19,6 +19,8 @@ import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
 import {MatExpansionModule} from '@angular/material/expansion';
+import {ThemePalette} from '@angular/material/core';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-project-kanban',
@@ -26,7 +28,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList, MatExpansionModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
+  imports: [CdkDropList, MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -41,6 +43,12 @@ export class ProjectKanbanComponent implements OnInit {
   projectId: number = 0;
   projectName: string = "";
   projectDate: Date | undefined;
+
+  allComplete: boolean = false;
+
+  updateAllComplete() {
+    this.allComplete = this.dropList != null && this.dropList.every(t => t.completed);
+  }
 
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;

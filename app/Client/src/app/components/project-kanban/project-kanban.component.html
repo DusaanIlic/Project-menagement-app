@@ -4,7 +4,7 @@
 
             <mat-accordion>
                 <mat-expansion-panel hideToggle>
-                  <mat-expansion-panel-header >
+                  <mat-expansion-panel-header>
                     <mat-panel-title class="text-2xl mr-3">
                         {{projectName}}
                     </mat-panel-title>
@@ -26,34 +26,26 @@
                 </mat-expansion-panel>
             </mat-accordion>
 
-            <form *ngFor="let column of dropList">
+
+            <section class="example-section">
+                <div>
+                    <ul class="flex flex-row justify-evenly">
+                        @for (column of dropList; track column) {
+                          <li>
+                            <mat-checkbox [(ngModel)]="columnVisibility[column]" color="primary"
+                                          (ngModelChange)="updateAllComplete()">
+                              {{column | titlecase}}
+                            </mat-checkbox>
+                          </li>
+                        }
+                      </ul>
+                </div>
+              </section>
+
+            <!--<form *ngFor="let column of dropList">
                 <input type="checkbox" [id]="column" [name]="column" [value]="column"  [(ngModel)]="columnVisibility[column]">
                 <label [for]="column" class="pl-1">{{ column | titlecase }}</label><br>
-            </form>
-            
-            <!--
-            <div>
-                <p class="text-4xl pb-3">{{projectName}}</p>
-            </div>
-
-            <div class="flex flex-row gap-5 justify-between items-center">
-                <div class="flex flex-col">
-                    <p><b>{{projectDate | date:'dd-MM-yyyy'}}</b></p>
-                    <p>Deadline</p>
-                </div>
-
-                <img src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden rounded-full border-dashed border-black border-2 xl:w-12 xl:h-12 xl:p-1 xl:table-cell">
-                <div class="flex-col ml-3 justify-center">
-                    <p class="text-xl pl-2" *ngIf="teamLeaderInfo"><b>{{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</b></p>
-                    <p>{{teamLeaderInfo?.roleName}}</p>
-                </div>
-                
-                <form *ngFor="let column of dropList">
-                    <input type="checkbox" [id]="column" [name]="column" [value]="column"  [(ngModel)]="columnVisibility[column]">
-                    <label [for]="column" class="pl-1">{{ column | titlecase }}</label><br>
-                </form>
-                  
-            </div>-->
+            </form>-->
 
 
         <div class="flex-row justify-end ml-auto mt-4">
