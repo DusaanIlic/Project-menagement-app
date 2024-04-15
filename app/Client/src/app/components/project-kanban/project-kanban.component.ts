@@ -15,6 +15,7 @@ import { AddTaskStatusComponent } from '../add-task-status/add-task-status.compo
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
+import {environment} from "../../../environments/environment";
 
 
 @Component({
@@ -303,6 +304,7 @@ getTasksByStatus(statusId: number): any[] {
   }
 
 
+  protected readonly environment = environment;
 }
 
 

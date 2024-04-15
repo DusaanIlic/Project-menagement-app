@@ -5,6 +5,7 @@ import {inject} from "@angular/core";
 import {AuthService} from "../services/auth.service";
 import {Member} from "../models/member";
 import {switchMap} from "rxjs/operators";
+import {environment} from "../../environments/environment";
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -54,7 +55,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
             localStorage.setItem('refresh-token', newRefreshToken);
             localStorage.setItem('authenticated-member-id', member.id.toString());
             localStorage.setItem('authenticated-member', JSON.stringify(member));
-            localStorage.setItem('authenticated-member-avatar', `http://localhost:8000/api/Member/${member.id}/Avatar`);
+            localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
 
             authService.updateAuthenticatedMember(member);
             authService.updateAuthenticatedMembersAvatar();

@@ -6,9 +6,10 @@ import {Permission} from "../models/permission";
 import {AddRoleForm} from "../forms/add-role.form";
 import {UpdateRoleForm} from "../forms/update-role.form";
 import {RoleMember} from "../models/role-member";
+import {environment} from "../../environments/environment";
 
-const ROLE_API: string = 'http://localhost:8000/api/Role';
-const PERM_API: string = 'http://localhost:8000/api/Permission';
+const ROLE_API: string = `${environment.apiUrl}/Role`;
+const PERM_API: string = `${environment.apiUrl}/Permission`;
 
 @Injectable({
   providedIn: 'root'

@@ -32,6 +32,7 @@ import {UpdateRoleForm} from "../../forms/update-role.form";
 import {RoleMember} from "../../models/role-member";
 import {Member} from "../../models/member";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-role-overview',
@@ -331,4 +332,5 @@ export class RoleOverviewComponent implements OnInit {
   }
 
   protected readonly close = close;
+    protected readonly environment = environment;
 }

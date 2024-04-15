@@ -15,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { taskPriority } from '../../models/taskPriority';
 import { switchMap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
+import {environment} from "../../../environments/environment";
 
 
 @Component({
@@ -114,4 +115,5 @@ export class MemberOverviewComponent implements OnInit{
     });
   }
 
+    protected readonly environment = environment;
 }

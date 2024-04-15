@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Member } from '../../models/member';
 import { MemberOverviewComponent } from '../member-overview/member-overview.component';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-member-info',
@@ -27,5 +28,5 @@ export class MemberInfoComponent {
   }
 
 
-
+    protected readonly environment = environment;
 }

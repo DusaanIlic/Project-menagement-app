@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import {RoleOverviewComponent} from "../role-overview/role-overview.component";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-all-members',
@@ -206,5 +207,6 @@ export class AllMembersComponent implements OnInit{
     });
   }
 
+    protected readonly environment = environment;
 }
 
