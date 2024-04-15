@@ -52,6 +52,11 @@ export class ProjectServiceGet{
   {
     return this.http.delete<Member>(`${PROJECT_API}/${projectId}/members/${memberId}`);
   }
+
+  getTaskCategoriesOnProject(projectId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${PROJECT_API}/project/${projectId}/categories`);
+  }
 }
 
 

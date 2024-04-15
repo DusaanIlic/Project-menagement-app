@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { TaskOverviewComponent } from '../task-overview/task-overview.component';
+import {ProjectServiceGet} from "../../services/project.service";
+import {taskCategory} from "../../models/taskCategory";
 
 
 @Component({
@@ -30,20 +32,20 @@ import { TaskOverviewComponent } from '../task-overview/task-overview.component'
   styleUrl: './all-tasks.component.scss'
 })
 export class AllTasksComponent {
-  showStandalone: boolean = true;
-  standaloneTasks: string = '- None';
   todo: Task[] = [];
   progress: Task[] = [];
   done: Task[] = [];
   projectId: number = 0;
   allTasks: Task[] = []
+  taskCategories : taskCategory[] = [];
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
               private _ngToastService: NgToastService,
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
-              private tService : TaskService){}
+              private tService : TaskService,
+              private pService : ProjectServiceGet){}
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
@@ -70,6 +72,7 @@ export class AllTasksComponent {
           this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.getAllTaskCategoriesOnProject()
         return data;
         }),
         catchError(error => {
@@ -110,5 +113,27 @@ export class AllTasksComponent {
         console.log("Error deleting task!")
       }
     });
+  }
+
+  hasElement(elem : taskCategory): boolean
+  {
+    for(let i=0;i<this.taskCategories.length;i++)
+    {
+      if(this.taskCategories[i].taskCategoryId == elem.taskCategoryId && this.taskCategories[i].taskCategoryName == elem.taskCategoryName)
+        return true;
+    }
+    return false;
+  }
+
+  getAllTaskCategoriesOnProject()
+  {
+    this.pService.getTaskCategoriesOnProject(this.projectId).subscribe((data : taskCategory[]) =>{
+     for(let i=0;i<data.length;i++)
+     {
+       if(!this.hasElement(data[i]))
+         this.taskCategories.push(data[i])
+     }
+
+    })
   }
 }
