@@ -100,19 +100,9 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseStaticFiles();
-
-    app.Use(async (context, next) =>
-    {
-        await next();
-
-        // If there's no available file and the request doesn't contain an extension, we're probably trying to access an Angular route
-        if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
-        {
-            context.Request.Path = "/index.html"; // Return the Angular app's entry point
-            await next();
-        }
-    });
+    app.UseFileServer();
+    app.UseRouting();
+    app.MapFallbackToFile("index.html");
 }
 
 app.UseHttpsRedirection();

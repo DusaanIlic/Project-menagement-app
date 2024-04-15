@@ -22,10 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="mydatabase.db">
+    <None Remove="Files\default_avatar.png" />
+    <Content Include="Files\default_avatar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\default_avatar.png">
+    <None Remove="mydatabase.db" />
+    <Content Include="mydatabase.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
