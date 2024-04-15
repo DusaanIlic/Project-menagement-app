@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { TaskOverviewComponent } from '../task-overview/task-overview.component';
 import {ProjectServiceGet} from "../../services/project.service";
 import {taskCategory} from "../../models/taskCategory";
+import {environment} from "../../../environments/environment";
 
 
 @Component({
@@ -38,6 +39,7 @@ export class AllTasksComponent {
   projectId: number = 0;
   allTasks: Task[] = []
   taskCategories : taskCategory[] = [];
+  visible : boolean[] = []
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
@@ -50,6 +52,8 @@ export class AllTasksComponent {
   ngOnInit(): void{
     this.getProjectIdFromRoute();
     this.loadTasksByProject(this.projectId);
+    for(let i=0;i<this.taskCategories.length;i++)
+      this.visible.push(false)
   }
 
   openDialog(): void{
@@ -136,4 +140,12 @@ export class AllTasksComponent {
 
     })
   }
+
+
+  showNHide(i: number)
+  {
+    this.visible[i] = !this.visible[i];
+  }
+
+  protected readonly environment = environment;
 }
