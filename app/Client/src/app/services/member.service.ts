@@ -5,9 +5,10 @@ import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
 import {EditProfileForm} from "../forms/edit-profile.form";
 import { Member } from "../models/member";
 import { Role } from "../models/role";
+import { environment} from "../../environments/environment";
 
-const API = 'http://localhost:8000/api/Member';
-const API_ROLES = 'http://localhost:8000/api/Role';
+const API = `${environment.apiUrl}/Member`;
+const API_ROLES = `${environment.apiUrl}/Role`;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

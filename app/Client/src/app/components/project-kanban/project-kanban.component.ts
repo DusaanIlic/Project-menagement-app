@@ -13,7 +13,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
-import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { ConfirmationComponent} from '../confirmation/confirmation.component';
 import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';

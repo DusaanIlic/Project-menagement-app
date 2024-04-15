@@ -12,12 +12,12 @@
             </svg>
             <span class="sr-only">Close modal</span>
         </button>
-    </div>       
+    </div>
     <div class="flex items-center justify-center mb-3">
-        <img ngSrc="http://localhost:8000/api/Member/{{member.id}}/Avatar" alt="Avatar" class="border-solid border-black border-2 "
+        <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" alt="Avatar" class="border-solid border-black border-2 "
         height="100" width="150">
     </div>
-    
+
     <div class="flex flex-row items-center justify-between">
         <p class="mr-2"><strong>Email:</strong> {{ member.email }}</p>
          

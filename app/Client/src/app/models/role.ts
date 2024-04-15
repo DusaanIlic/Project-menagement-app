@@ -1,5 +1,9 @@
+import {RoleMember} from "./role-member";
+
 export interface Role {
-  id?: number;
+  id: number;
   name: string;
-  count?: number;
+  isDefault: boolean;
+  isFallback: boolean;
+  members: RoleMember[];
 }

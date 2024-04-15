@@ -7,8 +7,6 @@ import { GantComponent } from './components/gantogram/gantogram.component';
 import {DashboardComponent} from "./components/dashboard/dashboard.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {EditMemberComponent} from "./components/edit-member/edit-member.component";
-import {AllRolesComponent} from "./components/all-roles/all-roles.component";
-import {EditRoleComponent} from "./components/edit-role/edit-role.component";
 import {ProjectComponent} from "./components/project/project.component";
 import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.component";
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
@@ -27,8 +25,6 @@ export const routes: Routes = [
   { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
   { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]},
   { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
-  { path: 'roles/all', component: AllRolesComponent, canActivate: [AuthGuard] },
-  { path: 'roles/:id/edit', component: EditRoleComponent, canActivate: [AuthGuard] },
   { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
   {
     path: 'projects/:id',

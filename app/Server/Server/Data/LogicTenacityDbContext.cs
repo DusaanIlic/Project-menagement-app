@@ -120,6 +120,10 @@ namespace Server.Data
                 .WithOne(rp => rp.Role)
                 .HasForeignKey(rp => rp.RoleId);
 
+            modelBuilder.Entity<Role>()
+                .HasIndex(r => r.RoleName)
+                .IsUnique();
+
             modelBuilder.Entity<Permission>()
                 .HasMany(p => p.RolePermissions)
                 .WithOne(rp => rp.Permission)
@@ -167,6 +171,7 @@ namespace Server.Data
                 .HasForeignKey(mp => mp.ProjectId);
 
             modelBuilder.Entity<Permission>().HasData(
+                new Permission { PermissionId = -1, PermissionName = "Edit roles" },
                 new Permission { PermissionId = 1, PermissionName = "Add members" },
                 new Permission { PermissionId = 2, PermissionName = "Deactivate members" },
                 new Permission { PermissionId = 3, PermissionName = "Create project" },
@@ -185,8 +190,6 @@ namespace Server.Data
                 new Permission { PermissionId = 16, PermissionName = "Remove task dependency" },
                 new Permission { PermissionId = 17, PermissionName = "Add task category" },
                 new Permission { PermissionId = 18, PermissionName = "Remove task category" }
-
-
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -194,14 +197,15 @@ namespace Server.Data
                 new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
             );
-
+            
             modelBuilder.Entity<Role>().HasData(
-                new Role { RoleId = 1, RoleName = "Administrator" },
-                new Role { RoleId = 2, RoleName = "Project Manager"},
-                new Role { RoleId = 3, RoleName = "Worker" }
+                new Role { RoleId = 1, RoleName = "Administrator", IsDefault = true },
+                new Role { RoleId = 2, RoleName = "Project Manager", IsDefault = true },
+                new Role { RoleId = 3, RoleName = "Worker", IsDefault = true, IsFallback = true }
             );
 
             modelBuilder.Entity<RolePermission>().HasData(
+                new RolePermission { RoleId = 1, PermissionId = -1 },
                 new RolePermission { RoleId = 1, PermissionId = 1 },
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 2, PermissionId = 3 },

@@ -11,11 +11,16 @@ using Server.Services.File;
 using Server.Services.RolePermission; // Added using directive for UseAuthentication
 
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ApplicationName = typeof(Program).Assembly.FullName,
+    ContentRootPath = Directory.GetCurrentDirectory(),
+    WebRootPath = "wwwroot/client/browser"
+});
 var config = builder.Configuration;
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -87,13 +92,18 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    app.UseCors(options =>
+        options.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 }
-
-app.UseCors(options =>
-options.WithOrigins("http://localhost:4200")
-.AllowAnyMethod()
-.AllowAnyHeader());
-
+else
+{
+    app.UseFileServer();
+    app.UseRouting();
+    app.MapFallbackToFile("index.html");
+}
 
 app.UseHttpsRedirection();
 

@@ -45,7 +45,9 @@ namespace Server.Migrations
                 {
                     RoleId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    RoleName = table.Column<string>(type: "TEXT", nullable: false)
+                    RoleName = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsFallback = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -410,6 +412,7 @@ namespace Server.Migrations
                 columns: new[] { "PermissionId", "PermissionName" },
                 values: new object[,]
                 {
+                    { -1, "Edit roles" },
                     { 1, "Add members" },
                     { 2, "Deactivate members" },
                     { 3, "Create project" },
@@ -442,12 +445,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Roles",
-                columns: new[] { "RoleId", "RoleName" },
+                columns: new[] { "RoleId", "IsDefault", "IsFallback", "RoleName" },
                 values: new object[,]
                 {
-                    { 1, "Administrator" },
-                    { 2, "Project Manager" },
-                    { 3, "Worker" }
+                    { 1, true, false, "Administrator" },
+                    { 2, true, false, "Project Manager" },
+                    { 3, true, true, "Worker" }
                 });
 
             migrationBuilder.InsertData(
@@ -490,9 +493,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 11, 16, 42, 26, 854, DateTimeKind.Local).AddTicks(5510), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$THZJ2JAdrqfSRwmx.U4Jvea1WsEzQsKqRhQNn2CoOdTAFFJUm9ap2", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 11, 16, 42, 26, 988, DateTimeKind.Local).AddTicks(6385), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$r4U3d.nMo2d43ZitEwashO/Wd4YTSBdgpMUkKG.LTtNQYrRKlj8r.", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 11, 16, 42, 27, 122, DateTimeKind.Local).AddTicks(6226), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$42UDzs48MWTL0aTz/FtH2e2s21QSMlK23a3LyAvpO9q01slNqUMQm", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 15, 17, 36, 55, 799, DateTimeKind.Local).AddTicks(1308), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$kosZ7rMaIRlgE8WZiiVHA.FJN9NSqbrjhhqrTlV/htSZ45FUvoGby", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 15, 17, 36, 55, 938, DateTimeKind.Local).AddTicks(6400), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$h1.Xnrd1HqIYBBIA7E3LuesROC8INnq2WWExhgJdyizrTQ8u6R006", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 15, 17, 36, 56, 78, DateTimeKind.Local).AddTicks(49), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$3DW3qV3xewRyEw.lV4LKlePjOC836Eq3f7pPzJ1LAOBQLAV3s3D82", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -500,6 +503,7 @@ namespace Server.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
+                    { -1, 1 },
                     { 1, 1 },
                     { 2, 1 },
                     { 3, 2 },
@@ -591,6 +595,12 @@ namespace Server.Migrations
                 name: "IX_RolePermissions_PermissionId",
                 table: "RolePermissions",
                 column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_RoleName",
+                table: "Roles",
+                column: "RoleName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskActivities_MemberId",

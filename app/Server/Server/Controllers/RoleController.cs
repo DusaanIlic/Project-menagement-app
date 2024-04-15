@@ -33,7 +33,9 @@ namespace Server.Controllers
             var roleDTOs = roles.Select(r => new RoleDTO
             {
                 Id = r.RoleId,
-                Name = r.RoleName
+                Name = r.RoleName,
+                IsDefault = r.IsDefault,
+                IsFallback = r.IsFallback
             }).ToList();
 
             return Ok(roleDTOs);
@@ -51,13 +53,15 @@ namespace Server.Controllers
 
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
             var roleDTO = new RoleDTO
             {
                 Id = role.RoleId,
-                Name = role.RoleName
+                Name = role.RoleName,
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
             };
 
             return Ok(roleDTO);
@@ -83,7 +87,9 @@ namespace Server.Controllers
             var roleDTO = new RoleDTO
             {
                 Id = role.RoleId,
-                Name = role.RoleName
+                Name = role.RoleName,
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
             };
 
             return Ok(roleDTO);
@@ -101,18 +107,31 @@ namespace Server.Controllers
             var role = await dbContext.Roles.FindAsync(roleId);
             if (role == null)
             {
-                return NotFound("Role with this id does not exist");
+                return NotFound(new { message = "Role with this id does not exist" });
             }
 
-            if(role.RoleId == 1 || role.RoleId == 2 || role.RoleId == 3)
+            if(role.IsDefault)
             {
-                return BadRequest("Cannot delete this role.");
+                return BadRequest(new { message = "Cannot delete this role." });
+            }
+
+            var members = await dbContext.Members.Where(m => m.RoleId == role.RoleId).ToListAsync();
+            var fallbackRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.IsFallback);
+
+            if (fallbackRole == null)
+            {
+                return NotFound("Fallback role not found");
+            }
+
+            foreach (var member in members)
+            {
+                member.RoleId = fallbackRole.RoleId;
             }
 
             dbContext.Roles.Remove(role);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
         [Authorize]
@@ -128,10 +147,10 @@ namespace Server.Controllers
                                                 .Select(rp => rp.Permission)
                                                 .ToListAsync();
 
-            if (rolePermissions == null || rolePermissions.Count == 0)
-            {
-                return NotFound("Permissions for this role not found.");
-            }
+            // if (rolePermissions == null || rolePermissions.Count == 0)
+            // {
+            //     return NotFound("Permissions for this role not found.");
+            // }
 
             var permissionDTOs = rolePermissions.Select(p => new PermissionDTO
             {
@@ -140,6 +159,44 @@ namespace Server.Controllers
             }).ToList();
 
             return Ok(permissionDTOs);
+        }
+
+        [Authorize]
+        [HttpPut("{roleId}")]
+        public async Task<IActionResult> ChangeRoleName(int roleId, UpdateRoleRequest request)
+        {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Forbid();
+            }
+            
+            var role = await dbContext.Roles.FindAsync(roleId);
+
+            if (role == null)
+            {
+                return NotFound("Role not found");
+            }
+            
+            // Check if role name is unique
+            if (await dbContext.Roles.AnyAsync(r => r.RoleName == request.Name && r.RoleId != roleId))
+            {
+                return BadRequest("Role name must be unique");
+            }
+
+            // Update role name
+            role.RoleName = request.Name;
+
+            await dbContext.SaveChangesAsync();
+
+            var roleDto = new RoleDTO()
+            {
+                Id = role.RoleId,
+                Name = role.RoleName,
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
+            };
+
+            return Ok(roleDto);
         }
 
         [Authorize]
@@ -156,13 +213,14 @@ namespace Server.Controllers
 
             if (rolePermission == null)
             {
-                return NotFound("Role permission not found.");
+                return NotFound(new { message = "Role permission not found." });
             }
 
             dbContext.RolePermissions.Remove(rolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
+
         }
 
         [Authorize]
@@ -178,7 +236,7 @@ namespace Server.Controllers
 
             if (existingRolePermission != null)
             {
-                return Conflict("Role already has this permission.");
+                return Conflict(new { message = "Role already has this permission." });
             }
 
             var newRolePermission = new RolePermission
@@ -190,8 +248,23 @@ namespace Server.Controllers
             dbContext.RolePermissions.Add(newRolePermission);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
         }
 
+        [Authorize]
+        [HttpGet("{roleId}/Members")]
+        public async Task<IActionResult> GetAllMembersWithRole(int roleId)
+        {
+            var members = await dbContext.Members.Where(m => m.RoleId == roleId).ToListAsync();
+
+            var roleMemberDtos = members.Select(m => new RoleMemberDTO()
+            {
+                Id = m.Id,
+                FirstName = m.FirstName,
+                LastName = m.LastName
+            });
+
+            return Ok(roleMemberDtos);
+        }
     }
 }

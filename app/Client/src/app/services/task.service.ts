@@ -5,11 +5,12 @@ import { HttpHeaders } from '@angular/common/http';
 import { Task } from '../models/task';
 import { taskActivity } from '../models/taskActivity';
 import { taskPriority } from '../models/taskPriority';
+import { environment} from "../../environments/environment";
 
-const TASK_API = 'http://localhost:8000/api/Task';
-const PROJECT_API = 'http://localhost:8000/api/Project';
-const TASKACTIVITY_API = 'http://localhost:8000/api/TaskActivity';
-const TASKPRIOROTY_API = 'http://localhost:8000/api/TaskPriority';
+const TASK_API = `${environment.apiUrl}/Task`;
+const PROJECT_API = `${environment.apiUrl}/Project`;
+const TASKACTIVITY_API = `${environment.apiUrl}/TaskActivity`;
+const TASKPRIOROTY_API = `${environment.apiUrl}/TaskPriority`;
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })

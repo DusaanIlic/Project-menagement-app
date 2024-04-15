@@ -74,12 +74,12 @@ namespace Server.Controllers
 
             if (userIdClaim == null)
             {
-                return NotFound("User ID claim not found in token");
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new {message = "Invalid user ID in token"});
             }
 
             var roleId = await _rolePermissionService.CheckRole(userId);
@@ -88,14 +88,14 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return Forbid();
             }
 
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == memberDTO.Email);
 
             if (existingMember != null)
             {
-                return Conflict();
+                return Conflict(new {message = "Member with this email already exists."});
             }
 
             String randomPassword = GenerateRandomPassword(8);
@@ -180,7 +180,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Member not found."});
             }
 
             var memberDTO = new MemberDTO
@@ -216,7 +216,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Member not found."});
             }
 
             if (member.Id != id && !isAdmin)
@@ -268,7 +268,7 @@ namespace Server.Controllers
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             var roleId = await _rolePermissionService.CheckRole(userId);
@@ -277,14 +277,14 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return Forbid();
             }
 
             var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Member not found."});
             }
 
             member.IsDisabled = true;
@@ -292,7 +292,8 @@ namespace Server.Controllers
             //_dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Member disabled");
+            return Ok(new { message = "Success." });
+
         }
 
         [Authorize]
@@ -304,7 +305,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Member not found."});
             }
 
             
@@ -332,7 +333,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Member not found."});
             }
 
             if (member.Id != id && !isAdmin)
@@ -352,7 +353,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Avatar posted successfully." });
+
         }
 
         [Authorize]
@@ -364,7 +366,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Member not found." });
             }
 
             if (member.Id != id && !isAdmin)
@@ -374,7 +376,7 @@ namespace Server.Controllers
 
             if (member.AvatarId == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Member avatar not found." });
             }
             
             await _fileService.DeleteFile(member.AvatarId.Value);
@@ -382,7 +384,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Success." });
+
         }
 
         public static string GenerateRandomPassword(int length)
@@ -408,24 +411,24 @@ namespace Server.Controllers
             
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             if (userId != id)
             {
-                return Forbid("You are not authorized to change this password");
+                return Forbid();
             }
 
             var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Member not found." });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, member.Password))
             {
-                return BadRequest("Old password is incorrect");
+                return BadRequest(new { message = "Old password is incorrect" });
             }
 
             string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordRequest.NewPassword);
@@ -434,7 +437,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Password changed successfully");
+            return Ok(new { message = "Password changed successfully." });
+
         }
 
         [Authorize]
@@ -446,7 +450,7 @@ namespace Server.Controllers
 
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Invalid user ID in token");
+                return BadRequest(new { message = "Invalid user ID in token" });
             }
 
             if (userId != id && !isAdmin)
@@ -458,19 +462,19 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Member not found." });
             }
 
             if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
             {
-                return BadRequest("Password is incorrect");
+                return BadRequest(new { message = "Password is incorrect" });
             }
             
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
 
             if (existingMember != null)
             {
-                return Conflict("Email address already exists");
+                return Conflict(new { message = "Email address already exists" });
             }
 
             
@@ -478,7 +482,8 @@ namespace Server.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Email address changed successfully");
+            return Ok(new { message = "Email changed successfully." });
+
         }
 
         [Authorize]
