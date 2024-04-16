@@ -15,13 +15,15 @@ import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 import {environment} from "../../../environments/environment";
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-all-members',
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule],
   providers: [DatePipe]
 })
 export class AllMembersComponent implements AfterViewInit{
@@ -31,16 +33,29 @@ export class AllMembersComponent implements AfterViewInit{
   members : Member[] = [];
   filteredMembers: Member[] = [];
   searchTerm: string = '';
-  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-  dataSource = new MatTableDataSource<Member>(this.members);
   displayedColumns: string[] = ['avatar', 'name', 'role', 'email', 'tasks', 'date'];
+  dataSource = new MatTableDataSource(this.filteredMembers);
+  @ViewChild(MatSort)
+  sort!: MatSort;
 
+  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
+    this.filteredMembers = this.members;
+  }
 
   ngAfterViewInit(): void {
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
     this.selectedRole = 'allMembers';
+    this.dataSource.sort = this.sort;
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   filterMembersByRole(role: string): void {
@@ -94,10 +109,7 @@ export class AllMembersComponent implements AfterViewInit{
   }
 
 
-  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
-    this.filteredMembers = this.members;
-  }
-
+  
   search(): void {
     let searchTerm = this.searchTerm.toLowerCase().trim();
     let filteredMembers = [...this.filteredMembers];
