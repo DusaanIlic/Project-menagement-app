@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240415153656_Initial")]
+    [Migration("20240416135043_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 15, 17, 36, 55, 799, DateTimeKind.Local).AddTicks(1308),
+                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 41, 942, DateTimeKind.Local).AddTicks(3469),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$kosZ7rMaIRlgE8WZiiVHA.FJN9NSqbrjhhqrTlV/htSZ45FUvoGby",
+                            Password = "$2a$10$P2mGtnNeMFqzpjgiQrpoR.xHAJrLgTaK3gdCvcYkbETfunuxitZoC",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 15, 17, 36, 55, 938, DateTimeKind.Local).AddTicks(6400),
+                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 42, 76, DateTimeKind.Local).AddTicks(4876),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$h1.Xnrd1HqIYBBIA7E3LuesROC8INnq2WWExhgJdyizrTQ8u6R006",
+                            Password = "$2a$10$/5E1WQrSMmiyUapSXXg3xO/sqgvtrt55ckV4W4SuytSsKpNY2og0O",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 15, 17, 36, 56, 78, DateTimeKind.Local).AddTicks(49),
+                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 42, 210, DateTimeKind.Local).AddTicks(4096),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$3DW3qV3xewRyEw.lV4LKlePjOC836Eq3f7pPzJ1LAOBQLAV3s3D82",
+                            Password = "$2a$10$egvjRtlp6KfcfI2XpRUYN.fugwB4WY.Z4igltLqA40oMsUy79JuFm",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -228,98 +228,23 @@ namespace Server.Migrations
                     b.HasData(
                         new
                         {
-                            PermissionId = -1,
-                            PermissionName = "Edit roles"
-                        },
-                        new
-                        {
                             PermissionId = 1,
-                            PermissionName = "Add members"
+                            PermissionName = "Change global roles"
                         },
                         new
                         {
                             PermissionId = 2,
-                            PermissionName = "Deactivate members"
+                            PermissionName = "Add members"
                         },
                         new
                         {
                             PermissionId = 3,
-                            PermissionName = "Create project"
+                            PermissionName = "Deactivate members"
                         },
                         new
                         {
                             PermissionId = 4,
-                            PermissionName = "Create task"
-                        },
-                        new
-                        {
-                            PermissionId = 5,
-                            PermissionName = "Delete project"
-                        },
-                        new
-                        {
-                            PermissionId = 6,
-                            PermissionName = "Delete task"
-                        },
-                        new
-                        {
-                            PermissionId = 7,
-                            PermissionName = "Add member to task"
-                        },
-                        new
-                        {
-                            PermissionId = 8,
-                            PermissionName = "Add member to project"
-                        },
-                        new
-                        {
-                            PermissionId = 9,
-                            PermissionName = "Remove member from task"
-                        },
-                        new
-                        {
-                            PermissionId = 10,
-                            PermissionName = "Remove member from project"
-                        },
-                        new
-                        {
-                            PermissionId = 11,
-                            PermissionName = "Change task status"
-                        },
-                        new
-                        {
-                            PermissionId = 12,
-                            PermissionName = "Change project status"
-                        },
-                        new
-                        {
-                            PermissionId = 13,
-                            PermissionName = "Change project"
-                        },
-                        new
-                        {
-                            PermissionId = 14,
-                            PermissionName = "Update task priority"
-                        },
-                        new
-                        {
-                            PermissionId = 15,
-                            PermissionName = "Add task dependency"
-                        },
-                        new
-                        {
-                            PermissionId = 16,
-                            PermissionName = "Remove task dependency"
-                        },
-                        new
-                        {
-                            PermissionId = 17,
-                            PermissionName = "Add task category"
-                        },
-                        new
-                        {
-                            PermissionId = 18,
-                            PermissionName = "Remove task category"
+                            PermissionName = "Create project"
                         });
                 });
 
@@ -356,6 +281,238 @@ namespace Server.Migrations
                     b.HasIndex("TeamLeaderId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ProjectPermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Delete project"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Add member to project"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Remove member from project"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Create task"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Delete task"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Add member to task"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Remove member from task"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Change project"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Change project status"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Change task status"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Change task priority"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Add task dependency"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Remove task dependency"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "Add task category"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "Remove task category"
+                        });
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsFallback")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ProjectRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDefault = true,
+                            IsFallback = false,
+                            Name = "Project Leader"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDefault = true,
+                            IsFallback = true,
+                            Name = "Project Assignee"
+                        });
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectRolePermission", b =>
+                {
+                    b.Property<int>("ProjectRoleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProjectPermissionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProjectRoleId", "ProjectPermissionId");
+
+                    b.HasIndex("ProjectPermissionId");
+
+                    b.ToTable("ProjectRolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 1
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 2
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 3
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 4
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 5
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 6
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 7
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 8
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 9
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 10
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 11
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 12
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 13
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 14
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 15
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 10
+                        });
                 });
 
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>
@@ -515,11 +672,6 @@ namespace Server.Migrations
                         new
                         {
                             RoleId = 1,
-                            PermissionId = -1
-                        },
-                        new
-                        {
-                            RoleId = 1,
                             PermissionId = 1
                         },
                         new
@@ -529,88 +681,13 @@ namespace Server.Migrations
                         },
                         new
                         {
-                            RoleId = 2,
+                            RoleId = 1,
                             PermissionId = 3
                         },
                         new
                         {
-                            RoleId = 2,
+                            RoleId = 1,
                             PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 7
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 8
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 9
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 10
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 12
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 13
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 14
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 15
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 16
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 18
                         });
                 });
 
@@ -893,6 +970,25 @@ namespace Server.Migrations
                     b.Navigation("TeamLeader");
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectRolePermission", b =>
+                {
+                    b.HasOne("Server.Models.ProjectPermission", "ProjectPermission")
+                        .WithMany("ProjectRolePermissions")
+                        .HasForeignKey("ProjectPermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.ProjectRole", "ProjectRole")
+                        .WithMany("ProjectRolePermissions")
+                        .HasForeignKey("ProjectRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectPermission");
+
+                    b.Navigation("ProjectRole");
+                });
+
             modelBuilder.Entity("Server.Models.ProjectTask", b =>
                 {
                     b.HasOne("Server.Models.Project", "Project")
@@ -1037,6 +1133,16 @@ namespace Server.Migrations
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectPermission", b =>
+                {
+                    b.Navigation("ProjectRolePermissions");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectRole", b =>
+                {
+                    b.Navigation("ProjectRolePermissions");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectStatus", b =>

@@ -27,6 +27,34 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProjectPermissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectPermissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsFallback = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectStatuses",
                 columns: table => new
                 {
@@ -121,6 +149,30 @@ namespace Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TaskStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectRolePermissions",
+                columns: table => new
+                {
+                    ProjectRoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProjectPermissionId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectRolePermissions", x => new { x.ProjectRoleId, x.ProjectPermissionId });
+                    table.ForeignKey(
+                        name: "FK_ProjectRolePermissions_ProjectPermissions_ProjectPermissionId",
+                        column: x => x.ProjectPermissionId,
+                        principalTable: "ProjectPermissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectRolePermissions_ProjectRoles_ProjectRoleId",
+                        column: x => x.ProjectRoleId,
+                        principalTable: "ProjectRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -412,25 +464,41 @@ namespace Server.Migrations
                 columns: new[] { "PermissionId", "PermissionName" },
                 values: new object[,]
                 {
-                    { -1, "Edit roles" },
-                    { 1, "Add members" },
-                    { 2, "Deactivate members" },
-                    { 3, "Create project" },
+                    { 1, "Change global roles" },
+                    { 2, "Add members" },
+                    { 3, "Deactivate members" },
+                    { 4, "Create project" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectPermissions",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Delete project" },
+                    { 2, "Add member to project" },
+                    { 3, "Remove member from project" },
                     { 4, "Create task" },
-                    { 5, "Delete project" },
-                    { 6, "Delete task" },
-                    { 7, "Add member to task" },
-                    { 8, "Add member to project" },
-                    { 9, "Remove member from task" },
-                    { 10, "Remove member from project" },
-                    { 11, "Change task status" },
-                    { 12, "Change project status" },
-                    { 13, "Change project" },
-                    { 14, "Update task priority" },
-                    { 15, "Add task dependency" },
-                    { 16, "Remove task dependency" },
-                    { 17, "Add task category" },
-                    { 18, "Remove task category" }
+                    { 5, "Delete task" },
+                    { 6, "Add member to task" },
+                    { 7, "Remove member from task" },
+                    { 8, "Change project" },
+                    { 9, "Change project status" },
+                    { 10, "Change task status" },
+                    { 11, "Change task priority" },
+                    { 12, "Add task dependency" },
+                    { 13, "Remove task dependency" },
+                    { 14, "Add task category" },
+                    { 15, "Remove task category" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectRoles",
+                columns: new[] { "Id", "IsDefault", "IsFallback", "Name" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Project Leader" },
+                    { 2, true, true, "Project Assignee" }
                 });
 
             migrationBuilder.InsertData(
@@ -493,9 +561,32 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 15, 17, 36, 55, 799, DateTimeKind.Local).AddTicks(1308), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$kosZ7rMaIRlgE8WZiiVHA.FJN9NSqbrjhhqrTlV/htSZ45FUvoGby", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 15, 17, 36, 55, 938, DateTimeKind.Local).AddTicks(6400), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$h1.Xnrd1HqIYBBIA7E3LuesROC8INnq2WWExhgJdyizrTQ8u6R006", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 15, 17, 36, 56, 78, DateTimeKind.Local).AddTicks(49), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$3DW3qV3xewRyEw.lV4LKlePjOC836Eq3f7pPzJ1LAOBQLAV3s3D82", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 16, 15, 50, 41, 942, DateTimeKind.Local).AddTicks(3469), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$P2mGtnNeMFqzpjgiQrpoR.xHAJrLgTaK3gdCvcYkbETfunuxitZoC", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 16, 15, 50, 42, 76, DateTimeKind.Local).AddTicks(4876), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$/5E1WQrSMmiyUapSXXg3xO/sqgvtrt55ckV4W4SuytSsKpNY2og0O", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 16, 15, 50, 42, 210, DateTimeKind.Local).AddTicks(4096), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$egvjRtlp6KfcfI2XpRUYN.fugwB4WY.Z4igltLqA40oMsUy79JuFm", null, null, "", null, null, 3, "" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectRolePermissions",
+                columns: new[] { "ProjectPermissionId", "ProjectRoleId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 1 },
+                    { 4, 1 },
+                    { 5, 1 },
+                    { 6, 1 },
+                    { 7, 1 },
+                    { 8, 1 },
+                    { 9, 1 },
+                    { 10, 1 },
+                    { 11, 1 },
+                    { 12, 1 },
+                    { 13, 1 },
+                    { 14, 1 },
+                    { 15, 1 },
+                    { 10, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -503,26 +594,10 @@ namespace Server.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
-                    { -1, 1 },
                     { 1, 1 },
                     { 2, 1 },
-                    { 3, 2 },
-                    { 4, 2 },
-                    { 5, 2 },
-                    { 6, 2 },
-                    { 7, 2 },
-                    { 8, 2 },
-                    { 9, 2 },
-                    { 10, 2 },
-                    { 11, 2 },
-                    { 12, 2 },
-                    { 13, 2 },
-                    { 14, 2 },
-                    { 15, 2 },
-                    { 16, 2 },
-                    { 17, 2 },
-                    { 18, 2 },
-                    { 11, 3 }
+                    { 3, 1 },
+                    { 4, 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -555,6 +630,23 @@ namespace Server.Migrations
                 name: "IX_MemberTasks_TaskId",
                 table: "MemberTasks",
                 column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectPermissions_Name",
+                table: "ProjectPermissions",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectRolePermissions_ProjectPermissionId",
+                table: "ProjectRolePermissions",
+                column: "ProjectPermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectRoles_Name",
+                table: "ProjectRoles",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectStatusId",
@@ -645,6 +737,9 @@ namespace Server.Migrations
                 name: "MemberTasks");
 
             migrationBuilder.DropTable(
+                name: "ProjectRolePermissions");
+
+            migrationBuilder.DropTable(
                 name: "ProjectTaskStatuses");
 
             migrationBuilder.DropTable(
@@ -658,6 +753,12 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskDependencies");
+
+            migrationBuilder.DropTable(
+                name: "ProjectPermissions");
+
+            migrationBuilder.DropTable(
+                name: "ProjectRoles");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
