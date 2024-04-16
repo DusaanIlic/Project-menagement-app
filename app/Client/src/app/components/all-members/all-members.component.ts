@@ -1,4 +1,4 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Member } from '../../models/member';
 import {RouterLink} from "@angular/router";
@@ -13,25 +13,30 @@ import { DatePipe } from '@angular/common';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 import {environment} from "../../../environments/environment";
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-all-members',
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule],
   providers: [DatePipe]
 })
-export class AllMembersComponent implements OnInit{
+export class AllMembersComponent implements AfterViewInit{
 
   selectedRole: string = '';
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
   searchTerm: string = '';
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  dataSource = new MatTableDataSource<Member>(this.members);
+  displayedColumns: string[] = ['avatar', 'name', 'role', 'email', 'tasks', 'date'];
 
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
@@ -87,7 +92,6 @@ export class AllMembersComponent implements OnInit{
 
     return role ? role.name : 'Unknown';
   }
-
 
 
   constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {

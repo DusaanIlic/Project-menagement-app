@@ -4,7 +4,7 @@ import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Observable} from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormControl, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -13,14 +13,16 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { ActivatedRoute } from '@angular/router';
-import { ConfirmationComponent} from '../confirmation/confirmation.component';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
 import {MatExpansionModule} from '@angular/material/expansion';
-import {ThemePalette} from '@angular/material/core';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-project-kanban',
@@ -28,7 +30,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList, MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
+  imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, 
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -44,12 +47,6 @@ export class ProjectKanbanComponent implements OnInit {
   projectName: string = "";
   projectDate: Date | undefined;
 
-  allComplete: boolean = false;
-
-  updateAllComplete() {
-    this.allComplete = this.dropList != null && this.dropList.every(t => t.completed);
-  }
-
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;
 
@@ -63,7 +60,7 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
 
-getTeamLeaderInfo(projectId: number): void {
+  getTeamLeaderInfo(projectId: number): void {
   this.projectService.getProjectById(projectId)
     .subscribe((projectData: any) => {
       const teamLeader = projectData.teamLider;
@@ -176,7 +173,7 @@ getTeamLeaderInfo(projectId: number): void {
   }
 
 
-getTasksByStatus(statusId: number): any[] {
+  getTasksByStatus(statusId: number): any[] {
   switch (statusId) {
     case 1:
       return this.todo;
@@ -187,7 +184,7 @@ getTasksByStatus(statusId: number): any[] {
     default:
       return [];
   }
-}
+  }
 
   findTaskIndex(taskId: number, column: string): number {
       let taskList: any[];
