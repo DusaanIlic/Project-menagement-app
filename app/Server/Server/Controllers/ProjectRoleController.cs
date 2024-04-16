@@ -129,4 +129,49 @@ public partial class ProjectController
 
         return Ok(roleDto);
     }
+
+    [HttpDelete("{projectId}/Role/{roleId}")]
+    public async Task<IActionResult> DeleteRoleFromProject(int projectId, int roleId)
+    {
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .FirstOrDefaultAsync();
+
+        if (projectRole == null)
+        {
+            return BadRequest(new
+                { message = "Either project not found, or role is not a part of project with given id!" });
+        }
+
+        var role = await dbContext.ProjectRoles.FirstOrDefaultAsync(r => r.Id == roleId);
+        
+        if (role == null || role.IsDefault || role.IsFallback)
+        {
+            return BadRequest(new { message = "Can't delete this role!" });
+        }
+        
+        var fallbackRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.IsFallback);
+
+        if (fallbackRole == null)
+        {
+            return NotFound("Fallback role not found");
+        }
+
+        var members = await dbContext.Members
+            .Include(m => m.MemberProjects
+                .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId))
+            .ToListAsync();
+        
+        foreach (var project in members.SelectMany(member => member.MemberProjects))
+        {
+            project.ProjectRoleId = fallbackRole.RoleId;
+        }
+
+        dbContext.ProjectProjectRoles.Remove(projectRole);
+        dbContext.ProjectRoles.Remove(role);
+
+        await dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Successfully removed role" });
+    }
 }
