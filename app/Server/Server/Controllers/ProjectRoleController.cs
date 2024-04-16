@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request.Role;
+using Server.Models;
 
 namespace Server.Controllers;
 
@@ -77,6 +79,52 @@ public partial class ProjectController
                 PermissionId = prp.ProjectPermission.Id,
                 PermissionName = prp.ProjectPermission.Name
             }).ToList()
+        };
+
+        return Ok(roleDto);
+    }
+
+    [HttpPost("{projectId}/Roles")]
+    public async Task<IActionResult> AddRoleToProject(int projectId, AddRoleRequest addRoleRequest)
+    {
+        var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+        {
+            return BadRequest(new { message = "Project with given id not found" });
+        }
+
+        var roleExists = await dbContext.ProjectRoles.FirstOrDefaultAsync(r => r.Name == addRoleRequest.Name);
+
+        if (roleExists != null)
+        {
+            return BadRequest(new { message = "Project role with given name already exists" });
+        }
+
+        var role = new ProjectRole
+        {
+            Name = addRoleRequest.Name
+        };
+
+        dbContext.ProjectRoles.Add(role);
+        await dbContext.SaveChangesAsync();
+
+        var ppr = new ProjectProjectRole
+        {
+            ProjectId = projectId,
+            ProjectRoleId = role.Id
+        };
+
+        dbContext.ProjectProjectRoles.Add(ppr);
+        await dbContext.SaveChangesAsync();
+
+        var roleDto = new RoleDTO
+        {
+            Id = role.Id,
+            Name = role.Name,
+            IsDefault = role.IsDefault,
+            IsFallback = role.IsFallback,
+            PermissionList = new List<PermissionDTO>()
         };
 
         return Ok(roleDto);

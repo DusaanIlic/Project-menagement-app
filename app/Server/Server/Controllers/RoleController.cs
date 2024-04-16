@@ -76,6 +76,13 @@ namespace Server.Controllers
                 return Forbid();
             }
 
+            var roleExists = await dbContext.Roles.FirstOrDefaultAsync(r => r.RoleName == addRoleRequest.Name);
+
+            if (roleExists != null)
+            {
+                return BadRequest(new { message = "Role name already taken" });
+            }
+
             var role = new Role
             {
                 RoleName = addRoleRequest.Name
