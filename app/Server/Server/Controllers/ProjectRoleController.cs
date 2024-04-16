@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.Role;
@@ -232,5 +233,54 @@ public partial class ProjectController
         };
 
         return Ok(roleDto);
+    }
+    
+    [HttpPost("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    public async Task<IActionResult> AddPermissionToRole(int projectId, int roleId, int permissionId)
+    {
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .Include(ppr => ppr.ProjectRole)
+            .FirstOrDefaultAsync();
+
+        if (projectRole == null)
+        {
+            return BadRequest(new { message = "Either project with given id or role with given id does not exist "} );
+        }
+
+        var role = projectRole.ProjectRole;
+
+        if (role.IsDefault || role.IsFallback)
+        {
+            return BadRequest(new { message = "You can't modify this project role" });
+        }
+
+        var permission = await dbContext.ProjectPermissions
+            .FirstOrDefaultAsync(rp => rp.Id == permissionId);
+
+        if (permission == null)
+        {
+            return BadRequest(new { message = "Permission with given id not found" });
+        }
+        
+        var rolePermission = await dbContext.ProjectRolePermissions
+            .FirstOrDefaultAsync(prp => prp.ProjectRoleId == roleId && prp.ProjectPermissionId == permissionId);
+            
+        if (rolePermission != null)
+        {
+            return Conflict(new { message = "Role already has this permission." });
+        }
+        
+        
+        var newRolePermission = new ProjectRolePermission
+        {
+            ProjectRoleId = roleId,
+            ProjectPermissionId = permissionId
+        };
+
+        dbContext.ProjectRolePermissions.Add(newRolePermission);
+        await dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Success." });
     }
 }
