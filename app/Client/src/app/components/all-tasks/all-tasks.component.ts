@@ -40,6 +40,7 @@ export class AllTasksComponent {
   allTasks: Task[] = []
   taskCategories : taskCategory[] = [];
   visible : boolean[] = []
+  tableSel: string = 't1';
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
@@ -147,5 +148,5 @@ export class AllTasksComponent {
     this.visible[i] = !this.visible[i];
   }
 
-  protected readonly environment = environment;
+
 }
