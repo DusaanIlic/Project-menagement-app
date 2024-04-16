@@ -183,6 +183,11 @@ namespace Server.Controllers
             {
                 return NotFound("Role not found");
             }
+
+            if (role.IsDefault || role.IsFallback)
+            {
+                return Forbid();
+            }
             
             // Check if role name is unique
             if (await dbContext.Roles.AnyAsync(r => r.RoleName == request.Name && r.RoleId != roleId))
@@ -216,11 +221,17 @@ namespace Server.Controllers
             }
 
             var rolePermission = await dbContext.RolePermissions
-                                              .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
+                .Include(rp => rp.Role)
+                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+            
             if (rolePermission == null)
             {
                 return NotFound(new { message = "Role permission not found." });
+            }
+
+            if (rolePermission.Role.IsDefault || rolePermission.Role.IsFallback)
+            {
+                return NotFound(new { message = "You can't change permissions of this role" });
             }
 
             dbContext.RolePermissions.Remove(rolePermission);
@@ -238,12 +249,20 @@ namespace Server.Controllers
             {
                 return Forbid();
             }
-            var existingRolePermission = await dbContext.RolePermissions
-                                                      .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-            if (existingRolePermission != null)
+            
+            var rolePermission = await dbContext.RolePermissions
+                .Include(rp => rp.Role)
+                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+            
+            if (rolePermission != null)
             {
                 return Conflict(new { message = "Role already has this permission." });
+            }
+            
+            
+            if (rolePermission != null && (rolePermission.Role.IsDefault || rolePermission.Role.IsFallback))
+            {
+                return NotFound(new { message = "You can't change permissions of this role" });
             }
 
             var newRolePermission = new RolePermission

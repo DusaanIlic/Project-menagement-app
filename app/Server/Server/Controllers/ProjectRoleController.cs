@@ -94,7 +94,11 @@ public partial class ProjectController
             return BadRequest(new { message = "Project with given id not found" });
         }
 
-        var roleExists = await dbContext.ProjectRoles.FirstOrDefaultAsync(r => r.Name == addRoleRequest.Name);
+        var roleExists = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId)
+            .Include(ppr => ppr.ProjectRole)
+            .Where(ppr => ppr.ProjectRole.Name == addRoleRequest.Name)
+            .FirstOrDefaultAsync();
 
         if (roleExists != null)
         {
@@ -173,5 +177,60 @@ public partial class ProjectController
         await dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Successfully removed role" });
+    }
+    
+    [HttpPut("{projectId}/Roles/{roleId}")]
+    public async Task<IActionResult> ChangeRoleName(int projectId, int roleId, UpdateRoleRequest request)
+    {
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .Include(ppr => ppr.ProjectRole)
+                .ThenInclude(pr => pr.ProjectRolePermissions)
+                    .ThenInclude(prp => prp.ProjectPermission)
+            .FirstOrDefaultAsync();
+        
+        if (projectRole == null)
+        {
+            return NotFound("Role not found");
+        }
+
+        var role = projectRole.ProjectRole;
+
+        if (role.IsDefault || role.IsFallback)
+        {
+            return BadRequest(new { message = "You can't edit this role" });
+        }
+            
+        var roleExists = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId)
+            .Include(ppr => ppr.ProjectRole)
+            .Where(ppr => ppr.ProjectRoleId != roleId && ppr.ProjectRole.Name == request.Name)
+            .FirstOrDefaultAsync();
+        
+        // Check if role name is unique
+        if (roleExists != null)
+        {
+            return BadRequest("Role name must be unique");
+        }
+
+        // Update role name
+        role.Name = request.Name;
+
+        await dbContext.SaveChangesAsync();
+
+        var roleDto = new RoleDTO()
+        {
+            Id = role.Id,
+            Name = role.Name,
+            IsDefault = role.IsDefault,
+            IsFallback = role.IsFallback,
+            PermissionList = role.ProjectRolePermissions.Select(prp => new PermissionDTO
+            {
+                PermissionId = prp.ProjectPermission.Id,
+                PermissionName = prp.ProjectPermission.Name
+            }).ToList()
+        };
+
+        return Ok(roleDto);
     }
 }
