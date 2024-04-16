@@ -283,4 +283,46 @@ public partial class ProjectController
 
         return Ok(new { message = "Success." });
     }
+    
+    [HttpDelete("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    public async Task<IActionResult> RemovePermissionFromRole(int projectId, int roleId, int permissionId)
+    {
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .Include(ppr => ppr.ProjectRole)
+            .FirstOrDefaultAsync();
+
+        if (projectRole == null)
+        {
+            return BadRequest(new { message = "Either project with given id or role with given id does not exist "} );
+        }
+
+        var role = projectRole.ProjectRole;
+
+        if (role.IsDefault || role.IsFallback)
+        {
+            return BadRequest(new { message = "You can't modify this project role" });
+        }
+
+        var permission = await dbContext.ProjectPermissions
+            .FirstOrDefaultAsync(rp => rp.Id == permissionId);
+
+        if (permission == null)
+        {
+            return BadRequest(new { message = "Permission with given id not found" });
+        }
+        
+        var rolePermission = await dbContext.ProjectRolePermissions
+            .FirstOrDefaultAsync(prp => prp.ProjectRoleId == roleId && prp.ProjectPermissionId == permissionId);
+            
+        if (rolePermission == null)
+        {
+            return Conflict(new { message = "Role doesn't have this permission." });
+        }
+        
+        dbContext.ProjectRolePermissions.Remove(rolePermission);
+        await dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Success." });
+    }
 }
