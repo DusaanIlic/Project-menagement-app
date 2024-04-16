@@ -155,7 +155,7 @@ namespace Server.Controllers
             
             await dbContext.SaveChangesAsync();
             
-            dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId });
+            dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId, ProjectRoleId = 1 });
             
             await dbContext.SaveChangesAsync();
 
@@ -499,12 +499,12 @@ namespace Server.Controllers
 
             var roleId = await rolePermissionService.CheckRole(userId);
 
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
@@ -532,7 +532,9 @@ namespace Server.Controllers
                     return BadRequest(new { message = "Member already exists in the project" });
                 }
 
-                dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId });
+                var defaultRole = await dbContext.ProjectRoles.FirstOrDefaultAsync(pr => pr.IsFallback);
+                
+                dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId, ProjectRoleId = defaultRole.Id });
 
                 var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
 

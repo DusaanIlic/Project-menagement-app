@@ -289,7 +289,8 @@ namespace Server.Migrations
                 columns: table => new
                 {
                     MemberId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProjectRoleId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -298,6 +299,12 @@ namespace Server.Migrations
                         name: "FK_MemberProjects_Members_MemberId",
                         column: x => x.MemberId,
                         principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MemberProjects_ProjectRoles_ProjectRoleId",
+                        column: x => x.ProjectRoleId,
+                        principalTable: "ProjectRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -586,9 +593,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 16, 16, 31, 51, 979, DateTimeKind.Local).AddTicks(267), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$3IMYdL5JTLlwFMqOPJLW5OAyDi00qjxznK3Z4u8G8wbVXZLkDy.Ta", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 16, 16, 31, 52, 41, DateTimeKind.Local).AddTicks(9560), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$RTiNH57LFV4ZP4LmJ0dRIeb5Ci8lfsd248LJOi.vOPxGCc.nL9uiO", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 16, 16, 31, 52, 106, DateTimeKind.Local).AddTicks(7912), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$JqwUG4EamTkGC3CnAj40NOJKHhHwKczHBS7XBpCa1aWquK7Xw0I.a", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 16, 17, 35, 50, 59, DateTimeKind.Local).AddTicks(1885), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$y3DMvyomtkRA.GiSOy1akOe69X5/6yYJFDvz3ybBkUExXqmjth9w.", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 16, 17, 35, 50, 192, DateTimeKind.Local).AddTicks(3428), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$wFI6D4li6XxEkBoIgQgTKeiGGcVkcsYtjTnFyDlItBo0TmW2cNKsO", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 16, 17, 35, 50, 325, DateTimeKind.Local).AddTicks(4774), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$6cDRRpU1DHT8zLZWvUsUMegHKRcLflrk4BHEjGDKht4.uOg3EMBt6", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -634,6 +641,11 @@ namespace Server.Migrations
                 name: "IX_MemberProjects_ProjectId",
                 table: "MemberProjects",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberProjects_ProjectRoleId",
+                table: "MemberProjects",
+                column: "ProjectRoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Members_AvatarId",

@@ -174,6 +174,11 @@ namespace Server.Data
                 .WithMany(p => p.MemberProjects)
                 .HasForeignKey(mp => mp.ProjectId);
 
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.ProjectRole)
+                .WithMany()
+                .HasForeignKey(mp => mp.ProjectRoleId);
+
             modelBuilder.Entity<ProjectRole>()
                 .HasIndex(pr => pr.Name)
                 .IsUnique();

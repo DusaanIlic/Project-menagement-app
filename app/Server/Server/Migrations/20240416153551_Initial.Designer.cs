@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240416143152_Initial")]
+    [Migration("20240416153551_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 51, 979, DateTimeKind.Local).AddTicks(267),
+                            DateAdded = new DateTime(2024, 4, 16, 17, 35, 50, 59, DateTimeKind.Local).AddTicks(1885),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$3IMYdL5JTLlwFMqOPJLW5OAyDi00qjxznK3Z4u8G8wbVXZLkDy.Ta",
+                            Password = "$2a$10$y3DMvyomtkRA.GiSOy1akOe69X5/6yYJFDvz3ybBkUExXqmjth9w.",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 52, 41, DateTimeKind.Local).AddTicks(9560),
+                            DateAdded = new DateTime(2024, 4, 16, 17, 35, 50, 192, DateTimeKind.Local).AddTicks(3428),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$RTiNH57LFV4ZP4LmJ0dRIeb5Ci8lfsd248LJOi.vOPxGCc.nL9uiO",
+                            Password = "$2a$10$wFI6D4li6XxEkBoIgQgTKeiGGcVkcsYtjTnFyDlItBo0TmW2cNKsO",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 52, 106, DateTimeKind.Local).AddTicks(7912),
+                            DateAdded = new DateTime(2024, 4, 16, 17, 35, 50, 325, DateTimeKind.Local).AddTicks(4774),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$JqwUG4EamTkGC3CnAj40NOJKHhHwKczHBS7XBpCa1aWquK7Xw0I.a",
+                            Password = "$2a$10$6cDRRpU1DHT8zLZWvUsUMegHKRcLflrk4BHEjGDKht4.uOg3EMBt6",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -189,9 +189,14 @@ namespace Server.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProjectRoleId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("MemberId", "ProjectId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("ProjectRoleId");
 
                     b.ToTable("MemberProjects");
                 });
@@ -951,9 +956,17 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Models.ProjectRole", "ProjectRole")
+                        .WithMany()
+                        .HasForeignKey("ProjectRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Member");
 
                     b.Navigation("Project");
+
+                    b.Navigation("ProjectRole");
                 });
 
             modelBuilder.Entity("Server.Models.MemberTask", b =>
@@ -995,13 +1008,13 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
                 {
                     b.HasOne("Server.Models.Project", "Project")
-                        .WithMany("ProjectRoleAssociations")
+                        .WithMany("ProjectProjectRoles")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Server.Models.ProjectRole", "ProjectRole")
-                        .WithMany("ProjectRoleAssociations")
+                        .WithMany("ProjectProjeRoles")
                         .HasForeignKey("ProjectRoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1171,7 +1184,7 @@ namespace Server.Migrations
                 {
                     b.Navigation("MemberProjects");
 
-                    b.Navigation("ProjectRoleAssociations");
+                    b.Navigation("ProjectProjectRoles");
 
                     b.Navigation("ProjectTaskStatuses");
 
@@ -1185,7 +1198,7 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.ProjectRole", b =>
                 {
-                    b.Navigation("ProjectRoleAssociations");
+                    b.Navigation("ProjectProjeRoles");
 
                     b.Navigation("ProjectRolePermissions");
                 });
