@@ -19,4 +19,6 @@ public class ProjectRole
     public bool IsFallback { get; set; } = false;
     
     public ICollection<ProjectRolePermission> ProjectRolePermissions { get; set; } = new List<ProjectRolePermission>();
+
+    public ICollection<ProjectProjectRole> ProjectRoleAssociations { get; set; } = new List<ProjectProjectRole>();
 }

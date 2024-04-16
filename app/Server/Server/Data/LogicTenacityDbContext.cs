@@ -33,6 +33,7 @@ namespace Server.Data
         public DbSet<ProjectRole> ProjectRoles { get; set; }
         public DbSet<ProjectPermission> ProjectPermissions { get; set; }
         public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
+        public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -194,6 +195,19 @@ namespace Server.Data
             modelBuilder.Entity<ProjectRolePermission>()
                 .HasKey(prm => new { prm.ProjectRoleId, prm.ProjectPermissionId });
 
+            modelBuilder.Entity<ProjectProjectRole>()
+                .HasKey(pra => new { pra.ProjectId, pra.ProjectRoleId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.ProjectRoleAssociations)
+                .WithOne(pra => pra.Project)
+                .HasForeignKey(pra => pra.ProjectId);
+            
+            modelBuilder.Entity<ProjectRole>()
+                .HasMany(pr => pr.ProjectRoleAssociations)
+                .WithOne(pra => pra.ProjectRole)
+                .HasForeignKey(pra => pra.ProjectRoleId);
+            
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global roles" },
                 new Permission { PermissionId = 2, PermissionName = "Add members" },
@@ -250,7 +264,8 @@ namespace Server.Data
 
             modelBuilder.Entity<ProjectRole>().HasData(
                 new ProjectRole { Id = 1, Name = "Project Leader", IsDefault = true },
-                new ProjectRole { Id = 2, Name = "Project Assignee", IsDefault = true, IsFallback = true }
+                new ProjectRole { Id = 2, Name = "Project Assignee", IsDefault = true },
+                new ProjectRole { Id = 3, Name = "Project Guest", IsDefault = true, IsFallback = true }
             );
 
             modelBuilder.Entity<ProjectPermission>().HasData(

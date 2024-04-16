@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240416135043_Initial")]
+    [Migration("20240416143152_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 41, 942, DateTimeKind.Local).AddTicks(3469),
+                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 51, 979, DateTimeKind.Local).AddTicks(267),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$P2mGtnNeMFqzpjgiQrpoR.xHAJrLgTaK3gdCvcYkbETfunuxitZoC",
+                            Password = "$2a$10$3IMYdL5JTLlwFMqOPJLW5OAyDi00qjxznK3Z4u8G8wbVXZLkDy.Ta",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 42, 76, DateTimeKind.Local).AddTicks(4876),
+                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 52, 41, DateTimeKind.Local).AddTicks(9560),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$/5E1WQrSMmiyUapSXXg3xO/sqgvtrt55ckV4W4SuytSsKpNY2og0O",
+                            Password = "$2a$10$RTiNH57LFV4ZP4LmJ0dRIeb5Ci8lfsd248LJOi.vOPxGCc.nL9uiO",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 16, 15, 50, 42, 210, DateTimeKind.Local).AddTicks(4096),
+                            DateAdded = new DateTime(2024, 4, 16, 16, 31, 52, 106, DateTimeKind.Local).AddTicks(7912),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$egvjRtlp6KfcfI2XpRUYN.fugwB4WY.Z4igltLqA40oMsUy79JuFm",
+                            Password = "$2a$10$JqwUG4EamTkGC3CnAj40NOJKHhHwKczHBS7XBpCa1aWquK7Xw0I.a",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -378,6 +378,21 @@ namespace Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProjectRoleId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProjectId", "ProjectRoleId");
+
+                    b.HasIndex("ProjectRoleId");
+
+                    b.ToTable("ProjectProjectRoles");
+                });
+
             modelBuilder.Entity("Server.Models.ProjectRole", b =>
                 {
                     b.Property<int>("Id")
@@ -413,8 +428,15 @@ namespace Server.Migrations
                         {
                             Id = 2,
                             IsDefault = true,
-                            IsFallback = true,
+                            IsFallback = false,
                             Name = "Project Assignee"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDefault = true,
+                            IsFallback = true,
+                            Name = "Project Guest"
                         });
                 });
 
@@ -970,6 +992,25 @@ namespace Server.Migrations
                     b.Navigation("TeamLeader");
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
+                {
+                    b.HasOne("Server.Models.Project", "Project")
+                        .WithMany("ProjectRoleAssociations")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.ProjectRole", "ProjectRole")
+                        .WithMany("ProjectRoleAssociations")
+                        .HasForeignKey("ProjectRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("ProjectRole");
+                });
+
             modelBuilder.Entity("Server.Models.ProjectRolePermission", b =>
                 {
                     b.HasOne("Server.Models.ProjectPermission", "ProjectPermission")
@@ -1130,6 +1171,8 @@ namespace Server.Migrations
                 {
                     b.Navigation("MemberProjects");
 
+                    b.Navigation("ProjectRoleAssociations");
+
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");
@@ -1142,6 +1185,8 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.ProjectRole", b =>
                 {
+                    b.Navigation("ProjectRoleAssociations");
+
                     b.Navigation("ProjectRolePermissions");
                 });
 

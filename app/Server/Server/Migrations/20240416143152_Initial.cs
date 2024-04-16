@@ -309,6 +309,30 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProjectProjectRoles",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProjectRoleId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectProjectRoles", x => new { x.ProjectId, x.ProjectRoleId });
+                    table.ForeignKey(
+                        name: "FK_ProjectProjectRoles_ProjectRoles_ProjectRoleId",
+                        column: x => x.ProjectRoleId,
+                        principalTable: "ProjectRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectProjectRoles_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectTasks",
                 columns: table => new
                 {
@@ -498,7 +522,8 @@ namespace Server.Migrations
                 values: new object[,]
                 {
                     { 1, true, false, "Project Leader" },
-                    { 2, true, true, "Project Assignee" }
+                    { 2, true, false, "Project Assignee" },
+                    { 3, true, true, "Project Guest" }
                 });
 
             migrationBuilder.InsertData(
@@ -561,9 +586,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 16, 15, 50, 41, 942, DateTimeKind.Local).AddTicks(3469), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$P2mGtnNeMFqzpjgiQrpoR.xHAJrLgTaK3gdCvcYkbETfunuxitZoC", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 16, 15, 50, 42, 76, DateTimeKind.Local).AddTicks(4876), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$/5E1WQrSMmiyUapSXXg3xO/sqgvtrt55ckV4W4SuytSsKpNY2og0O", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 16, 15, 50, 42, 210, DateTimeKind.Local).AddTicks(4096), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$egvjRtlp6KfcfI2XpRUYN.fugwB4WY.Z4igltLqA40oMsUy79JuFm", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 16, 16, 31, 51, 979, DateTimeKind.Local).AddTicks(267), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$3IMYdL5JTLlwFMqOPJLW5OAyDi00qjxznK3Z4u8G8wbVXZLkDy.Ta", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 16, 16, 31, 52, 41, DateTimeKind.Local).AddTicks(9560), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$RTiNH57LFV4ZP4LmJ0dRIeb5Ci8lfsd248LJOi.vOPxGCc.nL9uiO", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 16, 16, 31, 52, 106, DateTimeKind.Local).AddTicks(7912), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$JqwUG4EamTkGC3CnAj40NOJKHhHwKczHBS7XBpCa1aWquK7Xw0I.a", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -636,6 +661,11 @@ namespace Server.Migrations
                 table: "ProjectPermissions",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectProjectRoles_ProjectRoleId",
+                table: "ProjectProjectRoles",
+                column: "ProjectRoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectRolePermissions_ProjectPermissionId",
@@ -735,6 +765,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "MemberTasks");
+
+            migrationBuilder.DropTable(
+                name: "ProjectProjectRoles");
 
             migrationBuilder.DropTable(
                 name: "ProjectRolePermissions");
