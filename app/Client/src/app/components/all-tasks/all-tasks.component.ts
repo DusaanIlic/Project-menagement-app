@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
-import {NgIf, NgOptimizedImage} from "@angular/common";
+import { ChangeDetectorRef, Component } from '@angular/core';
+import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskService } from '../../services/task.service';
 import { catchError, map } from 'rxjs/operators';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { ActivatedRoute } from '@angular/router';
+import { Task } from '../../models/task';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { FormsModule } from '@angular/forms';
+import { TaskOverviewComponent } from '../task-overview/task-overview.component';
+import {ProjectServiceGet} from "../../services/project.service";
+import {taskCategory} from "../../models/taskCategory";
+import {environment} from "../../../environments/environment";
+
 
 @Component({
   selector: 'app-all-tasks',
@@ -14,35 +23,39 @@ import { ActivatedRoute } from '@angular/router';
     NgOptimizedImage,
     NgIf,
     MatDialogModule,
-    NgToastModule
+    NgToastModule,
+    CommonModule,
+    MatButtonModule,
+    MatMenuModule,
+    FormsModule
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
 })
 export class AllTasksComponent {
-  showStandalone: boolean = true;
-  standaloneTasks: string = '- None';
-  todo: any[] = [];
-  progress: any[] = [];
-  done: any[] = [];
-  projectId: string | undefined;
+  todo: Task[] = [];
+  progress: Task[] = [];
+  done: Task[] = [];
+  projectId: number = 0;
+  allTasks: Task[] = []
+  taskCategories : taskCategory[] = [];
+  visible : boolean[] = []
+  tableSel: string = 't1';
 
-  constructor(public dialog: MatDialog, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
+  constructor(public dialog: MatDialog,
+              private taskService: TaskService,
+              private _ngToastService: NgToastService,
+              private route: ActivatedRoute,
+              private cdr: ChangeDetectorRef,
+              private tService : TaskService,
+              private pService : ProjectServiceGet){}
 
   ngOnInit(): void{
-    this.loadTasksByProject(1);
     this.getProjectIdFromRoute();
+    this.loadTasksByProject(this.projectId);
+    for(let i=0;i<this.taskCategories.length;i++)
+      this.visible.push(false)
   }
-
-  toggleUncategorized() {
-    this.showStandalone = !this.showStandalone;
-
-    if (this.showStandalone)
-      this.standaloneTasks = '- None';
-    else
-      this.standaloneTasks = '+ None';
-  }
-
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
@@ -51,7 +64,7 @@ export class AllTasksComponent {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(1); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+      this.loadTasksByProject(this.projectId); // Ponovo učitava zadatke nakon dodavanja novog zadatka
     });
   }
 
@@ -59,17 +72,22 @@ export class AllTasksComponent {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          this.todo = data.filter(task => task.taskStatusId === 1);
-          this.progress = data.filter(task => task.taskStatusId === 2);
-          this.done = data.filter(task => task.taskStatusId === 3);
-          return data;
+          console.log(data)
+          this.allTasks = data
+          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.getAllTaskCategoriesOnProject()
+        return data;
         }),
         catchError(error => {
           console.error('Error fetching tasks:', error);
-          throw error; 
+          throw error;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.cdr.detectChanges();
+      });
   }
 
   getProjectIdFromRoute(){
@@ -81,4 +99,54 @@ export class AllTasksComponent {
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
   }
+
+  openDialogOverview(taskId : number)
+  {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId
+    });
+  }
+
+  deleteTask(taskId : number)
+  {
+    this.tService.deleteTask(taskId).subscribe({
+      next : data =>{
+        this.loadTasksByProject(this.projectId);
+      },
+      error : error =>{
+        console.log("Error deleting task!")
+      }
+    });
+  }
+
+  hasElement(elem : taskCategory): boolean
+  {
+    for(let i=0;i<this.taskCategories.length;i++)
+    {
+      if(this.taskCategories[i].taskCategoryId == elem.taskCategoryId && this.taskCategories[i].taskCategoryName == elem.taskCategoryName)
+        return true;
+    }
+    return false;
+  }
+
+  getAllTaskCategoriesOnProject()
+  {
+    this.pService.getTaskCategoriesOnProject(this.projectId).subscribe((data : taskCategory[]) =>{
+     for(let i=0;i<data.length;i++)
+     {
+       if(!this.hasElement(data[i]))
+         this.taskCategories.push(data[i])
+     }
+
+    })
+  }
+
+
+  showNHide(i: number)
+  {
+    this.visible[i] = !this.visible[i];
+  }
+
+
 }

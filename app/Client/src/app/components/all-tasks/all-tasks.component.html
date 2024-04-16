@@ -30,245 +30,265 @@
         <p class="text-accent-blue font-bold">Show only:</p>
 
         <div class="flex items-center justify-center gap-1 ">
-          <input type="radio" id="radio-all" name="radio-filter">
+          <input type="radio" id="radio-all" name="radio-filter" [(ngModel)]="tableSel" value="t1">
           <label for="radio-all">All</label>
         </div>
 
         <div class="flex items-center justify-center gap-1">
-          <input type="radio" id="radio-in-progress" name="radio-filter">
+          <input type="radio" id="radio-new" name="radio-filter" [(ngModel)]="tableSel" value="t2">
+          <label for="radio-new">New</label>
+        </div>
+
+        <div class="flex items-center justify-center gap-1">
+          <input type="radio" id="radio-in-progress" name="radio-filter" [(ngModel)]="tableSel" value="t3">
           <label for="radio-in-progress">In Progress</label>
         </div>
 
         <div class="flex items-center justify-center gap-1">
-          <input type="radio" id="radio-completed" name="radio-filter">
-          <label for="radio-completed">Completed Tasks</label>
+          <input type="radio" id="radio-completed" name="radio-filter" [(ngModel)]="tableSel" value="t4">
+          <label for="radio-completed">Completed</label>
         </div>
       </div>
     </div>
 
     <hr class="border-accent-blue">
 
-    <table>
-      <thead class="text-left">
-        <tr class="text-accent-blue h-12 select-none">
-          <th class="text-xl font-bold">SUBPROJECT</th>
-          <th class="text-xl">TASK</th>
-          <th class="text-xl">PRIORITY</th>
-          <th class="text-xl">STATUS</th>
-          <th class="text-xl">ASSIGNEES</th>
-          <th class="text-xl">PROGRESS</th>
-          <th class="text-center text-xl">DUE DATE</th>
-          <th></th>
-        </tr>
-      </thead>
+    <div class="flex justify-center select-none" *ngIf="tableSel == 't1'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <thead class="text-center">
+          <tr class="">
+            <th class="text-left w-60 p-3 border-b-[1px] border-b-gray-300">TASK GROUP</th>
+            <th class="text-center w-60 border-b-[1px] border-b-gray-300">TASK</th>
+            <th class="text-center w-60 border-b-[1px] border-b-gray-300">START DATE</th>
+            <th class="text-center w-60 border-b-[1px] border-b-gray-300">DUE DATE</th>
+            <th class="text-center w-60 border-b-[1px] border-b-gray-300">STATUS</th>
+            <th class="text-center w-60 border-b-[1px] border-b-gray-300">PRIORITY</th>
+            <th class="text-center w-52 border-b-[1px] border-b-gray-300">ASSIGNEES</th>
+            <th class="text-center w-20 border-b-[1px] border-b-gray-300"></th>
+          </tr>
+        </thead>
 
-      <tbody class="overflow-auto">
-        <tr>
-          <td class="text-xl text-accent-blue font-bold border-b border-accent-blue" colspan="8" (click)="toggleUncategorized()">{{standaloneTasks}}</td>
-        </tr>
+        <tbody *ngFor="let cat of taskCategories; index as i">
+          <td *ngIf="allTasks.length == 0 && i==0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8">No tasks.</td>
+          <td *ngIf="!visible[i] && allTasks.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4" src="assets/icons/arrow.png"></div></td>
+          <td *ngIf="visible[i] && allTasks.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4 rotate-180" src="assets/icons/arrow.png"></div></td>
+          <tr *ngFor="let task of allTasks" class="border-[1px] border-gray-500 hover:bg-gray-300">
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"></td>
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.taskName}}</td>
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.startDate | date}}</td>
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.deadline | date}}</td>
+            <td *ngIf="task.taskStatusId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#EE9322]">
+              {{task.taskStatus}}
+            </td>
+            <td *ngIf="task.taskStatusId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#0029a3]">
+              {{task.taskStatus}}
+            </td>
+            <td *ngIf="task.taskStatusId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#002d00]">
+              {{task.taskStatus}}
+            </td>
+            <td *ngIf="task.taskPriorityId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriorityName}}</div></div></td>
+            <td *ngIf="task.taskPriorityId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></div></td>
+            <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
+              <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
+              <div class="flex justify-end">
+                <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+                  <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
+                  <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
+                </div>
+              </div>
+            </td>
+            <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="w-20 border-b-[1px] border-b-gray-300">
+              <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
+            </td>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+              <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="deleteTask(task.taskId)">Delete</button>
+            </mat-menu>
+          </tr>
+        </tbody>
 
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
+      </div>
+    </div>
+
+
+
+    <div class="flex justify-center select-none" *ngIf="tableSel == 't2'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <thead class="text-center">
+        <tr class="">
+          <th class="text-left w-60 p-3 border-b-[1px] border-b-gray-300">TASK GROUP</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">TASK</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">START DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">DUE DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">STATUS</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">PRIORITY</th>
+          <th class="text-center w-52 border-b-[1px] border-b-gray-300">ASSIGNEES</th>
+          <th class="text-center w-20 border-b-[1px] border-b-gray-300"></th>
+        </tr>
+        </thead>
+
+        <tbody *ngFor="let cat of taskCategories; index as i">
+        <td *ngIf="todo.length == 0 && i==0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8">No new tasks.</td>
+        <td *ngIf="!visible[i] && todo.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4" src="assets/icons/arrow.png"></div></td>
+        <td *ngIf="visible[i] && todo.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4 rotate-180" src="assets/icons/arrow.png"></div></td>
+        <tr *ngFor="let task of todo" class="border-[1px] border-gray-500 hover:bg-gray-300">
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.taskName}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.startDate | date}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.deadline | date}}</td>
+          <td *ngIf="task.taskStatusId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#EE9322]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
+          <td *ngIf="task.taskStatusId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#0029a3]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
+          <td *ngIf="task.taskStatusId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#002d00]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
+          <td *ngIf="task.taskPriorityId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
+            <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
+            <div class="flex justify-end">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+                <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
+                <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
             </div>
           </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="w-20 border-b-[1px] border-b-gray-300">
+            <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
           </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="deleteTask(task.taskId)">Delete</button>
+          </mat-menu>
         </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
+        </tbody>
+
+      </div>
+    </div>
+
+    <div class="flex justify-center select-none" *ngIf="tableSel == 't3'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <thead class="text-center">
+        <tr class="">
+          <th class="text-left w-60 p-3 border-b-[1px] border-b-gray-300">TASK GROUP</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">TASK</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">START DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">DUE DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">STATUS</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">PRIORITY</th>
+          <th class="text-center w-52 border-b-[1px] border-b-gray-300">ASSIGNEES</th>
+          <th class="text-center w-20 border-b-[1px] border-b-gray-300"></th>
+        </tr>
+        </thead>
+
+        <tbody *ngFor="let cat of taskCategories; index as i">
+        <td *ngIf="progress.length == 0 && i==0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8">No in progress tasks.</td>
+        <td *ngIf="!visible[i] && progress.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4" src="assets/icons/arrow.png"></div></td>
+        <td *ngIf="visible[i] && progress.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4 rotate-180" src="assets/icons/arrow.png"></div></td>
+        <tr *ngFor="let task of progress" class="border-[1px] border-gray-500 hover:bg-gray-300">
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.taskName}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.startDate | date}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.deadline | date}}</td>
+          <td *ngIf="task.taskStatusId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#EE9322]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
+          <td *ngIf="task.taskStatusId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#0029a3]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
+          <td *ngIf="task.taskStatusId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#002d00]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
+          <td *ngIf="task.taskPriorityId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
+            <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
+            <div class="flex justify-end">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+                <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
+                <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
             </div>
           </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="w-20 border-b-[1px] border-b-gray-300">
+            <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
           </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="deleteTask(task.taskId)">Delete</button>
+          </mat-menu>
         </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
+        </tbody>
+
+      </div>
+    </div>
+
+
+    <div class="flex justify-center select-none" *ngIf="tableSel == 't4'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <thead class="text-center">
+        <tr class="">
+          <th class="text-left w-60 p-3 border-b-[1px] border-b-gray-300">TASK GROUP</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">TASK</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">START DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">DUE DATE</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">STATUS</th>
+          <th class="text-center w-60 border-b-[1px] border-b-gray-300">PRIORITY</th>
+          <th class="text-center w-52 border-b-[1px] border-b-gray-300">ASSIGNEES</th>
+          <th class="text-center w-20 border-b-[1px] border-b-gray-300"></th>
+        </tr>
+        </thead>
+
+        <tbody *ngFor="let cat of taskCategories; index as i">
+        <td *ngIf="done.length == 0 && i==0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8">No finished tasks.</td>
+        <td *ngIf="!visible[i] && done.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4" src="assets/icons/arrow.png"></div></td>
+        <td *ngIf="visible[i] && done.length != 0" class="text-left w-60 border-b-[1px] border-b-gray-300 p-3 hover:cursor-pointer" colspan="8" (click)="showNHide(i)"><div class="flex items-center gap-1">{{cat.taskCategoryName}} <img class="flex size-4 rotate-180" src="assets/icons/arrow.png"></div></td>
+        <tr *ngFor="let task of done" class="border-[1px] border-gray-500 hover:bg-gray-300">
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.taskName}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.startDate | date}}</td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300">{{task.deadline | date}}</td>
+          <td *ngIf="task.taskStatusId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#EE9322]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
+          <td *ngIf="task.taskStatusId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#0029a3]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
+          <td *ngIf="task.taskStatusId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300 text-[#002d00]">
+            {{task.taskStatus}}
           </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
+          <td *ngIf="task.taskPriorityId == 1 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
+            <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
+            <div class="flex justify-end">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+                <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
+                <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
             </div>
           </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
+          <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="w-20 border-b-[1px] border-b-gray-300">
+            <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button>
           </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+            <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="deleteTask(task.taskId)">Delete</button>
+          </mat-menu>
         </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-        <tr *ngIf="showStandalone">
-          <td></td>
-          <td class="text-accent-blue">Finish working on all tasks component</td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-red-800 pl-4 pr-4 rounded-xl text-red-300 font-bold text-sm select-none flex items-center justify-center">High</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center">
-              <p class="bg-blue-800 pl-4 pr-4 rounded-xl text-blue-300 font-bold text-sm select-none flex items-center justify-center">In Progress</p>
-            </div>
-          </td>
-          <td>
-            <div class="flex list-none first select-none">
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] z-40">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black rounded-[100%] ml-[-20px] z-30">
-                <img class="min-w-[48px] min-h-[48px]" ngSrc="/assets/avatar.png" alt="avatar icon" height="48" width="48">
-              </a>
-              <a class="border-[1px] min-w-[48px] min-h-[48px] border-black bg-accent-blue rounded-[100%] ml-[-20px] z-10">
-                <p class="h-12 w-12 pr-1 flex items-center justify-end text-white ">+12</p>
-              </a>
-            </div>
-          </td>
-          <td>
-            <div id="outer-progress-1" class="border-[1px] border-black min-h-6 flex select-none">
-              <div id="inner-progress-1" class="relative basis-[50%] bg-lime-300">
-                <span class="absolute left-2 flex items-center justify-center text-black">50%</span>
-              </div>
-            </div>
-          </td>
-          <td class="text-center">
-            <p class="text-accent-blue">25.03.2024.</p>
-          </td>
-          <td>
-            <button class="bg-accent-blue w-full rounded-xl text-white h-8 select-none">Open</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+
+      </div>
+    </div>
+
+
   </div>
 
 

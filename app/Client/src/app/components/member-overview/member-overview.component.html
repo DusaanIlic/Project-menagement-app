@@ -93,7 +93,7 @@
                             <td *ngIf="task.taskStatusId == 1" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskStatus}}</div></td>
                             <td *ngIf="task.taskStatusId == 3" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{task.taskStatus}}</div></td>
                             <td *ngIf="task.taskStatusId == 2" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{task.taskStatus}}</div></td>
-                            <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskPriority}}</td>
+                            <td class="w-60 border-t-[1px] border-t-gray-300">{{task.taskPriorityName}}</td>
                             <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
                             <mat-menu #menu="matMenu">
                               <button mat-menu-item (click)="openDialog(task)">View</button>

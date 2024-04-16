@@ -112,6 +112,7 @@ export class AddProjectComponent implements OnDestroy {
         //console.log('Project saved successfully:', response);
         this.projectAdded.emit();
         this.showMessage();
+        this.closeDialog();
       },
       (error) => {
         this.showMessageError();
