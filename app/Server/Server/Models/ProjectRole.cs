@@ -20,5 +20,5 @@ public class ProjectRole
     
     public ICollection<ProjectRolePermission> ProjectRolePermissions { get; set; } = new List<ProjectRolePermission>();
 
-    public ICollection<ProjectProjectRole> ProjectProjeRoles { get; set; } = new List<ProjectProjectRole>();
+    public ICollection<ProjectProjectRole> ProjectProjectRoles { get; set; } = new List<ProjectProjectRole>();
 }

@@ -209,7 +209,7 @@ namespace Server.Data
                 .HasForeignKey(pra => pra.ProjectId);
             
             modelBuilder.Entity<ProjectRole>()
-                .HasMany(pr => pr.ProjectProjeRoles)
+                .HasMany(pr => pr.ProjectProjectRoles)
                 .WithOne(pra => pra.ProjectRole)
                 .HasForeignKey(pra => pra.ProjectRoleId);
             
@@ -236,7 +236,7 @@ namespace Server.Data
                 new RolePermission { RoleId = 1, PermissionId = 1 },
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 1, PermissionId = 3 },
-                new RolePermission { RoleId = 1, PermissionId = 4 }
+                new RolePermission { RoleId = 2, PermissionId = 4 }
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
