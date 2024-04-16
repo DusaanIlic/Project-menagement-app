@@ -34,6 +34,6 @@ namespace Server.Models
 
         public ICollection<MemberProject> MemberProjects { get; set; } = new List<MemberProject>();
         
-        public ICollection<ProjectProjectRole> ProjectRoleAssociations { get; set; } = new List<ProjectProjectRole>();
+        public ICollection<ProjectProjectRole> ProjectProjectRoles { get; set; } = new List<ProjectProjectRole>();
     }
 }

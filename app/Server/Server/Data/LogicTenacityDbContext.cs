@@ -199,12 +199,12 @@ namespace Server.Data
                 .HasKey(pra => new { pra.ProjectId, pra.ProjectRoleId });
 
             modelBuilder.Entity<Project>()
-                .HasMany(p => p.ProjectRoleAssociations)
+                .HasMany(p => p.ProjectProjectRoles)
                 .WithOne(pra => pra.Project)
                 .HasForeignKey(pra => pra.ProjectId);
             
             modelBuilder.Entity<ProjectRole>()
-                .HasMany(pr => pr.ProjectRoleAssociations)
+                .HasMany(pr => pr.ProjectProjeRoles)
                 .WithOne(pra => pra.ProjectRole)
                 .HasForeignKey(pra => pra.ProjectRoleId);
             

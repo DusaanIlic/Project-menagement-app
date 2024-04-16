@@ -115,12 +115,12 @@ namespace Server.Controllers
 
             var roleId = await rolePermissionService.CheckRole(userId);
 
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 3);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 3);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var teamLeader = await dbContext.Members
                                     .Include(m => m.Role)
@@ -141,19 +141,23 @@ namespace Server.Controllers
                 TeamLeaderId = teamLeader.Id
             };
             
-            var firstThreeTaskStatuses = await dbContext.TaskStatuses.Take(3).ToListAsync();
+            var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
 
             project.ProjectTaskStatuses = firstThreeTaskStatuses
                 .Select(status => new ProjectTaskStatus { TaskStatus = status }).ToList();
+            
+            var defaultProjectRoles = await dbContext.ProjectRoles.Where(pr => pr.IsDefault).ToListAsync();
+
+            project.ProjectProjectRoles = defaultProjectRoles
+                .Select(projectRole => new ProjectProjectRole {ProjectRole = projectRole }).ToList();
 
             dbContext.Projects.Add(project);
-
+            
             await dbContext.SaveChangesAsync();
-
-
+            
             dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId });
+            
             await dbContext.SaveChangesAsync();
-
 
             var teamLeaderDTO = new MemberDTO
             {
