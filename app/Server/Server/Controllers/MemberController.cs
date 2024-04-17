@@ -198,14 +198,16 @@ namespace Server.Controllers
             var member = await _dbContext.Members
                                             .Include(m => m.Role)
                                             .FirstOrDefaultAsync(m => m.Id == id);
-            var isAdmin = User.IsInRole("Administrator");
-
+            
             if (member == null)
             {
                 return NotFound(new {message = "Member not found."});
             }
-
-            if (member.Id != id && !isAdmin)
+            
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+            
+            if (!isAuthedUser && !hasPermission)
             {
                 return Forbid();
             }
@@ -305,14 +307,16 @@ namespace Server.Controllers
         public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
                 return NotFound(new {message = "Member not found."});
             }
+            
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
 
-            if (member.Id != id && !isAdmin)
+            if (!isAuthedUser && !isAdmin)
             {
                 return Forbid();
             }
@@ -338,14 +342,16 @@ namespace Server.Controllers
         public async Task<IActionResult> DeleteAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
                 return NotFound(new { message = "Member not found." });
             }
 
-            if (member.Id != id && !isAdmin)
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+            
+            if (!isAuthedUser &&  !isAdmin)
             {
                 return Forbid();
             }
@@ -421,25 +427,21 @@ namespace Server.Controllers
         [HttpPost("{id}/ChangeEmail")]
         public async Task<IActionResult> ChangeEmail(int id, EmailChangeRequest changeEmailRequest)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            var isAdmin = User.IsInRole("Administrator");
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
-
-            if (userId != id && !isAdmin)
-            {
-                return Forbid("You can only change your own email address");
-            }
-
             var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
                 return NotFound(new { message = "Member not found." });
             }
+            
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+
+            if (!isAuthedUser && !isAdmin)
+            {
+                return Forbid("You can only change your own email address");
+            }
+            
 
             if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
             {

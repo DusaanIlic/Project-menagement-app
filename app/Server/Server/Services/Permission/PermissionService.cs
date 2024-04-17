@@ -68,4 +68,11 @@ public class PermissionService : IPermissionService
             throw new ApplicationException("Error checking project permission.", ex);
         }
     }
+    
+    public async Task<bool> IsCurrentUserIdMatchAsync(int memberId)
+    {
+        int currentUserId = GetCurrentUserId();
+        
+        return await Task.FromResult(currentUserId == memberId);
+    }
 }
