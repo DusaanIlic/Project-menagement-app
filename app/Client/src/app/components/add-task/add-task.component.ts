@@ -2,16 +2,18 @@ import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@ang
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { NgxEditorModule, Editor } from 'ngx-editor';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { Member } from '../../models/member';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @Component({
   selector: 'app-add-task',
   standalone: true,
-  imports: [NgxEditorModule, FormsModule, CommonModule, NgToastModule],
+  imports: [NgxEditorModule, MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, CommonModule, NgToastModule],
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss'
 })
@@ -24,10 +26,12 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   projectId: number | null = null;
   taskPriority: number | null = null;
   projectMembers: Member[] = [];
-  selectedMember: number | null = null;
-  addedMembers: string[] = [];
+  selectedMembers: number[] = [];
+  assignedMembersIds: number[] = [];
+  members = new FormControl('');
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
+
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService) {}
 
@@ -55,12 +59,14 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     const taskData = {
       taskName: this.taskName,
       taskDescription: this.html,
-      projectId: this.projectId,
       deadline: this.deadline,
-      assignedMemberIds : []
+      projectId: this.projectId,
+      assignedMemberIds: this.selectedMembers,
+      taskPriorityId: this.taskPriority
     };
-
-    this.taskService.saveTask(taskData).subscribe(response => {
+    //console.log(this.assignedMembersIds);
+    console.log(taskData);
+    this.taskService.saveTask(taskData).subscribe(response => { 
       console.log('Task saved successfully:', response);
       this.taskAdded.emit();
       this.showMessage();
@@ -88,15 +94,9 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     }
   }
 
-  addSelectedMember() {
-    // Pronalazimo odabranog člana iz niza projectMembers
-    const member = this.projectMembers.find(member => member.id === this.selectedMember);
-    // Ako smo pronašli člana
-    if (member) {
-        // Dodajemo ime i prezime odabranog člana u niz addedMembers
-        console.log(this.addedMembers);
-        this.addedMembers.push(`${member.firstName} ${member.lastName}`);
+  toggleMember(event: MatSelectChange) {
+    this.selectedMembers = event.value;
+    this.assignedMembersIds = this.selectedMembers;
+  }
 
-    }
-}
 }

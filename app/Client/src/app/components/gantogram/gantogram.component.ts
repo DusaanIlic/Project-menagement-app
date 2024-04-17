@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+//import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 
 @Component({
   standalone: true,
   selector: 'app-gantogram',
-  imports: [GanttModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './gantogram.component.html',
   styleUrls: ['./gantogram.component.scss'],
   encapsulation: ViewEncapsulation.None,

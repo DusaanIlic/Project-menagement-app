@@ -1,4 +1,4 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Member } from '../../models/member';
 import {RouterLink} from "@angular/router";
@@ -13,36 +13,62 @@ import { DatePipe } from '@angular/common';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 import {environment} from "../../../environments/environment";
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatRadioModule} from '@angular/material/radio';
+
 
 @Component({
   selector: 'app-all-members',
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule,MatRadioModule],
   providers: [DatePipe]
 })
-export class AllMembersComponent implements OnInit{
+export class AllMembersComponent implements AfterViewInit{
 
   selectedRole: string = '';
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
   searchTerm: string = '';
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
+  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
+    this.filteredMembers = this.members;
+  }
 
-  ngOnInit(): void {
+  ngOnInit(){
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
-    this.selectedRole = 'allMembers';
+    this.selectedRole = 'allMembers'; 
+  }
+
+  ngAfterViewInit(): void {
+   
+    
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   filterMembersByRole(role: string): void {
     if (role === 'allMembers') {
-      this.filteredMembers = this.members;
+      this.dataSource = this.members;
     } else {
-      this.filteredMembers = this.members.filter(member => this.getRoleName(member.roleId) === role);
+      this.dataSource = this.members.filter(member => this.getRoleName(member.roleId) === role);
     }
   }
 
@@ -60,6 +86,9 @@ export class AllMembersComponent implements OnInit{
       (data: Member[]) => {
         this.members = data;
         this.filteredMembers = data;
+        this.dataSource = new MatTableDataSource(data);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
       },
       (error) => {
         console.log('Error fetching members:', error);
@@ -89,11 +118,7 @@ export class AllMembersComponent implements OnInit{
   }
 
 
-
-  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService) {
-    this.filteredMembers = this.members;
-  }
-
+  
   search(): void {
     let searchTerm = this.searchTerm.toLowerCase().trim();
     let filteredMembers = [...this.filteredMembers];
@@ -122,7 +147,7 @@ export class AllMembersComponent implements OnInit{
       filteredMembers = this.members;
     }
 
-    this.filteredMembers = filteredMembers;
+    this.dataSource = filteredMembers;
   }
 
 
@@ -153,59 +178,6 @@ export class AllMembersComponent implements OnInit{
     });
   }
 
-
-  sortMembersBy(event: any): void {
-    const option = event.target.value;
-    switch(option) {
-      case 'name':
-        this.sortByName();
-        break;
-      case 'role':
-        this.sortByRole();
-        break;
-      case 'email':
-        this.sortByEmail();
-        break;
-      // case 'tasks':
-      //   this.sortByTasks();
-      //   break;
-      case 'date':
-        this.sortByDate();
-        break;
-      default:
-        break;
-    }
-  }
-
-  sortByName() {
-    this.filteredMembers.sort((a, b) => {
-      return (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName);
-    });
-  }
-
-  sortByRole() {
-    this.filteredMembers.sort((a, b) => {
-      return this.getRoleName(a.roleId).localeCompare(this.getRoleName(b.roleId));
-    });
-  }
-
-  sortByEmail() {
-    this.filteredMembers.sort((a, b) => {
-      return a.email.localeCompare(b.email);
-    });
-  }
-
-  // sortByTasks() {
-  //   this.filteredMembers.sort((a, b) => {
-  //     return a?.numberOfTasks - b?.numberOfTasks;
-  //   });
-  // }
-
-  sortByDate() {
-    this.filteredMembers.sort((a, b) => {
-      return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
-    });
-  }
 
     protected readonly environment = environment;
 }
