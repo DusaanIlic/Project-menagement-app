@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
@@ -142,7 +143,7 @@ public partial class ProjectController
         return Ok(roleDto);
     }
 
-    [HttpDelete("{projectId}/Role/{roleId}")]
+    [HttpDelete("{projectId}/Roles/{roleId}")]
     public async Task<IActionResult> DeleteRoleFromProject(int projectId, int roleId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
@@ -256,7 +257,7 @@ public partial class ProjectController
         return Ok(roleDto);
     }
     
-    [HttpPost("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    [HttpPost("{projectId}/Roles/{roleId}/Permissions/{permissionId}")]
     public async Task<IActionResult> AddPermissionToRole(int projectId, int roleId, int permissionId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
@@ -312,7 +313,7 @@ public partial class ProjectController
         return Ok(new { message = "Success." });
     }
     
-    [HttpDelete("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    [HttpDelete("{projectId}/Roles/{roleId}/Permissions/{permissionId}")]
     public async Task<IActionResult> RemovePermissionFromRole(int projectId, int roleId, int permissionId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
@@ -359,5 +360,24 @@ public partial class ProjectController
         await dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Success." });
+    }
+    
+    [Authorize]
+    [HttpGet("{projectId}/Roles/{roleId}/Members")]
+    public async Task<IActionResult> GetAllMembersWithRole(int projectId, int roleId)
+    {
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Include(mp => mp.Member)
+            .ToListAsync();
+
+        var roleMemberDtos = members.Select(m => new RoleMemberDTO()
+        {
+            Id = m.Member.Id,
+            FirstName = m.Member.FirstName,
+            LastName = m.Member.LastName
+        });
+
+        return Ok(roleMemberDtos);
     }
 }
