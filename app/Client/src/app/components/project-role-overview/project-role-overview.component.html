@@ -88,6 +88,28 @@
               </mat-card>
             </div>
           </mat-tab>
+          <mat-tab label="Members">
+            <div class="flex flex-col p-2 gap-2">
+              <div class="flex items-center justify-center" *ngIf="members.length === 0">
+                <p class="flex items-center justify-center">There are no members assigned to this role.</p>
+              </div>
+
+              <mat-card *ngFor="let member of members">
+                <mat-card-content>
+                  <div class="flex items-center gap-2">
+                    <img src="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" height="64" width="64">
+                    <p class="text-2xl">{{member.firstName}} {{member.lastName}}</p>
+                    <span class="grow"></span>
+                    <a mat-button color="stroked" (click)="closeDialog()" href="members/{{member.id}}">
+                      <div class="flex items-center justify-center">
+                        <mat-icon class="scale-[1.25]">person</mat-icon>
+                      </div>
+                    </a>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
         </mat-tab-group>
       </div>
     </mat-sidenav-content>

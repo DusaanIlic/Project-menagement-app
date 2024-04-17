@@ -22,6 +22,7 @@ import {Permission} from "../../models/permission";
 import {UpdateRoleForm} from "../../forms/update-role.form";
 import {AddRoleForm} from "../../forms/add-role.form";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-project-role-overview',
@@ -60,6 +61,7 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
   selectedRole: any;
   roleForm: any;
   projectId: any;
+  members: any;
   private projectSubscription: any;
 
   constructor(public dialogRef: MatDialogRef<ProjectRoleOverviewComponent>, public projectService: ProjectServiceGet,
@@ -149,6 +151,16 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
 
   selectRole(role: Role) {
     this.selectedRole = role;
+    this.members = [];
+
+    this.projectService.getMemberRoles(this.projectId, this.selectedRole.id).subscribe({
+      next: data => {
+        this.members = data;
+      },
+      error: error =>{
+        console.log('failed fetching data');
+      }
+    });
 
     this.roleForm.patchValue({
       name: this.selectedRole.name,
@@ -307,4 +319,6 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  protected readonly environment = environment;
 }

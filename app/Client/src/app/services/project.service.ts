@@ -9,6 +9,7 @@ import {Role} from "../models/role";
 import {Permission} from "../models/permission";
 import {UpdateRoleForm} from "../forms/update-role.form";
 import {AddRoleForm} from "../forms/add-role.form";
+import {RoleMember} from "../models/role-member";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 
@@ -89,6 +90,10 @@ export class ProjectServiceGet{
 
   removePermissionFromRole(projectId: number, roleId: number, permissionId: number) {
     return this.http.delete(`${PROJECT_API}/${projectId}/Roles/${roleId}/Permissions/${permissionId}`);
+  }
+
+  getMemberRoles(projectId: number, roleId: number) {
+    return this.http.get<RoleMember[]>(`${PROJECT_API}/${projectId}/Roles/${roleId}/Members`);
   }
 }
 

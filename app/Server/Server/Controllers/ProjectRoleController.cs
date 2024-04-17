@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
@@ -359,5 +360,24 @@ public partial class ProjectController
         await dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Success." });
+    }
+    
+    [Authorize]
+    [HttpGet("{projectId}/Roles/{roleId}/Members")]
+    public async Task<IActionResult> GetAllMembersWithRole(int projectId, int roleId)
+    {
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Include(mp => mp.Member)
+            .ToListAsync();
+
+        var roleMemberDtos = members.Select(m => new RoleMemberDTO()
+        {
+            Id = m.Member.Id,
+            FirstName = m.Member.FirstName,
+            LastName = m.Member.LastName
+        });
+
+        return Ok(roleMemberDtos);
     }
 }
