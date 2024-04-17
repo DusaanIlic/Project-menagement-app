@@ -37,6 +37,7 @@ export class AllMembersComponent implements AfterViewInit{
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
   constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
     this.filteredMembers = this.members;
@@ -86,6 +87,7 @@ export class AllMembersComponent implements AfterViewInit{
         this.filteredMembers = data;
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
       },
       (error) => {
         console.log('Error fetching members:', error);
