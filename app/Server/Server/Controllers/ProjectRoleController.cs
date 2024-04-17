@@ -256,7 +256,7 @@ public partial class ProjectController
         return Ok(roleDto);
     }
     
-    [HttpPost("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    [HttpPost("{projectId}/Roles/{roleId}/Permissions/{permissionId}")]
     public async Task<IActionResult> AddPermissionToRole(int projectId, int roleId, int permissionId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
@@ -312,7 +312,7 @@ public partial class ProjectController
         return Ok(new { message = "Success." });
     }
     
-    [HttpDelete("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
+    [HttpDelete("{projectId}/Roles/{roleId}/Permissions/{permissionId}")]
     public async Task<IActionResult> RemovePermissionFromRole(int projectId, int roleId, int permissionId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");

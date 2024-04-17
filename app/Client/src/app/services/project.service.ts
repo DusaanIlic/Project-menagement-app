@@ -82,6 +82,14 @@ export class ProjectServiceGet{
   deleteRole(projectId: number, roleId: number) {
     return this.http.delete(`${PROJECT_API}/${projectId}/Roles/${roleId}`);
   }
+
+  addPermissionToRole(projectId: number, roleId: number, permissionId: number) {
+    return this.http.post(`${PROJECT_API}/${projectId}/Roles/${roleId}/Permissions/${permissionId}`, null);
+  }
+
+  removePermissionFromRole(projectId: number, roleId: number, permissionId: number) {
+    return this.http.delete(`${PROJECT_API}/${projectId}/Roles/${roleId}/Permissions/${permissionId}`);
+  }
 }
 
 
