@@ -12,7 +12,7 @@ namespace Server.Data
         {
         }
 
-        public  DbSet<Project> Projects { get; set; }
+        public DbSet<Project> Projects { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<ProjectTask> ProjectTasks{ get; set; }
@@ -30,6 +30,10 @@ namespace Server.Data
         public DbSet<TaskActivityType> TaskActivityTypes { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
         public DbSet<MemberProject> MemberProjects { get; set; }
+        public DbSet<ProjectRole> ProjectRoles { get; set; }
+        public DbSet<ProjectPermission> ProjectPermissions { get; set; }
+        public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
+        public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -113,7 +117,7 @@ namespace Server.Data
                .HasForeignKey(m => m.RoleId);
 
             modelBuilder.Entity<RolePermission>()
-            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+                .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
             modelBuilder.Entity<Role>()
                 .HasMany(r => r.RolePermissions)
@@ -170,26 +174,51 @@ namespace Server.Data
                 .WithMany(p => p.MemberProjects)
                 .HasForeignKey(mp => mp.ProjectId);
 
+            modelBuilder.Entity<MemberProject>()
+                .HasOne(mp => mp.ProjectRole)
+                .WithMany()
+                .HasForeignKey(mp => mp.ProjectRoleId);
+
+            modelBuilder.Entity<ProjectRole>()
+                .HasIndex(pr => pr.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<ProjectRole>()
+                .HasMany(pr => pr.ProjectRolePermissions)
+                .WithOne(prm => prm.ProjectRole)
+                .HasForeignKey(prm => prm.ProjectRoleId);
+            
+            modelBuilder.Entity<ProjectPermission>()
+                .HasIndex(pp => pp.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<ProjectPermission>()
+                .HasMany(pp => pp.ProjectRolePermissions)
+                .WithOne(prm => prm.ProjectPermission)
+                .HasForeignKey(prm => prm.ProjectPermissionId);
+
+            modelBuilder.Entity<ProjectRolePermission>()
+                .HasKey(prm => new { prm.ProjectRoleId, prm.ProjectPermissionId });
+
+            modelBuilder.Entity<ProjectProjectRole>()
+                .HasKey(pra => new { pra.ProjectId, pra.ProjectRoleId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.ProjectProjectRoles)
+                .WithOne(pra => pra.Project)
+                .HasForeignKey(pra => pra.ProjectId);
+            
+            modelBuilder.Entity<ProjectRole>()
+                .HasMany(pr => pr.ProjectProjectRoles)
+                .WithOne(pra => pra.ProjectRole)
+                .HasForeignKey(pra => pra.ProjectRoleId);
+            
             modelBuilder.Entity<Permission>().HasData(
-                new Permission { PermissionId = -1, PermissionName = "Edit roles" },
-                new Permission { PermissionId = 1, PermissionName = "Add members" },
-                new Permission { PermissionId = 2, PermissionName = "Deactivate members" },
-                new Permission { PermissionId = 3, PermissionName = "Create project" },
-                new Permission { PermissionId = 4, PermissionName = "Create task" },
-                new Permission { PermissionId = 5, PermissionName = "Delete project" },
-                new Permission { PermissionId = 6, PermissionName = "Delete task" },
-                new Permission { PermissionId = 7, PermissionName = "Add member to task" },
-                new Permission { PermissionId = 8, PermissionName = "Add member to project" },
-                new Permission { PermissionId = 9, PermissionName = "Remove member from task" },
-                new Permission { PermissionId = 10, PermissionName = "Remove member from project" },
-                new Permission { PermissionId = 11, PermissionName = "Change task status" },
-                new Permission { PermissionId = 12, PermissionName = "Change project status" },
-                new Permission { PermissionId = 13, PermissionName = "Change project" },
-                new Permission { PermissionId = 14, PermissionName = "Update task priority" },
-                new Permission { PermissionId = 15, PermissionName = "Add task dependency" },
-                new Permission { PermissionId = 16, PermissionName = "Remove task dependency" },
-                new Permission { PermissionId = 17, PermissionName = "Add task category" },
-                new Permission { PermissionId = 18, PermissionName = "Remove task category" }
+                new Permission { PermissionId = 1, PermissionName = "Change global role" },
+                new Permission { PermissionId = 2, PermissionName = "Add member" },
+                new Permission { PermissionId = 3, PermissionName = "Edit member" },
+                new Permission { PermissionId = 4, PermissionName = "Deactivate member" },
+                new Permission { PermissionId = 5, PermissionName = "Create project" }
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -205,28 +234,11 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<RolePermission>().HasData(
-                new RolePermission { RoleId = 1, PermissionId = -1 },
                 new RolePermission { RoleId = 1, PermissionId = 1 },
                 new RolePermission { RoleId = 1, PermissionId = 2 },
-                new RolePermission { RoleId = 2, PermissionId = 3 },
-                new RolePermission { RoleId = 2, PermissionId = 4 },
-                new RolePermission { RoleId = 2, PermissionId = 5 },
-                new RolePermission { RoleId = 2, PermissionId = 6 },
-                new RolePermission { RoleId = 2, PermissionId = 7 },
-                new RolePermission { RoleId = 2, PermissionId = 8 },
-                new RolePermission { RoleId = 2, PermissionId = 9 },
-                new RolePermission { RoleId = 2, PermissionId = 10 },
-                new RolePermission { RoleId = 3, PermissionId = 11 },
-                new RolePermission { RoleId = 2, PermissionId = 11 },
-                new RolePermission { RoleId = 2, PermissionId = 12 },
-                new RolePermission { RoleId = 2, PermissionId = 13 },
-                new RolePermission { RoleId = 2, PermissionId = 14 },
-                new RolePermission { RoleId = 2, PermissionId = 15 },
-                new RolePermission { RoleId = 2, PermissionId = 16 },
-                new RolePermission { RoleId = 2, PermissionId = 17 },
-                new RolePermission { RoleId = 2, PermissionId = 18 }
-
-
+                new RolePermission { RoleId = 1, PermissionId = 3 },
+                new RolePermission { RoleId = 1, PermissionId = 4 },
+                new RolePermission { RoleId = 2, PermissionId = 5 }
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
@@ -255,6 +267,51 @@ namespace Server.Data
                 new TaskActivityType { TaskActivityTypeId = 1, TaskActivityName = "Review" },
                 new TaskActivityType { TaskActivityTypeId = 2, TaskActivityName = "Update" },
                 new TaskActivityType { TaskActivityTypeId = 3, TaskActivityName = "Bug fix" }
+            );
+
+            modelBuilder.Entity<ProjectRole>().HasData(
+                new ProjectRole { Id = 1, Name = "Project Leader", IsDefault = true },
+                new ProjectRole { Id = 2, Name = "Project Assignee", IsDefault = true },
+                new ProjectRole { Id = 3, Name = "Project Guest", IsDefault = true, IsFallback = true }
+            );
+
+            modelBuilder.Entity<ProjectPermission>().HasData(
+                new ProjectPermission { Id = -1, Name = "Change project role" },
+                new ProjectPermission { Id = 1, Name = "Delete project" },
+                new ProjectPermission { Id = 2, Name = "Add member to project" },
+                new ProjectPermission { Id = 3, Name = "Remove member from project" },
+                new ProjectPermission { Id = 4, Name = "Create task" },
+                new ProjectPermission { Id = 5, Name = "Delete task" },
+                new ProjectPermission { Id = 6, Name = "Add member to task" },
+                new ProjectPermission { Id = 7, Name = "Remove member from task" },
+                new ProjectPermission { Id = 8, Name = "Change project" },
+                new ProjectPermission { Id = 9, Name = "Change project status" },
+                new ProjectPermission { Id = 10, Name = "Change task status" },
+                new ProjectPermission { Id = 11, Name = "Change task priority" },
+                new ProjectPermission { Id = 12, Name = "Add task dependency" },
+                new ProjectPermission { Id = 13, Name = "Remove task dependency" },
+                new ProjectPermission { Id = 14, Name = "Add task category" },
+                new ProjectPermission { Id = 15, Name = "Remove task category" }
+            );
+
+            modelBuilder.Entity<ProjectRolePermission>().HasData(
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = -1 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 1 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 2 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 3 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 4 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 5 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 6 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 7 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 8 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 9 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 10 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 11 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 12 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 13 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 14 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 15 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 }
             );
         }
     }

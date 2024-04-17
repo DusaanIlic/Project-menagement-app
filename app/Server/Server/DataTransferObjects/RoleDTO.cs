@@ -15,5 +15,7 @@ namespace Server.DataTransferObjects
         
         [Required]
         public bool IsFallback { get; set; }
+        
+        public ICollection<PermissionDTO> PermissionList { get; set; }
     }
 }

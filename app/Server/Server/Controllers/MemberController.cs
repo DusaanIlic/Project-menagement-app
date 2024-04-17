@@ -14,8 +14,8 @@ using Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
-using Server.Services.RolePermission;
 using Server.DataTransferObjects.Request.Member;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
@@ -26,14 +26,14 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext _dbContext;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
-        private readonly IRolePermissionService _rolePermissionService;
+        private readonly IPermissionService _permissionService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IRolePermissionService rolePermissionService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IPermissionService permissionService)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
-            _rolePermissionService = rolePermissionService;
+            _permissionService = permissionService;
         }
 
         [Authorize]
@@ -66,25 +66,11 @@ namespace Server.Controllers
             return Ok(memberDTOs);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddMember(AddMemberRequest memberDTO)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (userIdClaim == null)
-            {
-                return NotFound(new { message = "User ID claim not found in token" });
-            }
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new {message = "Invalid user ID in token"});
-            }
-
-            var roleId = await _rolePermissionService.CheckRole(userId);
-            
-            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 1);
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Add member");
 
             if (!hasPermission)
             {
@@ -212,14 +198,16 @@ namespace Server.Controllers
             var member = await _dbContext.Members
                                             .Include(m => m.Role)
                                             .FirstOrDefaultAsync(m => m.Id == id);
-            var isAdmin = User.IsInRole("Administrator");
-
+            
             if (member == null)
             {
                 return NotFound(new {message = "Member not found."});
             }
-
-            if (member.Id != id && !isAdmin)
+            
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+            
+            if (!isAuthedUser && !hasPermission)
             {
                 return Forbid();
             }
@@ -263,17 +251,7 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMember(int id)
         {
-
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
-
-            var roleId = await _rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await _rolePermissionService.CheckRolePermission(roleId.Value, 2);
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Deactivate member");
 
             if (!hasPermission)
             {
@@ -329,14 +307,16 @@ namespace Server.Controllers
         public async Task<IActionResult> PostAvatar(int id, AddFileRequest addFileRequest)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
                 return NotFound(new {message = "Member not found."});
             }
+            
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
 
-            if (member.Id != id && !isAdmin)
+            if (!isAuthedUser && !isAdmin)
             {
                 return Forbid();
             }
@@ -362,14 +342,16 @@ namespace Server.Controllers
         public async Task<IActionResult> DeleteAvatar(int id)
         {
             var member = await _dbContext.Members.FindAsync(id);
-            var isAdmin = User.IsInRole("Administrator");
 
             if (member == null)
             {
                 return NotFound(new { message = "Member not found." });
             }
 
-            if (member.Id != id && !isAdmin)
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+            
+            if (!isAuthedUser &&  !isAdmin)
             {
                 return Forbid();
             }
@@ -445,25 +427,21 @@ namespace Server.Controllers
         [HttpPost("{id}/ChangeEmail")]
         public async Task<IActionResult> ChangeEmail(int id, EmailChangeRequest changeEmailRequest)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            var isAdmin = User.IsInRole("Administrator");
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
-
-            if (userId != id && !isAdmin)
-            {
-                return Forbid("You can only change your own email address");
-            }
-
             var member = await _dbContext.Members.FindAsync(id);
 
             if (member == null)
             {
                 return NotFound(new { message = "Member not found." });
             }
+            
+            var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
+            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
+
+            if (!isAuthedUser && !isAdmin)
+            {
+                return Forbid("You can only change your own email address");
+            }
+            
 
             if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
             {

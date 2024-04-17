@@ -9,7 +9,7 @@ using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
 using Server.DataTransferObjects.Request.ProjectTask;
 using Server.Models;
-using Server.Services.RolePermission;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
@@ -18,13 +18,13 @@ namespace Server.Controllers
     public class TaskController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
-        private readonly IRolePermissionService rolePermissionService;
+        private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
 
-        public TaskController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService, IEmailService emailService)
+        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService)
         {
             this.dbContext = dbContext;
-            this.rolePermissionService = rolePermissionService;
+            _permissionService = permissionService;
             _emailService = emailService;
         }
 
@@ -100,9 +100,8 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
 
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 4);
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(addProjectTaskRequest.ProjectId, "Create task");
 
             if (!hasPermission)
             {
@@ -279,9 +278,9 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 6);
+            // Gde je projekt id???
+            
+            var hasPermission = true;
 
             if (!hasPermission)
             {
@@ -370,14 +369,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 11);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 11);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
@@ -518,14 +517,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 14);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 14);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
@@ -562,14 +561,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 7);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 7);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var projectTask = await dbContext.ProjectTasks.Include(pt => pt.Project).FirstOrDefaultAsync(pt => pt.TaskId == taskId);
 
@@ -725,14 +724,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 15);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 15);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
             var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
@@ -820,14 +819,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 16);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 16);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
             var dependentTask = await dbContext.ProjectTasks.FindAsync(dependentTaskId);
@@ -869,14 +868,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 17);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 17);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
@@ -911,14 +910,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 18);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 18);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
 
@@ -951,14 +950,14 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 9);
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
+            // var roleId = await rolePermissionService.CheckRole(userId);
+            //
+            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 9);
+            //
+            // if (!hasPermission)
+            // {
+            //     return Forbid("Insufficient permissions");
+            // }
 
             var projectTask = await dbContext.ProjectTasks
                                              .Include(pt => pt.Project).Include(pt => pt.Members)

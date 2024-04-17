@@ -6,6 +6,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.Permission;
 using Server.Models;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
@@ -14,17 +15,19 @@ namespace Server.Controllers
     public class PermissionController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
+        private readonly IPermissionService _permissionService;
 
-        public PermissionController(LogicTenacityDbContext dbContext)
+        public PermissionController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
         {
             this.dbContext = dbContext;
+            _permissionService = permissionService;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPermissions()
         {
-            if (!User.IsInRole("Administrator"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -39,11 +42,11 @@ namespace Server.Controllers
             return Ok(permissionDTOs);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpGet("{permissionId}")]
         public async Task<IActionResult> GetPermissionById(int permissionId)
         {
-            if (!User.IsInRole("Administrator"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -63,11 +66,11 @@ namespace Server.Controllers
             return Ok(permissionDTO);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddPermission(AddPermissionRequest addPermissionRequest)
         {
-            if (!User.IsInRole("Administrator"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -88,11 +91,11 @@ namespace Server.Controllers
             return Ok(permissionDTO);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpDelete("{permissionId}")]
         public async Task<IActionResult> RemovePermission(int permissionId)
         {
-            if (!User.IsInRole("Administrator"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }

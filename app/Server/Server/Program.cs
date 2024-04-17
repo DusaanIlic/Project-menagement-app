@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using Server.Models;
 using Server.Services.File;
-using Server.Services.RolePermission; // Added using directive for UseAuthentication
+using Server.Services.Permission;
 
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -24,6 +24,7 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
@@ -83,7 +84,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 var app = builder.Build();
 
