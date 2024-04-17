@@ -8,21 +8,24 @@ using Server.DataTransferObjects.Request.TaskActivity;
 using Server.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TaskActivityController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
+        private readonly IPermissionService _permissionService;
 
-        public TaskActivityController(LogicTenacityDbContext dbContext)
+        public TaskActivityController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
         {
             this.dbContext = dbContext;
+            _permissionService = permissionService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllTaskActivities()
         {

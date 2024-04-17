@@ -27,7 +27,7 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPermissions()
         {
-            if (await _permissionService.HasGlobalPermissionAsync("Change global role"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -46,7 +46,7 @@ namespace Server.Controllers
         [HttpGet("{permissionId}")]
         public async Task<IActionResult> GetPermissionById(int permissionId)
         {
-            if (await _permissionService.HasGlobalPermissionAsync("Change global role"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -70,7 +70,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPermission(AddPermissionRequest addPermissionRequest)
         {
-            if (await _permissionService.HasGlobalPermissionAsync("Change global role"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }
@@ -95,7 +95,7 @@ namespace Server.Controllers
         [HttpDelete("{permissionId}")]
         public async Task<IActionResult> RemovePermission(int permissionId)
         {
-            if (await _permissionService.HasGlobalPermissionAsync("Change global role"))
+            if (!await _permissionService.HasGlobalPermissionAsync("Change global role"))
             {
                 return Forbid();
             }

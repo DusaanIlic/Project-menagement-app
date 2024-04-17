@@ -6,6 +6,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.Role;
 using Server.Models;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
@@ -14,21 +15,18 @@ namespace Server.Controllers
     public class RoleController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
+        private readonly IPermissionService _permissionService;
 
-        public RoleController(LogicTenacityDbContext dbContext)
+        public RoleController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
         {
             this.dbContext = dbContext;
+            _permissionService = permissionService;
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetRoles()
         {
-            if (!User.IsInRole("Administrator"))
-            {
-                return Forbid();
-            }
-
             var roles = await dbContext.Roles.ToListAsync();
             var roleDTOs = roles.Select(r => new RoleDTO
             {
@@ -45,10 +43,6 @@ namespace Server.Controllers
         [HttpGet("{roleId}")]
         public async Task<IActionResult> GetRoleById(int roleId)
         {
-            if (!User.IsInRole("Administrator"))
-            {
-                return Forbid();
-            }
             var role = await dbContext.Roles.FindAsync(roleId);
 
             if (role == null)
@@ -71,7 +65,9 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRole(AddRoleRequest addRoleRequest)
         {
-            if (!User.IsInRole("Administrator"))
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Change global role");
+
+            if (!hasPermission)
             {
                 return Forbid();
             }
@@ -106,7 +102,9 @@ namespace Server.Controllers
         [HttpDelete("{roleId}")]
         public async Task<IActionResult> RemoveRole(int roleId)
         {
-            if (!User.IsInRole("Administrator"))
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Change global role");
+
+            if (!hasPermission)
             {
                 return Forbid();
             }
@@ -145,10 +143,6 @@ namespace Server.Controllers
         [HttpGet("permissions/{roleId}")]
         public async Task<IActionResult> GetPermissionsByRoleId(int roleId)
         {
-            if (!User.IsInRole("Administrator"))
-            {
-                return Forbid();
-            }
             var rolePermissions = await dbContext.RolePermissions
                                                 .Where(rp => rp.RoleId == roleId)
                                                 .Select(rp => rp.Permission)
@@ -172,7 +166,9 @@ namespace Server.Controllers
         [HttpPut("{roleId}")]
         public async Task<IActionResult> ChangeRoleName(int roleId, UpdateRoleRequest request)
         {
-            if (!User.IsInRole("Administrator"))
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Change global role");
+
+            if (!hasPermission)
             {
                 return Forbid();
             }
@@ -215,7 +211,9 @@ namespace Server.Controllers
         [HttpDelete("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> RemovePermissionFromRole(int roleId, int permissionId)
         {
-            if (!User.IsInRole("Administrator"))
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Change global role");
+
+            if (!hasPermission)
             {
                 return Forbid();
             }
@@ -245,7 +243,9 @@ namespace Server.Controllers
         [HttpPost("{roleId}/permissions/{permissionId}")]
         public async Task<IActionResult> AddPermissionToRole(int roleId, int permissionId)
         {
-            if (!User.IsInRole("Administrator"))
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Change global role");
+
+            if (!hasPermission)
             {
                 return Forbid();
             }
