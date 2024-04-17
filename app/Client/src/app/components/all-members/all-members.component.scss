@@ -1,9 +1,6 @@
-.mat-sort-header-container {
-  align-items: center;
-}
 
 table {
-  width: 80%;
+  width: 100%;
 }
 
 th.mat-sort-header-sorted {
@@ -15,29 +12,27 @@ th.mat-sort-header-sorted {
 }
 
 .mat-column-avatar {
-  width: 32px;
-  text-align: center;
-  justify-items: center;
+  text-align: left;
 }
 
 .mat-column-firstName {
-  text-align: center;
+  text-align: left;
 }
 
 .mat-column-roleName {
-  text-align: center;
+  text-align: left;
 }
 
 .mat-column-email {
-  text-align: center;
+  text-align: left;
 }
 
 .mat-column-tasks {
-  text-align: center;
+  text-align: left;
 }
 
 .mat-column-date {
-  text-align: center;
+  text-align: left;
 }
 
 .mat-mdc-radio-button ~ .mat-mdc-radio-button {

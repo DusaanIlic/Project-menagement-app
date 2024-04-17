@@ -1,5 +1,5 @@
-<div class="flex flex-col mt-5">
-      <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5">
+<div class="flex flex-col mt-5 max-w-80% items-center">
+      <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5 w-4/5">
       
 
         <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-1/3" value="" placeholder="Search..."  pInputText [(ngModel)]="searchTerm" (input)="search()">
@@ -11,13 +11,13 @@
 
       </div>
 
-      <div class="flex flex-row items-center p-2">
+      <div class="flex flex-row items-center p-2 w-4/5">
         <h1 class="mr-2">Show only:</h1>
         <mat-radio-group aria-label="Select an option">
-          <mat-radio-button id="allMembers" value="allMembers" (change)="onRoleChange($event)" checked color="primary">All Members</mat-radio-button>
-          <mat-radio-button id="administrators" value="Administrator" (change)="onRoleChange($event)" color="primary">Administrators</mat-radio-button>
-          <mat-radio-button id="projectManagers" value="Project Manager" (change)="onRoleChange($event)" color="primary">Project Manager</mat-radio-button>
-          <mat-radio-button id="workers" value="Worker" (change)="onRoleChange($event)" color="primary">Worker</mat-radio-button>
+          <mat-radio-button id="allMembers" value="allMembers" (click)="onRoleChange($event)" checked color="primary">All Members</mat-radio-button>
+          <mat-radio-button id="administrators" value="Administrator" (click)="onRoleChange($event)" color="primary">Administrators</mat-radio-button>
+          <mat-radio-button id="projectManagers" value="Project Manager" (click)="onRoleChange($event)" color="primary">Project Manager</mat-radio-button>
+          <mat-radio-button id="workers" value="Worker" (click)="onRoleChange($event)" color="primary">Worker</mat-radio-button>
         </mat-radio-group>
         
         <!--
@@ -35,16 +35,15 @@
       </div>
 
 
-      <div class="mat-elevation-z8">
+      <div class="mat-elevation-z8 w-4/5">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
           
           <ng-container matColumnDef="avatar">
             <th mat-header-cell *matHeaderCellDef > AVATAR </th>
-            <td mat-cell *matCellDef="let member"> <div class="flex justify-center">
+            <td mat-cell *matCellDef="let member"> 
               <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
               height="35" width="35" alt="user-avatar" (click)="openMemberInfoDialog(member)">
-            </div>
-               </td>
+              </td>
           </ng-container>
       
           <ng-container matColumnDef="firstName">
@@ -81,7 +80,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
       </div>
 
     <ng-toast></ng-toast>
