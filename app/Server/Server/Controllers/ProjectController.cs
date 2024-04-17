@@ -264,6 +264,11 @@ namespace Server.Controllers
         [HttpPut("{projectId}")]
         public async Task<IActionResult> UpdateProject(int projectId, UpdateProjectRequest updateProjectRequest)
         {
+            if (!await _permissionService.HasProjectPermissionAsync(projectId, "Change project"))
+            {
+                return Forbid();
+            }
+            
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
@@ -456,6 +461,12 @@ namespace Server.Controllers
         [HttpPost("{projectId}/teamleader/{memberId}")]
         public async Task<IActionResult> AddTeamLeaderToProject(int projectId, int memberId)
         {
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
+
+            if (!hasPermission)
+            {
+                return Forbid();
+            }
             
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)

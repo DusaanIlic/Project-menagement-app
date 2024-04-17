@@ -88,6 +88,13 @@ public partial class ProjectController
     [HttpPost("{projectId}/Roles")]
     public async Task<IActionResult> AddRoleToProject(int projectId, AddRoleRequest addRoleRequest)
     {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
         if (project == null)
@@ -138,6 +145,13 @@ public partial class ProjectController
     [HttpDelete("{projectId}/Role/{roleId}")]
     public async Task<IActionResult> DeleteRoleFromProject(int projectId, int roleId)
     {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
         var projectRole = await dbContext.ProjectProjectRoles
             .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
             .FirstOrDefaultAsync();
@@ -183,6 +197,13 @@ public partial class ProjectController
     [HttpPut("{projectId}/Roles/{roleId}")]
     public async Task<IActionResult> ChangeRoleName(int projectId, int roleId, UpdateRoleRequest request)
     {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
         var projectRole = await dbContext.ProjectProjectRoles
             .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
             .Include(ppr => ppr.ProjectRole)
@@ -238,6 +259,13 @@ public partial class ProjectController
     [HttpPost("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
     public async Task<IActionResult> AddPermissionToRole(int projectId, int roleId, int permissionId)
     {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
         var projectRole = await dbContext.ProjectProjectRoles
             .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
             .Include(ppr => ppr.ProjectRole)
@@ -287,6 +315,13 @@ public partial class ProjectController
     [HttpDelete("{projectId}/Roles/{roleId}/Permission/{permissionId}")]
     public async Task<IActionResult> RemovePermissionFromRole(int projectId, int roleId, int permissionId)
     {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
         var projectRole = await dbContext.ProjectProjectRoles
             .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
             .Include(ppr => ppr.ProjectRole)
