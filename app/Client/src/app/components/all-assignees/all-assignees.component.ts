@@ -110,7 +110,10 @@ export class AllAssigneesComponent implements OnInit{
   openRoleDialog() {
     const dialogRef = this.dialog.open(ProjectRoleOverviewComponent, {
       width: '800px',
-      height: '600px'
+      height: '600px',
+      data: {
+        projectId: this.projectId
+      }
     });
   }
 }

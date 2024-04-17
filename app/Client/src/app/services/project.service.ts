@@ -5,6 +5,8 @@ import { Project } from '../models/project';
 import { HttpHeaders } from '@angular/common/http';
 import {Member} from "../models/member";
 import {environment} from "../../environments/environment";
+import {Role} from "../models/role";
+import {Permission} from "../models/permission";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 
@@ -57,6 +59,14 @@ export class ProjectServiceGet{
   getTaskCategoriesOnProject(projectId : number) : Observable<any[]>
   {
     return this.http.get<any[]>(`${PROJECT_API}/project/${projectId}/categories`);
+  }
+
+  getAllRoles(projectId: number): Observable<Role[]> {
+    return this.http.get<Role[]>(`${PROJECT_API}/${projectId}/Roles`);
+  }
+
+  getAllPermissions(): Observable<Permission[]> {
+    return this.http.get<Permission[]>(`${PROJECT_API}/Permissions`);
   }
 }
 
