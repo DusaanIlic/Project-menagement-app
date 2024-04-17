@@ -91,8 +91,8 @@
             <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
             <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
               <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
-              <div class="flex justify-end">
-                <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+              <div class="flex justify-center">
+                <div *ngFor="let member of task.assignedMembers;index as j" class="flex items-center">
                   <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
                   <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
                 </div>
@@ -151,8 +151,8 @@
           <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
           <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
             <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
-            <div class="flex justify-end">
-              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+            <div class="flex justify-center">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex items-center justify-center">
                 <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
                 <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
@@ -208,9 +208,9 @@
           <td *ngIf="task.taskPriorityId == 2 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{task.taskPriorityName}}</div></div></td>
           <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
           <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
-            <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
-            <div class="flex justify-end">
-              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+            <div class="justify-center justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
+            <div class="flex">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex items-center justify-center">
                 <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
                 <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
@@ -268,8 +268,8 @@
           <td *ngIf="task.taskPriorityId == 3 && task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-60 border-b-[1px] border-b-gray-300"><div class="flex justify-center"><div class="flex bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{task.taskPriorityName}}</div></div></td>
           <td *ngIf="task.taskCategoryId == cat.taskCategoryId && visible[i]" class="text-center w-52 border-b-[1px] border-b-gray-300">
             <div class="justify-center" *ngIf="task.assignedMembers.length === 0"><span>No assignees.</span></div>
-            <div class="flex justify-end">
-              <div *ngFor="let member of task.assignedMembers;index as j" class="flex justify-end items-center">
+            <div class="flex justify-center">
+              <div *ngFor="let member of task.assignedMembers;index as j" class="flex items-center justify-center">
                 <img src="http://localhost:8000/api/Member/{{member.id}}/Avatar" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j < 2">
                 <img src="assets/icons/circle-64.png" class="size-8 flex" style="transform: translateX({{ -j / 2 }}rem);" *ngIf="j == 2"><span class="text-white" style="transform: translateX({{ -2.7 }}rem);" *ngIf="j == 2">+{{task.assignedMembers.length - j}}</span>
               </div>
