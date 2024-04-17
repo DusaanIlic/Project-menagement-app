@@ -1,9 +1,21 @@
-table {
-    width: 100%;
+.mat-sort-header-container {
+  align-items: center;
 }
 
-#mat-elevation-z8{
+table {
   width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.mat-header-cell-def {
+  text-align: center;
+}
+
+.center-header {
+  text-align: center;
 }
 
 .mat-column-avatar {

@@ -33,24 +33,28 @@ export class AllMembersComponent implements AfterViewInit{
   members : Member[] = [];
   filteredMembers: Member[] = [];
   searchTerm: string = '';
-  displayedColumns: string[] = ['avatar', 'name', 'role', 'email', 'tasks', 'date'];
-  dataSource = new MatTableDataSource(this.filteredMembers);
-  @ViewChild(MatSort)
-  sort!: MatSort;
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
 
   constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
     this.filteredMembers = this.members;
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(){
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
-    this.selectedRole = 'allMembers';
-    this.dataSource.sort = this.sort;
+    this.selectedRole = 'allMembers'; 
+  }
+
+  ngAfterViewInit(): void {
+   
+    
   }
 
   announceSortChange(sortState: Sort) {
+    console.log(sortState.direction);
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
@@ -60,9 +64,9 @@ export class AllMembersComponent implements AfterViewInit{
 
   filterMembersByRole(role: string): void {
     if (role === 'allMembers') {
-      this.filteredMembers = this.members;
+      this.dataSource = this.members;
     } else {
-      this.filteredMembers = this.members.filter(member => this.getRoleName(member.roleId) === role);
+      this.dataSource = this.members.filter(member => this.getRoleName(member.roleId) === role);
     }
   }
 
@@ -80,6 +84,8 @@ export class AllMembersComponent implements AfterViewInit{
       (data: Member[]) => {
         this.members = data;
         this.filteredMembers = data;
+        this.dataSource = new MatTableDataSource(data);
+        this.dataSource.sort = this.sort;
       },
       (error) => {
         console.log('Error fetching members:', error);
@@ -138,7 +144,7 @@ export class AllMembersComponent implements AfterViewInit{
       filteredMembers = this.members;
     }
 
-    this.filteredMembers = filteredMembers;
+    this.dataSource = filteredMembers;
   }
 
 
@@ -194,7 +200,7 @@ export class AllMembersComponent implements AfterViewInit{
   }
 
   sortByName() {
-    this.filteredMembers.sort((a, b) => {
+    this.dataSource.sort((a: { firstName: string; lastName: string; }, b: { firstName: string; lastName: string; }) => {
       return (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName);
     });
   }
