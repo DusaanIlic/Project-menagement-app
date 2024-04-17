@@ -20,6 +20,7 @@ import {EditMemberComponent} from "../edit-member/edit-member.component";
 import {ProjectService} from "../../services/add.project.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
+import { MemberInfoComponent } from '../member-info/member-info.component';
 
 @Component({
   selector: 'app-task-overview',
@@ -30,6 +31,23 @@ import {environment} from "../../../environments/environment";
 })
 export class TaskOverviewComponent implements OnInit{
 
+  lead: Member = {
+    id: 0,
+      roleId: 0,
+      firstName: '',
+      lastName: '',
+      email: '',
+      roleName: '',
+      linkedin: '',
+      github: '',
+      status: '',
+      phoneNumber: '',
+      country: '',
+      city: '',
+      dateOfBirth: new Date(),
+      dateAdded: new Date()
+  }
+
   project : Project = {
     id: 0,
     projectName: '',
@@ -38,8 +56,10 @@ export class TaskOverviewComponent implements OnInit{
     description: '',
     details: '',
     status: '',
-    lead: ''
+    lead: this.lead
   };
+
+  
     activitiesForThisTask : taskActivity[] = [];
     membersOnThisProject : Member[] = [];
     commentText = "";

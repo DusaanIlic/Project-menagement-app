@@ -1,7 +1,6 @@
 <div class="flex flex-col mt-5 max-w-80% items-center">
       <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5 w-4/5">
       
-
         <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-1/3" value="" placeholder="Search..."  pInputText [(ngModel)]="searchTerm" (input)="search()">
 
         <span class="grow"></span>
@@ -20,18 +19,6 @@
           <mat-radio-button id="workers" value="Worker" (click)="onRoleChange($event)" color="primary">Worker</mat-radio-button>
         </mat-radio-group>
         
-        <!--
-        <input type="radio" name="projectShow" id="allMembers" value="allMembers" class="mr-2" (change)="onRoleChange($event)" checked>
-        <label for="allMembers" class="mr-2">All members</label>
-
-        <input type="radio" name="projectShow" id="administrators" value="Administrator" class="mr-2" (change)="onRoleChange($event)">
-        <label for="administrators" class="mr-2">Administrators</label>
-
-        <input type="radio" name="projectShow" id="projectManagers" value="Project Manager" class="mr-2" (change)="onRoleChange($event)">
-        <label for="projectManagers" class="mr-2">Project managers</label>
-
-        <input type="radio" name="projectShow" id="workers" value="Worker" class="mr-2" (change)="onRoleChange($event)">
-        <label for="workers" class="mr-2">Workers</label>-->
       </div>
 
 
@@ -42,14 +29,12 @@
             <th mat-header-cell *matHeaderCellDef > AVATAR </th>
             <td mat-cell *matCellDef="let member"> 
               <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
-              height="35" width="35" alt="user-avatar" (click)="openMemberInfoDialog(member)">
+              height="30" width="30" alt="user-avatar" (click)="openMemberInfoDialog(member)">
               </td>
           </ng-container>
       
           <ng-container matColumnDef="firstName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by firstName"><div class="flex items-center justify-center">
-              NAME
-            </div> </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by firstName">NAME </th>
             <td mat-cell *matCellDef="let member"> {{member.firstName}} {{member.lastName}} </td>
           </ng-container>
       
@@ -65,13 +50,13 @@
 
           
           <ng-container matColumnDef="tasks">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ACTIVE TASKS</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by tasks">ACTIVE TASKS</th>
             <td mat-cell *matCellDef="let member"> 0 </td>
           </ng-container>
 
           
           <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> DATE OF EMPLOYEMENT  </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by date"> DATE OF EMPLOYEMENT  </th>
             <td mat-cell *matCellDef="let member"> {{member.dateAdded | date :'dd-MM-yyyy'}} </td>
           </ng-container>
        
