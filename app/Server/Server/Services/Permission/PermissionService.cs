@@ -6,14 +6,31 @@ namespace Server.Services.Permission;
 public class PermissionService : IPermissionService
 {
     private readonly LogicTenacityDbContext _dbContext;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PermissionService(LogicTenacityDbContext dbContext)
+    public PermissionService(LogicTenacityDbContext dbContext, IHttpContextAccessor httpContextAccessor)
     {
         _dbContext = dbContext;
+        _httpContextAccessor = httpContextAccessor;
     }
     
-    public async Task<bool> HasGlobalPermissionAsync(int memberId, string permissionName)
+    private int GetCurrentUserId()
     {
+        var userIdClaim = _httpContextAccessor.HttpContext.User.Claims
+            .FirstOrDefault(c => c.Type == "Id");
+
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+        {
+            return userId;
+        }
+
+        throw new ApplicationException("User ID not found in JWT.");
+    }
+    
+    public async Task<bool> HasGlobalPermissionAsync(string permissionName)
+    {
+        int memberId = GetCurrentUserId();
+        
         try
         {
             return await _dbContext.Members
@@ -31,8 +48,10 @@ public class PermissionService : IPermissionService
         }
     }
 
-    public async Task<bool> HasProjectPermissionAsync(int memberId, int projectId, string permissionName)
+    public async Task<bool> HasProjectPermissionAsync(int projectId, string permissionName)
     {
+        int memberId = GetCurrentUserId();
+        
         try
         {
             return await _dbContext.MemberProjects

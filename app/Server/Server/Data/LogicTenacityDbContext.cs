@@ -214,10 +214,11 @@ namespace Server.Data
                 .HasForeignKey(pra => pra.ProjectRoleId);
             
             modelBuilder.Entity<Permission>().HasData(
-                new Permission { PermissionId = 1, PermissionName = "Change global roles" },
-                new Permission { PermissionId = 2, PermissionName = "Add members" },
-                new Permission { PermissionId = 3, PermissionName = "Deactivate members" },
-                new Permission { PermissionId = 4, PermissionName = "Create project" }
+                new Permission { PermissionId = 1, PermissionName = "Change global role" },
+                new Permission { PermissionId = 2, PermissionName = "Add member" },
+                new Permission { PermissionId = 3, PermissionName = "Edit member" },
+                new Permission { PermissionId = 4, PermissionName = "Deactivate member" },
+                new Permission { PermissionId = 5, PermissionName = "Create project" }
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -236,7 +237,8 @@ namespace Server.Data
                 new RolePermission { RoleId = 1, PermissionId = 1 },
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 1, PermissionId = 3 },
-                new RolePermission { RoleId = 2, PermissionId = 4 }
+                new RolePermission { RoleId = 1, PermissionId = 4 },
+                new RolePermission { RoleId = 2, PermissionId = 5 }
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
@@ -274,6 +276,7 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<ProjectPermission>().HasData(
+                new ProjectPermission { Id = -1, Name = "Change project role" },
                 new ProjectPermission { Id = 1, Name = "Delete project" },
                 new ProjectPermission { Id = 2, Name = "Add member to project" },
                 new ProjectPermission { Id = 3, Name = "Remove member from project" },
@@ -292,6 +295,7 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = -1 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 1 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 2 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 3 },

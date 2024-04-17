@@ -9,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using Server.Models;
 using Server.Services.File;
 using Server.Services.Permission;
-using Server.Services.RolePermission; // Added using directive for UseAuthentication
 
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -25,6 +24,7 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });

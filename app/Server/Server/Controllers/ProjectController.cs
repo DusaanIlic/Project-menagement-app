@@ -13,7 +13,7 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
 using Server.Models;
-using Server.Services.RolePermission;
+using Server.Services.Permission;
 using TaskStatus = Server.Models.TaskStatus;
 
 namespace Server.Controllers
@@ -23,13 +23,13 @@ namespace Server.Controllers
     public partial class ProjectController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
-        private readonly IRolePermissionService rolePermissionService;
+        private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
 
-        public ProjectController(LogicTenacityDbContext dbContext, IRolePermissionService rolePermissionService, IEmailService emailService)
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService)
         {
             this.dbContext = dbContext;
-            this.rolePermissionService = rolePermissionService;
+            _permissionService = permissionService;
             _emailService = emailService;
         }
 
@@ -113,14 +113,12 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 3);
-            //
-            // if (!hasPermission)
-            // {
-            //     return Forbid("Insufficient permissions");
-            // }
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Create project");
+            
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             var teamLeader = await dbContext.Members
                                     .Include(m => m.Role)
@@ -348,9 +346,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 5);
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Delete project");
 
             if (!hasPermission)
             {
@@ -393,9 +389,8 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
 
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 12);
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project status");
 
             if (!hasPermission)
             {
@@ -496,15 +491,13 @@ namespace Server.Controllers
             {
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
-
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 8);
-            //
-            // if (!hasPermission)
-            // {
-            //     return Forbid("Insufficient permissions");
-            // }
+            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
+            
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
@@ -581,9 +574,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var roleId = await rolePermissionService.CheckRole(userId);
-
-            var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 10);
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Remove member from project");
 
             if (!hasPermission)
             {
