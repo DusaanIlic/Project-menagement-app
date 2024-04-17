@@ -505,6 +505,9 @@ namespace Server.Controllers
             
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
             
+            
+            Console.WriteLine("stigne dovde");
+            
             if (!hasPermission)
             {
                 return Forbid("Insufficient permissions");
@@ -515,7 +518,7 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Project not found" });
             }
-
+            
             var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id) && !m.IsDisabled).ToListAsync();
             
             if (members == null || members.Count != memberIds.Count)

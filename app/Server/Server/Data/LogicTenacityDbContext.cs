@@ -180,10 +180,6 @@ namespace Server.Data
                 .HasForeignKey(mp => mp.ProjectRoleId);
 
             modelBuilder.Entity<ProjectRole>()
-                .HasIndex(pr => pr.Name)
-                .IsUnique();
-
-            modelBuilder.Entity<ProjectRole>()
                 .HasMany(pr => pr.ProjectRolePermissions)
                 .WithOne(prm => prm.ProjectRole)
                 .HasForeignKey(prm => prm.ProjectRoleId);

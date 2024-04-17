@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240417200939_Fix")]
+    partial class Fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -127,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 460, DateTimeKind.Local).AddTicks(7412),
+                            DateAdded = new DateTime(2024, 4, 17, 22, 9, 38, 104, DateTimeKind.Local).AddTicks(1934),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$WybggFcdM/G0Uu5j5pOR5uGwCGPGJgY8UQ7/UT4MLDrQQuWTyZkXm",
+                            Password = "$2a$10$2SKJUHSDOzuJ673h4corkOK0EJqdIgb7pQ0LRpgiklg8t68aEjo16",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 523, DateTimeKind.Local).AddTicks(1683),
+                            DateAdded = new DateTime(2024, 4, 17, 22, 9, 38, 166, DateTimeKind.Local).AddTicks(5061),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$c9TUQHi5jW5eTtSIZDQX5OsqV9a5Wh51DxeXyucAdBm8F8QsFFsDW",
+                            Password = "$2a$10$ykxrq8dxaZfs5ovWtOHRv..kcTI12qbFtPXmnBkt2yunh7aLSC8U2",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 586, DateTimeKind.Local).AddTicks(1492),
+                            DateAdded = new DateTime(2024, 4, 17, 22, 9, 38, 229, DateTimeKind.Local).AddTicks(7690),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$NDH6lS8O.Q5EHgKNAgJgW.5C.e8xA0IjpB.Z9FYjYgZS7BMNKAoRq",
+                            Password = "$2a$10$MboRkQyNJJn/Uqs6rFtEV.T787o96YdSC9cvi8Z0ZNctEGSIE3Jaa",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -302,9 +305,6 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("ProjectPermissions");
 
                     b.HasData(
@@ -422,6 +422,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("ProjectRoles");
 
