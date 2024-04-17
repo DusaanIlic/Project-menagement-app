@@ -142,7 +142,7 @@ public partial class ProjectController
         return Ok(roleDto);
     }
 
-    [HttpDelete("{projectId}/Role/{roleId}")]
+    [HttpDelete("{projectId}/Roles/{roleId}")]
     public async Task<IActionResult> DeleteRoleFromProject(int projectId, int roleId)
     {
         var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change project role");

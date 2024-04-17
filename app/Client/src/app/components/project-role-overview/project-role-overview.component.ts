@@ -19,6 +19,9 @@ import {ActivatedRoute} from "@angular/router";
 import {switchMap} from "rxjs/operators";
 import {ProjectServiceGet} from "../../services/project.service";
 import {Permission} from "../../models/permission";
+import {UpdateRoleForm} from "../../forms/update-role.form";
+import {AddRoleForm} from "../../forms/add-role.form";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-project-role-overview',
@@ -112,7 +115,32 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
   }
 
   addRole() {
+    let newRoleName = `New Role 1`;
+    let id = 1;
 
+    // Check if a role with the same name already exists
+    while (this.roles.some(role => role.name === newRoleName)) {
+      id++;
+      newRoleName = `New Role ${id}`;
+    }
+
+    const addRoleForm: AddRoleForm = {
+      name: newRoleName
+    }
+
+    this.projectService.addRole(this.projectId, addRoleForm).subscribe({
+      next: (data: any) => {
+        this.roles = [...this.roles, data]; // Add the new role locally
+
+        this.snackBar.open('Role added successfully!', 'Close', { duration: 3000 });
+      },
+      error: error => {
+        this.snackBar.open('Failed to add role!', 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
+    });
   }
 
   trackByRole(index: number, role: Role): number {
@@ -136,6 +164,13 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
   }
 
   isPermissionAssigned(roleId: number, permissionId: number): boolean {
+    const role = this.roles.find(r => r.id === roleId);
+
+    // If role is found, check if permissionId exists in its permissionList
+    if (role && role.permissionList) {
+      return role.permissionList.some((permission: { permissionId: number; }) => permission.permissionId === permissionId);
+    }
+
     return false;
   }
 
@@ -143,11 +178,92 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
 
   }
 
-  deleteRole(id: any) {
+  deleteRole(roleId: number): void {
+    const roleToDelete = this.roles.find(role => role.id === roleId);
 
+    if (!roleToDelete) {
+      this.snackBar.open('Role not found!', 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+      return;
+    }
+
+    const dialogRef = this.matDialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm Deletion',
+        message1: `Are you sure you want to delete ${roleToDelete.name}?`,
+        message2: `All of it's members will be assigned to the default role!`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.projectService.deleteRole(this.projectId, roleId).subscribe({
+          next: () => {
+            // Remove role from local array
+            this.roles = this.roles.filter(role => role.id !== roleId);
+
+            // Remove role from selected role if it matches
+            if (this.selectedRole && this.selectedRole.id === roleId) {
+              this.selectedRole = null;
+            }
+
+            // Refresh change detection
+            this.cdRef.detectChanges();
+
+            this.snackBar.open('Role deleted successfully!', 'Close', { duration: 3000 });
+          },
+          error: () => {
+            this.snackBar.open('Failed to delete role!', 'Close', {
+              duration: 3000,
+              panelClass: ['snackbar-error']
+            });
+          }
+        });
+      }
+    });
   }
 
   saveGeneral() {
+    if (this.roleForm.valid) {
+      this.roleForm.patchValue({
+        name: this.roleForm.get('name').value.trim()
+      });
 
+      const data: UpdateRoleForm = this.roleForm.value;
+      const selectedRole = this.selectedRole;
+
+      this.projectService.updateRole(this.projectId, this.selectedRole.id, data).subscribe({
+        next: data => {
+          const index = this.roles.findIndex(role => role.id === selectedRole.id);
+
+          if (index !== -1) {
+            this.roles[index] = data;
+          }
+
+          // Trigger view update
+          this.cdRef.detectChanges();
+          this.roleForm.markAsPristine();
+
+          this.snackBar.open('Successfully changed settings!', 'Close', {
+            duration: 3000,
+            panelClass: ['snackbar-error']
+          });
+        },
+        error: error => {
+          this.snackBar.open('Error updating role.', 'Close', {
+            duration: 3000,
+            panelClass: ['snackbar-error']
+          });
+        }
+      });
+    } else {
+      this.snackBar.open('Please fill out all required fields', 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
   }
 }

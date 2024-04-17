@@ -7,6 +7,8 @@ import {Member} from "../models/member";
 import {environment} from "../../environments/environment";
 import {Role} from "../models/role";
 import {Permission} from "../models/permission";
+import {UpdateRoleForm} from "../forms/update-role.form";
+import {AddRoleForm} from "../forms/add-role.form";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 
@@ -67,6 +69,18 @@ export class ProjectServiceGet{
 
   getAllPermissions(): Observable<Permission[]> {
     return this.http.get<Permission[]>(`${PROJECT_API}/Permissions`);
+  }
+
+  updateRole(projectId: number, roleId: number, updateRoleForm: UpdateRoleForm) {
+    return this.http.put<Role>(`${PROJECT_API}/${projectId}/Roles/${roleId}`, updateRoleForm);
+  }
+
+  addRole(projectId: number, addRoleForm: AddRoleForm) {
+    return this.http.post<Role>(`${PROJECT_API}/${projectId}/Roles`, addRoleForm);
+  }
+
+  deleteRole(projectId: number, roleId: number) {
+    return this.http.delete(`${PROJECT_API}/${projectId}/Roles/${roleId}`);
   }
 }
 
