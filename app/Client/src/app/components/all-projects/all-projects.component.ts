@@ -28,7 +28,7 @@ export class AllProjectsComponent implements OnInit{
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
   selectedTable: string = "t1";
-  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', /*'priority',*/ 'manager'];
+  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', 'manager', /*'details'*/];
   dataSource: any;
   searchTerm: string = '';
   @ViewChild(MatSort)sort: any;
@@ -59,11 +59,22 @@ export class AllProjectsComponent implements OnInit{
 
   onStatusChange(event: any): void {
     this.selectedStatus = event.target.value;
-    this.filterProjects();
+    this.filterProjects(this.selectedStatus);
+  }
+
+  filterProjects(status: string): void {
+    if (status === 'allProjects') {
+      this.dataSource = this.allProjects;
+    } else if (status == 'finishedProjects') {
+      this.dataSource = this.allProjects.filter(project => project.status === 'Closed');
+    }
+    else{
+      this.dataSource = this.allProjects.filter(project => project.status === 'In Progress' || project.status === 'In Preparation');
+    }
   }
 
 
-  filterProjects() {
+  /*filterProjects() {
     switch (this.selectedStatus) {
       case 'activeProjects':
         return this.allProjects.filter(project => project.status === 'in progress' || project.status === 'in preparation');
@@ -72,7 +83,7 @@ export class AllProjectsComponent implements OnInit{
       default:
         return this.allProjects;
     }
-  }
+  }*/
 
   fetchProjects() : void
   {

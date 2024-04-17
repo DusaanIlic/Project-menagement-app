@@ -1,16 +1,9 @@
 <div class="flex flex-col mt-5 max-w-80% items-center">
 
         <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5 w-4/5">
-          <form>
-            <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
-              <option disabled selected >Sort by</option>
-              <option value="name">Name</option>
-              <option value="count">Member count</option>
-              <option value="lead">Project lead</option>
-            </select>
-          </form>
+        
 
-          <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Search..."  pInputText [(ngModel)]="searchTerm" (input)="search()">
+          <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-1/3" value="" placeholder="Search..."  pInputText [(ngModel)]="searchTerm" (input)="search()">
 
           <span class="grow"></span>
 
@@ -22,9 +15,9 @@
         <div class="flex flex-row items-center p-2 w-4/5">
           <h1 class="mr-2">Show only:</h1>
           <mat-radio-group aria-label="Select an option">
-            <mat-radio-button name="projectShow" id="allProjects" value="allProjects" class="mr-2" (click)="onStatusChange($event)" checked color="primary">All Projects</mat-radio-button>
-            <mat-radio-button name="projectShow" id="activeProjects" value="activeProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Active projects</mat-radio-button>
-            <mat-radio-button name="projectShow" id="finishedProjects" value="finishedProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Finished projects</mat-radio-button>
+            <mat-radio-button  id="allProjects" value="allProjects" class="mr-2" (click)="onStatusChange($event)" checked color="primary">All Projects</mat-radio-button>
+            <mat-radio-button  id="activeProjects" value="activeProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Active projects</mat-radio-button>
+            <mat-radio-button  id="finishedProjects" value="finishedProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Finished projects</mat-radio-button>
           </mat-radio-group>
           
         </div>
@@ -67,19 +60,20 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
               <td mat-cell *matCellDef="let project"> {{project.status}} </td>
             </ng-container>
-   
-            <!--
-            <ng-container matColumnDef="priority">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by priority">PRIORITY<th>
-              <td mat-cell *matCellDef="let project"> {{project.priority}} </td>
-            </ng-container>-->
-  
             
             <ng-container matColumnDef="manager">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> PROJECT MANAGER  </th>
               <td mat-cell *matCellDef="let project"> {{project.lead.firstName}} {{project.lead.lastName}} </td>
             </ng-container>
          
+           <!-- <ng-container matColumnDef="details">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> DETAILS </th>
+              <td mat-cell *matCellDef="let project">  <button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *matItemDef="let project" [routerLink]="['/projects', project.id]">View</button>
+                <button mat-menu-item *matCellDef="let project" class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
+              </mat-menu>
+            </ng-container>-->
   
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
