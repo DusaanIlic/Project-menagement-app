@@ -1,1 +1,25 @@
-<p>project-role-overview works!</p>
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}}
+        <span *ngIf="selectedRole.isDefault" class="text-red-700">[LOCKED]</span>
+        <span *ngIf="selectedRole.isFallback" class="text-yellow-700"> [DEFAULT]</span>
+      </h1>
+      <h1 *ngIf="!selectedRole">Project Role Overview</h1>
+
+      <span class="grow"></span>
+
+      <button mat-raised-button color="primary" type="button" (click)="addRole()">
+        <div class="flex items-center justify-center">
+          <p class="flex items-center justify-center">Add New Project Role</p>
+        </div>
+      </button>
+
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+</div>

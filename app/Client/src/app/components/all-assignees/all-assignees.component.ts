@@ -12,6 +12,8 @@ import {Task} from "../../models/task";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 import {AddAssigneeComponent} from "../add-assignee/add-assignee.component";
 import {MatDialog} from "@angular/material/dialog";
+import {RoleOverviewComponent} from "../role-overview/role-overview.component";
+import {ProjectRoleOverviewComponent} from "../project-role-overview/project-role-overview.component";
 
 @Component({
   selector: 'app-all-assignees',
@@ -105,6 +107,10 @@ export class AllAssigneesComponent implements OnInit{
       }
     }
 
-
-
+  openRoleDialog() {
+    const dialogRef = this.dialog.open(ProjectRoleOverviewComponent, {
+      width: '800px',
+      height: '600px'
+    });
+  }
 }
