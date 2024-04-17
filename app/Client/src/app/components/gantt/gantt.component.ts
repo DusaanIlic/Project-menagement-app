@@ -23,6 +23,16 @@ export class GanttComponent {
         100,
         null,
       ],
+      [
+        '2015Spring',
+        'Spring 2015',
+        'spring',
+        new Date(2015, 2, 22),
+        new Date(2015, 5, 20),
+        5,
+        0,
+        null,
+      ],
     ],
     columnNames: [
       'Task ID',
