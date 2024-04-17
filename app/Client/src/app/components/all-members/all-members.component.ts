@@ -18,6 +18,12 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatButton} from "@angular/material/button";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormField} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatLabel} from "@angular/material/select";
+import {MatIcon} from "@angular/material/icon";
 
 
 @Component({
@@ -25,7 +31,7 @@ import {MatRadioModule} from '@angular/material/radio';
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule,MatRadioModule],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon],
   providers: [DatePipe]
 })
 export class AllMembersComponent implements AfterViewInit{
@@ -48,12 +54,12 @@ export class AllMembersComponent implements AfterViewInit{
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
-    this.selectedRole = 'allMembers'; 
+    this.selectedRole = 'allMembers';
   }
 
   ngAfterViewInit(): void {
-   
-    
+
+
   }
 
   announceSortChange(sortState: Sort) {
@@ -118,7 +124,7 @@ export class AllMembersComponent implements AfterViewInit{
   }
 
 
-  
+
   search(): void {
     let searchTerm = this.searchTerm.toLowerCase().trim();
     let filteredMembers = [...this.filteredMembers];
