@@ -17,13 +17,14 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatRadioModule} from '@angular/material/radio';
 
 @Component({
   selector: 'app-all-members',
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule,MatRadioModule],
   providers: [DatePipe]
 })
 export class AllMembersComponent implements AfterViewInit{
@@ -54,7 +55,6 @@ export class AllMembersComponent implements AfterViewInit{
   }
 
   announceSortChange(sortState: Sort) {
-    console.log(sortState.direction);
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
@@ -175,59 +175,6 @@ export class AllMembersComponent implements AfterViewInit{
     });
   }
 
-
-  sortMembersBy(event: any): void {
-    const option = event.target.value;
-    switch(option) {
-      case 'name':
-        this.sortByName();
-        break;
-      case 'role':
-        this.sortByRole();
-        break;
-      case 'email':
-        this.sortByEmail();
-        break;
-      // case 'tasks':
-      //   this.sortByTasks();
-      //   break;
-      case 'date':
-        this.sortByDate();
-        break;
-      default:
-        break;
-    }
-  }
-
-  sortByName() {
-    this.dataSource.sort((a: { firstName: string; lastName: string; }, b: { firstName: string; lastName: string; }) => {
-      return (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName);
-    });
-  }
-
-  sortByRole() {
-    this.filteredMembers.sort((a, b) => {
-      return this.getRoleName(a.roleId).localeCompare(this.getRoleName(b.roleId));
-    });
-  }
-
-  sortByEmail() {
-    this.filteredMembers.sort((a, b) => {
-      return a.email.localeCompare(b.email);
-    });
-  }
-
-  // sortByTasks() {
-  //   this.filteredMembers.sort((a, b) => {
-  //     return a?.numberOfTasks - b?.numberOfTasks;
-  //   });
-  // }
-
-  sortByDate() {
-    this.filteredMembers.sort((a, b) => {
-      return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
-    });
-  }
 
     protected readonly environment = environment;
 }
