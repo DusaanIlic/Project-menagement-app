@@ -12,6 +12,7 @@ import {AllAssigneesComponent} from "./components/all-assignees/all-assignees.co
 import {AllTasksComponent} from "./components/all-tasks/all-tasks.component";
 import {ProjectKanbanComponent} from "./components/project-kanban/project-kanban.component";
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
+import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -31,6 +32,7 @@ export const routes: Routes = [
     component: ProjectComponent,
     canActivate: [AuthGuard],
     children: [
+      { path: 'overview', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
       { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
       { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
       { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
