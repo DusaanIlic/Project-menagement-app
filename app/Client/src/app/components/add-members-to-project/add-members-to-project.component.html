@@ -1,43 +1,53 @@
-<div id="default-modal" tabindex="-1" aria-hidden="true" class="flex fixed justify-center items-center top-2 left-[25%]">
+<div id="default-modal" tabindex="-1" aria-hidden="true" class="flex fixed justify-center items-center top-2 left-[30%]">
   <div class="relative p-4 w-full max-w-2xl max-h-full">
     <!-- Modal content -->
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-[950px]">
+    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-[700px] p-2">
       <!-- Modal header -->
       <div class="flex flex-col items-start justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h1 class="text-xl font-bold">Add members to project</h1>
+        <h1 class="text-xl font-bold justify-center">Add members to project</h1>
       </div>
       <!-- Modal body -->
-      <div class="flex p-2">
-        <div class="w-[80%]">
-          <div class="flex justify-start">
+      <div class="flex p-2 justify-center">
+        <div class="w-[90%]">
+          <div class="flex justify-center">
             <div class="flex flex-col gap-5">
-              <div class="w-[90%]">
+              <div>
                 <div class="table border-[1px] border-gray-300 rounded-md">
                   <tr class="">
                     <th class="text-left w-10"></th>
-                    <th class="text-left p-2 w-40">MEMBER</th>
+                    <th class="text-left p-2 w-60">MEMBER</th>
                     <th class="text-left p-2 w-40">STATUS</th>
-                    <th class="text-left p-2 w-40">ROLE</th>
+                    <th class="text-left p-2 w-60">ROLE</th>
+                    <th class="text-left p-2 w-60">EMAIL</th>
                   </tr>
 
                   <tr *ngIf="allMembers.length === 0">
-                    <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No assigned members.</td>
+                    <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No members.</td>
                   </tr>
 
                   <tr *ngFor="let assignee of allMembers" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" checked (change)="assignRemove($event, assignee.id)"></td>
-                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><mat-checkbox checked (change)="assignRemove($event.checked, assignee.id)" class="example-margin"></mat-checkbox></td>
+                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2 font semi-bold">{{assignee.firstName}} {{assignee.lastName}}</td>
                     <td *ngIf="assignee.status != '' && isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
                     <td *ngIf="assignee.status === '' && isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
-                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                    <td *ngIf="isMemberOnProject(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.email}}</td>
                   </tr>
 
                   <tr *ngFor="let assignee of allMembers" class="border-[1px] border-gray-500 hover:bg-gray-300">
-                    <td *ngIf="!isMemberOnProject(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" (change)="assignRemove($event, assignee.id)"></td>
-                    <td *ngIf="!isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-                    <td *ngIf="assignee.status != '' && !isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
-                    <td *ngIf="assignee.status === '' && !isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
-                    <td *ngIf="!isMemberOnProject(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><mat-checkbox (change)="assignRemove($event.checked, assignee.id)" disabled checked class="example-margin"></mat-checkbox></td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                    <td *ngIf="assignee.status != '' && !isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                    <td *ngIf="assignee.status === '' && !isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.email}}</td>
+
+                    <td *ngIf="!isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-10 border-t-[1px] border-t-gray-300 p-2"><mat-checkbox (change)="assignRemove($event.checked, assignee.id)" class="example-margin"></mat-checkbox></td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+                    <td *ngIf="assignee.status != '' && !isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">{{assignee.status}}</td>
+                    <td *ngIf="assignee.status === '' && !isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-40 border-t-[1px] border-t-gray-300 p-2">Not set.</td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.roleName}}</td>
+                    <td *ngIf="!isMemberOnProject(assignee.id) && !isMemberTeamLeader(assignee.id)" class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.email}}</td>
                   </tr>
                 </div>
               </div>
@@ -46,7 +56,10 @@
 
         </div>
       </div>
+      <button (click)="closeDialog()" type="button" class="mt-2 ml-2 flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 me-2  xl:hover:bg-[#0B2043]">Close</button>
     </div>
+
+
   </div>
 
 

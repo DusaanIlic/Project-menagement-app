@@ -8,6 +8,8 @@ import {TaskService} from "../../services/task.service";
 import {MemberService} from "../../services/member.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {Member} from "../../models/member";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {Project} from "../../models/project";
 
 @Component({
   selector: 'app-add-members-to-project',
@@ -18,7 +20,8 @@ import {Member} from "../../models/member";
     NgIf,
     NgToastModule,
     NgxEditorModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCheckbox
   ],
   templateUrl: './add-members-to-project.component.html',
   styleUrl: './add-members-to-project.component.scss'
@@ -27,6 +30,7 @@ export class AddMembersToProjectComponent implements OnInit{
 
   membersOnThisProject : Member[] = [];
   allMembers : Member[] = [];
+  teamLider : any;
 
 
   constructor(public dialogRef: MatDialogRef<AddMembersToProjectComponent>,
@@ -55,6 +59,10 @@ export class AddMembersToProjectComponent implements OnInit{
       console.log(this.membersOnThisProject)
     })
 
+    this.pService.getProjectById(this.projectId).subscribe((data : any)=>{
+      this.teamLider = data.teamLider;
+      console.log(this.teamLider)
+    })
 
   }
 
@@ -68,14 +76,21 @@ export class AddMembersToProjectComponent implements OnInit{
     return false;
   }
 
+  isMemberTeamLeader(mId : number) : boolean
+  {
+    if(mId === this.teamLider.id)
+      return true;
+    return false
+  }
+
+
   assignRemove(event : any, memberId: number)
   {
-    console.log(event.target.checked) // If true - assign if false - remove
+    console.log(event)
     const membersList = [memberId];
-    console.log(membersList)
 
 
-    if(event.target.checked) // assign
+    if(event) // assign
     {
 
       this.pService.assignMemberToProject(membersList, this.projectId).subscribe({
@@ -112,4 +127,7 @@ export class AddMembersToProjectComponent implements OnInit{
     this._ngToastService.error({detail: "Error Message", summary: "Member add/delete failed!", duration: 3000});
   }
 
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 }
