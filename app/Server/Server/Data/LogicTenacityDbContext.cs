@@ -291,7 +291,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 12, Name = "Add task dependency" },
                 new ProjectPermission { Id = 13, Name = "Remove task dependency" },
                 new ProjectPermission { Id = 14, Name = "Add task category" },
-                new ProjectPermission { Id = 15, Name = "Remove task category" }
+                new ProjectPermission { Id = 15, Name = "Remove task category" },
+                new ProjectPermission { Id = 16, Name = "Change task" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -311,8 +312,11 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 13 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 14 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 15 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 }
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 16 }
             );
+
+           
         }
     }
 }

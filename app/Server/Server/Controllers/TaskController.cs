@@ -224,6 +224,13 @@ namespace Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskRequest updateProjectTaskRequest)
         {
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Update task");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var projectTask = await dbContext.ProjectTasks
                 .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
