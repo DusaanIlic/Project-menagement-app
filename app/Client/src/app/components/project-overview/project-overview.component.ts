@@ -5,11 +5,14 @@ import {MemberService} from "../../services/member.service";
 import {TaskService} from "../../services/task.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [],
+    imports: [
+        MatButton
+    ],
   templateUrl: './project-overview.component.html',
   styleUrl: './project-overview.component.scss'
 })

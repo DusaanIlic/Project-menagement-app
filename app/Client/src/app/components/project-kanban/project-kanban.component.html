@@ -38,9 +38,9 @@
                 </div>
               </section>
 
-        <div class="flex-row justify-end ml-auto mt-4">
-            <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 mr-3" (click)="openDialog()">Add task</button>
-            <button type="button" class="px-3 py-2 bg-[#0E2954] text-white rounded-md min-h-3 font-normal hover mb-3 ml-3" (click)="openTaskStatusDialog()">Add Column</button>
+        <div class="flex gap-2 justify-end ml-auto mt-4 gap ">
+            <button mat-raised-button color="primary" type="button"  (click)="openDialog()">Add task</button>
+            <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()">Add Column</button>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
                 (cdkDropListDropped)="drop($event)" >
                 <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
                     <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
-                          
+
                         <div class="px-2.5 py-2.5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
                             'low-priority': item.taskPriorityId === 1,
                             'medium-priority': item.taskPriorityId === 2,
@@ -70,8 +70,8 @@
                           <div class=" flex flex-col">
                             <p class="text-lg font-medium">{{item.taskName}}</p>
                             <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
-                          </div>                        
-                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex" 
+                          </div>
+                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
                                 (click)="openConfirmationDialog(column, item.taskId)"><mat-icon>delete</mat-icon></button>
                         </div>
                     </ng-container>
@@ -85,7 +85,7 @@
             </div>
         </div>
     </div>
-      
+
 
 
     <ng-toast></ng-toast>

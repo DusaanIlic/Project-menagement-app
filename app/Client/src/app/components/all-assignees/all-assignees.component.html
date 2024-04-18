@@ -5,17 +5,26 @@
 
       <div class="flex gap-10">
         <div class="flex">
-          <input class="rounded-l-xl" type="text" placeholder="Search by name...">
-          <button class="rounded-r-xl bg-accent-blue text-l text-white w-[100px]">Search</button>
+          <mat-form-field class="w-64" subscriptSizing="dynamic">
+            <mat-label>
+              <div class="flex items-center justify-between gap-2">
+                <p>Search Assignees</p>
+                <mat-icon class="scale-125">search</mat-icon>
+              </div>
+            </mat-label>
+
+            <input matInput>
+          </mat-form-field>
         </div>
 
-        <select class="rounded-xl text-accent-blue">
-          <option selected>Sort by</option>
-          <option>Name</option>
-          <option>Role</option>
-          <option>Load</option>
-          <option>Last login</option>
-        </select>
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Sort by</mat-label>
+          <mat-select>
+            <mat-option value="name">Name</mat-option>
+            <mat-option value="priority">Role</mat-option>
+            <mat-option value="dueDate">Date Added</mat-option>
+          </mat-select>
+        </mat-form-field>
 
         <span class="grow"></span>
 
@@ -29,22 +38,13 @@
     <hr class="border-accent-blue">
 
     <div class="flex gap-4 text-accent-blue">
-      <p class="text-accent-blue font-bold">Show only:</p>
+      <p class="flex items-center justify-center text-accent-blue font-bold">Show only:</p>
 
-      <div class="flex items-center justify-center gap-1 ">
-        <input type="radio" id="radio-all" name="radio-filter" value="t1" [(ngModel)] = 'selectedTable'>
-        <label for="radio-all">All</label>
-      </div>
-
-      <div class="flex items-center justify-center gap-1">
-        <input type="radio" id="radio-in-progress" name="radio-filter" value="t2" [(ngModel)] = 'selectedTable'>
-        <label for="radio-in-progress">Active</label>
-      </div>
-
-      <div class="flex items-center justify-center gap-1">
-        <input type="radio" id="radio-completed" name="radio-filter" value="t3" [(ngModel)] = 'selectedTable'>
-        <label for="radio-completed">Inactive</label>
-      </div>
+      <mat-radio-group [(ngModel)]="selectedTable" name="radio-filter" color="primary">
+        <mat-radio-button class="text-accent-blue" value="t1">All</mat-radio-button>
+        <mat-radio-button class="text-accent-blue" value="t2">Active</mat-radio-button>
+        <mat-radio-button class="text-accent-blue" value="t3">Inactive</mat-radio-button>
+      </mat-radio-group>
     </div>
 
     <hr class="border-accent-blue">

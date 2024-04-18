@@ -5,49 +5,46 @@
 
       <div class="flex gap-10">
         <div class="flex">
-          <input class="rounded-l-xl" type="text" placeholder="Search by name..">
-          <button class="rounded-r-xl bg-accent-blue text-l text-white w-[100px]">Search</button>
+          <mat-form-field class="w-64" subscriptSizing="dynamic">
+            <mat-label>
+              <div class="flex items-center justify-between gap-2">
+                <p>Search Tasks</p>
+                <mat-icon class="scale-125">search</mat-icon>
+              </div>
+            </mat-label>
+
+            <input matInput>
+          </mat-form-field>
         </div>
 
-        <select class="rounded-xl text-accent-blue">
-          <option selected>Sort by</option>
-          <option>Name</option>
-          <option>Priority</option>
-          <option>Due date</option>
-          <option>Progression</option>
-        </select>
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Sort by</mat-label>
+          <mat-select>
+            <mat-option value="name">Name</mat-option>
+            <mat-option value="priority">Priority</mat-option>
+            <mat-option value="dueDate">Due date</mat-option>
+            <mat-option value="progression">Progression</mat-option>
+          </mat-select>
+        </mat-form-field>
 
         <span class="grow"></span>
 
         <div class="flex gap-1">
-          <button class="rounded-xl bg-accent-blue text-l text-white w-[120px]" (click)="openDialog()">Add new task</button>
+          <button mat-raised-button color="primary" (click)="openDialog()">Add new task</button>
         </div>
       </div>
 
       <hr class="border-accent-blue">
 
       <div class="flex gap-4 text-accent-blue">
-        <p class="text-accent-blue font-bold">Show only:</p>
+        <p class="flex items-center justify-center text-accent-blue font-bold">Show only:</p>
 
-        <div class="flex items-center justify-center gap-1 ">
-          <input type="radio" id="radio-all" name="radio-filter" [(ngModel)]="tableSel" value="t1">
-          <label for="radio-all">All</label>
-        </div>
-
-        <div class="flex items-center justify-center gap-1">
-          <input type="radio" id="radio-new" name="radio-filter" [(ngModel)]="tableSel" value="t2">
-          <label for="radio-new">New</label>
-        </div>
-
-        <div class="flex items-center justify-center gap-1">
-          <input type="radio" id="radio-in-progress" name="radio-filter" [(ngModel)]="tableSel" value="t3">
-          <label for="radio-in-progress">In Progress</label>
-        </div>
-
-        <div class="flex items-center justify-center gap-1">
-          <input type="radio" id="radio-completed" name="radio-filter" [(ngModel)]="tableSel" value="t4">
-          <label for="radio-completed">Completed</label>
-        </div>
+        <mat-radio-group [(ngModel)]="tableSel" name="radio-filter" color="primary">
+          <mat-radio-button class="text-accent-blue" value="t1">All</mat-radio-button>
+          <mat-radio-button class="text-accent-blue" value="t2">New</mat-radio-button>
+          <mat-radio-button class="text-accent-blue" value="t3">In Progress</mat-radio-button>
+          <mat-radio-button class="text-accent-blue" value="t4">Completed</mat-radio-button>
+        </mat-radio-group>
       </div>
     </div>
 
