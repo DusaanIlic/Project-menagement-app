@@ -11,7 +11,7 @@
 
           <input matInput [(ngModel)]="searchTerm" (input)="search()">
         </mat-form-field>
-        
+
         <span class="grow"></span>
 
         <button mat-raised-button color="primary" type="button" class="flex items-center justify-center w-48 text-white" (click)="openRoleDialog()">Manage Roles</button>
@@ -38,7 +38,7 @@
           <ng-container matColumnDef="avatar">
             <th mat-header-cell *matHeaderCellDef > AVATAR </th>
             <td mat-cell *matCellDef="let member">
-              <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" class="rounded-full border-solid border-black border-2"
+              <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar"
               height="30" width="30" alt="user-avatar" (click)="openMemberInfoDialog(member)">
               </td>
           </ng-container>

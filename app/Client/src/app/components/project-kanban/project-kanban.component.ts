@@ -17,7 +17,6 @@ import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { AddTaskStatusComponent } from '../add-task-status/add-task-status.component';
 import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
-import { ProjectNavbarComponent } from "../project-navbar/project-navbar.component";
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
@@ -30,8 +29,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag, 
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, ProjectNavbarComponent]
+  imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag,
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -127,7 +126,7 @@ export class ProjectKanbanComponent implements OnInit {
         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
         const taskId = event.item.data.taskId;
-        const newColumn = event.container.id; 
+        const newColumn = event.container.id;
         const newStatusId = this.getStatusIdFromColumnName(newColumn);
 
         if (event.container.data.length === 0) {
@@ -145,7 +144,7 @@ export class ProjectKanbanComponent implements OnInit {
             .subscribe(
                 () => {
                   this.loadTasksByProject(this.projectId);
-                  //console.log('Task status updated successfully.')     
+                  //console.log('Task status updated successfully.')
                 },
                 error => console.error('Error updating task status:', error)
             );
