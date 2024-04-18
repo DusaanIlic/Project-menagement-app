@@ -224,7 +224,7 @@ namespace Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskRequest updateProjectTaskRequest)
         {
-            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Update task");
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Change task");
 
             if (!hasPermission)
             {
@@ -276,32 +276,18 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProjectTask(int id)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (userIdClaim == null)
-            {
-                return NotFound(new { message = "User ID claim not found in token" });
-            }
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
-
-            // Gde je projekt id???
-            
-            var hasPermission = true;
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
-
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
             {
                 return NotFound(new { message = "Task not found" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Delete task");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
             }
 
             dbContext.ProjectTasks.Remove(projectTask);
@@ -367,31 +353,17 @@ namespace Server.Controllers
         [HttpPut("{taskId}/status/{statusId}")]
         public async Task<IActionResult> UpdateTaskStatus(int taskId, int statusId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (userIdClaim == null)
-            {
-                return NotFound(new { message = "User ID claim not found in token" });
-            }
-
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
-
-            // var roleId = await rolePermissionService.CheckRole(userId);
-            //
-            // var hasPermission = await rolePermissionService.CheckRolePermission(roleId.Value, 11);
-            //
-            // if (!hasPermission)
-            // {
-            //     return Forbid("Insufficient permissions");
-            // }
-
             var projectTask = await dbContext.ProjectTasks.FindAsync(taskId);
             if (projectTask == null)
             {
                 return NotFound(new { message = "Specified project does not exist" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
             }
 
             var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
