@@ -170,17 +170,13 @@ export class TaskOverviewComponent implements OnInit{
       {
         this.tService.saveTaskActivity(taskAct).subscribe(
           {
-          next : data => {},
+          next : data => {
+            this.showMessage()
+            this.fetchTaskActivities()
+          },
           error : error => {
-            if(error.statusText == "OK")
-              {
-                this.showMessage();
-                this.fetchTaskActivities();
-              }
-            else
-            {
-              this.showMessageError();
-            }
+            this.showMessageError()
+
 
           }
         })
