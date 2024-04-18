@@ -38,8 +38,8 @@ export class NavbarComponent implements OnInit {
 
   buttons = [
     { link: '/dashboard', text: 'Dashboard', icon: 'home' },
-    { link: '/projects/all', text: 'All Projects', icon: 'insert_drive_file' },
-    { link: '/members/all', text: 'All Members', icon: 'person' },
+    { link: '/projects/all', text: 'Projects', icon: 'insert_drive_file' },
+    { link: '/members/all', text: 'Members', icon: 'person' },
   ];
 
   constructor(private authService: AuthService) { }

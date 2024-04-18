@@ -28,6 +28,6 @@
     <a mat-menu-item routerLink="/members/{{member?.id}}">View Profile</a>
     <a mat-menu-item routerLink="/members/{{member?.id}}/edit">Edit Profile</a>
     <mat-divider></mat-divider>
-    <a mat-menu-item>Logout</a>
+    <a mat-menu-item (click)="logout()">Logout</a>
   </mat-menu>
 </mat-toolbar>
