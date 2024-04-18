@@ -73,6 +73,11 @@ namespace Server.Data
                .WithMany(ts => ts.ProjectTasks)
                .HasForeignKey(pt => pt.TaskPriorityId);
 
+            modelBuilder.Entity<TaskComment>()
+                .HasOne(tc => tc.Task)
+                .WithMany(pt => pt.TaskComment)
+                .HasForeignKey(tc => tc.TaskId);
+
             modelBuilder.Entity<MemberTask>()
                 .HasKey(mt => new { mt.MemberId, mt.TaskId });
 
