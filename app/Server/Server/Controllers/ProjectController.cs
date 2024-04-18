@@ -78,6 +78,7 @@ namespace Server.Controllers
                 }
 
                 int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
+                int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == p.ProjectId);
                 projectDTOs.Add(new ProjectDTO
                     {
                         ProjectId = p.ProjectId,
@@ -89,7 +90,8 @@ namespace Server.Controllers
                         ProjectTasks = taskDTOs,
                         TeamLider = teamLeaderDTO,
                         StartDate = p.StartDate,
-                        NumberOfPeople = numberOfMembers
+                        NumberOfPeople = numberOfMembers,
+                        NumberOfTasks = numberOfTasks
                 });
             }
 
@@ -134,7 +136,7 @@ namespace Server.Controllers
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
                 Deadline = addProjectRequest.Deadline,
-                StartDate = DateTime.MinValue,
+                StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
                 TeamLeaderId = teamLeader.Id
             };
@@ -177,6 +179,7 @@ namespace Server.Controllers
             };
 
             int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
+            int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
 
             var projectDTO = new ProjectDTO
             {
@@ -188,7 +191,8 @@ namespace Server.Controllers
                 Status = projectStatus.Status,
                 StartDate = project.StartDate,
                 TeamLider = teamLeaderDTO,
-                NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers,
+                NumberOfTasks = numberOfTasks
             };
 
             return Ok(projectDTO);
@@ -224,6 +228,8 @@ namespace Server.Controllers
                 TaskStatusId = t.TaskStatusId
             }).ToList();
 
+            int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
+
             MemberDTO teamLeaderDTO = null;
 
             if (project.TeamLeader != null)
@@ -254,7 +260,8 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-                NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers,
+                NumberOfTasks = numberOfTasks
             };
 
             return Ok(projectDTO);
@@ -317,6 +324,7 @@ namespace Server.Controllers
             }
 
             int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == project.ProjectId && !mp.Member.IsDisabled);
+            int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
 
             var projectDTO = new ProjectDTO
             {
@@ -329,7 +337,8 @@ namespace Server.Controllers
                 ProjectTasks = taskDTOs,
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
-                NumberOfPeople = numberOfMembers
+                NumberOfPeople = numberOfMembers,
+                NumberOfTasks = numberOfTasks
             };
 
             return Ok(projectDTO);

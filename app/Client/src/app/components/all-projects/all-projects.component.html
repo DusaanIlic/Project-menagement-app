@@ -1,153 +1,97 @@
-<div>
-  <div class="flex justify-center mt-5">
-    <div class="flex w-[90%] justify-center">
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5">
-          <form>
-            <select id="sort" class="rounded-md bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
-              <option disabled selected >Sort by</option>
-              <option value="name">Name</option>
-              <option value="count">Member count</option>
-              <option value="lead">Project lead</option>
-            </select>
-          </form>
+<div class="flex flex-col mt-5 max-w-80% items-center">
 
-          <input type="text" id="name" aria-label="disabled input 2" class="flex border border-gray-300 text-sm rounded-md p-2.5 w-50" value="" placeholder="Filter by name...">
+        <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5 w-4/5">
+
+          <mat-form-field class="w-96" subscriptSizing="dynamic">
+            <mat-label>
+              <div class="flex items-center justify-between gap-2">
+                <p>Search</p>
+                <mat-icon class="scale-125">search</mat-icon>
+              </div>
+            </mat-label>
+
+            <input matInput [(ngModel)]="searchTerm" (input)="search()">
+          </mat-form-field>
 
           <span class="grow"></span>
 
-          <button (click)="openDialog()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 me-2  xl:hover:bg-[#0B2043]">New project</button>
+          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center w-48">New project</button>
 
         </div>
 
-        <div class="flex flex-row items-center p-2">
+
+        <div class="flex flex-row items-center p-2 w-4/5">
           <h1 class="mr-2">Show only:</h1>
-          <input type="radio" name="projectShow" id="allProjects" value="t1" class="mr-2" [(ngModel)] = "selectedTable">
+          <mat-radio-group aria-label="Select an option">
+            <mat-radio-button  id="allProjects" value="allProjects" class="mr-2" (click)="onStatusChange($event)" checked color="primary">All Projects</mat-radio-button>
+            <mat-radio-button  id="activeProjects" value="activeProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Active projects</mat-radio-button>
+            <mat-radio-button  id="finishedProjects" value="finishedProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Finished projects</mat-radio-button>
+          </mat-radio-group>
+
+        </div>
+
+
+        <!--
+        <div class="flex flex-row items-center p-2 w-4/5">
+          <h1 class="mr-2">Show only:</h1>
+          <input type="radio" name="projectShow" id="allProjects" value="allProjects" class="mr-2" [(ngModel)] = "selectedTable" checked>
           <label for="allProjects" class="mr-2">All projects</label>
 
-          <input type="radio" name="projectShow" id="activeProjects" value="t2" class="mr-2" [(ngModel)] = "selectedTable">
+          <input type="radio" name="projectShow" id="activeProjects" value="activeProjects" class="mr-2" [(ngModel)] = "selectedTable">
           <label for="activeProjects" class="mr-2">Active projects</label>
 
-          <input type="radio" name="projectShow" id="finishedProjects" value="t3" class="mr-2" [(ngModel)] = "selectedTable">
+          <input type="radio" name="projectShow" id="finishedProjects" value="finishedProjects" class="mr-2" [(ngModel)] = "selectedTable">
           <label for="activeProjects" class="mr-2">Finished projects</label>
 
+        </div>-->
+
+
+        <div class="mat-elevation-z8 w-4/5">
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+
+            <ng-container matColumnDef="project">
+              <th mat-header-cell *matHeaderCellDef  mat-sort-header sortActionDescription="Sort by project"> PROJECT </th>
+              <td mat-cell *matCellDef="let project"> {{project.projectName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by startDate">START DATE </th>
+              <td mat-cell *matCellDef="let project"> {{project.startDate | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by endDate"> DUE DATE </th>
+              <td mat-cell *matCellDef="let project"> {{project.endDate | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
+              <td mat-cell *matCellDef="let project"> {{project.status}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="manager">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> PROJECT MANAGER  </th>
+              <td mat-cell *matCellDef="let project"> {{project.lead.firstName}} {{project.lead.lastName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> DETAILS </th>
+              <td mat-cell *matCellDef="let project">
+                <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">...</button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
+                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
         </div>
-
-
-        <div class="flex justify-center" *ngIf="selectedTable === 't1'">
-          <div class="table border-[1px] border-gray-300 rounded-md">
-            <tr class="">
-              <th class="text-left p-3 w-60">PROJECT</th>
-              <th class="text-left w-60">START DATE</th>
-              <th class="text-left w-60">DUE DATE</th>
-              <th class="text-left w-60">STATUS</th>
-              <th class="text-left w-60">PRIORITY</th>
-              <th class="text-left w-52">PROJECT MANAGER</th>
-              <th class="text-left w-20"></th>
-            </tr>
-
-            <tr *ngIf="finishedProjectsCount === 0 && activeProjectsCount === 0">
-              <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No projects.</td>
-            </tr>
-
-            <tr *ngFor="let project of allProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-              <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
-              <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'Closed'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'In Progress'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{project.status}}</div></td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">Important</td>
-              <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
-              <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item [routerLink]="['/projects', project.id, 'overview']">View</button>
-                <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
-              </mat-menu>
-            </tr>
-          </div>
-        </div>
-
-
-
-        <div class="flex justify-center" *ngIf="selectedTable === 't2'">
-          <div class="table border-[1px] border-gray-300 rounded-md">
-            <tr class="">
-              <th class="text-left p-3 w-60">PROJECT</th>
-              <th class="text-left w-60">START DATE</th>
-              <th class="text-left w-60">DUE DATE</th>
-              <th class="text-left w-60">STATUS</th>
-              <th class="text-left w-60">PRIORITY</th>
-              <th class="text-left w-52">PROJECT MANAGER</th>
-              <th class="text-left w-20"></th>
-            </tr>
-
-
-            <tr *ngIf="activeProjectsCount === 0">
-              <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No active projects.</td>
-            </tr>
-
-            <tr *ngFor="let project of activeProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-              <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
-              <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'Closed'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'In Progress'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{project.status}}</div></td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">Important</td>
-              <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
-              <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
-              </mat-menu>
-            </tr>
-          </div>
-        </div>
-
-
-
-        <div class="flex justify-center" *ngIf="selectedTable === 't3'">
-          <div class="table border-[1px] border-gray-300 rounded-md">
-            <tr class="">
-              <th class="text-left p-3 w-60">PROJECT</th>
-              <th class="text-left w-60">START DATE</th>
-              <th class="text-left w-60">DUE DATE</th>
-              <th class="text-left w-60">STATUS</th>
-              <th class="text-left w-60">PRIORITY</th>
-              <th class="text-left w-52">PROJECT MANAGER</th>
-              <th class="text-left w-20"></th>
-            </tr>
-
-            <tr *ngIf="finishedProjectsCount === 0">
-              <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No finished projects.</td>
-            </tr>
-            <tr *ngFor="let project of finishedProjects" class="border-[1px] border-gray-500 hover:bg-gray-300">
-              <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{project.projectName}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.startDate | date}}</td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">{{project.endDate | date}}</td>
-              <td *ngIf="project.status == 'In Preparation'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'Closed'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{project.status}}</div></td>
-              <td *ngIf="project.status == 'In Progress'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]">{{project.status}}</div></td>
-              <td class="w-60 border-t-[1px] border-t-gray-300">Important</td>
-              <td class="w-52 border-t-[1px] border-t-gray-300">Pera Peric</td>
-              <td class="w-10 border-t-[1px] border-t-gray-300"><button class="font-extrabold text-3xl"  mat-button [matMenuTriggerFor]="menu">...</button></td>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
-              </mat-menu>
-            </tr>
-          </div>
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </div>
+ </div>
 
 
 
@@ -163,48 +107,6 @@
 
 
 
-    <!--<div class="flex justify-center">
-        <div id="default-tab-content">
-            <div class="hidden p-4 rounded-lg" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="grid grid-cols-5 gap-5">
-                    <div *ngFor="let activeProj of activeProjects" class="w-60 h-60 rounded-md shadow-2xl flex flex-col">
-                        <div class="h-2/3 rounded-md">
-                            <img src="assets/allProjects/projectImg1.jpg" class="rounded-t-md">
-                        </div>
-                        <div class="h-1/3 rounded-b-md p-1 pt-0">
-                            <h2>
-                                {{activeProj.name}}
-                            </h2>
-                            <p>Project lead: {{activeProj.lead}}</p>
-                            <p>Members: 5</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hidden p-4 rounded-lg" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                <div class="grid grid-cols-5 gap-5">
-                    <div *ngFor="let finishedProj of finishedProjects" class="w-60 h-60 rounded-md shadow-2xl flex flex-col">
-                        <div class="h-2/3 rounded-md">
-                            <img src="assets/allProjects/projectImg1.jpg" class="rounded-t-md mb-0">
-                        </div>
-                        <div class="h-1/3 rounded-b-md p-1 pt-0">
-                            <h2>
-                                {{finishedProj.name}}
-                            </h2>
-                            <p>Project lead: {{finishedProj.lead}}</p>
-                            <p>Members: 5</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex justify-center">
-        <div class="flex justify-end">
-            <button routerLink="/projects/add" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">New project</button>
-        </div>
-    </div>-->
 
 
 

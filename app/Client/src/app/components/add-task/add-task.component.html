@@ -26,11 +26,11 @@
                     <div class="flex-row justify-between mb-3">
                         <label for="name" class="pr-10">Priority</label>
                         
-                            <select id="sort" class="rounded-md ml-4 w-1/2 bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400">
+                            <select id="sort" class="rounded-md ml-4 w-1/2 bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400" [(ngModel)]="taskPriority">
                             <option disabled selected >Select priority</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
                             </select>
                     </div>
     
@@ -51,22 +51,23 @@
                 <div class="flex flex-col w-1/2">
                     <div class="flex-row justify-between mb-1 py-4">
                         <label for="members">Add Members </label>
-                            <select id="members" class="rounded-md ml-4 w-1/2 bg-gray-50 border border-gray-300 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 placeholder:text-gray-400" [(ngModel)]="selectedMember" (change)="addSelectedMember()">
-                                <option disabled selected >Select members</option>
-                                <option *ngFor="let member of projectMembers" [value]="member.id">{{ member.firstName }} {{ member.lastName }}</option>
-                            </select>
+                        <mat-form-field class="w-3/4">
+                            <mat-select [formControl]="members" multiple (selectionChange)="toggleMember($event)">
+                                <mat-option *ngFor="let member of projectMembers" [value]="member.id">
+                                    {{member.firstName}} {{member.lastName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>                              
                     </div>
-                    <div class="flex flex-col mb-4">
-                        <label for="selMembers">Selected Members</label>
-                        <textarea class="min-h-48" id="selMembers"[(ngModel)]="addedMembers" readonly></textarea>
-                    </div>
+                                                     
                 </div>
             </div>
-           
+
             <!-- Modal footer -->
             <div class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button data-modal-hide="default-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" (click)="saveTask()">Save</button>
             </div>
+           
         </div>
     </div>
 

@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 460, DateTimeKind.Local).AddTicks(7412),
+                            DateAdded = new DateTime(2024, 4, 18, 20, 44, 59, 947, DateTimeKind.Local).AddTicks(2911),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$WybggFcdM/G0Uu5j5pOR5uGwCGPGJgY8UQ7/UT4MLDrQQuWTyZkXm",
+                            Password = "$2a$10$lSOZ3PrMCQrd/j6uJtizuejdZGw2hqJgukZR9tb5lsKH0mm/JIJ12",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 523, DateTimeKind.Local).AddTicks(1683),
+                            DateAdded = new DateTime(2024, 4, 18, 20, 45, 0, 9, DateTimeKind.Local).AddTicks(9155),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$c9TUQHi5jW5eTtSIZDQX5OsqV9a5Wh51DxeXyucAdBm8F8QsFFsDW",
+                            Password = "$2a$10$ccM6QoxJ./oVR4EwlFn4b.vtMShcmFuQvnW/DTJxhejcRm00P9Kz6",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 17, 22, 12, 17, 586, DateTimeKind.Local).AddTicks(1492),
+                            DateAdded = new DateTime(2024, 4, 18, 20, 45, 0, 73, DateTimeKind.Local).AddTicks(2598),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$NDH6lS8O.Q5EHgKNAgJgW.5C.e8xA0IjpB.Z9FYjYgZS7BMNKAoRq",
+                            Password = "$2a$10$UtyvX4LEieaipIbuzBWl3u42puArJQ62u0hKD37fGdjHRd/LKw9tC",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -387,6 +387,26 @@ namespace Server.Migrations
                         {
                             Id = 15,
                             Name = "Remove task category"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "Change task"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "Add task activity"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Name = "Remove task acitivity"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Name = "Comment task"
                         });
                 });
 
@@ -548,6 +568,36 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 2,
                             ProjectPermissionId = 10
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 16
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 17
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 18
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 17
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 19
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 19
                         });
                 });
 
@@ -834,11 +884,16 @@ namespace Server.Migrations
                     b.Property<int>("MemberTaskId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TaskId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
 
                     b.ToTable("TaskComments");
                 });
@@ -1157,6 +1212,17 @@ namespace Server.Migrations
                     b.Navigation("TaskActivityType");
                 });
 
+            modelBuilder.Entity("Server.Models.TaskComment", b =>
+                {
+                    b.HasOne("Server.Models.ProjectTask", "Task")
+                        .WithMany("TaskComment")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("Server.Models.TaskDependency", b =>
                 {
                     b.HasOne("Server.Models.ProjectTask", "DependentTask")
@@ -1231,6 +1297,8 @@ namespace Server.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("TaskActivities");
+
+                    b.Navigation("TaskComment");
                 });
 
             modelBuilder.Entity("Server.Models.Role", b =>

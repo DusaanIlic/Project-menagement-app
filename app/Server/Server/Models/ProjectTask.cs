@@ -38,6 +38,8 @@ namespace Server.Models
 
         public ICollection<MemberTask> Members { get; set; } = new List<MemberTask>();
 
-        public ICollection<TaskActivity> TaskActivities { get; set; }
+        public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
+
+        public ICollection<TaskComment> TaskComment { get; set; } = new List<TaskComment>();
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Project} from "../../models/project";
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -9,24 +9,35 @@ import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddProjectComponent} from "../add-project/add-project.component";
-
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon]
 })
 export class AllProjectsComponent implements OnInit{
+  selectedStatus: string = '';
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
-  activeProjects : Project[] = [];
-  finishedProjects : Project[] = [];
   selectedTable: string = "t1";
+  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', 'manager', 'details'];
+  dataSource: any;
+  searchTerm: string = '';
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private projectService : ProjectServiceGet, private location : Location, private dialog: MatDialog) {}
+  constructor(private projectService : ProjectServiceGet, private location : Location, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
 
   openDialog() {
     const dialogConfig = new MatDialogConfig();
@@ -41,32 +52,50 @@ export class AllProjectsComponent implements OnInit{
       .subscribe((data) => this.fetchProjects());
   }
 
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
 
+  onStatusChange(event: any): void {
+    this.selectedStatus = event.target.value;
+    this.filterProjects(this.selectedStatus);
+  }
+
+  filterProjects(status: string): void {
+    if (status === 'allProjects') {
+      this.dataSource = this.allProjects;
+    } else if (status == 'finishedProjects') {
+      this.dataSource = this.allProjects.filter(project => project.status === 'Closed');
+    }
+    else{
+      this.dataSource = this.allProjects.filter(project => project.status === 'In Progress' || project.status === 'In Preparation');
+    }
+  }
+
+
+  /*filterProjects() {
+    switch (this.selectedStatus) {
+      case 'activeProjects':
+        return this.allProjects.filter(project => project.status === 'in progress' || project.status === 'in preparation');
+      case 'finishedProjects':
+        return this.allProjects.filter(project => project.status === 'closed');
+      default:
+        return this.allProjects;
+    }
+  }*/
 
   fetchProjects() : void
   {
     this.projectService.getAllProjects().subscribe((data : any[]) => {
       console.log(data);
       this.allProjects = this.mapDataFromDTO(data);
+      this.dataSource = new MatTableDataSource(this.allProjects);
+      this.dataSource.paginator = this.paginator;
       console.log(this.allProjects);
-      let i = 0;
-      while(this.allProjects[i] != undefined)
-      {
-        if(this.allProjects[i].status === "Closed")
-        {
-          this.finishedProjectsCount++;
-          this.finishedProjects.push(this.allProjects[i]);
-        }
-
-        else
-        {
-          this.activeProjectsCount++;
-          this.activeProjects.push(this.allProjects[i]);
-        }
-        i++;
-        console.log('A:',this.activeProjectsCount);
-        console.log('F:',this.finishedProjectsCount);
-      }
     });
 
 
@@ -94,6 +123,21 @@ export class AllProjectsComponent implements OnInit{
   }
 
 
+  search(): void {
+    let searchTerm = this.searchTerm.toLowerCase().trim();
+    let filteredProjects = [...this.allProjects];
+
+    if (searchTerm) {
+      filteredProjects = filteredProjects.filter(project =>
+        project.projectName.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredProjects = this.allProjects;
+    }
+
+    this.dataSource = filteredProjects;
+  }
 
 
   ngOnInit(): void

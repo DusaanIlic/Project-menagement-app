@@ -6,7 +6,6 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import { initFlowbite } from 'flowbite';
-import {ProjectNavbarComponent} from "./components/project-navbar/project-navbar.component";
 import { NgxEditorModule } from 'ngx-editor';
 
 @Component({
@@ -21,7 +20,6 @@ import { NgxEditorModule } from 'ngx-editor';
     AddProjectComponent,
     NavbarComponent,
     NgIf,
-    ProjectNavbarComponent,
     NgxEditorModule
   ],
 })

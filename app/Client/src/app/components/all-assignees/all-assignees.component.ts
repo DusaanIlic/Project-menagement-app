@@ -14,7 +14,12 @@ import {AddAssigneeComponent} from "../add-assignee/add-assignee.component";
 import {MatDialog} from "@angular/material/dialog";
 import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 import {ProjectRoleOverviewComponent} from "../project-role-overview/project-role-overview.component";
-import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatIcon} from "@angular/material/icon";
+import {MatInput} from "@angular/material/input";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatSelect} from "@angular/material/select";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @Component({
   selector: 'app-all-assignees',
@@ -29,7 +34,15 @@ import {AddMembersToProjectComponent} from "../add-members-to-project/add-member
     NgIf,
     MatMenuTrigger,
     RouterLink,
-    FormsModule
+    FormsModule,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    MatRadioButton,
+    MatRadioGroup
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'

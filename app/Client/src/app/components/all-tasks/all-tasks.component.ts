@@ -14,6 +14,12 @@ import { TaskOverviewComponent } from '../task-overview/task-overview.component'
 import {ProjectServiceGet} from "../../services/project.service";
 import {taskCategory} from "../../models/taskCategory";
 import {environment} from "../../../environments/environment";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatIcon} from "@angular/material/icon";
+import {MatInput} from "@angular/material/input";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatSelect} from "@angular/material/select";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 
 @Component({
@@ -27,7 +33,15 @@ import {environment} from "../../../environments/environment";
     CommonModule,
     MatButtonModule,
     MatMenuModule,
-    FormsModule
+    FormsModule,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    MatRadioGroup,
+    MatRadioButton
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'

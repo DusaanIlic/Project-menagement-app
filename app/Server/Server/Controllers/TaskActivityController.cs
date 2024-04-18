@@ -9,6 +9,7 @@ using Server.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Server.Services.Permission;
+using Server.DataTransferObjects.Request.ProjectTask;
 
 namespace Server.Controllers
 {
@@ -77,6 +78,15 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Member not found" });
             }
 
+            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskActivityRequest.TaskId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Add task activity");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var taskActivity = new TaskActivity
             {
                 MemberId = member.Id,
@@ -93,12 +103,23 @@ namespace Server.Controllers
 
         }
 
-
+        [Authorize]
         [HttpDelete("{taskActivityId}")]
         public async Task<IActionResult> DeleteTaskActivity(int taskActivityId)
         {
-            var taskActivity = await dbContext.TaskActivities.FindAsync(taskActivityId);
-          
+            var taskActivity = await dbContext.TaskActivities
+                  .Include(ta => ta.ProjectTask)
+                      .ThenInclude(t => t.Project)
+                  .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(taskActivity.ProjectTask.ProjectId, "Remove task activity");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
             if (taskActivity == null)
             {
                 return NotFound(new {message = "Task activity not found"});
@@ -112,6 +133,7 @@ namespace Server.Controllers
 
         }
 
+        [Authorize]
         [HttpGet("{taskActivityId}")]
         public async Task<IActionResult> GetTaskActivityById(int taskActivityId)
         {
