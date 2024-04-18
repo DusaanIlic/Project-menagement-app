@@ -3,7 +3,6 @@ import { LoginComponent } from './components/login/login.component';
 import { AllMembersComponent } from './components/all-members/all-members.component';
 import { AllProjectsComponent } from './components/all-projects/all-projects.component';
 import { MemberOverviewComponent } from './components/member-overview/member-overview.component';
-import { GantComponent } from './components/gantogram/gantogram.component';
 import {DashboardComponent} from "./components/dashboard/dashboard.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {EditMemberComponent} from "./components/edit-member/edit-member.component";
@@ -36,7 +35,6 @@ export const routes: Routes = [
       { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
       { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
       { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
-      { path: 'gantt', component: GantComponent, canActivate: [AuthGuard] }
     ]
   }
 ]
