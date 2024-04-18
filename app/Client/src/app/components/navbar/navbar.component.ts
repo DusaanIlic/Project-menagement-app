@@ -1,9 +1,14 @@
 import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core';
-import {NgIf, NgOptimizedImage} from "@angular/common";
+import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {ActivatedRoute, RouterLink, RouterLinkActive} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
 import {MemberService} from "../../services/member.service";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatAnchor, MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {MatDivider} from "@angular/material/divider";
 
 @Component({
   selector: 'app-navbar',
@@ -13,18 +18,31 @@ import {MemberService} from "../../services/member.service";
     RouterLink,
     RouterLinkActive,
     NgIf,
+    MatToolbar,
+    MatButton,
+    MatAnchor,
+    NgForOf,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatDivider,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit {
   visible: boolean = false;
   member: Member | null | undefined;
   avatarUrl: string | undefined;
 
-  constructor(private authService: AuthService, private renderer: Renderer2, private elementRef: ElementRef) {
-    this.addClickOutsideListener();
-  }
+  buttons = [
+    { link: '/dashboard', text: 'Dashboard', icon: 'home' },
+    { link: '/projects/all', text: 'All Projects', icon: 'insert_drive_file' },
+    { link: '/members/all', text: 'All Members', icon: 'person' },
+  ];
+
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
     this.authService.getAuthenticatedMember().subscribe(member => {
@@ -36,31 +54,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy() {
-    this.renderer.destroy();
-  }
-
-  dropdownShow() {
-    this.visible = !this.visible;
-  }
-
-  hideDropdown() {
-    this.visible = false;
-  }
-
   logout() {
     this.authService.logout();
   }
 
-  addClickOutsideListener() {
-    this.renderer.listen('document', 'click', (event) => {
-      if (!this.isClickedInsideComponent(event.target)) {
-        this.visible = false;
-      }
-    });
-  }
-
-  isClickedInsideComponent(target: any): boolean {
-    return this.elementRef.nativeElement.contains(target);
-  }
 }

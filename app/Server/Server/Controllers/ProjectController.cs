@@ -134,7 +134,7 @@ namespace Server.Controllers
                 ProjectName = addProjectRequest.ProjectName,
                 ProjectDescription = addProjectRequest.ProjectDescription,
                 Deadline = addProjectRequest.Deadline,
-                StartDate = DateTime.MinValue,
+                StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
                 TeamLeaderId = teamLeader.Id
             };
