@@ -109,22 +109,6 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskComments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Text = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    MemberTaskId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MemberId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaskComments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TaskPriority",
                 columns: table => new
                 {
@@ -467,6 +451,29 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaskComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Text = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    MemberTaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TaskComments_ProjectTasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "ProjectTasks",
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaskDependencies",
                 columns: table => new
                 {
@@ -522,7 +529,11 @@ namespace Server.Migrations
                     { 12, "Add task dependency" },
                     { 13, "Remove task dependency" },
                     { 14, "Add task category" },
-                    { 15, "Remove task category" }
+                    { 15, "Remove task category" },
+                    { 16, "Change task" },
+                    { 17, "Add task activity" },
+                    { 18, "Remove task acitivity" },
+                    { 19, "Comment task" }
                 });
 
             migrationBuilder.InsertData(
@@ -595,9 +606,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 18, 14, 10, 2, 759, DateTimeKind.Local).AddTicks(1588), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$EDmSXAVopZX4x7A7C1OI1e45Ow5lzM3mFvVxDKFA35Y2jFfmc1haO", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 18, 14, 10, 2, 821, DateTimeKind.Local).AddTicks(4204), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$WGt5SrYNo/uf38c0TiPOa.ODxOx2vTKjBYJDGVGEwhn9DQHiMkIXK", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 18, 14, 10, 2, 884, DateTimeKind.Local).AddTicks(6584), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$ESTTUneBMO6gbwO7x2Ii0OVi4l8le9DZMF.jh7PLfv5zRhRorJ/Ge", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 18, 20, 44, 59, 947, DateTimeKind.Local).AddTicks(2911), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$lSOZ3PrMCQrd/j6uJtizuejdZGw2hqJgukZR9tb5lsKH0mm/JIJ12", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 18, 20, 45, 0, 9, DateTimeKind.Local).AddTicks(9155), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$ccM6QoxJ./oVR4EwlFn4b.vtMShcmFuQvnW/DTJxhejcRm00P9Kz6", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 18, 20, 45, 0, 73, DateTimeKind.Local).AddTicks(2598), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$UtyvX4LEieaipIbuzBWl3u42puArJQ62u0hKD37fGdjHRd/LKw9tC", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -621,7 +632,13 @@ namespace Server.Migrations
                     { 13, 1 },
                     { 14, 1 },
                     { 15, 1 },
-                    { 10, 2 }
+                    { 16, 1 },
+                    { 17, 1 },
+                    { 18, 1 },
+                    { 19, 1 },
+                    { 10, 2 },
+                    { 17, 2 },
+                    { 19, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -748,6 +765,11 @@ namespace Server.Migrations
                 name: "IX_TaskActivities_TaskActivityTypeId",
                 table: "TaskActivities",
                 column: "TaskActivityTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskComments_TaskId",
+                table: "TaskComments",
+                column: "TaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskDependencies_DependentTaskId",

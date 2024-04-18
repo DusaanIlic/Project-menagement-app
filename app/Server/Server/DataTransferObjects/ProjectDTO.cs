@@ -14,5 +14,6 @@ namespace Server.DataTransferObjects
         public ICollection<ProjectTaskDTO> ProjectTasks { get; set; }
         public MemberDTO TeamLider { get; set; }
         public int NumberOfPeople { get; set; } 
+        public int NumberOfTasks { get; set; }
     }
 }

@@ -56,6 +56,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskComment>> PostTaskComment(TaskComment taskComment)
         {
+
             taskComment.CreatedAt = DateTime.Now;
 
             var userClaims = HttpContext.User.Claims;
