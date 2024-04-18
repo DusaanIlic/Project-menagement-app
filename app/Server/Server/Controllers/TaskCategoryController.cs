@@ -37,7 +37,7 @@ namespace Server.Controllers
         [HttpGet("{taskCategoryId}")]
         public async Task<IActionResult> GetTaskCategoryByCategoryID(int taskCategoryId)
         {
-            var taskCategory = dbContext.TaskCategories.SingleOrDefault(tc => tc.TaskCategoryID == taskCategoryId);
+            var taskCategory = await dbContext.TaskCategories.SingleOrDefaultAsync(tc => tc.TaskCategoryID == taskCategoryId);
             
             if(taskCategory == null)
             {
