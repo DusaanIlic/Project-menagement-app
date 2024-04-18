@@ -25,6 +25,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MemberInfoComponent } from '../member-info/member-info.component';
 
 @Component({
   selector: 'app-all-assignees',
@@ -55,7 +56,9 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 })
 export class AllAssigneesComponent implements OnInit{
   private routeSub: any;
+  selectedStatus: string = '';
   assignees : Member[] = [];
+  filteredAssignees : Member[] = [];
   projectId : number = 0;
   searchTerm: string = '';
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'status', 'date', 'action'];
@@ -76,6 +79,7 @@ export class AllAssigneesComponent implements OnInit{
     this.routeSub = this.route.params.subscribe((params : any) => {
       this.projectId = params['id'];
       this.fetchMembersOnProject();
+      this.selectedStatus = 'allAssignees';
     })
   }
 
@@ -91,6 +95,7 @@ export class AllAssigneesComponent implements OnInit{
   {
     this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
       this.assignees = data;
+      this.filteredAssignees = data;
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
@@ -139,6 +144,44 @@ export class AllAssigneesComponent implements OnInit{
       data: {
         projectId: this.projectId
       }
+    });
+  }
+
+  search(): void {
+    let searchTerm = this.searchTerm.toLowerCase().trim();
+    let filteredAssignees = [...this.filteredAssignees];
+
+    /*if (this.selectedStatus) {
+      switch (this.selectedStatus) {
+        case 'allStatuses':
+          filteredAssignees = filteredAssignees.filter(member => this.selectedStatus);
+          break;
+        default:
+          break;
+      }
+    }*/
+
+    if (searchTerm) {
+      filteredAssignees = filteredAssignees.filter(assignee =>
+        assignee.firstName.toLowerCase().includes(searchTerm) ||
+        assignee.lastName.toLowerCase().includes(searchTerm) ||
+        assignee.email.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredAssignees = this.assignees;
+    }
+
+    this.dataSource = filteredAssignees;
+  }
+
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
     });
   }
 
