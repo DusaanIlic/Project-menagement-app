@@ -26,6 +26,7 @@ import { environment } from '../../../environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MemberInfoComponent } from '../member-info/member-info.component';
+import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
 
 @Component({
   selector: 'app-all-assignees',
@@ -119,12 +120,21 @@ export class AllAssigneesComponent implements OnInit{
     });
   }
 
+  openConfirmationDialog(assignee: Member): void{
+    const dialogRef = this.dialog.open(ConfirmationAssigneeComponent, {
+      width: '500px',
+      data: { assignee }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.removeAssignee(assignee);
+      }
+    });
+  }
+
   removeAssignee(assignee: Member)
   {
-    console.log("DELETING...")
-
-      if(confirm("Are you sure you want to remove member?"))
-      {
         this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
           next : data =>{
             console.log("Removed successfully.");
@@ -134,7 +144,6 @@ export class AllAssigneesComponent implements OnInit{
             this.fetchMembersOnProject()
           }
         })
-      }
     }
 
   openRoleDialog() {
