@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
@@ -20,6 +20,11 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { environment } from '../../../environments/environment';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-all-assignees',
@@ -42,7 +47,8 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     MatOption,
     MatSelect,
     MatRadioButton,
-    MatRadioGroup
+    MatTableModule,
+    MatRadioGroup, MatPaginatorModule, MatSortModule
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
@@ -50,16 +56,18 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 export class AllAssigneesComponent implements OnInit{
   private routeSub: any;
   assignees : Member[] = [];
-  activeAssignees : Member[] = [];
-  inactiveAssignees : Member[] = [];
-  selectedTable: string = 't1';
   projectId : number = 0;
+  searchTerm: string = '';
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'status', 'date', 'action'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
   constructor(private route: ActivatedRoute,
               private pService : ProjectServiceGet,
               private tService : TaskService,
               private mService : MemberService,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) { }
 
 
 
@@ -71,19 +79,22 @@ export class AllAssigneesComponent implements OnInit{
     })
   }
 
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
   fetchMembersOnProject()
   {
     this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
       this.assignees = data;
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
       console.log(data);
-
-      for(let i=0;i<this.assignees.length;i++)
-      {
-        if(this.assignees[i].status === 'Active')
-          this.activeAssignees.push(this.assignees[i]);
-        else
-          this.inactiveAssignees.push(this.assignees[i])
-      }
     })
   }
 
@@ -130,4 +141,6 @@ export class AllAssigneesComponent implements OnInit{
       }
     });
   }
+
+  protected readonly environment = environment;
 }

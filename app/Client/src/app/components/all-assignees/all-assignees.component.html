@@ -1,5 +1,5 @@
 <div class="flex justify-center p-8">
-  <div class="p-2 basis-[95%] flex flex-col gap-4 rounded-t-xl">
+  <div class="p-2 basis-[90%] flex flex-col gap-4 rounded-t-xl">
     <div class="flex flex-col gap-4 select-none">
       <p class="text-accent-blue font-bold text-2xl">Assignees</p>
 
@@ -30,173 +30,73 @@
 
         <div class="flex gap-1">
           <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openRoleDialog()">Manage Project Roles</button>
-          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openDialog()">Add new Assignee</button>
+          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openDialog()">Add New Assignee</button>
         </div>
       </div>
     </div>
 
     <hr class="border-accent-blue">
 
-    <div class="flex gap-4 text-accent-blue">
-      <p class="flex items-center justify-center text-accent-blue font-bold">Show only:</p>
-
-      <mat-radio-group [(ngModel)]="selectedTable" name="radio-filter" color="primary">
-        <mat-radio-button class="text-accent-blue" value="t1">All</mat-radio-button>
-        <mat-radio-button class="text-accent-blue" value="t2">Active</mat-radio-button>
-        <mat-radio-button class="text-accent-blue" value="t3">Inactive</mat-radio-button>
+    <div class="flex flex-row items-center p-1 w-4/5">
+      <h1 class="mr-2">Show only:</h1>
+      <mat-radio-group aria-label="Select an option">
+        <mat-radio-button id="allMembers" value="allMembers"  checked color="primary">All Assignees</mat-radio-button>
+        <mat-radio-button id="administrators" value="Administrator" color="primary">Active</mat-radio-button>
+        <mat-radio-button id="projectManagers" value="Project Manager"  color="primary">Inactive</mat-radio-button>
       </mat-radio-group>
+
     </div>
 
     <hr class="border-accent-blue">
 
-    <div class="flex justify-center" *ngIf="selectedTable === 't1'">
-      <div class="table border-[1px] border-gray-300 rounded-md">
-        <tr class="">
-          <th class="text-left p-3 w-60">ASSIGNEE</th>
-          <th class="text-left w-60">ROLE</th>
-          <th class="text-left w-60">STATUS</th>
-          <th class="text-left w-60">DATE ADDED</th>
-          <th class="text-left w-20"></th>
-        </tr>
+    <div class="mat-elevation-z8 w-4/5 self-center">
+      <table mat-table [dataSource]="assignees" matSort (matSortChange)="announceSortChange($event)">
 
-        <tr *ngIf="assignees.length === 0">
-          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No assignees.</td>
-        </tr>
+        <ng-container matColumnDef="avatar">
+          <th mat-header-cell *matHeaderCellDef > AVATAR </th>
+          <td mat-cell *matCellDef="let member">
+            <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar"
+            height="30" width="30" alt="user-avatar">
+            </td>
+        </ng-container>
 
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by firstName">NAME </th>
+          <td mat-cell *matCellDef="let member"> {{member.firstName}} {{member.lastName}} </td>
+        </ng-container>
 
-        </tr>
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+        <ng-container matColumnDef="roleName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header mat-sort-header sortActionDescription="Sort by roleName"> ROLE </th>
+          <td mat-cell *matCellDef="let member"> {{member.roleName}} </td>
+        </ng-container>
 
-        </tr>
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-        </tr>
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-        </tr>
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-        </tr><tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-        <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-        <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-        <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-        <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-        <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-      </tr><tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-        <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-        <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-        <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-        <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-        <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-      </tr>
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-
-        </tr>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by email">EMAIL</th>
+          <td mat-cell *matCellDef="let member"> {{member.email}} </td>
+        </ng-container>
 
 
-      </div>
-    </div>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
+          <td mat-cell *matCellDef="let member"> {{member.status}} </td>
+        </ng-container>
 
 
-    <div class="flex justify-center" *ngIf="selectedTable === 't2'">
-      <div class="table border-[1px] border-gray-300 rounded-md">
-        <tr class="">
-          <th class="text-left p-3 w-60">ASSIGNEE</th>
-          <th class="text-left w-60">ROLE</th>
-          <th class="text-left w-60">STATUS</th>
-          <th class="text-left w-60">DATE ADDED</th>
-          <th class="text-left w-20"></th>
-        </tr>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by date"> DATE OF EMPLOYEMENT  </th>
+          <td mat-cell *matCellDef="let member"> {{member.dateAdded | date :'dd-MM-yyyy'}} </td>
+        </ng-container>
 
-        <tr *ngIf="activeAssignees.length === 0">
-          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No active assignees.</td>
-        </tr>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> ACTIONS  </th>
+          <td mat-cell *matCellDef="let member"> <button mat-flat-button color="warn" (click)="removeAssignee(member)">Remove</button> </td>
+        </ng-container>
 
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of activeAssignees">
-          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-        </tr>
-      </div>
-    </div>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
 
-
-    <div class="flex justify-center" *ngIf="selectedTable === 't3'">
-      <div class="table border-[1px] border-gray-300 rounded-md">
-        <tr class="">
-          <th class="text-left p-3 w-60">ASSIGNEE</th>
-          <th class="text-left w-60">ROLE</th>
-          <th class="text-left w-60">STATUS</th>
-          <th class="text-left w-60">DATE ADDED</th>
-          <th class="text-left w-20"></th>
-        </tr>
-
-        <tr *ngIf="inactiveAssignees.length === 0">
-          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No inactive assignees.</td>
-        </tr>
-
-        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of inactiveAssignees">
-          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
-          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
-          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
-          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
-          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
-        </tr>
-      </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
     </div>
 
 
