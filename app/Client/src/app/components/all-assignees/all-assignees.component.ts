@@ -92,9 +92,10 @@ export class AllAssigneesComponent implements OnInit{
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(AddAssigneeComponent, {
-      width: '250px',
-      data : this.projectId
+    const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width : '800px',
+      height : '400px',
+      data: this.projectId
     });
 
     dialogRef.afterClosed().subscribe((result : any) => {

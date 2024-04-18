@@ -9,7 +9,8 @@ import {MemberService} from "../../services/member.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {Member} from "../../models/member";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {Project} from "../../models/project";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-add-members-to-project',
@@ -21,7 +22,8 @@ import {Project} from "../../models/project";
     NgToastModule,
     NgxEditorModule,
     ReactiveFormsModule,
-    MatCheckbox
+    MatCheckbox,
+    MatProgressSpinner
   ],
   templateUrl: './add-members-to-project.component.html',
   styleUrl: './add-members-to-project.component.scss'
@@ -31,6 +33,7 @@ export class AddMembersToProjectComponent implements OnInit{
   membersOnThisProject : Member[] = [];
   allMembers : Member[] = [];
   teamLider : any;
+  waiting: boolean = false;
 
 
   constructor(public dialogRef: MatDialogRef<AddMembersToProjectComponent>,
@@ -49,10 +52,7 @@ export class AddMembersToProjectComponent implements OnInit{
 
   fetchMembersOnProject()
   {
-    this.mService.getMembers().subscribe((members2 : Member[]) =>{
-      this.allMembers = members2;
-      console.log(this.allMembers)
-    })
+
 
     this.pService.getMembersByProjectId(this.projectId).subscribe((members1 : Member[]) =>{
       this.membersOnThisProject = members1;
@@ -62,6 +62,10 @@ export class AddMembersToProjectComponent implements OnInit{
     this.pService.getProjectById(this.projectId).subscribe((data : any)=>{
       this.teamLider = data.teamLider;
       console.log(this.teamLider)
+      this.mService.getMembers().subscribe((members2 : Member[]) =>{
+        this.allMembers = members2;
+        console.log(this.allMembers)
+      });
     })
 
   }
@@ -92,26 +96,31 @@ export class AddMembersToProjectComponent implements OnInit{
 
     if(event) // assign
     {
-
+      this.waiting = true;
       this.pService.assignMemberToProject(membersList, this.projectId).subscribe({
         next : data =>{
           this.showMessage()
           this.fetchMembersOnProject()
+          this.waiting = false;
         },
         error : error =>{
           this.showMessageError()
+          this.waiting = false;
         }
       })
     }
     else //remove
     {
+      this.waiting = true;
       this.pService.removeMemberFromProject(memberId, this.projectId).subscribe({
         next : data =>{
           this.showMessage()
           this.fetchMembersOnProject()
+          this.waiting = false;
         },
         error : error =>{
           this.showMessageError()
+          this.waiting = false;
         }
       })
     }
@@ -130,4 +139,6 @@ export class AddMembersToProjectComponent implements OnInit{
   closeDialog(): void {
     this.dialogRef.close();
   }
+
+  protected readonly environment = environment;
 }

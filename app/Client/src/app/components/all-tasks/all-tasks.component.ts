@@ -163,4 +163,5 @@ export class AllTasksComponent {
   }
 
 
+  protected readonly environment = environment;
 }
