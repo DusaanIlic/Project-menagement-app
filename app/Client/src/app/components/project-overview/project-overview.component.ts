@@ -5,11 +5,16 @@ import {MemberService} from "../../services/member.service";
 import {TaskService} from "../../services/task.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
+import {MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
+import {FormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [],
+  imports: [ ],
   templateUrl: './project-overview.component.html',
   styleUrl: './project-overview.component.scss'
 })
@@ -39,6 +44,8 @@ export class ProjectOverviewComponent implements OnInit{
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width : '800px',
+      height : '400px',
       data: this.projectId
     });
 

@@ -14,6 +14,7 @@ import {AddAssigneeComponent} from "../add-assignee/add-assignee.component";
 import {MatDialog} from "@angular/material/dialog";
 import {RoleOverviewComponent} from "../role-overview/role-overview.component";
 import {ProjectRoleOverviewComponent} from "../project-role-overview/project-role-overview.component";
+import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
 
 @Component({
   selector: 'app-all-assignees',
@@ -78,9 +79,10 @@ export class AllAssigneesComponent implements OnInit{
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(AddAssigneeComponent, {
-      width: '250px',
-      data : this.projectId
+    const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width : '800px',
+      height : '400px',
+      data: this.projectId
     });
 
     dialogRef.afterClosed().subscribe((result : any) => {
