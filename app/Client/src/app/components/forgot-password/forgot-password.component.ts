@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
-import {PaginatorModule} from "primeng/paginator";
 import {AuthService} from "../../services/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ForgotPasswordCompleteForm} from "../../forms/forgot-password-complete.form";
@@ -15,7 +14,6 @@ import {ForgotPasswordCompleteForm} from "../../forms/forgot-password-complete.f
     NgIf,
     NgOptimizedImage,
     NgToastModule,
-    PaginatorModule,
     ReactiveFormsModule
   ],
   templateUrl: './forgot-password.component.html',

@@ -5,7 +5,6 @@ import { AllMembersComponent } from './components/all-members/all-members.compon
 import { AddProjectComponent } from './components/add-project/add-project.component';
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
-import { initFlowbite } from 'flowbite';
 import { NgxEditorModule } from 'ngx-editor';
 
 @Component({
@@ -23,7 +22,7 @@ import { NgxEditorModule } from 'ngx-editor';
     NgxEditorModule
   ],
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   showNavbar: boolean = true;
 
   constructor(private router: Router) {
@@ -34,9 +33,5 @@ export class AppComponent implements OnInit{
         this.showNavbar = !url.includes('/login') && !url.includes('/forgot');
       }
     });
-  }
-
-  ngOnInit(): void {
-    initFlowbite();
   }
 }

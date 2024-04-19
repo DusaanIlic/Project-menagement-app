@@ -1,7 +1,9 @@
-<ngx-gantt #gantt [items]="items">
-  <ngx-gantt-table>
-    <ngx-gantt-column name="Title" width="300px">
-      <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
-    </ngx-gantt-column>
-  </ngx-gantt-table>
-</ngx-gantt>
+<div class="h-full">
+  <ngx-gantt #gantt [items]="items">
+    <ngx-gantt-table>
+      <ngx-gantt-column name="Tasks">
+        <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
+      </ngx-gantt-column>
+    </ngx-gantt-table>
+  </ngx-gantt>
+</div>
