@@ -265,7 +265,13 @@ namespace Server.Data
                 new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
                 new TaskPriority { TaskPriorityId = 3, Name = "High" }
             );
-            
+
+            modelBuilder.Entity<ProjectPriority>().HasData(
+                new ProjectPriority { ProjectPriorityId = 1, Name = "Low" },
+                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium" },
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High" }
+            );
+
             modelBuilder.Entity<TaskCategory>().HasData(
                 new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
             );
