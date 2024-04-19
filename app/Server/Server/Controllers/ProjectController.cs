@@ -126,11 +126,13 @@ namespace Server.Controllers
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
+            var priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == 1);
+
             if (teamLeader == null)
             {
                 return BadRequest(new {message = "Member not found"});
             }
-            
+
             var project = new Models.Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
@@ -138,7 +140,8 @@ namespace Server.Controllers
                 Deadline = addProjectRequest.Deadline,
                 StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
-                TeamLeaderId = teamLeader.Id
+                TeamLeaderId = teamLeader.Id,
+                ProjectPriorityId = 1
             };
             
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
@@ -192,7 +195,9 @@ namespace Server.Controllers
                 StartDate = project.StartDate,
                 TeamLider = teamLeaderDTO,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriorityId = priority.ProjectPriorityId,
+                ProjectPriority = priority.Name
             };
 
             return Ok(projectDTO);
