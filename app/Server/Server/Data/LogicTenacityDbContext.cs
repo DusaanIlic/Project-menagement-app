@@ -34,6 +34,7 @@ namespace Server.Data
         public DbSet<ProjectPermission> ProjectPermissions { get; set; }
         public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
+        public DbSet<ProjectPriority> ProjectPriorities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
