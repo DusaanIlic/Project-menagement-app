@@ -122,6 +122,11 @@ namespace Server.Data
                .WithMany(r => r.Members)
                .HasForeignKey(m => m.RoleId);
 
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Priority)
+                .WithMany(pr => pr.Projects)
+                .HasForeignKey(p => p.ProjectPriorityId);
+
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
