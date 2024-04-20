@@ -129,7 +129,7 @@ namespace Server.Controllers
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
-            var priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == 1);
+            var priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == addProjectRequest.PriorityId);
 
             if (teamLeader == null)
             {
