@@ -701,5 +701,27 @@ namespace Server.Controllers
 
             return Ok(categories);
         }
+
+        [HttpPost("projects/{projectId}/priority/{priorityId}")]
+        public async Task<IActionResult> UpdateProjectPriority(int projectId, int priorityId)
+        {
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if(projectId == null)
+            {
+                return BadRequest(new { message = "Project with this id does not exists." });
+            }
+
+            var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
+
+            if(priority == null)
+            {
+                return BadRequest(new { message = "Project priority with this id does not exists." });
+            }
+
+            project.Priority = priority;
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Project priority changed successfully." });
+        }
     }
 }
