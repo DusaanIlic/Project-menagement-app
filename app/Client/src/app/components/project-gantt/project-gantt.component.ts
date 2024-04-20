@@ -91,14 +91,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
         group_id: String(task.taskCategoryId),
-        progress: 100 // Assuming you have a method to calculate progress
+        progress: 100, // Assuming you have a method to calculate progress,
+        draggable: true
       };
     });
 
     this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
       return {
         id: String(taskCategory.taskCategoryID),
-        title: taskCategory.categoryName
+        title: taskCategory.categoryName,
+        expanded: true
       }
     });
 
