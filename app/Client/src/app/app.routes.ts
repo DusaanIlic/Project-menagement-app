@@ -13,6 +13,8 @@ import {ProjectKanbanComponent} from "./components/project-kanban/project-kanban
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ProjectOverviewComponent} from "./components/project-overview/project-overview.component";
 import {ProjectGanttComponent} from "./components/project-gantt/project-gantt.component";
+import {MainComponent} from "./components/main/main.component";
+import {NotFoundComponent} from "./components/not-found/not-found.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -21,22 +23,29 @@ export const routerConfig: RouterConfigOptions = {
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgot/:token', component: ForgotPasswordComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
-  { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]},
-  { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
-  { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
-  {
-    path: 'projects/:id',
-    component: ProjectComponent,
-    canActivate: [AuthGuard],
+  { path: '',
+    component: MainComponent,
     children: [
-      { path: 'overview', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
-      { path: 'gantt', component: ProjectGanttComponent, canActivate: [AuthGuard] },
-      { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
-      { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
-      { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
+      { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]},
+      { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
+      { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
+      {
+        path: 'projects/:id',
+        component: ProjectComponent,
+        canActivate: [AuthGuard],
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+          { path: 'overview', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
+          { path: 'gantt', component: ProjectGanttComponent, canActivate: [AuthGuard] },
+          { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
+          { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
+          { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
+        ]
+      }
     ]
-  }
+  },
+  { path: '**', component: NotFoundComponent } // or to a 404 component
 ]

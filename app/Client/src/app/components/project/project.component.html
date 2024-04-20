@@ -1,5 +1,5 @@
 <div class="h-[calc(100vh-64px)] flex flex-col select-none">
-  <mat-sidenav-container class="grow mat-elevation-z6">
+  <mat-sidenav-container class="grow mat-elevation-z6 flex">
     <mat-sidenav mode="side" opened="true">
       <div class="flex items-center justify-center p-4 border-b-[1px]">
         <p class="text-4xl font-bold">Project {{projectId}}</p>
@@ -10,8 +10,6 @@
             <mat-icon class="scale-125">{{ button.icon }}</mat-icon>
             <p>{{button.text}}</p>
           </div>
-
-          <mat-divider *ngIf="!last"></mat-divider>
         </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
