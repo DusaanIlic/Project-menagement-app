@@ -129,15 +129,13 @@ namespace Server.Controllers
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
+            var priority = await dbContext.ProjectPriorities.FindAsync(1); ;
+
             if (addProjectRequest.PriorityId != 0)
             {
-                var priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == addProjectRequest.PriorityId);
+                 priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == addProjectRequest.PriorityId);
             }
-            else
-            {
-                var priority = await dbContext.ProjectPriorities.FindAsync(1);
-            }
-
+            
             if (teamLeader == null)
             {
                 return BadRequest(new {message = "Member not found"});
