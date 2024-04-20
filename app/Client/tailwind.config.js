@@ -12,6 +12,9 @@ module.exports = {
         "accent-blue": "#0E2954",
         "background": "#EBF3FF"
       },
+      screens: {
+        'sm': '600px'
+      }
     },
   },
 }

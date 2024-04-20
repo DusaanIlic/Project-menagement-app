@@ -23,15 +23,5 @@ import { NgxEditorModule } from 'ngx-editor';
   ],
 })
 export class AppComponent {
-  showNavbar: boolean = true;
 
-  constructor(private router: Router) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        const url = event.urlAfterRedirects;
-
-        this.showNavbar = !url.includes('/login') && !url.includes('/forgot');
-      }
-    });
-  }
 }
