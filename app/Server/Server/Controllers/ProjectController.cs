@@ -723,5 +723,33 @@ namespace Server.Controllers
 
             return Ok(new { message = "Project priority changed successfully." });
         }
+
+        [HttpGet("projects/priority/{priorityId}")]
+        public async Task<IActionResult> GetAllProjectsByProjectPriority(int priorityId)
+        {
+            var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
+            if(priority == null)
+            {
+                return BadRequest(new { message = "Project priority not found" });
+            }
+
+            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).ToListAsync();
+
+            var projectsDTOs = projects.Select(p => new ProjectDTO
+            {
+                ProjectId = p.ProjectId,
+                ProjectName = p.ProjectName,
+                ProjectDescription = p.ProjectDescription,
+                Deadline = p.Deadline,
+                ProjectStatusId = p.ProjectStatusId,
+                Status = p.ProjectStatus.Status,
+                StartDate = p.StartDate,
+                ProjectPriority = priority.Name,
+                ProjectPriorityId = p.ProjectPriorityId
+            });
+
+            return Ok(projectsDTOs);
+        }
+
     }
 }
