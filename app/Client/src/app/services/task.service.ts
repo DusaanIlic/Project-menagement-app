@@ -11,6 +11,7 @@ const TASK_API = `${environment.apiUrl}/Task`;
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const TASKACTIVITY_API = `${environment.apiUrl}/TaskActivity`;
 const TASKPRIOROTY_API = `${environment.apiUrl}/TaskPriority`;
+const TASK_CATEGORY_API = `${environment.apiUrl}/TaskCategory`;
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -112,4 +113,7 @@ export class TaskService {
     return this.http.get<any[]>(`${TASK_API}/${taskId}/DependentTasks`);
   }
 
+  getTaskCategories() {
+    return this.http.get(`${TASK_CATEGORY_API}`);
+  }
 }

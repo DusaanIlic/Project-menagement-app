@@ -12,6 +12,8 @@ import {ActivatedRoute} from "@angular/router";
 import {TaskService} from "../../services/task.service";
 import {switchMap} from "rxjs/operators";
 import {Task} from "../../models/task";
+import {combineLatest} from "rxjs";
+import {data} from "autoprefixer";
 
 @Component({
   selector: 'app-project-gantt',
@@ -43,7 +45,9 @@ import {Task} from "../../models/task";
 export class ProjectGanttComponent  implements OnInit, OnDestroy {
   projectId: any;
   tasks: any;
+  taskCategories: any;
   ganttTasks: any;
+  ganttCategories: any;
   startRendering: boolean = false;
   private routeSubscription: any;
 
@@ -55,12 +59,18 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       switchMap(params => {
         const projectId = params['id'];
         this.projectId = projectId;
-        return this.taskService.getTasksByProject(projectId);
+
+        const tasks$ = this.taskService.getTasksByProject(projectId);
+        const taskCategories$ = this.taskService.getTaskCategories();
+
+        return combineLatest([tasks$, taskCategories$]);
       })
     ).subscribe({
-      next: data => {
-        this.tasks = data;
+      next: ([tasks, taskCategories]) => {
+        this.tasks = tasks;
+        this.taskCategories = taskCategories;
         this.mapTasksToGanttItems();
+        console.log(this.ganttCategories);
         console.log(this.ganttTasks);
       },
       error: error => {
@@ -81,8 +91,15 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
         group_id: String(task.taskCategoryId),
-        progress: this.calculateProgress(task) // Assuming you have a method to calculate progress
+        progress: 100 // Assuming you have a method to calculate progress
       };
+    });
+
+    this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
+      return {
+        id: String(taskCategory.taskCategoryID),
+        title: taskCategory.categoryName
+      }
     });
 
     this.startRendering = true;

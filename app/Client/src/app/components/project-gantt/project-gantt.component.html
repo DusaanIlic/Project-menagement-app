@@ -1,5 +1,5 @@
 <div class="flex justify-center h-[100%] shadow">
-  <ngx-gantt *ngIf="startRendering" #gantt [items]="ganttTasks">
+  <ngx-gantt *ngIf="startRendering" #gantt [items]="ganttTasks" [groups]="ganttCategories">
     <ngx-gantt-table>
       <ngx-gantt-column name="Tasks" width="300px">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
