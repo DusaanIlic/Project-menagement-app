@@ -44,6 +44,7 @@ namespace Server.Controllers
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
+                .Include(p => p.Priority)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
@@ -91,7 +92,9 @@ namespace Server.Controllers
                         TeamLider = teamLeaderDTO,
                         StartDate = p.StartDate,
                         NumberOfPeople = numberOfMembers,
-                        NumberOfTasks = numberOfTasks
+                        NumberOfTasks = numberOfTasks,
+                        ProjectPriority = p.Priority.Name,
+                        ProjectPriorityId = p.ProjectPriorityId
                 });
             }
 
@@ -215,6 +218,7 @@ namespace Server.Controllers
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
+                .Include (p => p.Priority)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -266,7 +270,9 @@ namespace Server.Controllers
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriority = project.Priority.Name,
+                ProjectPriorityId = project.ProjectPriorityId
             };
 
             return Ok(projectDTO);
@@ -287,6 +293,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.Priority)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -343,7 +350,9 @@ namespace Server.Controllers
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriority = project.Priority.Name,
+                ProjectPriorityId = project.ProjectPriorityId
             };
 
             return Ok(projectDTO);
