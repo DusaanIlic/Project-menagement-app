@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {
   GANTT_GLOBAL_CONFIG,
   GanttItem,
@@ -7,7 +7,11 @@ import {
   NgxGanttTableComponent
 } from "@worktile/gantt";
 import {enUS, fr} from "date-fns/locale";
-import {DatePipe} from "@angular/common";
+import {DatePipe, NgIf} from "@angular/common";
+import {ActivatedRoute} from "@angular/router";
+import {TaskService} from "../../services/task.service";
+import {switchMap} from "rxjs/operators";
+import {Task} from "../../models/task";
 
 @Component({
   selector: 'app-project-gantt',
@@ -17,6 +21,7 @@ import {DatePipe} from "@angular/common";
     NgxGanttTableColumnComponent,
     NgxGanttTableComponent,
     DatePipe,
+    NgIf,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -28,19 +33,64 @@ import {DatePipe} from "@angular/common";
         dateFormat: {
           yearQuarter: `QQQ 'of' yyyy`,
           month: 'LLLL',
-          yearMonth: `LLLL yyyy'(week' w ')'`
-        }
+          yearMonth: `LLLL yyyy'(week' w ')'`,
+          locale: enUS
+        },
       }
     }
   ]
 })
-export class ProjectGanttComponent {
-  items: GanttItem[] = [
-    { id: '000000', title: 'Task 0', start: 1627729997, end: 1628421197, expandable: true },
-    { id: '000001', title: 'Task 1', start: 1617361997, end: 1625483597, links: ['000003', '000004', '000000'], expandable: true },
-    { id: '000002', title: 'Task 2', start: 1610536397, end: 1610622797 },
-    { id: '000003', title: 'Task 3', start: 1628507597, end: 1633345997, expandable: true }
-  ];
+export class ProjectGanttComponent  implements OnInit, OnDestroy {
+  projectId: any;
+  tasks: any;
+  ganttTasks: any;
+  startRendering: boolean = false;
+  private routeSubscription: any;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute,
+              private taskService: TaskService) { }
+
+  ngOnInit() {
+    this.routeSubscription = this.route.params.pipe(
+      switchMap(params => {
+        const projectId = params['id'];
+        this.projectId = projectId;
+        return this.taskService.getTasksByProject(projectId);
+      })
+    ).subscribe({
+      next: data => {
+        this.tasks = data;
+        this.mapTasksToGanttItems();
+        console.log(this.ganttTasks);
+      },
+      error: error => {
+        console.log(`Failed fetching tasks for project with id ${this.projectId}`);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.routeSubscription.unsubscribe();
+  }
+
+  private mapTasksToGanttItems(): void {
+    this.ganttTasks = this.tasks.map((task: Task) => {
+      return {
+        id: String(task.taskId),
+        title: task.taskName,
+        start: new Date(task.startDate).getTime(),
+        end: new Date(task.deadline).getTime(),
+        group_id: String(task.taskCategoryId),
+        progress: this.calculateProgress(task) // Assuming you have a method to calculate progress
+      };
+    });
+
+    this.startRendering = true;
+  }
+
+  private calculateProgress(task: Task): number {
+    // Implement your logic to calculate progress, for example:
+    // return (completedTasks / totalTasks) * 100;
+    return 0; // Default progress
+  }
 }
