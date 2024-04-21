@@ -129,12 +129,7 @@ namespace Server.Controllers
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
-            var priority = await dbContext.ProjectPriorities.FindAsync(1); ;
-
-            if (addProjectRequest.PriorityId != 0)
-            {
-                 priority = await dbContext.ProjectPriorities.FirstOrDefaultAsync(pp => pp.ProjectPriorityId == addProjectRequest.PriorityId);
-            }
+            var priority = await dbContext.ProjectPriorities.FindAsync(addProjectRequest.PriorityId);
             
             if (teamLeader == null)
             {
@@ -149,7 +144,7 @@ namespace Server.Controllers
                 StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
                 TeamLeaderId = teamLeader.Id,
-                ProjectPriorityId = 1
+                ProjectPriorityId= priority.ProjectPriorityId
             };
             
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
