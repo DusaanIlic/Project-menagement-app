@@ -757,12 +757,12 @@ namespace Server.Controllers
             }
 
             var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
-            if(priority == null)
+            if (priority == null)
             {
                 return BadRequest(new { message = "Project priority not found" });
             }
 
-            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).ToListAsync();
+            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).Include(p=>p.ProjectStatus).ToListAsync();
 
             var projectsDTOs = projects.Select(p => new ProjectDTO
             {
@@ -773,7 +773,7 @@ namespace Server.Controllers
                 ProjectStatusId = p.ProjectStatusId,
                 Status = p.ProjectStatus.Status,
                 StartDate = p.StartDate,
-                ProjectPriority = priority.Name,
+                ProjectPriority = priority.Name, 
                 ProjectPriorityId = p.ProjectPriorityId
             });
 
