@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
-  GANTT_GLOBAL_CONFIG, GanttPrintService,
+  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttPrintService, GanttSelectedEvent,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -16,6 +16,9 @@ import {Task} from "../../models/task";
 import {combineLatest, forkJoin, map} from "rxjs";
 import {MatButton} from "@angular/material/button";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {MatDialog} from "@angular/material/dialog";
+import {TaskOverviewComponent} from "../task-overview/task-overview.component";
+import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
 
 @Component({
   selector: 'app-project-gantt',
@@ -92,7 +95,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   viewType: GanttViewType = GanttViewType.day;
   selectedViewType: GanttViewType = GanttViewType.day;
 
-  constructor(private route: ActivatedRoute, private taskService: TaskService) { }
+  constructor(private route: ActivatedRoute, private taskService: TaskService,
+              private matDialog: MatDialog) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -150,7 +154,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         end: new Date(task.deadline).getTime(),
         group_id: String(task.taskCategoryId),
         progress: this.calculateProgress(task), // Call your progress calculation method
-        links: dependentTaskIds
+        links: dependentTaskIds,
+        itemDraggable: false
       };
     });
 
@@ -180,5 +185,20 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   scrollToToday() {
     this.ganttComponent.scrollToToday();
+  }
+
+  selectedChange(event: GanttSelectedEvent) {
+    event.current && this.ganttComponent.scrollToDate(event.current?.start);
+  }
+
+  barClick($event: GanttBarClickEvent) {
+    this.openDialog(Number($event.item.id));
+  }
+
+  openDialog(taskId: number): void {
+    const dialogRef = this.matDialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId
+    });
   }
 }

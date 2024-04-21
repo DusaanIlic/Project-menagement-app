@@ -3,7 +3,7 @@
     <div class="flex gap-2">
       <p class="flex justify-center items-center">Show: </p>
       <mat-radio-group>
-        <mat-radio-button *ngFor="let view of views" [class.active]="view.value === selectedViewType" (click)="selectView(view.value)">
+        <mat-radio-button *ngFor="let view of views" [class.selected]="view.value === selectedViewType" (click)="selectView(view.value)">
           {{ view.name }}
         </mat-radio-button>
       </mat-radio-group>
@@ -19,22 +19,14 @@
              [items]="ganttTasks"
              [groups]="ganttCategories"
              [viewType]="viewType"
-             [showToolbar]="true"
-             [draggable]="true">
+             [draggable]="true"
+             [selectable]="true"
+             (barClick)="barClick($event)"
+             (selectedChange)="selectedChange($event)">
 
     <ngx-gantt-table [draggable]="true">
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
-      </ngx-gantt-column>
-      <ngx-gantt-column name="Starting Date" width="200px">
-        <ng-template #cell let-item="item">
-          {{ item.start * 1000 | date : 'yyyy-MM-dd HH:mm' }}
-        </ng-template>
-      </ngx-gantt-column>
-      <ngx-gantt-column name="End Date" width="200px">
-        <ng-template #cell let-item="item">
-          {{ item.end * 1000 | date : 'yyyy-MM-dd HH:mm' }}
-        </ng-template>
       </ngx-gantt-column>
     </ngx-gantt-table>
   </ngx-gantt>
