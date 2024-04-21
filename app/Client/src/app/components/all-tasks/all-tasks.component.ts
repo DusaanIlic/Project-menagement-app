@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -20,6 +20,10 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 
 @Component({
@@ -41,7 +45,10 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     MatOption,
     MatSelect,
     MatRadioGroup,
-    MatRadioButton
+    MatRadioButton,
+    MatTableModule, 
+    MatPaginatorModule, 
+    MatSortModule
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -56,13 +63,18 @@ export class AllTasksComponent {
   visible : boolean[] = []
   tableSel: string = 't1';
 
+  displayedColumns: string[] = ['name',  'priority', 'startDate', 'dueDate', 'email', 'action'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
+
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
               private _ngToastService: NgToastService,
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
               private tService : TaskService,
-              private pService : ProjectServiceGet){}
+              private pService : ProjectServiceGet, private _liveAnnouncer: LiveAnnouncer){}
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
@@ -78,8 +90,16 @@ export class AllTasksComponent {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(this.projectId); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+      this.loadTasksByProject(this.projectId); 
     });
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   loadTasksByProject(projectId: number): void {
@@ -88,6 +108,7 @@ export class AllTasksComponent {
         map((data: any[]) => {
           console.log(data)
           this.allTasks = data
+          this.dataSource = data;
           this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
