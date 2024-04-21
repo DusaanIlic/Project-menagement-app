@@ -1,6 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
-  GANTT_GLOBAL_CONFIG,
+  GANTT_GLOBAL_CONFIG, GanttPrintService,
+  GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
   NgxGanttTableColumnComponent,
@@ -14,7 +15,7 @@ import {switchMap} from "rxjs/operators";
 import {Task} from "../../models/task";
 import {combineLatest, forkJoin, map} from "rxjs";
 import {MatButton} from "@angular/material/button";
-import {MatRadioButton} from "@angular/material/radio";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @Component({
   selector: 'app-project-gantt',
@@ -28,6 +29,7 @@ import {MatRadioButton} from "@angular/material/radio";
     MatButton,
     NgForOf,
     MatRadioButton,
+    MatRadioGroup,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -58,7 +60,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   startRendering: boolean = false;
   private routeSubscription: any;
 
+  @ViewChild('gantt') ganttComponent: any;
+
   views = [
+    {
+      name: 'Hour',
+      value: GanttViewType.hour
+    },
     {
       name: 'Day',
       value: GanttViewType.day
@@ -84,8 +92,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   viewType: GanttViewType = GanttViewType.day;
   selectedViewType: GanttViewType = GanttViewType.day;
 
-  constructor(private route: ActivatedRoute,
-              private taskService: TaskService) { }
+  constructor(private route: ActivatedRoute, private taskService: TaskService) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -119,9 +126,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
         this.mapTasksToGanttItems();
-        console.log(this.ganttCategories);
-        console.log(this.ganttTasks);
-        console.log(this.tasks); // Now tasks should have dependentTasks property filled
       },
       error: error => {
         console.log(`Failed fetching tasks for project with id ${this.projectId}`);
@@ -170,6 +174,11 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   selectView(type: GanttViewType) {
     this.viewType = type;
     this.selectedViewType = type;
+
+    this.scrollToToday();
   }
 
+  scrollToToday() {
+    this.ganttComponent.scrollToToday();
+  }
 }

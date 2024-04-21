@@ -1,14 +1,25 @@
-<div class="flex flex-col justify-center h-[100%] shadow">
-  <div class="flex gap-2">
-    <mat-radio-button *ngFor="let view of views" [class.active]="view.value === selectedViewType" (click)="selectView(view.value)">
-      {{ view.name }}
-    </mat-radio-button>
+<div class="flex flex-col justify-center h-[100%] border-[1px]">
+  <div class="p-4 flex gap-4">
+    <div class="flex gap-2">
+      <p class="flex justify-center items-center">Show: </p>
+      <mat-radio-group>
+        <mat-radio-button *ngFor="let view of views" [class.active]="view.value === selectedViewType" (click)="selectView(view.value)">
+          {{ view.name }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <span class="grow"></span>
+
+    <button mat-raised-button color="primary" (click)="scrollToToday()">Scroll to today</button>
+    <button mat-raised-button color="primary">Add Task</button>
   </div>
 
   <ngx-gantt *ngIf="startRendering" #gantt
              [items]="ganttTasks"
              [groups]="ganttCategories"
              [viewType]="viewType"
+             [showToolbar]="true"
              [draggable]="true">
 
     <ngx-gantt-table [draggable]="true">
