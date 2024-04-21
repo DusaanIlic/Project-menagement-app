@@ -702,9 +702,30 @@ namespace Server.Controllers
             return Ok(categories);
         }
 
+        [Authorize]
         [HttpPost("projects/{projectId}/priority/{priorityId}")]
         public async Task<IActionResult> UpdateProjectPriority(int projectId, int priorityId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Remove member from project");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
             var project = await dbContext.Projects.FindAsync(projectId);
             if(projectId == null)
             {
@@ -724,9 +745,22 @@ namespace Server.Controllers
             return Ok(new { message = "Project priority changed successfully." });
         }
 
+        [Authorize]
         [HttpGet("projects/priority/{priorityId}")]
         public async Task<IActionResult> GetAllProjectsByProjectPriority(int priorityId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+            
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
             var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
             if(priority == null)
             {
