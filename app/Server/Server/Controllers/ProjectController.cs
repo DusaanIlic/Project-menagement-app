@@ -44,6 +44,7 @@ namespace Server.Controllers
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
+                .Include(p => p.Priority)
                 .ToListAsync();
             var projectDTOs = new List<ProjectDTO>();
 
@@ -91,7 +92,9 @@ namespace Server.Controllers
                         TeamLider = teamLeaderDTO,
                         StartDate = p.StartDate,
                         NumberOfPeople = numberOfMembers,
-                        NumberOfTasks = numberOfTasks
+                        NumberOfTasks = numberOfTasks,
+                        ProjectPriority = p.Priority.Name,
+                        ProjectPriorityId = p.ProjectPriorityId
                 });
             }
 
@@ -126,11 +129,13 @@ namespace Server.Controllers
                                     .Include(m => m.Role)
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
+            var priority = await dbContext.ProjectPriorities.FindAsync(addProjectRequest.PriorityId);
+            
             if (teamLeader == null)
             {
                 return BadRequest(new {message = "Member not found"});
             }
-            
+
             var project = new Models.Project()
             {
                 ProjectName = addProjectRequest.ProjectName,
@@ -138,7 +143,8 @@ namespace Server.Controllers
                 Deadline = addProjectRequest.Deadline,
                 StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
-                TeamLeaderId = teamLeader.Id
+                TeamLeaderId = teamLeader.Id,
+                ProjectPriorityId= priority.ProjectPriorityId
             };
             
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
@@ -192,7 +198,9 @@ namespace Server.Controllers
                 StartDate = project.StartDate,
                 TeamLider = teamLeaderDTO,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriorityId = priority.ProjectPriorityId,
+                ProjectPriority = priority.Name
             };
 
             return Ok(projectDTO);
@@ -210,6 +218,7 @@ namespace Server.Controllers
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
+                .Include (p => p.Priority)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -261,7 +270,9 @@ namespace Server.Controllers
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriority = project.Priority.Name,
+                ProjectPriorityId = project.ProjectPriorityId
             };
 
             return Ok(projectDTO);
@@ -282,6 +293,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.Priority)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -338,7 +350,9 @@ namespace Server.Controllers
                 TeamLider = teamLeaderDTO,
                 StartDate = project.StartDate,
                 NumberOfPeople = numberOfMembers,
-                NumberOfTasks = numberOfTasks
+                NumberOfTasks = numberOfTasks,
+                ProjectPriority = project.Priority.Name,
+                ProjectPriorityId = project.ProjectPriorityId
             };
 
             return Ok(projectDTO);
@@ -682,5 +696,89 @@ namespace Server.Controllers
 
             return Ok(categories);
         }
+
+        [Authorize]
+        [HttpPost("projects/{projectId}/priority/{priorityId}")]
+        public async Task<IActionResult> UpdateProjectPriority(int projectId, int priorityId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Remove member from project");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
+            var project = await dbContext.Projects.FindAsync(projectId);
+            if(projectId == null)
+            {
+                return BadRequest(new { message = "Project with this id does not exists." });
+            }
+
+            var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
+
+            if(priority == null)
+            {
+                return BadRequest(new { message = "Project priority with this id does not exists." });
+            }
+
+            project.Priority = priority;
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Project priority changed successfully." });
+        }
+
+        [Authorize]
+        [HttpGet("projects/priority/{priorityId}")]
+        public async Task<IActionResult> GetAllProjectsByProjectPriority(int priorityId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+            
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
+            if (priority == null)
+            {
+                return BadRequest(new { message = "Project priority not found" });
+            }
+
+            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).Include(p=>p.ProjectStatus).ToListAsync();
+
+            var projectsDTOs = projects.Select(p => new ProjectDTO
+            {
+                ProjectId = p.ProjectId,
+                ProjectName = p.ProjectName,
+                ProjectDescription = p.ProjectDescription,
+                Deadline = p.Deadline,
+                ProjectStatusId = p.ProjectStatusId,
+                Status = p.ProjectStatus.Status,
+                StartDate = p.StartDate,
+                ProjectPriority = priority.Name, 
+                ProjectPriorityId = p.ProjectPriorityId
+            });
+
+            return Ok(projectsDTOs);
+        }
+
     }
 }

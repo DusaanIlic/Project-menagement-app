@@ -15,5 +15,9 @@ namespace Server.DataTransferObjects
         public MemberDTO TeamLider { get; set; }
         public int NumberOfPeople { get; set; } 
         public int NumberOfTasks { get; set; }
+
+        public int ProjectPriorityId { get; set; }
+        public string ProjectPriority { get; set; } = string.Empty;
+
     }
 }

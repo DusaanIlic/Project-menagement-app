@@ -34,6 +34,7 @@ namespace Server.Data
         public DbSet<ProjectPermission> ProjectPermissions { get; set; }
         public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
+        public DbSet<ProjectPriority> ProjectPriorities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -120,6 +121,11 @@ namespace Server.Data
                .HasOne(m => m.Role)
                .WithMany(r => r.Members)
                .HasForeignKey(m => m.RoleId);
+
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Priority)
+                .WithMany(pr => pr.Projects)
+                .HasForeignKey(p => p.ProjectPriorityId);
 
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
@@ -259,7 +265,13 @@ namespace Server.Data
                 new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
                 new TaskPriority { TaskPriorityId = 3, Name = "High" }
             );
-            
+
+            modelBuilder.Entity<ProjectPriority>().HasData(
+                new ProjectPriority { ProjectPriorityId = 1, Name = "Low" },
+                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium" },
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High" }
+            );
+
             modelBuilder.Entity<TaskCategory>().HasData(
                 new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
             );
@@ -296,9 +308,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 16, Name = "Change task" },
                 new ProjectPermission { Id = 17, Name = "Add task activity" },
                 new ProjectPermission { Id = 18, Name = "Remove task acitivity" },
-                new ProjectPermission { Id = 19, Name = "Comment task" }
-
-
+                new ProjectPermission { Id = 19, Name = "Comment task" },
+                new ProjectPermission { Id = 20, Name = "Change project priority" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -324,7 +335,8 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 18 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 19 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 20 }
 
             );
 

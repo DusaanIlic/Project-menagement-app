@@ -6,6 +6,8 @@
 
         public string ProjectDescription { get; set; } = string.Empty;
 
-        public DateTime Deadline { get; set; } 
+        public DateTime Deadline { get; set; }
+
+        public int PriorityId { get; set; } 
     }
 }
