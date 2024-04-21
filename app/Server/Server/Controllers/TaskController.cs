@@ -771,10 +771,10 @@ namespace Server.Controllers
                 .Select(td => td.DependentTaskId)
                 .ToListAsync();
 
-            if (dependentTaskIds == null || dependentTaskIds.Count == 0)
-            {
-                return NotFound(new { message = "Specified task has no dependent tasks" });
-            }
+            // if (dependentTaskIds == null || dependentTaskIds.Count == 0)
+            // {
+            //     return NotFound(new { message = "Specified task has no dependent tasks" });
+            // }
 
             var dependentTasks = await dbContext.ProjectTasks
                 .Where(pt => dependentTaskIds.Contains(pt.TaskId))

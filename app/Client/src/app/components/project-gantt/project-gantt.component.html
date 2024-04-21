@@ -1,8 +1,29 @@
-<div class="flex justify-center h-[100%] shadow">
-  <ngx-gantt *ngIf="startRendering" #gantt [items]="ganttTasks" [groups]="ganttCategories">
-    <ngx-gantt-table>
-      <ngx-gantt-column name="Tasks" width="300px">
+<div class="flex flex-col justify-center h-[100%] shadow">
+  <div class="flex gap-2">
+    <mat-radio-button *ngFor="let view of views" [class.active]="view.value === selectedViewType" (click)="selectView(view.value)">
+      {{ view.name }}
+    </mat-radio-button>
+  </div>
+
+  <ngx-gantt *ngIf="startRendering" #gantt
+             [items]="ganttTasks"
+             [groups]="ganttCategories"
+             [viewType]="viewType"
+             [draggable]="true">
+
+    <ngx-gantt-table [draggable]="true">
+      <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
+      </ngx-gantt-column>
+      <ngx-gantt-column name="Starting Date" width="200px">
+        <ng-template #cell let-item="item">
+          {{ item.start * 1000 | date : 'yyyy-MM-dd HH:mm' }}
+        </ng-template>
+      </ngx-gantt-column>
+      <ngx-gantt-column name="End Date" width="200px">
+        <ng-template #cell let-item="item">
+          {{ item.end * 1000 | date : 'yyyy-MM-dd HH:mm' }}
+        </ng-template>
       </ngx-gantt-column>
     </ngx-gantt-table>
   </ngx-gantt>

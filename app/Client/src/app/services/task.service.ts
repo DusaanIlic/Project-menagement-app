@@ -116,4 +116,8 @@ export class TaskService {
   getTaskCategories() {
     return this.http.get(`${TASK_CATEGORY_API}`);
   }
+
+  getDependantTasks(taskId: number) {
+    return this.http.get(`${TASK_API}/${taskId}/DependentTasks`);
+  }
 }
