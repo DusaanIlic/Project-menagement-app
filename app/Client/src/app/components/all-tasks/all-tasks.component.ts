@@ -63,7 +63,7 @@ export class AllTasksComponent {
   visible : boolean[] = []
   tableSel: string = 't1';
 
-  displayedColumns: string[] = ['name',  'priority', 'startDate', 'dueDate', 'email', 'action'];
+  displayedColumns: string[] = ['name', 'startDate', 'dueDate', 'status', 'priority','action'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
