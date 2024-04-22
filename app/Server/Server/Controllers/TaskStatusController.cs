@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request.ProjectTask;
 using Server.DataTransferObjects.Request.ProjectTaskStatus;
 using Server.Models;
 using TaskStatus = Server.Models.TaskStatus;
@@ -32,6 +33,13 @@ public partial class ProjectController
     public async Task<IActionResult> AddTaskStatus(int projectId, AddTaskStatusRequest addTaskStatusRequest)
     {
         var projectExists = await dbContext.Projects.AnyAsync(p => p.ProjectId == projectId);
+
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add task status");
+
+        if (!hasPermission)
+        {
+            return Forbid("Insufficient permissions");
+        }
 
         if (!projectExists)
         {
@@ -81,6 +89,13 @@ public partial class ProjectController
         var projectTaskStatus = await dbContext.ProjectTaskStatuses
             .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskStatusId == taskStatusId);
 
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Remove task status");
+
+        if (!hasPermission)
+        {
+            return Forbid("Insufficient permissions");
+        }
+
         if (projectTaskStatus == null)
         {
             return NotFound(new { message = "Project with given id does not exist or this task status does not belong to it." });
@@ -120,6 +135,13 @@ public partial class ProjectController
     {
         var projectTaskStatus = await dbContext.ProjectTaskStatuses
             .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskStatusId == taskStatusId);
+
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change task status");
+
+        if (!hasPermission)
+        {
+            return Forbid("Insufficient permissions");
+        }
 
         if (projectTaskStatus == null)
         {
