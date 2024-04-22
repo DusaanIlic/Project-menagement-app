@@ -35,6 +35,7 @@ namespace Server.Data
         public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
         public DbSet<ProjectPriority> ProjectPriorities { get; set; }
+        public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -107,10 +108,10 @@ namespace Server.Data
                 .HasForeignKey(td => td.DependentTaskId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ProjectTask>()
-                .HasOne(pt => pt.TaskCategory)
-                .WithMany(tc => tc.ProjectTasks)
-                .HasForeignKey(pt => pt.TaskCategoryId);
+            //modelBuilder.Entity<ProjectTask>()
+                //.HasOne(pt => pt.TaskCategory)
+                //.WithMany(tc => tc.ProjectTasks)
+                //.HasForeignKey(pt => pt.TaskCategoryId);
 
             modelBuilder.Entity<File>()
                 .HasOne(uf => uf.Uploader)
@@ -219,7 +220,21 @@ namespace Server.Data
                 .HasMany(pr => pr.ProjectProjectRoles)
                 .WithOne(pra => pra.ProjectRole)
                 .HasForeignKey(pra => pra.ProjectRoleId);
-            
+
+            modelBuilder.Entity<ProjectTaskCategories>()
+             .HasKey(ptc => new { ptc.ProjectId, ptc.TaskCategoryId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.ProjectTaskCategories)
+                .WithOne(pts => pts.Project)
+                .HasForeignKey(pts => pts.ProjectId);
+
+            modelBuilder.Entity<TaskCategory>()
+                .HasMany(tc => tc.ProjectTaskCategories)
+                .WithOne(ptc => ptc.TaskCategory)
+                .HasForeignKey(pts => pts.TaskCategoryId);
+
+
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global role" },
                 new Permission { PermissionId = 2, PermissionName = "Add member" },
