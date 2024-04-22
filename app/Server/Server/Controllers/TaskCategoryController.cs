@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects.Request.TaskCategory;
 using Microsoft.AspNetCore.Authorization;
 using Server.DataTransferObjects.Request.ProjectTaskStatus;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
@@ -17,10 +18,11 @@ namespace Server.Controllers
     public class TaskCategoryController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
-
-        public TaskCategoryController(LogicTenacityDbContext dbContext)
+        private readonly IPermissionService _permissionService;
+        public TaskCategoryController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
         {
             this.dbContext = dbContext;
+            _permissionService = permissionService;
         }
 
         [HttpGet("{projectId}/TaskCategories")]
@@ -45,6 +47,13 @@ namespace Server.Controllers
         public async Task<IActionResult> AddTaskCategory(int projectId, AddTaskCategoryRequest addTaskCategoryRequest)
         {
             var projectExists = await dbContext.Projects.AnyAsync(p => p.ProjectId == projectId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add task category");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             if (!projectExists)
             {
@@ -97,6 +106,13 @@ namespace Server.Controllers
             var projectTaskCategory = await dbContext.ProjectTaskCategories
                 .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskCategoryId == taskCategoryId);
 
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Remove task category");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             if (projectTaskCategory == null)
             {
                 return NotFound(new { message = "Project with given id does not exist or this task category does not belong to it." });
@@ -130,5 +146,49 @@ namespace Server.Controllers
 
         }
 
+        [Authorize]
+        [HttpPut("{projectId}/TaskCategory/{taskCategoryId}")]
+        public async Task<IActionResult> UpdateTaskCategory(int projectId, int taskCategoryId, UpdateTaskCategoryRequest updateTaskCategoryRequest)
+        {
+            var projectTaskStatus = await dbContext.ProjectTaskCategories
+                .FirstOrDefaultAsync(pts => pts.ProjectId == projectId && pts.TaskCategoryId == taskCategoryId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change task category");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            if (projectTaskStatus == null)
+            {
+                return NotFound(new { message = "Project with given id does not exist or this task catgeory does not belong to it." });
+            }
+
+            var taskCategory = await dbContext.TaskCategories
+                .FirstOrDefaultAsync(ts => ts.TaskCategoryID == taskCategoryId);
+
+            if (taskCategory == null)
+            {
+                return NotFound(new { message = "Task category with given id does not exist." });
+            }
+
+            if (taskCategory.IsDefault)
+            {
+                return Conflict(new { message = "It's forbidden to change name of this task category." });
+            }
+
+            taskCategory.CategoryName = updateTaskCategoryRequest.Name;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new TaskCategoryDTO
+            {
+                TaskCategoryID = taskCategory.TaskCategoryID,
+                CategoryName = taskCategory.CategoryName,
+                IsDefault = taskCategory.IsDefault
+            });
+        }
     }
+
 }
