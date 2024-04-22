@@ -1,9 +1,9 @@
 <div class="flex flex-col justify-center h-[100%] border-[1px]">
   <div class="p-4 flex gap-4">
     <div class="flex gap-2">
-      <p class="flex justify-center items-center">Show: </p>
-      <mat-radio-group>
-        <mat-radio-button *ngFor="let view of views" [class.selected]="view.value === selectedViewType" (click)="selectView(view.value)">
+      <p class="flex justify-center items-center">Show:</p>
+      <mat-radio-group [(ngModel)]="selectedViewType">
+        <mat-radio-button *ngFor="let view of views" [value]="view.value" (click)="selectView(view.value)">
           {{ view.name }}
         </mat-radio-button>
       </mat-radio-group>
@@ -23,7 +23,8 @@
              [draggable]="true"
              [selectable]="true"
              (barClick)="barClick($event)"
-             (selectedChange)="selectedChange($event)">
+             (selectedChange)="selectedChange($event)"
+             (dragEnded)="dragEnded($event)">
 
     <ngx-gantt-table [draggable]="true">
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true">

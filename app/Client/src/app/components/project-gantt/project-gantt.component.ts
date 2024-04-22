@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
-  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttPrintService, GanttSelectedEvent,
+  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttDragEvent, GanttPrintService, GanttSelectedEvent,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -19,6 +19,7 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatDialog} from "@angular/material/dialog";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-project-gantt',
@@ -33,6 +34,7 @@ import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
     NgForOf,
     MatRadioButton,
     MatRadioGroup,
+    FormsModule,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -200,5 +202,9 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       width: '250px',
       data: taskId
     });
+  }
+
+  dragEnded(event: GanttDragEvent) {
+    
   }
 }
