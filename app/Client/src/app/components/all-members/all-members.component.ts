@@ -62,6 +62,7 @@ export class AllMembersComponent implements AfterViewInit{
 
   }
 
+
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
@@ -188,4 +189,3 @@ export class AllMembersComponent implements AfterViewInit{
 
     protected readonly environment = environment;
 }
-
