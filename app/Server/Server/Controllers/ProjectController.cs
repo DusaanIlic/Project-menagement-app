@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Plugins;
@@ -146,7 +147,7 @@ namespace Server.Controllers
                 TeamLeaderId = teamLeader.Id,
                 ProjectPriorityId= priority.ProjectPriorityId
             };
-            
+
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
 
             project.ProjectTaskStatuses = firstThreeTaskStatuses
@@ -160,7 +161,16 @@ namespace Server.Controllers
             dbContext.Projects.Add(project);
             
             await dbContext.SaveChangesAsync();
-            
+
+            var projectTaskCategories = new ProjectTaskCategories
+            {
+                ProjectId = project.ProjectId,
+                TaskCategoryId = 1
+            };
+
+            dbContext.ProjectTaskCategories.Add(projectTaskCategories);
+            await dbContext.SaveChangesAsync();
+
             dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId, ProjectRoleId = 1 });
             
             await dbContext.SaveChangesAsync();
