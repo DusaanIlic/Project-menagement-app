@@ -40,13 +40,13 @@ namespace Server.Controllers
                          .ThenInclude(p => p.Member)
                          .ThenInclude(p => p.Role)
                 .Include(tp => tp.TaskPriority)
-                //.Include(tc => tc.TaskCategory)
                 .ToListAsync();
 
             var tasksDTOs = new List<ProjectTaskDTO>();
 
             foreach (var t in tasks)
             {
+                
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
                 var taskPriority = await dbContext.TaskPriority.FirstOrDefaultAsync(tp => tp.TaskPriorityId == t.TaskPriorityId);
                 var assignedMembers = t.Members.Select(ta => new MemberDTO
@@ -128,6 +128,7 @@ namespace Server.Controllers
                 TaskName = addProjectTaskRequest.TaskName,
                 TaskStatus = projectTaskStatus,
                 TaskPriority = taskPriority,
+                StartDate = DateTime.Now,
                 //TaskCategory = taskCategory,
             };
 

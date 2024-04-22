@@ -30,6 +30,9 @@ namespace Server.Models
         public int TaskPriorityId { get; set; }
         public TaskPriority TaskPriority { get; set; }
 
+        public int TaskCategoryId { get; set; }
+        public TaskCategory TaskCategory { get; set; }
+
         public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();
         public ICollection<TaskDependency> DependentTasks { get; set; } = new List<TaskDependency>();
 

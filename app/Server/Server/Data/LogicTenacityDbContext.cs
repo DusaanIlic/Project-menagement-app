@@ -108,10 +108,10 @@ namespace Server.Data
                 .HasForeignKey(td => td.DependentTaskId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<ProjectTask>()
-                //.HasOne(pt => pt.TaskCategory)
-                //.WithMany(tc => tc.ProjectTasks)
-                //.HasForeignKey(pt => pt.TaskCategoryId);
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(pt => pt.TaskCategory)
+                .WithMany(tc => tc.ProjectTasks)
+                .HasForeignKey(pt => pt.TaskCategoryId);
 
             modelBuilder.Entity<File>()
                 .HasOne(uf => uf.Uploader)
