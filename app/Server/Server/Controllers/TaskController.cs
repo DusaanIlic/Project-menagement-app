@@ -261,6 +261,49 @@ namespace Server.Controllers
 
             return Ok(tasksDTO);
         }
+        
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangeTaskDates(int id, ChangeTaskDatesRequest changeTaskDatesRequest)
+        {
+            var projectTask = await dbContext.ProjectTasks
+                .Include(ts => ts.TaskStatus)
+                .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
+                .FirstOrDefaultAsync(t => t.TaskId == id);
+
+            if (projectTask == null)
+            {
+                return NotFound(new {message = "Task not found"});
+            }
+
+            projectTask.StartDate = changeTaskDatesRequest.startDate;
+            projectTask.Deadline = changeTaskDatesRequest.deadline;
+
+          
+            dbContext.ProjectTasks.Update(projectTask);
+            await dbContext.SaveChangesAsync();
+
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
+
+            var tasksDTO = new ProjectTaskDTO
+            {
+                Deadline = projectTask.Deadline,
+                ProjectId = projectTask.ProjectId,
+                TaskDescription = projectTask.TaskDescription,
+                TaskId = projectTask.TaskId,
+                TaskName = projectTask.TaskName,
+                TaskStatusId = projectTask.TaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
+                StartDate = projectTask.StartDate,
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = projectTask.TaskCategoryId
+            };
+
+            return Ok(tasksDTO);
+        }
 
         [Authorize]
         [HttpDelete("{id}")]
