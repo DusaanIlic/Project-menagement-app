@@ -263,7 +263,7 @@ namespace Server.Controllers
         }
         
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("{id}/ChangeDates")]
         public async Task<IActionResult> ChangeTaskDates(int id, ChangeTaskDatesRequest changeTaskDatesRequest)
         {
             var projectTask = await dbContext.ProjectTasks
