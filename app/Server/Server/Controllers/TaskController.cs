@@ -40,6 +40,7 @@ namespace Server.Controllers
                          .ThenInclude(p => p.Member)
                          .ThenInclude(p => p.Role)
                 .Include(tp => tp.TaskPriority)
+                .Include(tp => tp.TaskCategory)
                 .ToListAsync();
 
             var tasksDTOs = new List<ProjectTaskDTO>();

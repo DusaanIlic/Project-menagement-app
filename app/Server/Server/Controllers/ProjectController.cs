@@ -677,7 +677,7 @@ namespace Server.Controllers
         {
             var project = await dbContext.Projects
                 .Include(p => p.ProjectTasks)
-                    //.ThenInclude(ptc => ptc.TaskCategory)
+                    .ThenInclude(ptc => ptc.TaskCategory)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -689,8 +689,8 @@ namespace Server.Controllers
                 .Select(ptc => new TaskAndCategoryDTO
                 {
                     ProjectTaskId = ptc.TaskId,
-                    //TaskCategoryId = ptc.TaskCategoryId,
-                    //TaskCategoryName = ptc.TaskCategory.CategoryName
+                    TaskCategoryId = ptc.TaskCategoryId,
+                    TaskCategoryName = ptc.TaskCategory.CategoryName
                 })
                 .ToList();
 
