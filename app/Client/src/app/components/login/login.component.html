@@ -1,9 +1,19 @@
 <div class="min-h-screen flex flex-nowrap">
-  <div class="basis-1/2 hidden xl:flex flex-col justify-center items-center bg-gradient-to-bl from-[#a9edf6] to-[#6dafb8] select-none">
-    <img ngSrc="/assets/logo.png" alt="Logic Tenacity Logo" height="394" width="633">
+  <div
+    class="basis-1/2 hidden xl:flex flex-col justify-center items-center bg-gradient-to-bl from-[#a9edf6] to-[#6dafb8] select-none"
+  >
+    <img
+      ngSrc="/assets/logo.png"
+      alt="Logic Tenacity Logo"
+      height="394"
+      width="633"
+    />
   </div>
 
-  <div *ngIf="!showForgotPasswordForm" class="grow flex flex-col justify-center items-center gap-10">
+  <div
+    *ngIf="!showForgotPasswordForm"
+    class="grow flex flex-col justify-center items-center gap-10"
+  >
     <div class="flex flex-col justify-center items-center gap-2 select-none">
       <h1 class="font-bold text-6xl">WELCOME</h1>
       <h2 class="text-2xl">Please login</h2>
@@ -12,41 +22,109 @@
     <div class="flex flex-col min-w-80 items-center justify-between gap-10">
       <form class="flex flex-col gap-2 w-full">
         <label class="text-xl select-none" for="email">Email</label>
-        <input class="min-h-9 text-xl border-2 rounded-xl p-1.5"
-               type="email" name="email" id="email" required [(ngModel)]="email">
+        <input
+          class="min-h-9 text-xl border-2 rounded-xl p-1.5"
+          type="email"
+          name="email"
+          id="email"
+          required
+          [(ngModel)]="email"
+        />
         <label class="text-xl select-none" for="password">Password</label>
-        <input class="min-h-9 text-xl border-2 rounded-xl p-1.5"
-               type="password" name="password" id="password" required [(ngModel)]="password">
+        <input
+          class="min-h-9 text-xl border-2 rounded-xl p-1.5"
+          type="password"
+          name="password"
+          id="password"
+          required
+          [(ngModel)]="password"
+        />
       </form>
 
-      <button class="w-full bg-accent-blue text-white rounded-2xl min-h-12 font-bold hover:bg-[#0B2043] select-none"
-              type="button" (click)="onSubmit()">Login</button>
+      <button
+        class="w-full bg-accent-blue text-white rounded-2xl min-h-12 font-bold hover:bg-[#0B2043] select-none"
+        type="button"
+        (click)="onSubmit()"
+      >
+        Login
+      </button>
 
-      <a class="hover:underline" (click)="toggleForgotPasswordForm()">Forgot password? Click here to reset it</a>
+      <a class="hover:underline" (click)="toggleForgotPasswordForm()"
+        >Forgot password? Click here to reset it</a
+      >
 
-      <div class="w-full bg-[lightcoral] rounded-xl flex flex-wrap items-center justify-center gap-2 p-2 select-none"
-           *ngIf="errorMessage">
-        <p class="w-full text-[darkred] text-3 italic flex items-center justify-center">{{errorMessage}}</p>
+      <div
+        class="w-full bg-[lightcoral] rounded-xl flex flex-wrap items-center justify-center gap-2 p-2 select-none"
+        *ngIf="errorMessage"
+      >
+        <p
+          class="w-full text-[darkred] text-3 italic flex items-center justify-center"
+        >
+          {{ errorMessage }}
+        </p>
       </div>
     </div>
   </div>
 
-  <div *ngIf="showForgotPasswordForm" class="grow flex flex-col justify-center items-center gap-10">
+  <div
+    *ngIf="showForgotPasswordForm"
+    class="grow flex flex-col justify-center items-center gap-10"
+  >
     <div class="flex flex-col min-w-80 items-center justify-between gap-10">
       <form [formGroup]="forgotForm" class="flex flex-col gap-2 w-full">
         <label class="text-xl select-none" for="femail">Email</label>
-        <p *ngIf="forgotForm.get('email').errors?.['required'] && forgotForm.get('email').touched" class="italic text-sm text-red-600">Email is required.</p>
-        <p *ngIf="forgotForm.get('email').errors?.['email'] && forgotForm.get('email').touched" class="italic text-sm text-red-600">Email is in wrong format.</p>
-        <input formControlName="email" class="min-h-9 text-xl border-2 rounded-xl p-1.5"
-               type="email" name="femail" id="femail" required placeholder="test@gmail.com">
+        <p
+          *ngIf="forgotForm.get('email').errors?.['required'] && forgotForm.get('email').touched"
+          class="italic text-sm text-red-600"
+        >
+          Email is required.
+        </p>
+        <p
+          *ngIf="forgotForm.get('email').errors?.['email'] && forgotForm.get('email').touched"
+          class="italic text-sm text-red-600"
+        >
+          Email is in wrong format.
+        </p>
+        <input
+          formControlName="email"
+          class="min-h-9 text-xl border-2 rounded-xl p-1.5"
+          type="email"
+          name="femail"
+          id="femail"
+          required
+          placeholder="test@gmail.com"
+        />
       </form>
 
-      <button class="w-full bg-accent-blue text-white rounded-2xl min-h-12 font-bold hover:bg-[#0B2043] select-none"
-              type="button" (click)="forgotPasswordSubmit()">Reset password</button>
+      <button
+        class="w-full bg-accent-blue text-white rounded-2xl min-h-12 font-bold hover:bg-[#0B2043] select-none"
+        type="button"
+        (click)="forgotPasswordSubmit()"
+      >
+        Reset password
+      </button>
 
-      <a class="hover:underline" (click)="toggleForgotPasswordForm()">Go back to login</a>
+      <a class="hover:underline" (click)="toggleForgotPasswordForm()"
+        >Go back to login</a
+      >
     </div>
   </div>
 
   <ng-toast></ng-toast>
 </div>
+
+<mat-form-field appearance="fill">
+  <mat-label>Email</mat-label>
+  <input matInput type="email" name="email" id="email" [(ngModel)]="email" />
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Password</mat-label>
+  <input
+    matInput
+    type="password"
+    name="password"
+    id="password"
+    [(ngModel)]="password"
+  />
+</mat-form-field>
