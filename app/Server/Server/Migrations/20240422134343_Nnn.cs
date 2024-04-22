@@ -8,31 +8,62 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Menjanje3 : Migration
+    public partial class Nnn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "IsDefault",
+                table: "TaskCategories",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.CreateTable(
+                name: "ProjectTaskCategories",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectTaskCategories", x => new { x.ProjectId, x.TaskCategoryId });
+                    table.ForeignKey(
+                        name: "FK_ProjectTaskCategories_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectTaskCategories_TaskCategories_TaskCategoryId",
+                        column: x => x.TaskCategoryId,
+                        principalTable: "TaskCategories",
+                        principalColumn: "TaskCategoryID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 20, 31, 773, DateTimeKind.Local).AddTicks(8177), "$2a$10$LlzTf4JBep6urx2FC4rWb.ybdJ9/sg8VOG6G8ivPrF/qmkkuUO/5a" });
+                values: new object[] { new DateTime(2024, 4, 22, 15, 43, 42, 69, DateTimeKind.Local).AddTicks(1221), "$2a$10$QVo4Bo2Xct40Hud7Wg/1M.6PZBXXoWqKNwGuH6kewBiSjeXH2iBLG" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 20, 31, 931, DateTimeKind.Local).AddTicks(2580), "$2a$10$RNguLej1nD/16.ouu7EkuuInGcMXq2g7Kln2wx1d74fVXDCJsTmL2" });
+                values: new object[] { new DateTime(2024, 4, 22, 15, 43, 42, 223, DateTimeKind.Local).AddTicks(1027), "$2a$10$m7ybYhVB/O8XR3N04YO8U.7zT56GCA0K1MpX6JjIbaOcgcDWYimVK" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 20, 32, 108, DateTimeKind.Local).AddTicks(7745), "$2a$10$zvDeKGO826yIIFh10vTO.Ox4ckmrCfaioexSR6Mj2R5XJTymBofv6" });
+                values: new object[] { new DateTime(2024, 4, 22, 15, 43, 42, 379, DateTimeKind.Local).AddTicks(6732), "$2a$10$pFrByBa/OybsTlcJfh617OZ2sooz5XZJ4r4jYOS9ntkgUuPpwaOsy" });
 
             migrationBuilder.InsertData(
                 table: "ProjectPermissions",
@@ -45,6 +76,13 @@ namespace Server.Migrations
                     { 24, "Remove task status" }
                 });
 
+            migrationBuilder.UpdateData(
+                table: "TaskCategories",
+                keyColumn: "TaskCategoryID",
+                keyValue: 1,
+                column: "IsDefault",
+                value: true);
+
             migrationBuilder.InsertData(
                 table: "ProjectRolePermissions",
                 columns: new[] { "ProjectPermissionId", "ProjectRoleId" },
@@ -55,11 +93,19 @@ namespace Server.Migrations
                     { 23, 1 },
                     { 24, 1 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectTaskCategories_TaskCategoryId",
+                table: "ProjectTaskCategories",
+                column: "TaskCategoryId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ProjectTaskCategories");
+
             migrationBuilder.DeleteData(
                 table: "ProjectRolePermissions",
                 keyColumns: new[] { "ProjectPermissionId", "ProjectRoleId" },
@@ -100,26 +146,30 @@ namespace Server.Migrations
                 keyColumn: "Id",
                 keyValue: 24);
 
+            migrationBuilder.DropColumn(
+                name: "IsDefault",
+                table: "TaskCategories");
+
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 12, 59, 24, 161, DateTimeKind.Local).AddTicks(2614), "$2a$10$TKFuVFFYPFxXk2U.GzVLsu98/ev3QebDYO4/MjycEfp4EQPySrrE2" });
+                values: new object[] { new DateTime(2024, 4, 21, 21, 7, 42, 975, DateTimeKind.Local).AddTicks(5554), "$2a$10$2uv8/UNh9qfJqekXjVp6P.nleL052aHOQDIx93.bSb/EMCPOWEquC" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 12, 59, 24, 243, DateTimeKind.Local).AddTicks(3986), "$2a$10$JqQPn0LqsHFCh1cyyt9QauepJFJFFqjj2osS1PfJF27TEGmsjCljW" });
+                values: new object[] { new DateTime(2024, 4, 21, 21, 7, 43, 62, DateTimeKind.Local).AddTicks(669), "$2a$10$/wvLIdmicmFcsOw5wrjk7eDhjXRTPTCe2puRWyEXtVpgyYnJ.aaw6" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 12, 59, 24, 330, DateTimeKind.Local).AddTicks(9180), "$2a$10$zuaXMCtmeyJ4cu.h9rsy2e5PDkgceKrmvUey8xgOScTsq3iwEdca2" });
+                values: new object[] { new DateTime(2024, 4, 21, 21, 7, 43, 148, DateTimeKind.Local).AddTicks(3668), "$2a$10$psHQaT3p1hFtq6H20MfJJOHQoOBPGD18DVvC.BNfdwUNuV0tAqphG" });
         }
     }
 }

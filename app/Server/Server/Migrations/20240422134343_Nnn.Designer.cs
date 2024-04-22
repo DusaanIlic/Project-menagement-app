@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240422124007_Menjanje5")]
-    partial class Menjanje5
+    [Migration("20240422134343_Nnn")]
+    partial class Nnn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 261, DateTimeKind.Local).AddTicks(1544),
+                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 69, DateTimeKind.Local).AddTicks(1221),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$X/6ZD4qSjOYcQizij84oe.x/kxPoYts5xBp/5FxzM23wNb0E0UTL6",
+                            Password = "$2a$10$QVo4Bo2Xct40Hud7Wg/1M.6PZBXXoWqKNwGuH6kewBiSjeXH2iBLG",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 395, DateTimeKind.Local).AddTicks(4401),
+                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 223, DateTimeKind.Local).AddTicks(1027),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$8i4Jxno.bTQq38/nOMAj4OmV5VfoSGgeW91jixvnikfs3QkUZ0z0m",
+                            Password = "$2a$10$m7ybYhVB/O8XR3N04YO8U.7zT56GCA0K1MpX6JjIbaOcgcDWYimVK",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 635, DateTimeKind.Local).AddTicks(8287),
+                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 379, DateTimeKind.Local).AddTicks(6732),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$RyyFtqeNvfYFLz0t5miSxuGCEowsKZyfCWhiyknv17FjFyBweQEQG",
+                            Password = "$2a$10$pFrByBa/OybsTlcJfh617OZ2sooz5XZJ4r4jYOS9ntkgUuPpwaOsy",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -288,6 +288,8 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectId");
+
+                    b.HasIndex("ProjectPriorityId");
 
                     b.HasIndex("ProjectStatusId");
 
@@ -1168,7 +1170,7 @@ namespace Server.Migrations
                 {
                     b.HasOne("Server.Models.ProjectPriority", "Priority")
                         .WithMany("Projects")
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("ProjectPriorityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

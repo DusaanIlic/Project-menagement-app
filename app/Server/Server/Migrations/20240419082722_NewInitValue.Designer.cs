@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240422125845_Menjanje7")]
-    partial class Menjanje7
+    [Migration("20240419082722_NewInitValue")]
+    partial class NewInitValue
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 58, 43, 686, DateTimeKind.Local).AddTicks(5528),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 27, 20, 406, DateTimeKind.Local).AddTicks(5518),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$axI9.s/fv7VcKjCEUV0Q.uTpQWrfm.y2xylbZxE5REzcHvokkyTWa",
+                            Password = "$2a$10$PJW1XmWLydq8Lw9I66JU7uq2bEMUS/ZFxtIWGeVQ9cfabDQFgp3fe",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 58, 43, 781, DateTimeKind.Local).AddTicks(9795),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 27, 20, 497, DateTimeKind.Local).AddTicks(7125),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$r5ejNH7uQ7hBb/0fd1jEseF3o2a4uW/pBjsZaaC9qiZbewV7o2RPe",
+                            Password = "$2a$10$JTWa8JAVdNFfBS6/lvsG8.xdzpOmwYuimLFK1JqOoNm2dUwbMYjCS",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 58, 43, 879, DateTimeKind.Local).AddTicks(6301),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 27, 20, 606, DateTimeKind.Local).AddTicks(1958),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$KxxE/nH6Uq87a0K9N1b6wOnPd3yc4OVwjSSpjVcq/iaJWuGZVT6RW",
+                            Password = "$2a$10$TU.q9rg7OkJoIaKke6m.ROjD0opm./9qImqH3NLxODvVF.37VyCfO",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -415,31 +415,6 @@ namespace Server.Migrations
                         {
                             Id = 19,
                             Name = "Comment task"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Name = "Change project priority"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Name = "Change task category"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Name = "Remove task category"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Name = "Add task status"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Name = "Remove task status"
                         });
                 });
 
@@ -663,31 +638,6 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 2,
                             ProjectPermissionId = 19
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 20
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 21
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 22
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 23
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 24
                         });
                 });
 
@@ -766,21 +716,6 @@ namespace Server.Migrations
                     b.HasIndex("TaskStatusId");
 
                     b.ToTable("ProjectTasks");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTaskCategories", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TaskCategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ProjectId", "TaskCategoryId");
-
-                    b.HasIndex("TaskCategoryId");
-
-                    b.ToTable("ProjectTaskCategories");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
@@ -962,9 +897,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TaskCategoryID");
 
                     b.ToTable("TaskCategories");
@@ -973,8 +905,7 @@ namespace Server.Migrations
                         new
                         {
                             TaskCategoryID = 1,
-                            CategoryName = "None",
-                            IsDefault = true
+                            CategoryName = "None"
                         });
                 });
 
@@ -1264,25 +1195,6 @@ namespace Server.Migrations
                     b.Navigation("TaskStatus");
                 });
 
-            modelBuilder.Entity("Server.Models.ProjectTaskCategories", b =>
-                {
-                    b.HasOne("Server.Models.Project", "Project")
-                        .WithMany("ProjectTaskCategories")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.TaskCategory", "TaskCategory")
-                        .WithMany("ProjectTaskCategories")
-                        .HasForeignKey("TaskCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("TaskCategory");
-                });
-
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
                 {
                     b.HasOne("Server.Models.Project", "Project")
@@ -1402,8 +1314,6 @@ namespace Server.Migrations
 
                     b.Navigation("ProjectProjectRoles");
 
-                    b.Navigation("ProjectTaskCategories");
-
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");
@@ -1458,8 +1368,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
                 {
-                    b.Navigation("ProjectTaskCategories");
-
                     b.Navigation("ProjectTasks");
                 });
 

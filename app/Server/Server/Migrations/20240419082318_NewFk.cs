@@ -6,35 +6,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Menjanje7 : Migration
+    public partial class NewFk : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Projects_ProjectPriorities_ProjectId",
-                table: "Projects");
+            migrationBuilder.AddColumn<int>(
+                name: "ProjectPriorityId",
+                table: "Projects",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 58, 43, 686, DateTimeKind.Local).AddTicks(5528), "$2a$10$axI9.s/fv7VcKjCEUV0Q.uTpQWrfm.y2xylbZxE5REzcHvokkyTWa" });
+                values: new object[] { new DateTime(2024, 4, 19, 10, 23, 16, 952, DateTimeKind.Local).AddTicks(540), "$2a$10$Z.n7KnLBVS5ivriOpjaUzexLFQAws6uEy2SgHqvbbvLDgxm80gnD." });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 58, 43, 781, DateTimeKind.Local).AddTicks(9795), "$2a$10$r5ejNH7uQ7hBb/0fd1jEseF3o2a4uW/pBjsZaaC9qiZbewV7o2RPe" });
+                values: new object[] { new DateTime(2024, 4, 19, 10, 23, 17, 41, DateTimeKind.Local).AddTicks(2834), "$2a$10$1ZXx3iI0Zh6rpbTZ435JmODDF4cIZyA6sICPRP.NP2jVF2Hn55ry." });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 58, 43, 879, DateTimeKind.Local).AddTicks(6301), "$2a$10$KxxE/nH6Uq87a0K9N1b6wOnPd3yc4OVwjSSpjVcq/iaJWuGZVT6RW" });
+                values: new object[] { new DateTime(2024, 4, 19, 10, 23, 17, 138, DateTimeKind.Local).AddTicks(5575), "$2a$10$P5kaf2n2bQ7.DO7BJ1KRfudHwUnR4DD2aX1KRnS/LC2nWnqwPJWTm" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectPriorityId",
@@ -61,34 +64,30 @@ namespace Server.Migrations
                 name: "IX_Projects_ProjectPriorityId",
                 table: "Projects");
 
+            migrationBuilder.DropColumn(
+                name: "ProjectPriorityId",
+                table: "Projects");
+
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 47, 38, 870, DateTimeKind.Local).AddTicks(6112), "$2a$10$2w9OwgrG1zBniqqRNnahpuxCzRkhVvGp1l24pUKJYB8Xw/CxDHI92" });
+                values: new object[] { new DateTime(2024, 4, 19, 10, 17, 26, 398, DateTimeKind.Local).AddTicks(9515), "$2a$10$H8PWQg1YEOjj./6z3St9QOlNJyewLmwFmgAF/Q4z8mAAlGlYYmike" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 47, 38, 959, DateTimeKind.Local).AddTicks(2596), "$2a$10$gkSWSukjs8tPwcF6iXaKkulYjBwrgLORd63vyEkFQyzs4RCGgRvjC" });
+                values: new object[] { new DateTime(2024, 4, 19, 10, 17, 26, 479, DateTimeKind.Local).AddTicks(7490), "$2a$10$NmThjuIV.XeQ8aawqyMKOeuLgXZ7HwkePdqKI54Q1czW7537q5Y.q" });
 
             migrationBuilder.UpdateData(
                 table: "Members",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "DateAdded", "Password" },
-                values: new object[] { new DateTime(2024, 4, 22, 14, 47, 39, 46, DateTimeKind.Local).AddTicks(6953), "$2a$10$Q82rNqVcnPoXT5efssMPjuRJt2Ra3GJlnD0W0XdtNgJHu6jFTu7zO" });
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Projects_ProjectPriorities_ProjectId",
-                table: "Projects",
-                column: "ProjectId",
-                principalTable: "ProjectPriorities",
-                principalColumn: "ProjectPriorityId",
-                onDelete: ReferentialAction.Cascade);
+                values: new object[] { new DateTime(2024, 4, 19, 10, 17, 26, 565, DateTimeKind.Local).AddTicks(7556), "$2a$10$nShQ6K2BXG645zd2w6zMKONYlz37okY5IgoXQw6W2IaN9SB0zPj7y" });
         }
     }
 }

@@ -329,10 +329,6 @@ namespace Server.Data
                 new ProjectPermission { Id = 22, Name = "Remove task category" },
                 new ProjectPermission { Id = 23, Name = "Add task status" },
                 new ProjectPermission { Id = 24, Name = "Remove task status" }
-
-
-
-
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -364,8 +360,6 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 22 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 23 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 }
-
-
             );
 
            

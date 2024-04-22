@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240422122034_Menjanje3")]
-    partial class Menjanje3
+    [Migration("20240419081728_NewModel")]
+    partial class NewModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 20, 31, 773, DateTimeKind.Local).AddTicks(8177),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 17, 26, 398, DateTimeKind.Local).AddTicks(9515),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$LlzTf4JBep6urx2FC4rWb.ybdJ9/sg8VOG6G8ivPrF/qmkkuUO/5a",
+                            Password = "$2a$10$H8PWQg1YEOjj./6z3St9QOlNJyewLmwFmgAF/Q4z8mAAlGlYYmike",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 20, 31, 931, DateTimeKind.Local).AddTicks(2580),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 17, 26, 479, DateTimeKind.Local).AddTicks(7490),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$RNguLej1nD/16.ouu7EkuuInGcMXq2g7Kln2wx1d74fVXDCJsTmL2",
+                            Password = "$2a$10$NmThjuIV.XeQ8aawqyMKOeuLgXZ7HwkePdqKI54Q1czW7537q5Y.q",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 14, 20, 32, 108, DateTimeKind.Local).AddTicks(7745),
+                            DateAdded = new DateTime(2024, 4, 19, 10, 17, 26, 565, DateTimeKind.Local).AddTicks(7556),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$zvDeKGO826yIIFh10vTO.Ox4ckmrCfaioexSR6Mj2R5XJTymBofv6",
+                            Password = "$2a$10$nShQ6K2BXG645zd2w6zMKONYlz37okY5IgoXQw6W2IaN9SB0zPj7y",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -275,9 +275,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProjectPriorityId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ProjectStatusId")
                         .HasColumnType("INTEGER");
 
@@ -288,8 +285,6 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectId");
-
-                    b.HasIndex("ProjectPriorityId");
 
                     b.HasIndex("ProjectStatusId");
 
@@ -415,31 +410,6 @@ namespace Server.Migrations
                         {
                             Id = 19,
                             Name = "Comment task"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Name = "Change project priority"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Name = "Change task category"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Name = "Remove task category"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Name = "Add task status"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Name = "Remove task status"
                         });
                 });
 
@@ -456,23 +426,6 @@ namespace Server.Migrations
                     b.HasKey("ProjectPriorityId");
 
                     b.ToTable("ProjectPriorities");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectPriorityId = 1,
-                            Name = "Low"
-                        },
-                        new
-                        {
-                            ProjectPriorityId = 2,
-                            Name = "Medium"
-                        },
-                        new
-                        {
-                            ProjectPriorityId = 3,
-                            Name = "High"
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
@@ -663,31 +616,6 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 2,
                             ProjectPermissionId = 19
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 20
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 21
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 22
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 23
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 24
                         });
                 });
 
@@ -766,21 +694,6 @@ namespace Server.Migrations
                     b.HasIndex("TaskStatusId");
 
                     b.ToTable("ProjectTasks");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTaskCategories", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TaskCategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ProjectId", "TaskCategoryId");
-
-                    b.HasIndex("TaskCategoryId");
-
-                    b.ToTable("ProjectTaskCategories");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
@@ -962,9 +875,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TaskCategoryID");
 
                     b.ToTable("TaskCategories");
@@ -973,8 +883,7 @@ namespace Server.Migrations
                         new
                         {
                             TaskCategoryID = 1,
-                            CategoryName = "None",
-                            IsDefault = true
+                            CategoryName = "None"
                         });
                 });
 
@@ -1168,12 +1077,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
-                    b.HasOne("Server.Models.ProjectPriority", "Priority")
-                        .WithMany("Projects")
-                        .HasForeignKey("ProjectPriorityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Server.Models.ProjectStatus", "ProjectStatus")
                         .WithMany("Projects")
                         .HasForeignKey("ProjectStatusId")
@@ -1183,8 +1086,6 @@ namespace Server.Migrations
                     b.HasOne("Server.Models.Member", "TeamLeader")
                         .WithMany("ProjectsLead")
                         .HasForeignKey("TeamLeaderId");
-
-                    b.Navigation("Priority");
 
                     b.Navigation("ProjectStatus");
 
@@ -1262,25 +1163,6 @@ namespace Server.Migrations
                     b.Navigation("TaskPriority");
 
                     b.Navigation("TaskStatus");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectTaskCategories", b =>
-                {
-                    b.HasOne("Server.Models.Project", "Project")
-                        .WithMany("ProjectTaskCategories")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.TaskCategory", "TaskCategory")
-                        .WithMany("ProjectTaskCategories")
-                        .HasForeignKey("TaskCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("TaskCategory");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectTaskStatus", b =>
@@ -1402,8 +1284,6 @@ namespace Server.Migrations
 
                     b.Navigation("ProjectProjectRoles");
 
-                    b.Navigation("ProjectTaskCategories");
-
                     b.Navigation("ProjectTaskStatuses");
 
                     b.Navigation("ProjectTasks");
@@ -1412,11 +1292,6 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.ProjectPermission", b =>
                 {
                     b.Navigation("ProjectRolePermissions");
-                });
-
-            modelBuilder.Entity("Server.Models.ProjectPriority", b =>
-                {
-                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectRole", b =>
@@ -1458,8 +1333,6 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.TaskCategory", b =>
                 {
-                    b.Navigation("ProjectTaskCategories");
-
                     b.Navigation("ProjectTasks");
                 });
 
