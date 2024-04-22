@@ -40,13 +40,14 @@ namespace Server.Controllers
                          .ThenInclude(p => p.Member)
                          .ThenInclude(p => p.Role)
                 .Include(tp => tp.TaskPriority)
-                .Include(tc => tc.TaskCategory)
+                .Include(tp => tp.TaskCategory)
                 .ToListAsync();
 
             var tasksDTOs = new List<ProjectTaskDTO>();
 
             foreach (var t in tasks)
             {
+                
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
                 var taskPriority = await dbContext.TaskPriority.FirstOrDefaultAsync(tp => tp.TaskPriorityId == t.TaskPriorityId);
                 var assignedMembers = t.Members.Select(ta => new MemberDTO
@@ -128,6 +129,7 @@ namespace Server.Controllers
                 TaskName = addProjectTaskRequest.TaskName,
                 TaskStatus = projectTaskStatus,
                 TaskPriority = taskPriority,
+                StartDate = DateTime.Now,
                 TaskCategory = taskCategory,
             };
 
@@ -190,6 +192,12 @@ namespace Server.Controllers
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs,
                 TaskPriorityName = taskPriority.Name
+            };
+
+            var projectTaskCategory = new ProjectTaskCategories
+            {
+                ProjectId = projectTask.ProjectId,
+                TaskCategoryId = taskCategory.TaskCategoryID
             };
 
             foreach (var assignedMember in assignedMemberDTOs)
@@ -848,7 +856,6 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
 
             var category = await dbContext.TaskCategories.FindAsync(categoryId);
@@ -865,8 +872,7 @@ namespace Server.Controllers
                 return Forbid("Insufficient permissions");
             }
 
-            task.TaskCategoryId = categoryId;
-
+            task.TaskCategoryId = categoryId;        
             await dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Category added successfully." });
@@ -960,8 +966,7 @@ namespace Server.Controllers
         [Authorize]
         [HttpGet("membertasks")]
         public async Task<IActionResult> GetAllMemberTasks()
-        {
-
+        { 
             var memberTasks = await dbContext.MemberTasks
                 .Include(mt => mt.Member)
                     .ThenInclude(t => t.Role)
