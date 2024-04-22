@@ -200,9 +200,6 @@ namespace Server.Controllers
                 TaskCategoryId = taskCategory.TaskCategoryID
             };
 
-            dbContext.ProjectTaskCategories.Add(projectTaskCategory);
-            await dbContext.SaveChangesAsync();
-
             foreach (var assignedMember in assignedMemberDTOs)
             {
                 var request = new EmailDTO
@@ -859,7 +856,6 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-
             var task = await dbContext.ProjectTasks.FindAsync(taskId);
 
             var category = await dbContext.TaskCategories.FindAsync(categoryId);
@@ -876,14 +872,7 @@ namespace Server.Controllers
                 return Forbid("Insufficient permissions");
             }
 
-            task.TaskCategoryId = categoryId;
-            var projectTaskCategory = new ProjectTaskCategories
-            {
-                ProjectId = task.ProjectId,
-                TaskCategoryId = categoryId
-            };
-
-            dbContext.ProjectTaskCategories.Add(projectTaskCategory);          
+            task.TaskCategoryId = categoryId;        
             await dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Category added successfully." });
@@ -977,8 +966,7 @@ namespace Server.Controllers
         [Authorize]
         [HttpGet("membertasks")]
         public async Task<IActionResult> GetAllMemberTasks()
-        {
-
+        { 
             var memberTasks = await dbContext.MemberTasks
                 .Include(mt => mt.Member)
                     .ThenInclude(t => t.Role)

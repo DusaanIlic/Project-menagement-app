@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240422124007_Menjanje5")]
+    partial class Menjanje5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -127,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 3, 5, 625, DateTimeKind.Local).AddTicks(1063),
+                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 261, DateTimeKind.Local).AddTicks(1544),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$tiMHOqco/TbcJn7HgJr4wOihxlSUrbBBCLbGrgCNRMR.2Lty4kCm2",
+                            Password = "$2a$10$X/6ZD4qSjOYcQizij84oe.x/kxPoYts5xBp/5FxzM23wNb0E0UTL6",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 3, 5, 719, DateTimeKind.Local).AddTicks(2097),
+                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 395, DateTimeKind.Local).AddTicks(4401),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$29eFVC0gzCsn/ie7QyKnP.FLsWjTJpb.FhrD.K337BIP78WUwnBKS",
+                            Password = "$2a$10$8i4Jxno.bTQq38/nOMAj4OmV5VfoSGgeW91jixvnikfs3QkUZ0z0m",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 3, 5, 821, DateTimeKind.Local).AddTicks(3822),
+                            DateAdded = new DateTime(2024, 4, 22, 14, 40, 5, 635, DateTimeKind.Local).AddTicks(8287),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$ZeCZsOCETeLeSA6l11jvVOoIAd6TVdQHR8xkhzEEJ5LDu0VcpYlUG",
+                            Password = "$2a$10$RyyFtqeNvfYFLz0t5miSxuGCEowsKZyfCWhiyknv17FjFyBweQEQG",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -285,8 +288,6 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectId");
-
-                    b.HasIndex("ProjectPriorityId");
 
                     b.HasIndex("ProjectStatusId");
 
@@ -1167,7 +1168,7 @@ namespace Server.Migrations
                 {
                     b.HasOne("Server.Models.ProjectPriority", "Priority")
                         .WithMany("Projects")
-                        .HasForeignKey("ProjectPriorityId")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
