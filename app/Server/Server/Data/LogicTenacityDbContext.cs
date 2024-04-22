@@ -288,7 +288,7 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<TaskCategory>().HasData(
-                new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
+                new TaskCategory { TaskCategoryID = 1, CategoryName = "None", IsDefault = true}
             );
             
             modelBuilder.Entity<TaskActivityType>().HasData(

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.ProjectTaskStatus;
@@ -26,6 +27,7 @@ public partial class ProjectController
         return Ok(taskStatusDTOS);
     }
 
+    [Authorize]
     [HttpPost("{projectId}/TaskStatus")]
     public async Task<IActionResult> AddTaskStatus(int projectId, AddTaskStatusRequest addTaskStatusRequest)
     {
@@ -72,6 +74,7 @@ public partial class ProjectController
         return Ok(taskStatusDTO);
     }
 
+    [Authorize]
     [HttpDelete("{projectId}/TaskStatus/{taskStatusId}")]
     public async Task<IActionResult> DeleteTaskStatus(int projectId, int taskStatusId)
     {
@@ -111,6 +114,7 @@ public partial class ProjectController
 
     }
 
+    [Authorize]
     [HttpPut("{projectId}/TaskStatus/{taskStatusId}")]
     public async Task<IActionResult> UpdateTaskStatus(int projectId, int taskStatusId, UpdateTaskStatusRequest updateTaskStatusRequest)
     {
