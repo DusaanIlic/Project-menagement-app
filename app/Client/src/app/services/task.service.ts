@@ -120,4 +120,8 @@ export class TaskService {
   getDependantTasks(taskId: number) {
     return this.http.get(`${TASK_API}/${taskId}/DependentTasks`);
   }
+
+  changeTaskDates(taskId: number, startDate: Date, deadline: Date) {
+    return this.http.put(`${TASK_API}/${taskId}/ChangeDates`, { startDate, deadline });
+  }
 }

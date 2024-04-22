@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
-  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttDragEvent, GanttPrintService, GanttSelectedEvent,
+  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttDragEvent, GanttItem, GanttPrintService, GanttSelectedEvent,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -20,6 +20,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
 import {FormsModule} from "@angular/forms";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-project-gantt',
@@ -98,7 +99,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   selectedViewType: GanttViewType = GanttViewType.day;
 
   constructor(private route: ActivatedRoute, private taskService: TaskService,
-              private matDialog: MatDialog) { }
+              private matDialog: MatDialog, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -161,6 +162,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       };
     });
 
+    console.log(this.ganttTasks);
+
     this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
       return {
         id: String(taskCategory.taskCategoryID),
@@ -205,6 +208,29 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   dragEnded(event: GanttDragEvent) {
-    
+    if (event.item.id && event.item.start && event.item.end) {
+      const taskId = Number(event.item.id);
+      const startTimestamp = event.item.start * 1000;
+      const endTimestamp = event.item.end * 1000;
+
+      // Create UTC dates
+      const utcStartDate = new Date(startTimestamp);
+      const utcEndDate = new Date(endTimestamp);
+
+      // Set the timezone offset to 0 to get the UTC time
+      utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
+      utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
+
+      console.log(`UTC Start Date: ${utcStartDate.toISOString()}, UTC End Date: ${utcEndDate.toISOString()}`);
+
+      this.taskService.changeTaskDates(taskId, utcStartDate, utcEndDate).subscribe({
+        next: data => {
+          this.snackBar.open('Successfully changed task date!', 'Close', { duration: 1500 });
+        },
+        error: error => {
+          this.snackBar.open('Failed changing task date!', 'Close', { duration: 1500 });
+        }
+      });
+    }
   }
 }

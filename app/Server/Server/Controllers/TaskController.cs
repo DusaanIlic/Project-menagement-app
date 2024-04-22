@@ -277,10 +277,14 @@ namespace Server.Controllers
                 return NotFound(new {message = "Task not found"});
             }
 
+            if (changeTaskDatesRequest.startDate > changeTaskDatesRequest.deadline)
+            {
+                return BadRequest(new { message = "Start date can't be greater than deadline" });
+            }
+
             projectTask.StartDate = changeTaskDatesRequest.startDate;
             projectTask.Deadline = changeTaskDatesRequest.deadline;
-
-          
+            
             dbContext.ProjectTasks.Update(projectTask);
             await dbContext.SaveChangesAsync();
 
