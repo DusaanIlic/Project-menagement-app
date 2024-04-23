@@ -1,4 +1,17 @@
-<div class="p-2">
-  <button mat-raised-button color="primary" (click)="addMembersToProjects()" type="button">Add members to project</button>
+<div class="p-5 w-1/2">
 
+  <mat-accordion>
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+            <p class="text-3xl">{{projectDetails.projectName}}</p>
+            <mat-icon>add</mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+        <div>
+          <p class="text-xl">{{projectDetails.projectDescription}}</p>  
+        </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
+
