@@ -6,7 +6,7 @@ import {
   GanttItem,
   GanttLinkDragEvent,
   GanttPrintService,
-  GanttSelectedEvent,
+  GanttSelectedEvent, GanttTableDragEnterPredicateContext,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -153,36 +153,41 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   private mapTasksToGanttItems(): void {
-    this.ganttTasks = this.tasks.map((task: Task) => {
-      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
-      const links = dependentTaskIds.length ? dependentTaskIds : undefined;
+    this.ganttTasks = this.taskCategories.map((taskCategory: any) => {
+      const tasks = this.tasks.filter((task: { taskCategoryId: any; }) => task.taskCategoryId == taskCategory.taskCategoryID);
 
-      console.log(`Task ${task.taskId}: ${links}`);
+      const children = tasks.map((task: Task) => {
+        const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
+        const links = dependentTaskIds.length ? dependentTaskIds : undefined;
+
+        return {
+          id: String(task.taskId),
+          title: task.taskName,
+          start: new Date(task.startDate).getTime(),
+          end: new Date(task.deadline).getTime(),
+          links: links,
+          progress: 100, // Call your progress calculation method,
+          itemDraggable: true,
+          linkable: true
+        };
+      });
+
+      const currTime = new Date().getTime();
 
       return {
-        id: String(task.taskId),
-        title: task.taskName,
-        start: new Date(task.startDate).getTime(),
-        end: new Date(task.deadline).getTime(),
-        color: '#3F51B5',
-        group_id: String(task.taskCategoryId),
-        links: links,
-        progress: this.calculateProgress(task), // Call your progress calculation method,
-        itemDraggable: false,
-        linkable: true
-      };
-    });
-
-    this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
-      return {
-        id: String(taskCategory.taskCategoryID),
-        title: taskCategory.categoryName,
-        expanded: true
+        id: `C${taskCategory.taskCategoryID}`,
+        title: taskCategory.taskCategoryID == 1 ? '' : taskCategory.categoryName,
+        start: currTime + 100000000,
+        end: currTime - 1000000000,
+        children: children,
+        expanded: true,
+        linkable: false,
+        itemDraggable: true,
+        draggable: false
       };
     });
 
     console.log(this.ganttTasks);
-    console.log(this.ganttCategories);
 
     this.startRendering = true;
   }
@@ -205,10 +210,18 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   selectedChange(event: GanttSelectedEvent) {
+    if (event.current && event.current.id.includes('C')) {
+      return;
+    }
+
     event.current && this.ganttComponent.scrollToDate(event.current?.start);
   }
 
   barClick($event: GanttBarClickEvent) {
+    if ($event.item.id.includes('C')) {
+      return;
+    }
+
     this.openTaskOverview(Number($event.item.id));
   }
 
@@ -268,4 +281,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       });
     }
   }
+
+  dropEnterPredicate = (event: GanttTableDragEnterPredicateContext) => {
+    return event.dropPosition !== 'inside';
+  };
 }

@@ -18,10 +18,8 @@
   </div>
 
   <ngx-gantt *ngIf="startRendering" #gantt
-             [groups]="ganttCategories"
              [items]="ganttTasks"
              [viewType]="viewType"
-             [maxLevel]="1"
              [draggable]="true"
              [selectable]="true"
              [multiple]="true"
@@ -31,14 +29,11 @@
              (dragEnded)="dragEnded($event)"
              (linkDragEnded)="linkEnded($event)">
 
-    <ngx-gantt-table [draggable]="true">
+    <ngx-gantt-table [draggable]="true"
+                     [dropEnterPredicate]="dropEnterPredicate">
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>
     </ngx-gantt-table>
-
-    <ng-template #bar let-item="item">
-      <span style="color: #fff">&nbsp;&nbsp;{{ item.title }} </span>
-    </ng-template>
   </ngx-gantt>
 </div>
