@@ -8,11 +8,14 @@ import { AddMembersToProjectComponent } from "../add-members-to-project/add-memb
 import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MemberInfoComponent } from '../member-info/member-info.component';
+import { Member } from '../../models/member';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -21,6 +24,7 @@ export class ProjectOverviewComponent implements OnInit {
   routeSub: any;
   projectId: number = 0;
   projectDetails: any; 
+  teamLeaderInfo: any;
 
   constructor(
     public dialog: MatDialog,
@@ -35,6 +39,22 @@ export class ProjectOverviewComponent implements OnInit {
       this.projectId = this.getProjectIdFromUrl(params);
       this.getProjectDetails(); 
     });
+    this.getTeamLeaderInfo(this.projectId);
+  }
+
+  getTeamLeaderInfo(projectId: number): void {
+    this.pService.getProjectById(projectId)
+      .subscribe((projectData: any) => {
+        const teamLeader = projectData.teamLider;
+        if (teamLeader) {
+          console.log('Informacije o tim lideru:', teamLeader);
+          this.teamLeaderInfo = teamLeader;
+        } else {
+          console.error('Nije pronađen tim lider za dati projekat.');
+        }
+      }, error => {
+        console.error('Greška prilikom dobijanja podataka o projektu:', error);
+      });
   }
 
   addMembersToProjects() {
@@ -65,5 +85,15 @@ export class ProjectOverviewComponent implements OnInit {
 
   private getProjectIdFromUrl(params: any): number {
     return params['id'] ? +params['id'] : 0;
+  }
+
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
   }
 }
