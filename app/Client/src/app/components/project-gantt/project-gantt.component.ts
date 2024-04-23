@@ -153,7 +153,9 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   private mapTasksToGanttItems(): void {
-    this.ganttTasks = this.taskCategories.map((taskCategory: any) => {
+    this.ganttTasks = this.taskCategories
+      .filter((taskCategory: { taskCategoryID: number; }) => taskCategory.taskCategoryID !== 1)
+      .map((taskCategory: any) => {
       const tasks = this.tasks.filter((task: { taskCategoryId: any; }) => task.taskCategoryId == taskCategory.taskCategoryID);
 
       const children = tasks.map((task: Task) => {
@@ -186,6 +188,27 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         draggable: false
       };
     });
+
+    // Taskovi koji nemaju kategoriju
+    const tasks = this.tasks
+      .filter((task: Task) => task.taskCategoryId == 1)
+      .map((task: Task) => {
+      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
+      const links = dependentTaskIds.length ? dependentTaskIds : undefined;
+
+      return {
+        id: String(task.taskId),
+        title: task.taskName,
+        start: new Date(task.startDate).getTime(),
+        end: new Date(task.deadline).getTime(),
+        links: links,
+        progress: 100, // Call your progress calculation method,
+        itemDraggable: true,
+        linkable: true
+      };
+    });
+
+    this.ganttTasks = [...this.ganttTasks, ...tasks];
 
     console.log(this.ganttTasks);
 
