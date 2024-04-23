@@ -16,40 +16,51 @@
 </div>
 
 <div class="flex flex-row justify-evenly">
-  <div class="basis-1/4">
+  <div class="basis-1/5">
     <mat-card class="example-card" *ngIf="teamLeaderInfo">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
             <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
             <mat-card-subtitle>Project Manager</mat-card-subtitle>          
-          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
+          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
         </mat-card-title-group>
       </mat-card-header>
     </mat-card>
   </div>
 
-  <div class="basis-1/4">
+  <div class="basis-1/5">
     <mat-card class="example-card" *ngIf="projectDetails">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
           <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
           <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
-          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2">
+          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
         </mat-card-title-group>
       </mat-card-header>
     </mat-card>    
   </div>
 
-  <div class="basis-1/4">
+  <div class="basis-1/5">
     <mat-card class="example-card" *ngIf="numberOfMembers !== null">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
           <mat-card-title>{{ numberOfMembers }}</mat-card-title>
           <mat-card-subtitle>Number of assignees on project</mat-card-subtitle>
-          <img mat-card-sm-image src="../../../assets/icons/employee_id_icon.png" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2 p-1">
+          <img mat-card-sm-image src="../../../assets/icons/employee_id_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2 p-1">
         </mat-card-title-group>
       </mat-card-header>
     </mat-card>
-     
+  </div>
+
+  <div class="basis-1/5">
+    <mat-card class="example-card" *ngIf="numberOfTasks !== null">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title>{{ numberOfTasks }}</mat-card-title>
+          <mat-card-subtitle>Number of tasks on project</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/task_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2 p-1">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
   </div>
 </div>

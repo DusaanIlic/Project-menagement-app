@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import { Member } from '../../models/member';
+import { Task } from '../../models/task';
 
 @Component({
   selector: 'app-project-overview',
@@ -27,6 +28,8 @@ export class ProjectOverviewComponent implements OnInit {
   teamLeaderInfo: any;
   members : Member[] = [];
   numberOfMembers: number = 0;
+  tasks: Task[] = [];
+  numberOfTasks: number = 0;
 
   constructor(
     public dialog: MatDialog,
@@ -42,6 +45,7 @@ export class ProjectOverviewComponent implements OnInit {
       this.getProjectDetails(); 
     });
     this.fetchMembersOnProject();
+    this.loadTasksByProject(this.projectId);
     this.getTeamLeaderInfo(this.projectId);
   }
 
@@ -60,6 +64,15 @@ export class ProjectOverviewComponent implements OnInit {
       this.numberOfMembers = this.members.length;
       console.log(data);
     })
+  }
+
+  loadTasksByProject(projectId: number): void {
+    this.tService.getTasksByProject(projectId).subscribe((data: Task[])=>{
+      this.tasks = data;
+      this.numberOfTasks = this.tasks.length;
+      console.log(this.members);
+    })
+      
   }
 
   getTeamLeaderInfo(projectId: number): void {
