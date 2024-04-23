@@ -42,6 +42,15 @@ export class ProjectOverviewComponent implements OnInit {
     this.getTeamLeaderInfo(this.projectId);
   }
 
+  calculateDaysRemaining(projectEndDate: Date): number {
+    const currentDate = new Date();
+    const endDate = new Date(projectEndDate);
+    const timeDifference = endDate.getTime() - currentDate.getTime();
+    const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    return daysDifference;
+  }
+  
+
   getTeamLeaderInfo(projectId: number): void {
     this.pService.getProjectById(projectId)
       .subscribe((projectData: any) => {

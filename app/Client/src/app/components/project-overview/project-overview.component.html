@@ -1,4 +1,4 @@
-<div class="p-5 w-1/2">
+<div class="p-5 w-1/2 self-center">
 
   <mat-accordion *ngIf="projectDetails">
     <mat-expansion-panel hideToggle>
@@ -19,17 +19,24 @@
   <div class="basis-1/4">
     <mat-card class="example-card" *ngIf="teamLeaderInfo">
       <mat-card-header>
-        <mat-card-title-group>
-          <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
-          <mat-card-subtitle>Project Manager</mat-card-subtitle>
+        <mat-card-title-group class="pb-3">
+            <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
+            <mat-card-subtitle>Project Manager</mat-card-subtitle>          
           <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
         </mat-card-title-group>
       </mat-card-header>
-      <mat-card-content>
-        <div class="flex flex-row justify-center">
-         {{teamLeaderInfo.email}}
-        </div>
-      </mat-card-content>
     </mat-card>
+  </div>
+
+  <div class="basis-1/4">
+    <mat-card class="example-card" *ngIf="projectDetails">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} dana</p></mat-card-title>
+          <mat-card-subtitle>Preostalo dana do završetka projekta</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>    
   </div>
 </div>
