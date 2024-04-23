@@ -326,9 +326,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 19, Name = "Comment task" },
                 new ProjectPermission { Id = 20, Name = "Change project priority" },
                 new ProjectPermission { Id = 21, Name = "Change task category" },
-                new ProjectPermission { Id = 22, Name = "Remove task category" },
-                new ProjectPermission { Id = 23, Name = "Add task status" },
-                new ProjectPermission { Id = 24, Name = "Remove task status" }
+                new ProjectPermission { Id = 22, Name = "Add task status" },
+                new ProjectPermission { Id = 23, Name = "Remove task status" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
