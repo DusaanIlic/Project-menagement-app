@@ -32,11 +32,24 @@
     <mat-card class="example-card" *ngIf="projectDetails">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
-          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} dana</p></mat-card-title>
-          <mat-card-subtitle>Preostalo dana do završetka projekta</mat-card-subtitle>
+          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
+          <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
           <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2">
         </mat-card-title-group>
       </mat-card-header>
     </mat-card>    
+  </div>
+
+  <div class="basis-1/4">
+    <mat-card class="example-card" *ngIf="numberOfMembers !== null">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title>{{ numberOfMembers }}</mat-card-title>
+          <mat-card-subtitle>Number of assignees on project</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/employee_id_icon.png" class="hidden border-solid border-black border-2 xl:w-10 xl:h-10 xl:inline ml-2 p-1">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
+     
   </div>
 </div>

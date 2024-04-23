@@ -25,6 +25,8 @@ export class ProjectOverviewComponent implements OnInit {
   projectId: number = 0;
   projectDetails: any; 
   teamLeaderInfo: any;
+  members : Member[] = [];
+  numberOfMembers: number = 0;
 
   constructor(
     public dialog: MatDialog,
@@ -39,6 +41,7 @@ export class ProjectOverviewComponent implements OnInit {
       this.projectId = this.getProjectIdFromUrl(params);
       this.getProjectDetails(); 
     });
+    this.fetchMembersOnProject();
     this.getTeamLeaderInfo(this.projectId);
   }
 
@@ -50,6 +53,14 @@ export class ProjectOverviewComponent implements OnInit {
     return daysDifference;
   }
   
+  fetchMembersOnProject()
+  {
+    this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
+      this.members = data;
+      this.numberOfMembers = this.members.length;
+      console.log(data);
+    })
+  }
 
   getTeamLeaderInfo(projectId: number): void {
     this.pService.getProjectById(projectId)
