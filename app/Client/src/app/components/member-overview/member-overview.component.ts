@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { taskPriority } from '../../models/taskPriority';
 import { switchMap } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {environment} from "../../../environments/environment";
 
 
@@ -53,50 +53,59 @@ export class MemberOverviewComponent implements OnInit{
   p? : Project;
   projects : Project[] = [];
   tasks : Task[] = [];
-  mRole : string = "";
 
-  ngOnInit() {
-    this.routeSub = this.route.params.subscribe(params => {
-      this.member.id = params['id'];
+  ngOnInit()
+  {
+    this.routeSub = this.route.params.pipe(
+      switchMap(params => {
+        this.member.id = params['id'];
 
-      this.mService.getMemberById(this.member.id).subscribe(
-        {
-          next : data =>{
-            this.member = data;
-          },
-          error : error =>{
-            console.log("Member not found!")
-          }
-        }
-      )
+        this.mService.getMemberById(this.member.id).subscribe(
+          (member =>{
+            this.member = member;
+          })
+        )
 
-      this.tService.getTasksByMember(this.member.id).subscribe(
-        {
-          next : data => {
-            console.log((data))
-            this.tasks = data;
-            for(let i=0;i<this.tasks.length;i++)
-              {
+        return this.tService.getTasksByMember(this.member.id).pipe(
+          switchMap(tasks => {
+            this.tasks = tasks;
 
-                this.pService.getProjectById(this.tasks[i].projectId).subscribe((project : Project) => {
-                  //console.log(project)
-                  this.tasks[i].projectName = project.projectName;
-                })
-               // console.log("i:",i)
-                this.tService.getTaskPriority(this.tasks[i].taskPriorityId).subscribe((data : any) =>{
-                 // console.log(data);
-                  this.tasks[i].taskPriorityName = data.name;
-                 // console.log("i:",i)
-                })
-              }
-          },
-          error : error =>{
-            console.log("Empty")
-          }
-        }
-      )
-   })
-}
+            const observables = [];
+
+            for (let i = 0; i < tasks.length; i++) {
+              const projectObservable = this.pService.getProjectById(tasks[i].projectId);
+              const taskPriorityObservable = this.tService.getTaskPriority(tasks[i].taskPriorityId);
+
+              observables.push(projectObservable);
+              observables.push(taskPriorityObservable);
+            }
+
+            return forkJoin(observables).pipe(
+              switchMap((results : any) => {
+                // Use results to update tasks
+                for (let i = 0; i < tasks.length; i++) {
+                  const projectIndex = i * 2;
+                  tasks[i].projectName = results[projectIndex].projectName;
+
+                  const taskPriorityIndex = projectIndex + 1;
+                  tasks[i].taskPriorityName = results[taskPriorityIndex].name;
+                }
+
+                return tasks;
+              })
+            );
+          })
+        );
+      })
+    ).subscribe({
+      next: tasks => {
+        console.log(tasks);
+      },
+      error: error => {
+        console.error(error)
+      }
+    });
+  }
 
 
 

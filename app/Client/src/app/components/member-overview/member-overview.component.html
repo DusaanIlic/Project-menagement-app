@@ -82,11 +82,12 @@
                             <th class="text-left w-20"></th>
                         </tr>
 
-                        <tr *ngIf="tasks.length == 0">
-                            <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No projects.</td>
+                        <tr *ngIf="tasks.length == undefined">
+                            <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No tasks for this member.</td>
                         </tr>
 
-                        <tr *ngFor="let task of tasks; index as i" class="border-[1px] border-gray-500 hover:bg-gray-300">
+                        <tbody *ngIf="tasks.length != undefined">
+                          <tr *ngFor="let task of tasks; index as i" class="border-[1px] border-gray-500 hover:bg-gray-300">
                             <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{task.projectName}}</td>
                             <td class="w-60 border-t-[1px] border-t-gray-300 ">{{task.taskName}}</td>
                             <td class="w-60 border-t-[1px] border-t-gray-300">{{task.deadline | date}}</td>
@@ -99,7 +100,8 @@
                               <button mat-menu-item (click)="openDialog(task)">View</button>
                               <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black">Delete</button>
                             </mat-menu>
-                        </tr>
+                          </tr>
+                        </tbody>
                 </div>
                 </div>
             </div>
