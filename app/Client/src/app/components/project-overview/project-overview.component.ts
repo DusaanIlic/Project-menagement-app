@@ -12,11 +12,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import { Member } from '../../models/member';
 import { Task } from '../../models/task';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -30,6 +31,7 @@ export class ProjectOverviewComponent implements OnInit {
   numberOfMembers: number = 0;
   tasks: Task[] = [];
   numberOfTasks: number = 0;
+  taskStatusData: any[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -47,6 +49,7 @@ export class ProjectOverviewComponent implements OnInit {
     this.fetchMembersOnProject();
     this.loadTasksByProject(this.projectId);
     this.getTeamLeaderInfo(this.projectId);
+    this.fetchTaskStatusData();
   }
 
   calculateDaysRemaining(projectEndDate: Date): number {
@@ -118,6 +121,28 @@ export class ProjectOverviewComponent implements OnInit {
 
   private getProjectIdFromUrl(params: any): number {
     return params['id'] ? +params['id'] : 0;
+  }
+
+  fetchTaskStatusData() {
+    this.tService.getTasksByProject(this.projectId).subscribe((tasks: Task[]) => {
+      const statusCounts = this.countTasksByStatus(tasks);
+      this.taskStatusData = Object.entries(statusCounts).map(([status, count]) => ({
+        name: status,
+        value: count
+      }));
+    });
+  }
+
+  countTasksByStatus(tasks: Task[]): { [status: string]: number } {
+    const statusCounts: { [status: string]: number } = {};
+    tasks.forEach(task => {
+      if (statusCounts[task.taskStatus]) {
+        statusCounts[task.taskStatus]++;
+      } else {
+        statusCounts[task.taskStatus] = 1;
+      }
+    });
+    return statusCounts;
   }
 
   openMemberInfoDialog(member: Member): void {
