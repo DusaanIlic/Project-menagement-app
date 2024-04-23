@@ -280,6 +280,53 @@ namespace Server.Controllers
 
             return Ok(tasksDTO);
         }
+        
+        [Authorize]
+        [HttpPut("{id}/ChangeDates")]
+        public async Task<IActionResult> ChangeTaskDates(int id, ChangeTaskDatesRequest changeTaskDatesRequest)
+        {
+            var projectTask = await dbContext.ProjectTasks
+                .Include(ts => ts.TaskStatus)
+                .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
+                .FirstOrDefaultAsync(t => t.TaskId == id);
+
+            if (projectTask == null)
+            {
+                return NotFound(new {message = "Task not found"});
+            }
+
+            if (changeTaskDatesRequest.startDate > changeTaskDatesRequest.deadline)
+            {
+                return BadRequest(new { message = "Start date can't be greater than deadline" });
+            }
+
+            projectTask.StartDate = changeTaskDatesRequest.startDate;
+            projectTask.Deadline = changeTaskDatesRequest.deadline;
+            
+            dbContext.ProjectTasks.Update(projectTask);
+            await dbContext.SaveChangesAsync();
+
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
+
+            var tasksDTO = new ProjectTaskDTO
+            {
+                Deadline = projectTask.Deadline,
+                ProjectId = projectTask.ProjectId,
+                TaskDescription = projectTask.TaskDescription,
+                TaskId = projectTask.TaskId,
+                TaskName = projectTask.TaskName,
+                TaskStatusId = projectTask.TaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
+                StartDate = projectTask.StartDate,
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = projectTask.TaskCategoryId
+            };
+
+            return Ok(tasksDTO);
+        }
 
         [Authorize]
         [HttpDelete("{id}")]
@@ -760,10 +807,10 @@ namespace Server.Controllers
                 .Select(td => td.DependentTaskId)
                 .ToListAsync();
 
-            if (dependentTaskIds == null || dependentTaskIds.Count == 0)
-            {
-                return NotFound(new { message = "Specified task has no dependent tasks" });
-            }
+            // if (dependentTaskIds == null || dependentTaskIds.Count == 0)
+            // {
+            //     return NotFound(new { message = "Specified task has no dependent tasks" });
+            // }
 
             var dependentTasks = await dbContext.ProjectTasks
                 .Where(pt => dependentTaskIds.Contains(pt.TaskId))

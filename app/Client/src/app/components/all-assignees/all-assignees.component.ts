@@ -20,6 +20,7 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
 
 @Component({
   selector: 'app-all-assignees',

@@ -14,6 +14,7 @@ export interface Task
     taskPriorityName : string,
     taskStatusId : number,
     taskPriorityId : number,
-    taskCategoryId : number
-    assignedMembers: Member[]
+    taskCategoryId : number,
+    assignedMembers: Member[],
+    dependentTasks?: any,
 }

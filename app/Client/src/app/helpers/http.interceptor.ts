@@ -24,6 +24,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
         console.log('Caught unauthorized error, attempting to refresh token...');
+        console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
 
         return authService.refreshJwtToken().pipe(
           switchMap((data) => {

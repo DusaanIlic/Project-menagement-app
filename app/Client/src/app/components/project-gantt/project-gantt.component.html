@@ -1,0 +1,38 @@
+<div class="flex flex-col justify-center h-[100%] border-[1px]">
+  <div class="p-4 flex gap-4 items-center justify-center">
+    <div class="flex gap-4 border-[1px] p-2">
+      <p class="flex justify-center items-center">Show:</p>
+      <mat-radio-group [(ngModel)]="selectedViewType" color="primary">
+        <mat-radio-button *ngFor="let view of views" [value]="view.value" (click)="selectView(view.value)">
+          {{ view.name }}
+        </mat-radio-button>
+      </mat-radio-group>
+
+      <button mat-raised-button color="primary" (click)="scrollToToday()">Scroll to today</button>
+    </div>
+
+
+    <span class="grow"></span>
+
+    <!--    <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>-->
+  </div>
+
+  <ngx-gantt *ngIf="startRendering" #gantt
+             [items]="ganttTasks"
+             [viewType]="viewType"
+             [draggable]="true"
+             [selectable]="true"
+             [multiple]="true"
+             [linkable]="true"
+             (barClick)="barClick($event)"
+             (selectedChange)="selectedChange($event)"
+             (dragEnded)="dragEnded($event)"
+             (linkDragEnded)="linkEnded($event)">
+
+    <ngx-gantt-table>
+      <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
+        <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
+      </ngx-gantt-column>
+    </ngx-gantt-table>
+  </ngx-gantt>
+</div>

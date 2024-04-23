@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 69, DateTimeKind.Local).AddTicks(1221),
+                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 556, DateTimeKind.Local).AddTicks(3264),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$QVo4Bo2Xct40Hud7Wg/1M.6PZBXXoWqKNwGuH6kewBiSjeXH2iBLG",
+                            Password = "$2a$10$oAuGVQp1xlV2KM/3U.o8IethMdf78AzH8V.yz1pGc9XqwDwBGbs/e",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 223, DateTimeKind.Local).AddTicks(1027),
+                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 618, DateTimeKind.Local).AddTicks(6469),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$m7ybYhVB/O8XR3N04YO8U.7zT56GCA0K1MpX6JjIbaOcgcDWYimVK",
+                            Password = "$2a$10$52KO9gcoZVvypvhm7Q/M/uVFqskgEuoY0TF0aH1tErbI.MUDK8Mom",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 22, 15, 43, 42, 379, DateTimeKind.Local).AddTicks(6732),
+                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 681, DateTimeKind.Local).AddTicks(2751),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$pFrByBa/OybsTlcJfh617OZ2sooz5XZJ4r4jYOS9ntkgUuPpwaOsy",
+                            Password = "$2a$10$oj0jFu/3vsL9ZEhpRat98.aRFFqv37DMHXlqLThXbO98FbhC3l.PS",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -387,11 +387,6 @@ namespace Server.Migrations
                         {
                             Id = 14,
                             Name = "Add task category"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Name = "Remove task category"
                         },
                         new
                         {

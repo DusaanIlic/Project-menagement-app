@@ -177,7 +177,7 @@ namespace Server.Data
                  .HasKey(mp => new { mp.MemberId, mp.ProjectId });
 
             modelBuilder.Entity<MemberProject>()
-                .HasOne(mp => mp.Member)
+                .HasOne(mp => mp.Member)    
                 .WithMany(m => m.MemberProjects)
                 .HasForeignKey(mp => mp.MemberId);
 
@@ -319,7 +319,6 @@ namespace Server.Data
                 new ProjectPermission { Id = 12, Name = "Add task dependency" },
                 new ProjectPermission { Id = 13, Name = "Remove task dependency" },
                 new ProjectPermission { Id = 14, Name = "Add task category" },
-                new ProjectPermission { Id = 15, Name = "Remove task category" },
                 new ProjectPermission { Id = 16, Name = "Change task" },
                 new ProjectPermission { Id = 17, Name = "Add task activity" },
                 new ProjectPermission { Id = 18, Name = "Remove task acitivity" },

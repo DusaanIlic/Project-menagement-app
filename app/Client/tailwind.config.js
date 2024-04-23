@@ -2,7 +2,6 @@
 module.exports = {
   content: [
     "./src/**/*.{html,ts}",
-    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {
@@ -13,10 +12,10 @@ module.exports = {
         "accent-blue": "#0E2954",
         "background": "#EBF3FF"
       },
+      screens: {
+        'sm': '600px'
+      }
     },
   },
-  plugins: [
-    require('flowbite/plugin')
-  ],
 }
 

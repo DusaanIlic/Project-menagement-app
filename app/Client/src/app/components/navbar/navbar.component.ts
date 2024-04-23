@@ -1,6 +1,6 @@
-import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {ActivatedRoute, RouterLink, RouterLinkActive} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
 import {MemberService} from "../../services/member.service";
@@ -9,6 +9,7 @@ import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDivider} from "@angular/material/divider";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-navbar',
@@ -32,7 +33,6 @@ import {MatDivider} from "@angular/material/divider";
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent implements OnInit {
-  visible: boolean = false;
   member: Member | null | undefined;
   avatarUrl: string | undefined;
 
@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit {
     { link: '/members/all', text: 'Members', icon: 'person' },
   ];
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.authService.getAuthenticatedMember().subscribe(member => {
@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
 
     this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
       this.avatarUrl = avatarUrl;
-    })
+    });
   }
 
   logout() {

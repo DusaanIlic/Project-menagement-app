@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, RouterLink, RouterOutlet} from "@angular/router";
+import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/material/sidenav";
 import {MatListItem, MatNavList} from "@angular/material/list";
 import {NgForOf, NgIf} from "@angular/common";
@@ -20,7 +20,8 @@ import {MatDivider} from "@angular/material/divider";
     MatSidenavContent,
     RouterLink,
     MatDivider,
-    NgIf
+    NgIf,
+    RouterLinkActive
   ],
   templateUrl: './project.component.html',
   styleUrl: './project.component.scss'
