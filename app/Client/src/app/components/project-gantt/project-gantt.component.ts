@@ -1,6 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
-  GANTT_GLOBAL_CONFIG, GanttBarClickEvent, GanttDragEvent, GanttItem, GanttPrintService, GanttSelectedEvent,
+  GANTT_GLOBAL_CONFIG,
+  GanttBarClickEvent,
+  GanttDragEvent,
+  GanttItem,
+  GanttLinkDragEvent,
+  GanttPrintService,
+  GanttSelectedEvent,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -21,6 +27,7 @@ import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {AddTaskComponent} from "../add-task/add-task.component";
 
 @Component({
   selector: 'app-project-gantt',
@@ -158,19 +165,23 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         group_id: String(task.taskCategoryId),
         progress: this.calculateProgress(task), // Call your progress calculation method
         links: dependentTaskIds,
-        itemDraggable: false
+        itemDraggable: false,
+        linkable: true
       };
     });
 
     console.log(this.ganttTasks);
 
-    this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
-      return {
-        id: String(taskCategory.taskCategoryID),
-        title: taskCategory.categoryName,
-        expanded: true
-      }
-    });
+    // Only create categories excluding the "None" category
+    this.ganttCategories = this.taskCategories
+      .filter((taskCategory: { taskCategoryID: number; }) => taskCategory.taskCategoryID !== 1)
+      .map((taskCategory: any) => {
+        return {
+          id: String(taskCategory.taskCategoryID),
+          title: taskCategory.categoryName,
+          expanded: true
+        };
+      });
 
     this.startRendering = true;
   }
@@ -197,13 +208,20 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   barClick($event: GanttBarClickEvent) {
-    this.openDialog(Number($event.item.id));
+    this.openTaskOverview(Number($event.item.id));
   }
 
-  openDialog(taskId: number): void {
+  openTaskOverview(taskId: number): void {
     const dialogRef = this.matDialog.open(TaskOverviewComponent, {
       width: '250px',
       data: taskId
+    });
+  }
+
+  openAddTask() {
+    const dialogRef = this.matDialog.open(AddTaskComponent, {
+      width: '500px',
+      data: { projectId: this.projectId}
     });
   }
 
@@ -232,5 +250,9 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  linkEnded($event: GanttLinkDragEvent<unknown>) {
+
   }
 }
