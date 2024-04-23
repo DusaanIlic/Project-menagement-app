@@ -6,7 +6,7 @@ import {
   GanttItem,
   GanttLinkDragEvent,
   GanttPrintService,
-  GanttSelectedEvent, GanttTableDragEnterPredicateContext,
+  GanttSelectedEvent, GanttTableDragEndedEvent, GanttTableDragEnterPredicateContext,
   GanttToolbarOptions,
   GanttViewType,
   NgxGanttComponent,
@@ -168,9 +168,11 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
           start: new Date(task.startDate).getTime(),
           end: new Date(task.deadline).getTime(),
           links: links,
+          color: '#3F51B5',
           progress: 100, // Call your progress calculation method,
           itemDraggable: true,
-          linkable: true
+          linkable: true,
+          parent: { id: `C${taskCategory.taskCategoryID}` } // Reference to parent
         };
       });
 
@@ -201,16 +203,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         title: task.taskName,
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
+        color: '#3F51B5',
         links: links,
         progress: 100, // Call your progress calculation method,
         itemDraggable: true,
-        linkable: true
+        linkable: true,
+        parent: { id: 'uncategorized' } // Reference to parent
       };
     });
 
     this.ganttTasks = [...this.ganttTasks, ...tasks];
-
-    console.log(this.ganttTasks);
 
     this.startRendering = true;
   }
@@ -304,8 +306,4 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       });
     }
   }
-
-  dropEnterPredicate = (event: GanttTableDragEnterPredicateContext) => {
-    return event.dropPosition !== 'inside';
-  };
 }
