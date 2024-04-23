@@ -124,4 +124,8 @@ export class TaskService {
   changeTaskDates(taskId: number, startDate: Date, deadline: Date) {
     return this.http.put(`${TASK_API}/${taskId}/ChangeDates`, { startDate, deadline });
   }
+
+  addTaskDependency(taskId: number, dTaskId: number) {
+    return this.http.post(`${TASK_API}/${taskId}/dependency/${dTaskId}`, null);
+  }
 }

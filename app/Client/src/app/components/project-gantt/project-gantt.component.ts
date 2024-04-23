@@ -139,6 +139,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       next: ({ tasks, taskCategories }) => {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
+
         this.mapTasksToGanttItems();
       },
       error: error => {
@@ -147,8 +148,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     });
   }
 
-
-
   ngOnDestroy() {
     this.routeSubscription.unsubscribe();
   }
@@ -156,32 +155,34 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   private mapTasksToGanttItems(): void {
     this.ganttTasks = this.tasks.map((task: Task) => {
       const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
+      const links = dependentTaskIds.length ? dependentTaskIds : undefined;
+
+      console.log(`Task ${task.taskId}: ${links}`);
 
       return {
         id: String(task.taskId),
         title: task.taskName,
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
+        color: '#3F51B5',
         group_id: String(task.taskCategoryId),
-        progress: this.calculateProgress(task), // Call your progress calculation method
-        links: dependentTaskIds,
+        links: links,
+        progress: this.calculateProgress(task), // Call your progress calculation method,
         itemDraggable: false,
         linkable: true
       };
     });
 
-    console.log(this.ganttTasks);
+    this.ganttCategories = this.taskCategories.map((taskCategory: any) => {
+      return {
+        id: String(taskCategory.taskCategoryID),
+        title: taskCategory.categoryName,
+        expanded: true
+      };
+    });
 
-    // Only create categories excluding the "None" category
-    this.ganttCategories = this.taskCategories
-      .filter((taskCategory: { taskCategoryID: number; }) => taskCategory.taskCategoryID !== 1)
-      .map((taskCategory: any) => {
-        return {
-          id: String(taskCategory.taskCategoryID),
-          title: taskCategory.categoryName,
-          expanded: true
-        };
-      });
+    console.log(this.ganttTasks);
+    console.log(this.ganttCategories);
 
     this.startRendering = true;
   }
@@ -252,7 +253,19 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     }
   }
 
-  linkEnded($event: GanttLinkDragEvent<unknown>) {
+  linkEnded(event: GanttLinkDragEvent) {
+    if (event.source && event.target) {
+      const taskId = Number(event.source.id);
+      const dTaskId = Number(event.target.id);
 
+      this.taskService.addTaskDependency(taskId, dTaskId).subscribe({
+        next: data => {
+          this.snackBar.open('Successfully added dependency!', 'Close', { duration: 1500 });
+        },
+        error: error => {
+          this.snackBar.open('Failed adding dependency', 'Close', { duration: 1500 });
+        }
+      });
+    }
   }
 }
