@@ -21,6 +21,7 @@ import {ProjectService} from "../../services/add.project.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
 import { MemberInfoComponent } from '../member-info/member-info.component';
+import {forkJoin, Subscription, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-task-overview',
@@ -59,7 +60,7 @@ export class TaskOverviewComponent implements OnInit{
     lead: this.lead
   };
 
-  
+
     activitiesForThisTask : taskActivity[] = [];
     membersOnThisProject : Member[] = [];
     commentText = "";
@@ -105,72 +106,135 @@ export class TaskOverviewComponent implements OnInit{
 
   ngOnInit()
   {
-    this.tService.getTaskById(this.taskId).subscribe((data : any) => {
-      this.task = data;
-      this.pService.getProjectById(this.task.projectId).subscribe((project : Project) =>{
-        this.project = project;
+    this.show = 'overview';
+    this.taskActivityDesc = "";
+    this.selectedType = "-1"
+
+
+    this.tService.getTaskById(this.taskId).pipe(
+      switchMap(task =>{
+        this.task = task;
+        this.description = this.task.taskDescription;
+        this.descriptionForP = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
+
+        return this.pService.getProjectById(this.task.projectId).pipe(
+          switchMap(project => {
+            this.project = project;
+
+            return this.pService.getMembersByProjectId(this.task.projectId).pipe(
+              switchMap(members =>{
+                this.membersOnThisProject = members
+
+                return this.tService.getTaskActivityType().pipe(
+                  switchMap(data => {
+                    this.allTypes = data;
+
+                    return this.tService.getTaskActivities().pipe(
+                      switchMap(taskActivities =>{
+                        this.activities = taskActivities
+                        console.log(taskActivities)
+                        this.activitiesForThisTask = [];
+
+                        const observables = [];
+
+                        for (let i = 0; i < taskActivities.length; i++) {
+                          const memberObservable = this.mService.getMemberById(this.activities[i].workerId);
+                          const taskObservable = this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId);
+
+                          observables.push(memberObservable);
+                          observables.push(taskObservable);
+                        }
+
+                        return forkJoin(observables).pipe(
+                          switchMap((results : any) => {
+
+                            // Use results to update tasks
+                            for (let i = 0; i < taskActivities.length; i++) {
+
+                              if(this.activities[i].taskId == this.task.taskId)
+                              {
+                                this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
+                                this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+
+                                const memberIndex = i * 2;
+                                this.activities[i].memberName = results[memberIndex].firstName + " " + results[memberIndex].lastName;
+
+                                const taskActivityIndex = memberIndex + 1;
+                                this.activities[i].taskActivityName = results[taskActivityIndex].taskActivityTypeName;
+
+                                this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
+
+                                this.activitiesForThisTask.push(this.activities[i])
+                              }
+
+
+                            }
+                            console.log(this.activities)
+                            return this.activities;
+                          })
+                        );
+                      })
+                    )
+                  })
+                )
+              })
+            )
+          })
+        )
       })
-      this.tService.getTasksDependentOnTaskId(this.task.taskId).subscribe((depTasks : Task[]) =>{
-        this.depTasks = depTasks;
-        console.log(depTasks);
-      })
-      this.fetchMembersOnProject();
-      //console.log(this.task)
-      this.show = 'overview';
-      this.description = this.task.taskDescription;
-      this.descriptionForP = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
-      this.taskActivityDesc = "";
-      this.selectedType = "-1"
-      this.tService.getTaskActivityType().subscribe((data : any) =>{
-        this.allTypes = data;
-        //console.log(data);
-        this.fetchTaskActivities();
-      })
-    })
+    ).subscribe()
   }
 
-  fetchMembersOnProject()
+  fetchTaskActivities() : void
   {
-    this.pService.getMembersByProjectId(this.task.projectId).subscribe((data : Member[]) =>{
-      this.membersOnThisProject = data;
-      console.log(data)
-    })
-  }
-
-
-  fetchTaskActivities()
-  {
-    this.tService.getTaskActivities().subscribe((taskactivities : taskActivity[]) =>
-      {
-        this.activities = taskactivities;
+    this.tService.getTaskActivities().pipe(
+      switchMap(taskActivities =>{
+        this.activities = taskActivities
+        console.log(taskActivities)
         this.activitiesForThisTask = [];
 
-        //this.dateCheck();
-        for(let i=0;i<this.activities.length;i++)
-          {
-            if(this.activities[i].taskId == this.task.taskId)
-            {
-              this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
-              this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+        const observables = [];
 
-            //console.log(this.activities[i].differenceH)
-            //console.log(this.activities[i].differenceM)
+        for (let i = 0; i < taskActivities.length; i++) {
+          const memberObservable = this.mService.getMemberById(this.activities[i].workerId);
+          const taskObservable = this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId);
 
-              this.mService.getMemberById(this.activities[i].workerId).subscribe((member : Member) =>{
-                  this.activities[i].memberName = member.firstName + " " + member.lastName;
-              })
+          observables.push(memberObservable);
+          observables.push(taskObservable);
+        }
 
-              this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId).subscribe((data : any) =>{
-                this.activities[i].taskActivityName = data.taskActivityTypeName;
-              })
-              this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
+        return forkJoin(observables).pipe(
+          switchMap((results : any) => {
 
-              this.activitiesForThisTask.push(this.activities[i])
+            // Use results to update tasks
+            for (let i = 0; i < taskActivities.length; i++) {
+
+              if(this.activities[i].taskId == this.task.taskId)
+              {
+                this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
+                this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
+
+                const memberIndex = i * 2;
+                this.activities[i].memberName = results[memberIndex].firstName + " " + results[memberIndex].lastName;
+
+                const taskActivityIndex = memberIndex + 1;
+                this.activities[i].taskActivityName = results[taskActivityIndex].taskActivityTypeName;
+
+                this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
+
+                this.activitiesForThisTask.push(this.activities[i])
+              }
+
             }
-
-          }
+            console.log(this.activities)
+            return this.activities;
+          })
+        );
       })
+    ).subscribe()
   }
+
+
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -212,7 +276,7 @@ export class TaskOverviewComponent implements OnInit{
       }
 
         showEditor() {
-          this.showEditorForDesc = true;
+          this.showEditorForDesc = !this.showEditorForDesc;
           }
 
 
@@ -231,8 +295,7 @@ export class TaskOverviewComponent implements OnInit{
                 {
                   next : data =>
                     {
-                      console.log(data);
-                      window.location.reload()
+                      this.task = data
                     },
                   error : error =>
                     {

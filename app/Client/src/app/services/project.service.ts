@@ -40,8 +40,8 @@ export class ProjectServiceGet{
     return this.http.get<Project>(`${PROJECT_API}/${id}`);
   }
 
-  getMembersByProjectId(projectId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/members`);
+  getMembersByProjectId(projectId: number): Observable<Member[]> {
+    return this.http.get<Member[]>(`${PROJECT_API}/${projectId}/members`);
   }
 
   getProjectMembers(projectId: number): Observable<Member[]>
