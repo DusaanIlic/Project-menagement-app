@@ -1,0 +1,253 @@
+<div class="flex justify-center">
+  <div class="basis-[95%] flex flex-col gap-4 rounded-t-xl">
+    <div class="flex flex-col gap-4 select-none">
+      <p class="text-accent-blue font-bold text-2xl">Assignees</p>
+
+      <div class="flex gap-10">
+        <div class="flex">
+          <mat-form-field class="w-64" subscriptSizing="dynamic">
+            <mat-label>
+              <div class="flex items-center justify-between gap-2">
+                <p>Search Assignees</p>
+                <mat-icon class="scale-125">search</mat-icon>
+              </div>
+            </mat-label>
+
+            <input matInput>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Sort by</mat-label>
+          <mat-select>
+            <mat-option value="name">Name</mat-option>
+            <mat-option value="priority">Role</mat-option>
+            <mat-option value="dueDate">Date Added</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <span class="grow"></span>
+
+        <div class="flex gap-1">
+          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openRoleDialog()">Manage Project Roles</button>
+          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openDialog()">Add new Assignee</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-accent-blue">
+
+    <div class="flex gap-4 text-accent-blue">
+      <p class="flex items-center justify-center text-accent-blue font-bold">Show only:</p>
+
+      <mat-radio-group [(ngModel)]="selectedTable" name="radio-filter" color="primary">
+        <mat-radio-button class="text-accent-blue" value="t1">All</mat-radio-button>
+        <mat-radio-button class="text-accent-blue" value="t2">Active</mat-radio-button>
+        <mat-radio-button class="text-accent-blue" value="t3">Inactive</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <hr class="border-accent-blue">
+
+    <div class="flex justify-center" *ngIf="selectedTable === 't1'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
+          <th class="text-left w-60">ROLE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">DATE ADDED</th>
+          <th class="text-left w-20"></th>
+        </tr>
+
+        <tr *ngIf="assignees.length === 0">
+          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No assignees.</td>
+        </tr>
+
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr><tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+        <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+        <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+        <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+        <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+        <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+      </tr><tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+        <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+        <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+        <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+        <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+        <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+        <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+      </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of assignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+
+        </tr>
+
+      </div>
+    </div>
+
+
+    <div class="flex justify-center" *ngIf="selectedTable === 't2'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
+          <th class="text-left w-60">ROLE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">DATE ADDED</th>
+          <th class="text-left w-20"></th>
+        </tr>
+
+        <tr *ngIf="activeAssignees.length === 0">
+          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No active assignees.</td>
+        </tr>
+
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of activeAssignees">
+          <td class="w-20 border-t-[1px] border-t-gray-300 p-2"><input type="checkbox" name="" id=""></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Active'" class="w-60 border-t-[1px] border-t-gray-300 "><div class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+        </tr>
+      </div>
+    </div>
+
+
+    <div class="flex justify-center" *ngIf="selectedTable === 't3'">
+      <div class="table border-[1px] border-gray-300 rounded-md">
+        <tr class="">
+          <th class="text-left p-3 w-60">ASSIGNEE</th>
+          <th class="text-left w-60">ROLE</th>
+          <th class="text-left w-60">STATUS</th>
+          <th class="text-left w-60">DATE ADDED</th>
+          <th class="text-left w-20"></th>
+        </tr>
+
+        <tr *ngIf="inactiveAssignees.length === 0">
+          <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">No inactive assignees.</td>
+        </tr>
+
+        <tr class="border-[1px] border-gray-500 hover:bg-gray-300" *ngFor="let assignee of inactiveAssignees">
+          <td class="w-60 border-t-[1px] border-t-gray-300 p-2">{{assignee.firstName}} {{assignee.lastName}}</td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.roleName}}</td>
+          <td *ngIf="assignee.status == 'Inactive'" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">{{assignee.status}}</div></td>
+          <td *ngIf="assignee.status == ''" class="w-60 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b]">Not set</div></td>
+          <td class="w-60 border-t-[1px] border-t-gray-300">{{assignee.dateAdded | date}}</td>
+          <td class="w-10 border-t-[1px] border-t-gray-300"><div class="bg-[#a70000] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#ff7b7b] hover:cursor-pointer" (click)="removeAssignee(assignee)">Remove</div></td>
+        </tr>
+      </div>
+    </div>
+
+
+  </div>
+</div>

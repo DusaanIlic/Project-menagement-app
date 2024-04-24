@@ -1,199 +1,190 @@
-import { Component, Input, OnInit} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit, ViewChild, OnInit} from '@angular/core';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Member } from '../../models/member';
 import {RouterLink} from "@angular/router";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MemberService } from '../../services/member.service';
+import { Role } from '../../models/role';
+import { AddMemberComponent } from '../add-member/add-member.component';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MatDialog } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
+import { MemberInfoComponent } from '../member-info/member-info.component';
+import {RoleOverviewComponent} from "../role-overview/role-overview.component";
+import {environment} from "../../../environments/environment";
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatSort, Sort, MatSortModule} from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatButton} from "@angular/material/button";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormField} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatLabel} from "@angular/material/select";
+import {MatIcon} from "@angular/material/icon";
+
 
 @Component({
-    selector: 'app-all-members',
-    standalone: true,
-    templateUrl: './all-members.component.html',
-    styleUrl: './all-members.component.scss',
-    imports: [CommonModule, RouterLink, FormsModule]
+  selector: 'app-all-members',
+  standalone: true,
+  templateUrl: './all-members.component.html',
+  styleUrl: './all-members.component.scss',
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon],
+  providers: [DatePipe]
 })
-export class AllMembersComponent implements OnInit{
+export class AllMembersComponent implements AfterViewInit{
 
-    members : Member[] = [];
-    member1? : Member;
-    sortByName = true;
-    sortByEmail = true;
-    sortByDate = true;
+  selectedRole: string = '';
+  roles: Role[] = [];
+  members : Member[] = [];
+  filteredMembers: Member[] = [];
+  searchTerm: string = '';
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
-    ngOnInit(): void {
-        this.member1 = {
-            id: 1,
-            fullName: 'AB',
-            email: 'peraperic@gmail.com',
-            role: 'Project Menager',
-            dateAdded : '2024-03-13',
-          };
+  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
+    this.filteredMembers = this.members;
+  }
 
-          this.members?.push(this.member1)
+  ngOnInit(){
+    this.getMembersFromServer();
+    this.getRolesFromServer();
+    this.filterMembersByRole(this.selectedRole);
+    this.selectedRole = 'allMembers';
+  }
 
-          this.member1 = {
-            id: 1,
-            fullName: 'C',
-            email: 'peraperic@gmail.com',
-            role: 'Project Menager',
-            dateAdded : '2024-03-13',
-          };
+  ngAfterViewInit(): void {
 
-          this.members?.push(this.member1)
 
-          this.member1 = {
-            id: 1,
-            fullName: 'BA',
-            email: 'peraperic@gmail.com',
-            role: 'Project Menager',
-            dateAdded : '2024-03-13',
-          };
+  }
 
-          this.members.push(this.member1);
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
+  filterMembersByRole(role: string): void {
+    if (role === 'allMembers') {
+      this.dataSource = this.members;
+    } else {
+      this.dataSource = this.members.filter(member => this.getRoleName(member.roleId) === role);
+    }
+  }
+
+  onRoleChange(event: any): void {
+    this.selectedRole = event.target.value;
+    this.filterMembersByRole(this.selectedRole);
+  }
+
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
+  }
+
+  getMembersFromServer(): void {
+    this.memberService.getMembers().subscribe(
+      (data: Member[]) => {
+        this.members = data;
+        this.filteredMembers = data;
+        this.dataSource = new MatTableDataSource(data);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      },
+      (error) => {
+        console.log('Error fetching members:', error);
+      }
+    );
+  }
+
+  getRolesFromServer(): void {
+    this.memberService.getRoles().subscribe(
+      (data: Role[]) => {
+        this.roles = data;
+      },
+      (error) => {
+        console.log('Error fetching roles:', error);
+      }
+    );
+  }
+
+  getRoleName(roleId: number): any {
+    if (!this.roles || this.roles.length === 0) {
+      return 'Unknown';
     }
 
-    filteredMembers: Member[] = [];
-    searchQuery: string = '';
+    const role = this.roles.find(r => r.id === roleId);
 
-    constructor() {
-        this.filteredMembers = this.members;
-        this.sortNames();
-        this.sortEmails();
-        this.sortDates();
-    }
+    return role ? role.name : 'Unknown';
+  }
+
+
 
   search(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredMembers = this.members;
-      return;
-    }
-    const regex = new RegExp(this.searchQuery.trim(), 'i');
-    this.filteredMembers = this.members.filter(member => regex.test(member.fullName));
-  }
+    let searchTerm = this.searchTerm.toLowerCase().trim();
+    let filteredMembers = [...this.filteredMembers];
 
-  switchSortName()
-  {
-    this.sortByName = !this.sortByName;
-    this.sortNames();
-  }
-
-  switchSortEmail()
-  {
-    this.sortByEmail = !this.sortByEmail;
-    this.sortEmails();
-  }
-
-  switchSortDate()
-  {
-    this.sortByDate = !this.sortByDate;
-    this.sortDates();
-  }
-
-  sortNames()
-  {
-    
-    if(this.sortByName)
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].fullName <= this.filteredMembers[i].fullName)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
+    if (this.selectedRole) {
+      switch (this.selectedRole) {
+        case 'allMembers':
+          break;
+        case 'administrators':
+        case 'projectManagers':
+        case 'workers':
+          filteredMembers = filteredMembers.filter(member => this.getRoleName(member.roleId) === this.selectedRole);
+          break;
+        default:
+          break;
       }
     }
-    else
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].fullName > this.filteredMembers[i].fullName)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
+
+    if (searchTerm) {
+      filteredMembers = filteredMembers.filter(member =>
+        member.firstName.toLowerCase().includes(searchTerm) ||
+        member.lastName.toLowerCase().includes(searchTerm)
+      );
     }
+    else{
+      filteredMembers = this.members;
+    }
+
+    this.dataSource = filteredMembers;
   }
 
 
-  sortEmails()
-  {
-    
-    if(this.sortByEmail)
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].email <= this.filteredMembers[i].email)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
-    else
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].email > this.filteredMembers[i].email)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
+  openMemberDialog(): void{
+    const dialogRef = this.dialog.open(AddMemberComponent, {
+      width: '500px',
+    });
+
+    dialogRef.componentInstance.memberAdded.subscribe(() => {
+      this.getMembersFromServer();
+    });
+  }
+
+  openRoleDialog() {
+    const dialogRef = this.dialog.open(RoleOverviewComponent, {
+      width: '800px',
+      height: '600px'
+    });
+  }
+
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
   }
 
 
-  sortDates()
-  {
-    
-    if(this.sortByDate)
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].dateAdded <= this.filteredMembers[i].dateAdded)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
-    else
-    {
-      for(let i=0;i<this.filteredMembers.length-1;i++)
-      {
-        for(let j=i+1;j<this.filteredMembers.length;j++)
-        {
-          if(this.filteredMembers[j].dateAdded > this.filteredMembers[i].dateAdded)
-          {
-            let temp = this.filteredMembers[j];
-            this.filteredMembers[j] = this.filteredMembers[i];
-            this.filteredMembers[i] = temp;
-          }
-        }
-      }
-    }
-  }
+    protected readonly environment = environment;
 }
 

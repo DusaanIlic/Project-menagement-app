@@ -1,41 +1,32 @@
-<nav class="h-12 pl-1 pr-1 bg-accent-blue flex items-center justify-between text-[14px] text-white select-none">
-  <ul class="h-10 flex gap-1">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black sm:hidden" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center">
-        <img ngSrc="/assets/navbar/hamburger.svg" alt="hamburger icon" height="30" width="30">
-      </a>
-    </li>
-    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center" routerLink="/home">
-        <p class="flex items-center justify-center">Home</p>
-      </a>
-    </li>
-    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center" routerLink="/projects/all">
-        <p class="flex items-center justify-center">Projects</p>
-      </a>
-    </li>
-    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center" routerLink="/members/all">
-        <p class="flex items-center justify-center">Members</p>
-      </a>
-    </li>
-    <li class="hidden sm:flex p-2 items-center justify-center rounded-md hover:bg-black" routerLinkActive="bg-black">
-      <a class="flex gap-1 justify-center items-center" routerLink="/roles/all">
-        <p class="flex items-center justify-center">Roles</p>
-      </a>
-    </li>
-  </ul>
+<mat-toolbar color="primary" class="relative">
+  <span class="flex space-x-2">
+    <a mat-button *ngFor="let button of buttons" [routerLink]="button.link"
+       routerLinkActive="selected">
+      <span class="flex justify-center items-center gap-2">
+        <mat-icon>{{button.icon}}</mat-icon>
+        <p>{{ button.text }}</p>
+      </span>
+    </a>
+  </span>
 
-  <ul class="h-10 flex gap-1">
-    <li class="flex p-2 items-center justify-center rounded-md hover:bg-black" (click)="dropdownShow()">
-      <a class="flex gap-2 justify-center items-center">
-        <img ngSrc="/assets/avatar.png" alt="avatar icon" height="30" width="30">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" class="rotate-180" *ngIf="visible">
-        <img ngSrc="/assets/navbar/dropdown-arrow.png" height="15" width="15" *ngIf="!visible">
-      </a>
-    </li>
-  </ul>
-</nav>
+  <span class="grow"></span>
 
-<app-profile-dropdown-menu [visible]="visible"></app-profile-dropdown-menu>
+  <button mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-center">
+      <img [src]="avatarUrl" alt="Avatar image" height="32" width="32">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
+  </button>
+
+  <mat-menu #menu="matMenu" class="w-48">
+    <div class="p-4 flex flex-col gap-2" (click)="$event.stopPropagation()">
+      <p class="font-medium">{{member?.firstName}} {{member?.lastName}}</p>
+      <p>{{member?.roleName}}</p>
+    </div>
+    <mat-divider></mat-divider>
+    <a mat-menu-item routerLink="/members/{{member?.id}}">View Profile</a>
+    <a mat-menu-item routerLink="/members/{{member?.id}}/edit">Edit Profile</a>
+    <mat-divider></mat-divider>
+    <a mat-menu-item (click)="logout()">Logout</a>
+  </mat-menu>
+</mat-toolbar>

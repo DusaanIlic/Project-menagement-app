@@ -1,44 +1,82 @@
-import { Component, Input } from '@angular/core';
-import { NgModule } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { MemberService } from '../../services/member.service';
 import { FormsModule } from '@angular/forms';
-import {MemberService} from "../../services/member.service";
-import {AddMemberForm} from "../../forms/add-member.form";
-
+import { CommonModule } from '@angular/common';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { AddTaskComponent } from '../add-task/add-task.component';
+import { AddMemberForm } from '../../forms/add-member.form';
 @Component({
-    selector: 'app-add-member',
-    standalone: true,
-    templateUrl: './add-member.component.html',
-    styleUrl: './add-member.component.scss',
-    imports: [FormsModule]
+  selector: 'app-add-member',
+  standalone: true,
+  imports: [FormsModule, CommonModule, NgToastModule],
+  templateUrl: './add-member.component.html',
+  styleUrl: './add-member.component.scss'
 })
 export class AddMemberComponent {
-  formData: AddMemberForm = {
-    firstName: '',
-    lastName: '',
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    dateOfBirth: '',
-    role: '',
-    password: ''
-  };
+  firstName: string = '';
+  lastName: string = '';
+  email: string = '';
+  roleId: number | null = null;
+  availableRoles: any[] = [];
 
-  constructor(private memberService: MemberService) { }
+  @Output() memberAdded: EventEmitter<any> = new EventEmitter<any>();
+disableSelect: any;
 
-  public onClick(){
-    this.formData.fullName = this.formData.firstName + this.formData.lastName;
+  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private memberService: MemberService, private _ngToastService: NgToastService){
+    this.loadRoles();
+  }
 
-    console.log(this.formData.role);
+  loadRoles(){
+    this.memberService.getRoles().subscribe((roles: any[]) =>{
+      this.availableRoles = roles;
+    }, error => {
+      console.error('Error fetching roles', error);
+    });
+  }
 
-    this.memberService.addMember(this.formData).subscribe({
-      next: data => {
-        console.log(data);
-      },
-      error: err => {
-        console.log(err);
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
+
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
+  }
+
+  addMember(){
+    if (!this.firstName || !this.lastName || !this.roleId || !this.email) {
+      this._ngToastService.error({
+        detail: 'Please fill up inputs',
+        summary: 'Adding failed: Inputs cannot be empty'
+      });
+      return;
+    }
+
+    const memberData = {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      roleId: this.roleId,
+      email: this.email
+    };
+
+    this.memberService.addMember(memberData).subscribe(response => {
+      console.log('Member saved successfully:', response);
+      this.memberAdded.emit();
+      this.showMessage();
+      this.closeDialog();
+    }, error => {
+      if (error.status === 400) {
+        this._ngToastService.error({
+          detail: 'Error: Bad Request',
+          summary: 'Adding failed: Bad data form'
+        });
+      } else {
+        this._ngToastService.error({
+          detail: 'Server error',
+          summary: 'Adding failed: Server error'
+        });
       }
+      console.error('Error saving task', error);
     });
   }
 }
-
-

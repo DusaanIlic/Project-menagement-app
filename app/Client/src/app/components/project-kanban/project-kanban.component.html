@@ -1,0 +1,93 @@
+<div class="p-5 bg-white items-center">
+
+    <div class="flex flex-row gap-5 items-center mb-3">
+
+            <mat-accordion>
+                <mat-expansion-panel hideToggle>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title class="text-2xl mr-3">
+                        {{projectName}}
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-self-end">
+                        Click for details
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                    <div class="flex flex-row">
+                        <div class="flex-col mr-5">
+                            <p><b>Deadline: </b></p>
+                            <p> {{projectDate | date:'dd-MM-yyyy'}}</p>
+                        </div>
+                        <div class="flex-col mr-5">
+                            <p><b>{{teamLeaderInfo?.roleName}}</b></p>
+                            <p> {{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</p>
+                        </div>
+                        <img src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden rounded-full border-solid border-black border-2 xl:w-12 xl:h-12  xl:table-cell">
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <section class="example-section">
+                <div>
+                    <ul class="flex flex-row justify-evenly">
+                        @for (column of dropList; track column) {
+                            <li>
+                                <mat-slide-toggle [(ngModel)]="columnVisibility[column]" color="primary" class="pr-0 mr-3">{{column | titlecase}}</mat-slide-toggle>
+                          </li>
+                        }
+                      </ul>
+                </div>
+              </section>
+
+        <div class="flex gap-2 justify-end ml-auto mt-4 gap ">
+            <button mat-raised-button color="primary" type="button"  (click)="openDialog()">Add task</button>
+            <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()">Add Column</button>
+        </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+
+    User
+<div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
+        <div *ngFor="let column of dropList" class="flex flex-col bg-background border-2 border-solid border-black rounded-lg w-1/3 p-5" [style.display]="columnVisibility[column] ? 'block' : 'none'">
+            <div class="flex flex-row justify-between items-center h-10">
+                <p class="mb-3 text-lg"><b>{{ column | titlecase }}</b></p>
+            </div>
+
+            <div
+                cdkDropList
+                [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
+                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" [id]="column.toLowerCase()"
+                (cdkDropListDropped)="drop($event)" >
+                <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
+                    <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
+
+                        <div class="px-2.5 py-2.5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
+                            'low-priority': item.taskPriorityId === 1,
+                            'medium-priority': item.taskPriorityId === 2,
+                            'high-priority': item.taskPriorityId === 3
+                          }">
+                          <div class=" flex flex-col">
+                            <p class="text-lg font-medium">{{item.taskName}}</p>
+                            <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
+                          </div>
+                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
+                                (click)="openConfirmationDialog(column, item.taskId)"><mat-icon>delete</mat-icon></button>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <ng-template #emptyList>
+                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
+                        No tasks.
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+
+
+
+    <ng-toast></ng-toast>
+
+</div>

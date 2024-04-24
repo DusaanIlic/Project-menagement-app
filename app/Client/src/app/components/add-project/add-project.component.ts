@@ -1,34 +1,123 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../services/project.service';
-import { Project } from '../../models/project';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  EventEmitter,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ProjectService } from '../../services/add.project.service';
+import { NgxEditorModule } from 'ngx-editor';
+import { Editor } from 'ngx-editor';
+import { ActivatedRoute } from '@angular/router';
+import { ProjectAddRequest } from '../../models/project-add';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-add-project',
   standalone: true,
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.scss'],
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, NgxEditorModule, NgToastModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AddProjectComponent {
-  projectForm = new FormGroup({
-    name: new FormControl(''),
-    date: new FormControl(''),
-    description: new FormControl(''),
-  });
+export class AddProjectComponent implements OnDestroy {
+  todayDate = new Date().toISOString().split('T')[0];
 
-  private project?: Project;
+  editor: Editor = new Editor();
+  html = '';
 
-  constructor(private projectService: ProjectService) {}
+  projectName!: string;
+  projectDescription!: string;
+  deadLine!: Date;
+
+  @Output() projectAdded: EventEmitter<any> = new EventEmitter<any>();
+
+  projectForm!: FormGroup;
+
+  constructor(
+    public dialogRef: MatDialogRef<AddProjectComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private projectService: ProjectService,
+    private _ngToastService: NgToastService
+  ) {}
+
+  ngOnDestroy(): void {
+    this.editor?.destroy();
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
+
+  showMessage() {
+    this._ngToastService.success({
+      detail: 'Success Message',
+      summary: 'Project added successfully!',
+      duration: 3000,
+    });
+  }
+
+  showMessageError() {
+    this._ngToastService.error({
+      detail: 'Error Message',
+      summary: 'Project add failed!',
+      duration: 3000,
+    });
+  }
 
   public onSubmit() {
-    /*this.project = {
-      id: 0,
-      name: this.projectForm.get('name')?.value || '',
-      startDate: '123',
-      description: this.projectForm.get('description')?.value || '',
+    /*this.projectForm = new FormGroup({
+      projectName: new FormControl(this.projectName, Validators.required),
+      projectDescription: new FormControl(this.html, Validators.required),
+      deadLine: new FormControl(this.deadLine, Validators.required),
+    });*/
+    //const projectData: ProjectAddRequest = this.projectForm.value;
+
+    const projectData = {
+      projectName: this.projectName,
+      projectDescription: this.html.trim(),
+      deadLine: this.deadLine,
     };
-    alert('kreiran projekat');
-    console.log(this.project);*/
+    if (!this.projectName) {
+      // Provera da li je uneti tekst prazan
+      alert('Morate uneti naziv projeta!');
+      return;
+    }
+    if (!this.html.trim()) {
+      // Provera da li je uneti tekst prazan
+      alert('Morate uneti opis projeta!');
+      return;
+    }
+    if (!this.deadLine) {
+      // Provera da li je uneti tekst prazan
+      alert('Morate uneti datum!');
+      return;
+    }
+
+    this.projectService.createProject(projectData).subscribe(
+      (response) => {
+        //console.log('Project saved successfully:', response);
+        this.projectAdded.emit();
+        this.showMessage();
+        this.closeDialog();
+      },
+      (error) => {
+        this.showMessageError();
+        //console.error('Error saving project', error);
+      }
+    );
   }
 }

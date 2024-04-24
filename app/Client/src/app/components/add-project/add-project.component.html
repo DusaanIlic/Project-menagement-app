@@ -1,49 +1,99 @@
-<section class="">
-  <form
-    [formGroup]="projectForm"
-    (ngSubmit)="onSubmit()"
-    class="flex flex-col place-items-center min-h-screen"
-  >
-    <div class="grid grid-rows-2">
-      <div class="mt-8 grid lg:grid-cols-2 gap-10">
-        <div class="grid grid-rows-2">
-          <label for="name" class="">Project Name</label>
+<div
+  id="default-modal"
+  tabindex="-1"
+  aria-hidden="true"
+  class="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+>
+  <div class="relative p-4 w-full max-w-4xl max-h-full">
+    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+      <div
+        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
+      >
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+          Add Project
+        </h3>
+        <button
+          type="button"
+          (click)="closeDialog()"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          data-modal-hide="default-modal"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+
+      <div class="p-4 md:p-5 flex justify-between flex-col">
+        <div class="flex-row justify-between mb-3">
+          <label for="name" class="">Project name</label>
           <input
             type="text"
+            placeholder="Project name..."
             id="name"
-            formControlName="name"
-            class="border-2 rounded-md max-h-8"
+            [(ngModel)]="projectName"
+            class="ml-5 w-1/2"
+            required
           />
         </div>
 
-        <div class="grid grid-rows-2">
-          <label for="date">Due Date</label>
+        <div class="flex-row justify-between mb-3">
+          <label for="name" class="pr-11">Deadline </label>
           <input
-            class="border-2 rounded-md max-h-8"
             type="date"
-            formControlName="date"
-            id="date"
+            id="name"
+            class="w-1/2 ml-1"
+            [(ngModel)]="deadLine"
+            required
+            [min]="todayDate"
           />
+          <div *ngIf="">Datum mora biti u budućnosti.</div>
         </div>
+        <ng-container>
+          <span>
+            <div class="flex-row justify-between">
+              <label for="name">Description </label>
+              <div class="NgxEditor__Wrapper">
+                <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+                <ngx-editor
+                  [(ngModel)]="html"
+                  [editor]="editor"
+                  [disabled]="false"
+                  [placeholder]="'Type here...'"
+                  required
+                ></ngx-editor>
+              </div>
+            </div>
+          </span>
+        </ng-container>
       </div>
 
-      <div class="mt-5 grid grid-rows-2">
-        <label for="description">Description</label>
-        <textarea
-          type="text"
-          formControlName="description"
-          id="description"
-          class="border-2 rounded-md"
+      <div
+        class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
+      >
+        <button
+          data-modal-hide="default-modal"
+          type="button"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          (click)="onSubmit()"
         >
-        </textarea>
+          Save
+        </button>
       </div>
     </div>
-
-    <button
-      type="submit"
-      class="mt-20 rounded-xl p-5 bg-accent-blue shadow-md text-white text-xl font-bold"
-    >
-      Create Project
-    </button>
-  </form>
-</section>
+  </div>
+  <ng-toast></ng-toast>
+</div>
