@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240423202610_Initial")]
+    [Migration("20240424191418_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 556, DateTimeKind.Local).AddTicks(3264),
+                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 871, DateTimeKind.Local).AddTicks(2517),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$oAuGVQp1xlV2KM/3U.o8IethMdf78AzH8V.yz1pGc9XqwDwBGbs/e",
+                            Password = "$2a$10$QyAu36huU7zZhTXQB4oTCOlkXxHdCvMtlEIUcO1uwGWvDHkutkU0G",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 618, DateTimeKind.Local).AddTicks(6469),
+                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 933, DateTimeKind.Local).AddTicks(5170),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$52KO9gcoZVvypvhm7Q/M/uVFqskgEuoY0TF0aH1tErbI.MUDK8Mom",
+                            Password = "$2a$10$xgA8jCzkT0Kb6DNEmb9vqubJEX7OSXp1h6ar8ino.I/QKa64vl8zu",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 23, 22, 26, 9, 681, DateTimeKind.Local).AddTicks(2751),
+                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 996, DateTimeKind.Local).AddTicks(1226),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$oj0jFu/3vsL9ZEhpRat98.aRFFqv37DMHXlqLThXbO98FbhC3l.PS",
+                            Password = "$2a$10$mtqtYllhFMiHqqu3O9/0wOr5vjSnOj1WVZnpANxUAMYfJZCpMED8e",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -263,6 +263,9 @@ namespace Server.Migrations
                     b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateFinished")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
                         .HasColumnType("TEXT");
@@ -424,16 +427,11 @@ namespace Server.Migrations
                         new
                         {
                             Id = 22,
-                            Name = "Remove task category"
-                        },
-                        new
-                        {
-                            Id = 23,
                             Name = "Add task status"
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 23,
                             Name = "Remove task status"
                         });
                 });
@@ -723,6 +721,9 @@ namespace Server.Migrations
                     b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateFinished")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
                         .HasColumnType("TEXT");

@@ -21,6 +21,9 @@ namespace Server.Models
         [Required]
         public DateTime Deadline { get; set; }
 
+        public DateTime DateFinished { get; set; }
+
+
         public int ProjectId { get; set; }
         public Project Project { get; set; }
 

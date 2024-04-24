@@ -453,6 +453,11 @@ namespace Server.Controllers
                 project.StartDate = DateTime.Now;
             }
 
+            if(statusId == 2)
+            {
+                project.DateFinished = DateTime.Now;
+            }
+
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
@@ -790,5 +795,43 @@ namespace Server.Controllers
             return Ok(projectsDTOs);
         }
 
+        [HttpGet("{projectId}/Latest")]
+        public async Task<IActionResult> GetLatestTaskActivitiesForProject(int projectId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId)
+                .OrderByDescending(ta => ta.ActivityDate)
+                .Take(5)
+                .ToListAsync();
+
+            if (taskActivities == null || !taskActivities.Any())
+            {
+                return NotFound(new { message = "No task activities found for the project" });
+            }
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.LastName,
+                Email = ta.Member.Email,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                RoleName = ta.Member.Role.RoleName
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
+        }
     }
 }
