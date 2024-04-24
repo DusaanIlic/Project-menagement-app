@@ -13,11 +13,13 @@ import { MemberInfoComponent } from '../member-info/member-info.component';
 import { Member } from '../../models/member';
 import { Task } from '../../models/task';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MatButtonModule } from '@angular/material/button';
+import { AddTaskComponent } from '../add-task/add-task.component';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -93,12 +95,26 @@ export class ProjectOverviewComponent implements OnInit {
       });
   }
 
-  addMembersToProjects() {
+  addMembersToProject() {
     this.openDialog();
+  }
+
+  addTasksToProject(){
+    this.openTaskDialog();
   }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      data: this.projectId
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  openTaskDialog(): void {
+    const dialogRef = this.dialog.open(AddTaskComponent, {
       data: this.projectId
     });
 
