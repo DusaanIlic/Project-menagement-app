@@ -285,7 +285,9 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProjectTask(int id)
         {
-            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(t => t.TaskId == id);
+            var projectTask = await dbContext.ProjectTasks
+                .Include(pt => pt.TaskActivities)
+                .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
             {
@@ -298,6 +300,8 @@ namespace Server.Controllers
             {
                 return Forbid("Insufficient permissions");
             }
+
+            dbContext.TaskActivities.RemoveRange(projectTask.TaskActivities);
 
             dbContext.ProjectTasks.Remove(projectTask);
             await dbContext.SaveChangesAsync();
