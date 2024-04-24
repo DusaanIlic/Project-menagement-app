@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
+using Server.DataTransferObjects;
 using Server.Models;
 
 namespace Server.Controllers
@@ -18,11 +19,17 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectPriority>>> GetAllProjectPriority()
+        public async Task<IActionResult> GetProjectPriority()
         {
-            return await _dbContext.ProjectPriorities.ToListAsync();
-           
+            var projectPriority = await _dbContext.ProjectPriorities.ToListAsync();
+            var projectPriorityDTO = projectPriority.Select(p => new ProjectPriorityDTO
+            {
+                PriorityId = p.ProjectPriorityId,
+                PriorityName = p.Name
+            }).ToList();
+            return Ok(projectPriorityDTO);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectPriority>> GetProjectPriorityById(int id)
