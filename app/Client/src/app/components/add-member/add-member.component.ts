@@ -6,10 +6,13 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { AddMemberForm } from '../../forms/add-member.form';
+import {MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatToolbar} from "@angular/material/toolbar";
 @Component({
   selector: 'app-add-member',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgToastModule],
+    imports: [FormsModule, CommonModule, NgToastModule, MatButton, MatIcon, MatToolbar],
   templateUrl: './add-member.component.html',
   styleUrl: './add-member.component.scss'
 })
