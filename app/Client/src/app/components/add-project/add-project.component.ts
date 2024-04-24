@@ -22,7 +22,7 @@ import { ProjectAddRequest } from '../../models/project-add';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import {MatButton} from "@angular/material/button";
 import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
-import {MatError, MatFormField, MatHint, MatLabel} from "@angular/material/form-field";
+import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
 import {MatIcon, MatIconModule} from "@angular/material/icon";
 import {MatInput} from "@angular/material/input";
 import {MatOption, MatSelect} from "@angular/material/select";
@@ -33,7 +33,7 @@ import {
   MatDatepickerModule,
   MatDatepickerToggle
 } from "@angular/material/datepicker";
-import {MAT_DATE_LOCALE, MatNativeDateModule, provideNativeDateAdapter} from "@angular/material/core";
+import {provideNativeDateAdapter} from "@angular/material/core";
 import {ProjectServiceGet} from "../../services/project.service";
 
 @Component({
@@ -62,10 +62,8 @@ import {ProjectServiceGet} from "../../services/project.service";
     MatDatepickerToggle,
     MatDatepicker,
     MatOption,
-    MatDatepickerModule
-  ],
-  providers: [
-    provideNativeDateAdapter()
+    MatDatepickerModule,
+    MatSuffix
   ]
 })
 export class AddProjectComponent implements OnInit {
@@ -73,6 +71,8 @@ export class AddProjectComponent implements OnInit {
 
   projectForm!: FormGroup;
   projectPriorities: any;
+
+  today: Date = new Date(); // Initialize today's date
 
   constructor(public dialogRef: MatDialogRef<AddProjectComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
                 private projectService: ProjectServiceGet, private _ngToastService: NgToastService,
