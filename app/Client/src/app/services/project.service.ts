@@ -97,6 +97,10 @@ export class ProjectServiceGet{
   addProject(projectData: any) {
     return this.http.post(PROJECT_API, projectData);
   }
+
+  getAllProjectsWhereMemberIsAssigned(memberId: number) {
+    return this.http.get<Project[]>(`${PROJECT_API}/Member/${memberId}`);
+  }
 }
 
 
