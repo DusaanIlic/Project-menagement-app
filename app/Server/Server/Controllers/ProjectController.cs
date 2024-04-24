@@ -453,6 +453,11 @@ namespace Server.Controllers
                 project.StartDate = DateTime.Now;
             }
 
+            if(statusId == 2)
+            {
+                project.DateFinished = DateTime.Now;
+            }
+
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
