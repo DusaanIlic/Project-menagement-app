@@ -71,6 +71,7 @@ export class TaskOverviewComponent implements OnInit{
     description: any;
     descriptionForP : any;
     task : Task = {
+      dependentTasks: undefined, taskCategoryName: "",
       assignedMembers: [],
       deadline: new Date(),
       isTaskDependentOn: false,

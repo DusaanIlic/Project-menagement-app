@@ -496,7 +496,8 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 });
             }
 

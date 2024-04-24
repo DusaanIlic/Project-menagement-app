@@ -117,6 +117,11 @@ export class TaskService {
     return this.http.get(`${TASK_CATEGORY_API}`);
   }
 
+  getTaskCategoriesOnProject(projectId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASK_CATEGORY_API}/${projectId}/TaskCategories`);
+  }
+
   getDependantTasks(taskId: number) {
     return this.http.get(`${TASK_API}/${taskId}/DependentTasks`);
   }

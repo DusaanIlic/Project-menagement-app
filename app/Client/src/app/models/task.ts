@@ -17,4 +17,5 @@ export interface Task
     taskCategoryId : number,
     assignedMembers: Member[],
     dependentTasks?: any,
+    taskCategoryName: string
 }
