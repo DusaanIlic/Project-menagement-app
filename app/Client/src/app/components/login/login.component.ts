@@ -39,6 +39,12 @@ export class LoginComponent implements OnInit {
   password: string | undefined;
   showForgotPasswordForm: boolean = false;
 
+  //dodato za FormControl
+  emailFormControl: FormControl;
+  passwordFormControl: FormControl;
+  loginForm: FormGroup;
+  //
+
   forgotForm: any;
 
   constructor(
@@ -46,7 +52,18 @@ export class LoginComponent implements OnInit {
     private memberService: MemberService,
     private router: Router,
     private _ngToastService: NgToastService
-  ) {}
+  ) {
+    this.emailFormControl = new FormControl('', [
+      Validators.required,
+      Validators.email,
+    ]);
+    this.passwordFormControl = new FormControl('', [Validators.required]);
+
+    this.loginForm = new FormGroup({
+      email: this.emailFormControl,
+      password: this.passwordFormControl,
+    });
+  }
 
   ngOnInit() {
     this.forgotForm = new FormGroup({
