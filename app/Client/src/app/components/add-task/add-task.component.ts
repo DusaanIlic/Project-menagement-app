@@ -63,6 +63,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       taskName: ['', Validators.required],
       deadline: ['', Validators.required],
       assignedMembers: ['', [Validators.required]],
+      taskDescription: ['', [Validators.required]]
     });
   }
 
@@ -82,14 +83,15 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 }
 
   saveTask(){
-    const taskData = {
-      taskName: this.taskName,
-      taskDescription: this.html,
-      deadline: this.deadline,
-      projectId: this.projectId,
-      assignedMemberIds: this.selectedMembers,
-      taskPriorityId: this.taskPriority
-    };
+    if (this.taskForm.invalid) {
+      this._ngToastService.error({
+        detail: 'Please fill up inputs',
+        summary: 'Adding failed: Inputs cannot be empty'
+      });
+      return;
+    }
+
+    const taskData = this.taskForm.value;
     //console.log(this.assignedMembersIds);
     console.log(taskData);
     this.taskService.saveTask(taskData).subscribe(response => { 
