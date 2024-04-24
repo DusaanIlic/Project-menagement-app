@@ -77,14 +77,19 @@
     class="grow flex flex-col justify-center items-center gap-10"
   >
     <div class="flex flex-col min-w-80 items-center justify-between gap-10">
-      <form [formGroup]="forgotForm" class="flex flex-col gap-2 w-full">
+      <mat-form-field
+        [formGroup]="forgotForm"
+        class="flex flex-col gap-2 w-full"
+      >
         <mat-label class="text-xl select-none" for="femail">Email</mat-label>
+        <!--
         <p
           *ngIf="forgotForm.get('email').errors?.['required'] && forgotForm.get('email').touched"
           class="italic text-sm text-red-600"
         >
           Email is required.
         </p>
+        -->
         <p
           *ngIf="forgotForm.get('email').errors?.['email'] && forgotForm.get('email').touched"
           class="italic text-sm text-red-600"
@@ -92,6 +97,7 @@
           Email is in wrong format.
         </p>
         <input
+          matInput
           formControlName="email"
           class="min-h-9 text-xl border-2 rounded-xl p-1.5"
           type="email"
@@ -100,7 +106,7 @@
           required
           placeholder="test@gmail.com"
         />
-      </form>
+      </mat-form-field>
 
       <button
         class="w-full bg-accent-blue text-white rounded-2xl min-h-12 font-bold hover:bg-[#0B2043] select-none"
