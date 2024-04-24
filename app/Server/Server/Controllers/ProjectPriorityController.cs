@@ -30,17 +30,23 @@ namespace Server.Controllers
             return Ok(projectPriorityDTO);
         }
 
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectPriority>> GetProjectPriorityById(int id)
+        [HttpGet("{projectPriorityId}")]
+        public IActionResult GetProjectPriorityName(int projectPriorityId)
         {
-            var projectPirority = await _dbContext.ProjectPriorities.FindAsync(id);
-            if(projectPirority == null)
+
+            var projectPriority = _dbContext.ProjectPriorities.SingleOrDefault(p => p.ProjectPriorityId == projectPriorityId);
+
+            if (projectPriority == null)
             {
-                return BadRequest(new { message = "Project priority with this id does not exists." });
+                return NotFound(new { message = "Project priority not found." });
             }
 
-            return projectPirority;
+            var projectPriorityDTO = new ProjectPriorityDTO
+            {
+                PriorityId= projectPriority.ProjectPriorityId,
+                PriorityName = projectPriority.Name
+            };
+            return Ok(projectPriorityDTO);
         }
 
     }
