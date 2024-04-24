@@ -58,10 +58,12 @@ export class AllTasksComponent {
   progress: Task[] = [];
   done: Task[] = [];
   projectId: number = 0;
-  allTasks: Task[] = []
+  allTasks: Task[] = [];
+  filteredTasks: Task[] = [];
   taskCategories : taskCategory[] = [];
   visible : boolean[] = []
   tableSel: string = 't1';
+  searchTerm: string = '';
 
   displayedColumns: string[] = ['name', 'startDate', 'dueDate', 'status', 'priority','action'];
   dataSource: any;
@@ -109,6 +111,7 @@ export class AllTasksComponent {
           console.log(data)
           this.allTasks = data
           this.dataSource = data;
+          this.filteredTasks = data;
           this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
           this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
@@ -130,6 +133,23 @@ export class AllTasksComponent {
       this.projectId = params['id'];
     });
   }
+
+  search(): void {
+    let searchTerm = this.searchTerm.toLowerCase().trim();
+    let filteredTasks = [...this.filteredTasks];
+
+    if (searchTerm) {
+      filteredTasks = filteredTasks.filter(task =>
+        task.taskName.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredTasks = this.allTasks;
+    }
+
+    this.dataSource = filteredTasks;
+  }
+
 
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});

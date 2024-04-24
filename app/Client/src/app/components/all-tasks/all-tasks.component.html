@@ -13,7 +13,7 @@
               </div>
             </mat-label>
 
-            <input matInput>
+            <input matInput [(ngModel)]="searchTerm" (input)="search()">
           </mat-form-field>
         </div>
 
