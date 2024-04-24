@@ -16,11 +16,10 @@
       <img [src]="avatarUrl" alt="Avatar image" height="32" width="32">
       <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
-
   </button>
 
   <mat-menu #menu="matMenu" class="w-48">
-    <div class="p-4 flex flex-col gap-2">
+    <div class="p-4 flex flex-col gap-2" (click)="$event.stopPropagation()">
       <p class="font-medium">{{member?.firstName}} {{member?.lastName}}</p>
       <p>{{member?.roleName}}</p>
     </div>

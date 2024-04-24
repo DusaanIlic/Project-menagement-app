@@ -12,16 +12,10 @@ import {AddRoleForm} from "../forms/add-role.form";
 import {RoleMember} from "../models/role-member";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    Authorization: 'my-auth-token', // ovde ce da ide token za autorizaciju kada ona bude omogucena na bekendu
-  }),
-};
+const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
 
 @Injectable({
-providedIn: 'root'
+  providedIn: 'root'
 })
 export class ProjectServiceGet{
   constructor(private http: HttpClient) { }
@@ -40,8 +34,8 @@ export class ProjectServiceGet{
     return this.http.get<Project>(`${PROJECT_API}/${id}`);
   }
 
-  getMembersByProjectId(projectId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/members`);
+  getMembersByProjectId(projectId: number): Observable<Member[]> {
+    return this.http.get<Member[]>(`${PROJECT_API}/${projectId}/members`);
   }
 
   getProjectMembers(projectId: number): Observable<Member[]>
@@ -94,6 +88,14 @@ export class ProjectServiceGet{
 
   getMemberRoles(projectId: number, roleId: number) {
     return this.http.get<RoleMember[]>(`${PROJECT_API}/${projectId}/Roles/${roleId}/Members`);
+  }
+
+  getProjectPriorities() {
+    return this.http.get(PROJECT_PRIORITY);
+  }
+
+  addProject(projectData: any) {
+    return this.http.post(PROJECT_API, projectData);
   }
 }
 

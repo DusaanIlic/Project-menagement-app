@@ -7,5 +7,6 @@
         public DateTime Deadline { get; set; }
         public int ProjectId { get; set; }
         public List<int> AssignedMemberIds { get; set; }
+        public int TaskPriorityId { get; set; }
     }
 }

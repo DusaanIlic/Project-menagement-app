@@ -10,6 +10,10 @@ namespace Server.Models
         public int TaskCategoryID { get; set; }
         public string CategoryName { get; set; }
 
+        [Required]
+        public bool IsDefault { get; set; } = false;
+
         public List<ProjectTask> ProjectTasks { get; set; }
+        public List<ProjectTaskCategories> ProjectTaskCategories { get; set; }
     }
 }

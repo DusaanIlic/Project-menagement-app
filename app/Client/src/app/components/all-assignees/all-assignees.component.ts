@@ -27,6 +27,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
+import { AddMembersToProjectComponent } from '../add-members-to-project/add-members-to-project.component';
 
 @Component({
   selector: 'app-all-assignees',
@@ -109,9 +110,10 @@ export class AllAssigneesComponent implements OnInit{
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(AddAssigneeComponent, {
-      width: '250px',
-      data : this.projectId
+    const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width : '800px',
+      height : '400px',
+      data: this.projectId
     });
 
     dialogRef.afterClosed().subscribe((result : any) => {

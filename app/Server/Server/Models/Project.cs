@@ -21,12 +21,19 @@ namespace Server.Models
         [Required]
         public DateTime StartDate { get; set; }
         
+        public DateTime DateFinished { get; set; }
+
+
         public int ProjectStatusId { get; set; }
 
         public ProjectStatus ProjectStatus { get; set; }
 
         public int? TeamLeaderId { get; set; }
         public Member TeamLeader { get; set; }
+
+        public int ProjectPriorityId { get; set; }
+        public ProjectPriority Priority { get; set; }
+
 
         public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
         
@@ -35,5 +42,7 @@ namespace Server.Models
         public ICollection<MemberProject> MemberProjects { get; set; } = new List<MemberProject>();
         
         public ICollection<ProjectProjectRole> ProjectProjectRoles { get; set; } = new List<ProjectProjectRole>();
+
+        public ICollection<ProjectTaskCategories> ProjectTaskCategories { get; set; } = new List<ProjectTaskCategories>();
     }
 }

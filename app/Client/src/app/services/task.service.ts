@@ -97,9 +97,9 @@ export class TaskService {
     return this.http.delete(`${TASKACTIVITY_API}/${taskActivityId}`);
   }
 
-  getTaskById(taskId : number) : Observable<any[]>
+  getTaskById(taskId : number) : Observable<Task>
   {
-    return this.http.get<any[]>(`${TASK_API}/${taskId}`);
+    return this.http.get<Task>(`${TASK_API}/${taskId}`);
   }
 
   assignMembersToTask(taskId : number, membersId : number[]) : Observable<any[]>
@@ -117,4 +117,19 @@ export class TaskService {
     return this.http.get<any[]>(`${TASK_API}/${taskId}/DependentTasks`);
   }
 
+  getTaskCategories() {
+    return this.http.get(`${TASKCATEGORY_API}`);
+  }
+
+  getDependantTasks(taskId: number) {
+    return this.http.get(`${TASK_API}/${taskId}/DependentTasks`);
+  }
+
+  changeTaskDates(taskId: number, startDate: Date, deadline: Date) {
+    return this.http.put(`${TASK_API}/${taskId}/ChangeDates`, { startDate, deadline });
+  }
+
+  addTaskDependency(taskId: number, dTaskId: number) {
+    return this.http.post(`${TASK_API}/${taskId}/dependency/${dTaskId}`, null);
+  }
 }

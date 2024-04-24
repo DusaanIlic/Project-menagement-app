@@ -1,11 +1,2 @@
-<div class="min-h-screen flex flex-col">
-  <!-- Header -->
-  <app-navbar class="sticky z-10 mat-elevation-z6 top-0" *ngIf="showNavbar"></app-navbar>
-  <!-- Main Content -->
-
-  <div class="flex grow">
-    <div class="grow">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
+<app-progress-bar class="absolute z-[1000] w-full top-0"></app-progress-bar>
+<router-outlet></router-outlet>

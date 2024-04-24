@@ -34,6 +34,8 @@ namespace Server.Data
         public DbSet<ProjectPermission> ProjectPermissions { get; set; }
         public DbSet<ProjectRolePermission> ProjectRolePermissions { get; set; }
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
+        public DbSet<ProjectPriority> ProjectPriorities { get; set; }
+        public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -121,6 +123,11 @@ namespace Server.Data
                .WithMany(r => r.Members)
                .HasForeignKey(m => m.RoleId);
 
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Priority)
+                .WithMany(pr => pr.Projects)
+                .HasForeignKey(p => p.ProjectPriorityId);
+
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
@@ -170,7 +177,7 @@ namespace Server.Data
                  .HasKey(mp => new { mp.MemberId, mp.ProjectId });
 
             modelBuilder.Entity<MemberProject>()
-                .HasOne(mp => mp.Member)
+                .HasOne(mp => mp.Member)    
                 .WithMany(m => m.MemberProjects)
                 .HasForeignKey(mp => mp.MemberId);
 
@@ -213,7 +220,21 @@ namespace Server.Data
                 .HasMany(pr => pr.ProjectProjectRoles)
                 .WithOne(pra => pra.ProjectRole)
                 .HasForeignKey(pra => pra.ProjectRoleId);
-            
+
+            modelBuilder.Entity<ProjectTaskCategories>()
+             .HasKey(ptc => new { ptc.ProjectId, ptc.TaskCategoryId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.ProjectTaskCategories)
+                .WithOne(pts => pts.Project)
+                .HasForeignKey(pts => pts.ProjectId);
+
+            modelBuilder.Entity<TaskCategory>()
+                .HasMany(tc => tc.ProjectTaskCategories)
+                .WithOne(ptc => ptc.TaskCategory)
+                .HasForeignKey(pts => pts.TaskCategoryId);
+
+
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global role" },
                 new Permission { PermissionId = 2, PermissionName = "Add member" },
@@ -259,9 +280,15 @@ namespace Server.Data
                 new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
                 new TaskPriority { TaskPriorityId = 3, Name = "High" }
             );
-            
+
+            modelBuilder.Entity<ProjectPriority>().HasData(
+                new ProjectPriority { ProjectPriorityId = 1, Name = "Low" },
+                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium" },
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High" }
+            );
+
             modelBuilder.Entity<TaskCategory>().HasData(
-                new TaskCategory { TaskCategoryID = 1, CategoryName = "None" }
+                new TaskCategory { TaskCategoryID = 1, CategoryName = "None", IsDefault = true}
             );
             
             modelBuilder.Entity<TaskActivityType>().HasData(
@@ -292,13 +319,14 @@ namespace Server.Data
                 new ProjectPermission { Id = 12, Name = "Add task dependency" },
                 new ProjectPermission { Id = 13, Name = "Remove task dependency" },
                 new ProjectPermission { Id = 14, Name = "Add task category" },
-                new ProjectPermission { Id = 15, Name = "Remove task category" },
                 new ProjectPermission { Id = 16, Name = "Change task" },
                 new ProjectPermission { Id = 17, Name = "Add task activity" },
                 new ProjectPermission { Id = 18, Name = "Remove task acitivity" },
-                new ProjectPermission { Id = 19, Name = "Comment task" }
-
-
+                new ProjectPermission { Id = 19, Name = "Comment task" },
+                new ProjectPermission { Id = 20, Name = "Change project priority" },
+                new ProjectPermission { Id = 21, Name = "Change task category" },
+                new ProjectPermission { Id = 22, Name = "Add task status" },
+                new ProjectPermission { Id = 23, Name = "Remove task status" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -324,8 +352,12 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 18 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 19 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
-
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 20 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 21 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 22 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 23 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 }
             );
 
            

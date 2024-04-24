@@ -1,11 +1,12 @@
 import {HttpErrorResponse, HttpInterceptor, HttpInterceptorFn} from "@angular/common/http";
 import {tap} from "rxjs/internal/operators/tap";
-import {catchError, throwError} from "rxjs";
+import {catchError, finalize, throwError} from "rxjs";
 import {inject} from "@angular/core";
 import {AuthService} from "../services/auth.service";
 import {Member} from "../models/member";
 import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
+import {ProgressBarService} from "../services/progress-bar.service";
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -18,12 +19,17 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     )
   });
 
+  const progressBarService = inject(ProgressBarService); // Inject ProgressBarService
+
+  progressBarService.show(); // Show progress bar when request starts
+
   console.log('Http Interceptor running');
 
   return next(cloned).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
         console.log('Caught unauthorized error, attempting to refresh token...');
+        console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
 
         return authService.refreshJwtToken().pipe(
           switchMap((data) => {
@@ -64,21 +70,31 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
             const clonedReq = req.clone({
               setHeaders: {
-                Authorization: `Bearer ${newJwtToken}` // Fixed the colon typo here
+                Authorization: `Bearer ${newJwtToken}`
               }
             });
+
+            progressBarService.hide();
 
             return next(clonedReq);
           }),
           catchError((error) => {
             console.log(`Failed refreshing token.`);
+            progressBarService.hide();
             authService.logout();
             return throwError(() => error);
+          }),
+          finalize(() => {
+            progressBarService.hide(); // Hide progress bar whether there's an error or not
           })
         );
       }
 
+      progressBarService.hide(); // Hide progress bar on error
       return throwError(() => err);
+    }),
+    finalize(() => {
+      progressBarService.hide(); // Hide progress bar whether there's an error or not
     })
   );
 }

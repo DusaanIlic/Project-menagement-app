@@ -105,6 +105,8 @@ export class ProjectOverviewComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width : '800px',
+      height : '400px',
       data: this.projectId
     });
 

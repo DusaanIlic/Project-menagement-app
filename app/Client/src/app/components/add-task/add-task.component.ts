@@ -1,19 +1,37 @@
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { NgxEditorModule, Editor } from 'ngx-editor';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxEditorModule, Editor, Validators } from 'ngx-editor';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { Member } from '../../models/member';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatOption, MatSelect, MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatError, MatFormField, MatFormFieldModule, MatLabel} from '@angular/material/form-field';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardHeader, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-add-task',
   standalone: true,
-  imports: [NgxEditorModule, MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, CommonModule, NgToastModule],
+  imports: [NgxEditorModule, MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, CommonModule, NgToastModule, MatButton,
+    MatIcon,
+    MatToolbar,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatCardActions,
+    ReactiveFormsModule,
+    MatError],
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss'
 })
@@ -29,15 +47,23 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   selectedMembers: number[] = [];
   assignedMembersIds: number[] = [];
   members = new FormControl('');
+  taskForm!: FormGroup;
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
 
-  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService) {}
+  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, 
+              private taskService: TaskService, private _ngToastService: NgToastService, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
     this.getProjectMembers();
+
+    this.taskForm = this.fb.group({
+      taskName: ['', Validators.required],
+      deadline: ['', Validators.required],
+      assignedMembers: ['', [Validators.required]],
+    });
   }
 
   ngOnDestroy(): void {

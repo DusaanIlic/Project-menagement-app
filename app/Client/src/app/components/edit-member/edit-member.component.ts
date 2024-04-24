@@ -11,11 +11,6 @@ import {maxDateValidator} from "../../validators/max-date.validator";
 import {AuthService} from "../../services/auth.service";
 import {MatDialog} from "@angular/material/dialog";
 import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
-import {MatToolbar} from "@angular/material/toolbar";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/material/sidenav";
-import {MatNavList} from "@angular/material/list";
 
 @Component({
   selector: 'app-edit-member',
