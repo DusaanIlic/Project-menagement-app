@@ -708,12 +708,6 @@ namespace Server.Controllers
                 .ThenInclude(tc => tc.TaskCategory)
                 .ToListAsync();
 
-            if (!memberTasks.Any())
-            {
-                return Ok(new { message = "Member does not have any task." });
-
-            }
-
             var taskDTOs = new List<ProjectTaskDTO>();
 
             foreach (var mt in memberTasks)

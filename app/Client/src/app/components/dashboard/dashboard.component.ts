@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {
   MatCell,
   MatCellDef,
@@ -25,6 +25,8 @@ import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatPaginator} from "@angular/material/paginator";
+import {Task} from "../../models/task";
+import {TaskService} from "../../services/task.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -62,16 +64,21 @@ import {MatPaginator} from "@angular/material/paginator";
 })
 export class DashboardComponent implements OnInit {
   projects!: Project[];
+  tasks!: Task[];
+
   memberId!: any;
+
   projectSource: any;
-  projectColumns: string[] = ['project', 'deadline', 'priority', 'actions'];
+  projectColumns: string[] = ['projectName', 'startDate', 'deadline', 'projectPriority', 'status', 'actions'];
 
-  @ViewChild(MatSort) projectSort: any;
-  @ViewChild(MatPaginator) projectPaginator: any;
+  taskSource: any;
+  taskColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskPriorityName', 'taskStatus', 'actions'];
 
+  @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sort = new QueryList<MatSort>();
 
   constructor(private authService: AuthService, private _liveAnnouncer: LiveAnnouncer,
-                private projectService: ProjectServiceGet) { }
+                private projectService: ProjectServiceGet, private taskService: TaskService) { }
 
   ngOnInit(): void {
     this.memberId = this.authService.getAuthenticatedMembersId();
@@ -80,11 +87,23 @@ export class DashboardComponent implements OnInit {
       next: data=> {
         this.projects = data;
         this.projectSource = new MatTableDataSource(this.projects);
-        this.projectSource.sort = this.projectSort;
-        this.projectSource.paginator = this.projectPaginator;
+        this.projectSource.sort = this.sort.toArray()[0];
+        this.projectSource.paginator = this.paginator.toArray()[1];
       },
       error: error => {
         console.log('failed fetching project data');
+      }
+    });
+
+    this.taskService.getTasksByMember(this.memberId).subscribe({
+      next: data => {
+        this.tasks = data;
+        this.taskSource = new MatTableDataSource(this.tasks);
+        this.taskSource.sort = this.sort.toArray()[1];
+        this.taskSource.paginator = this.paginator.toArray()[1];
+      },
+      error: error => {
+        console.log('failed fetching task data');
       }
     });
   }
