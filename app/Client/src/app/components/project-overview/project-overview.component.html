@@ -1,5 +1,5 @@
 <div class="flex flex-row justify-between">
-  <div class="p-5 w-1/2 self-center">
+  <div class="p-4 w-1/2 self-center">
     <mat-accordion *ngIf="projectDetails">
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
@@ -22,7 +22,7 @@
 </div>
 
 <div class="flex flex-row justify-between">
-  <div class="basis-1/5 ml-5">
+  <div class="basis-1/5 ml-4">
     <mat-card class="example-card" *ngIf="teamLeaderInfo">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
@@ -58,7 +58,7 @@
     </mat-card>
   </div>
 
-  <div class="basis-1/5 mr-5">
+  <div class="basis-1/5 mr-4">
     <mat-card class="example-card" *ngIf="numberOfTasks !== null">
       <mat-card-header>
         <mat-card-title-group class="pb-3">
@@ -71,7 +71,7 @@
   </div>
 </div>
 
-<div class="flex flex-row justify-center h-2/3 m-5">
+<div class="flex flex-row justify-center h-2/3 m-4">
   <div class="flex flex-col basis-1/2 pr-5 gap-2">
     <p class="text-xl pb-2">Recent activity</p>
     <mat-card class="example-card" *ngIf="projectDetails">
@@ -96,7 +96,8 @@
     </mat-card>
   </div>
 
-  <div class="flex flex-col justify-end basis-1/2">
+  <div class="flex flex-col basis-1/2 pr-5">
+    <p class="text-xl pb-2">Tasks on project</p>
     <ngx-charts-pie-chart
       [results]="taskStatusData"
       [legend]="true"
