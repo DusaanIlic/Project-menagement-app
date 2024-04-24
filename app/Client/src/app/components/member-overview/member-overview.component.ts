@@ -33,6 +33,7 @@ export class MemberOverviewComponent implements OnInit{
                   private pService : ProjectServiceGet) {}
 
   member : Member = {
+    checked: undefined, isDisabled: false,
     id: -1,
     firstName: '',
     lastName: '',

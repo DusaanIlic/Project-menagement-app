@@ -41,9 +41,14 @@
               <td mat-cell *matCellDef="let project"> {{project.startDate | date :'dd-MM-yyyy'}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="endDate">
+            <ng-container matColumnDef="deadline">
               <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by endDate"> DUE DATE </th>
-              <td mat-cell *matCellDef="let project"> {{project.endDate | date :'dd-MM-yyyy'}} </td>
+              <td mat-cell *matCellDef="let project"> {{project.deadline | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">PRIORITY</th>
+              <td mat-cell *matCellDef="let project"> {{project.projectPriority}} </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
@@ -53,7 +58,7 @@
 
             <ng-container matColumnDef="manager">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> PROJECT MANAGER  </th>
-              <td mat-cell *matCellDef="let project"> {{project.lead.firstName}} {{project.lead.lastName}} </td>
+              <td mat-cell *matCellDef="let project"> {{project.teamLider.firstName}} {{project.teamLider.lastName}} </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
@@ -61,8 +66,8 @@
               <td mat-cell *matCellDef="let project">
                 <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">...</button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
+                  <button mat-menu-item [routerLink]="['/projects', project.projectId]">View</button>
+                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.projectId, project.status)">Delete</button>
                 </mat-menu>
               </td>
             </ng-container>
