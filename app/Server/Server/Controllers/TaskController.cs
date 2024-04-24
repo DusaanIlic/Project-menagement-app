@@ -394,6 +394,11 @@ namespace Server.Controllers
                 projectTask.StartDate = DateTime.Now;
             }
 
+            if(statusId == 3)
+            {
+                projectTask.DateFinished = DateTime.Now;
+            }
+
             projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
