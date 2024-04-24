@@ -31,33 +31,9 @@ import {forkJoin, Subscription, switchMap} from "rxjs";
 })
 export class TaskOverviewComponent implements OnInit{
 
-  lead: Member = {
-    id: 0,
-      roleId: 0,
-      firstName: '',
-      lastName: '',
-      email: '',
-      roleName: '',
-      linkedin: '',
-      github: '',
-      status: '',
-      phoneNumber: '',
-      country: '',
-      city: '',
-      dateOfBirth: new Date(),
-      dateAdded: new Date()
-  }
+  lead: any;
 
-  project : Project = {
-    id: 0,
-    projectName: '',
-    endDate: new Date(),
-    startDate: new Date(),
-    description: '',
-    details: '',
-    status: '',
-    lead: this.lead
-  };
+  project : any;
 
 
     activitiesForThisTask : taskActivity[] = [];
@@ -69,22 +45,7 @@ export class TaskOverviewComponent implements OnInit{
     taskActivityDesc: any;
     description: any;
     descriptionForP : any;
-    task : Task = {
-      assignedMembers: [],
-      deadline: new Date(),
-      isTaskDependentOn: false,
-      projectId: 0,
-      projectName: "",
-      startDate: new Date(),
-      taskCategoryId: 0,
-      taskDescription: "",
-      taskId: 0,
-      taskName: "",
-      taskPriorityName: "",
-      taskPriorityId: 0,
-      taskStatus: "",
-      taskStatusId: 0
-    };
+    task : any;
 
     depTasks : Task[] = [];
 
