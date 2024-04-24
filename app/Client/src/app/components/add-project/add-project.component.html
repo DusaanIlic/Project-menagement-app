@@ -26,7 +26,7 @@
           <mat-form-field>
             <mat-label>Priority</mat-label>
             <mat-select formControlName="priorityId" required>
-              <mat-option *ngFor="let priority of projectPriorities" [value]="priority.id">{{ priority.name }}</mat-option>
+              <mat-option *ngFor="let priority of projectPriorities" [value]="priority.priorityId">{{ priority.priorityName }}</mat-option>
             </mat-select>
             <mat-error *ngIf="projectForm.get('priorityId')?.hasError('required')">
               Priority is required

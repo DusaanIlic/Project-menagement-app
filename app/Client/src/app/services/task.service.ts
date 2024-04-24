@@ -113,8 +113,8 @@ export class TaskService {
     return this.http.get<any[]>(`${TASK_API}/${taskId}/DependentTasks`);
   }
 
-  getTaskCategories() {
-    return this.http.get(`${TASK_CATEGORY_API}`);
+  getTaskCategories(projectId: number) {
+    return this.http.get(`${TASK_CATEGORY_API}/${projectId}/TaskCategories`);
   }
 
   getDependantTasks(taskId: number) {

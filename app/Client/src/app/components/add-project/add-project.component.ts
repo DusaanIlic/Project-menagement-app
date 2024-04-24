@@ -87,13 +87,8 @@ export class AddProjectComponent implements OnInit {
     });
 
     this.projectService.getProjectPriorities().subscribe({
-      next: (data: any) => {
-        this.projectPriorities = data.map((priority: {projectPriorityId: number, name: string}) => {
-          return {
-            id: priority.projectPriorityId,
-            name: priority.name
-          };
-        })
+      next: data => {
+        this.projectPriorities = data;
       },
       error: error => {
         console.log('error fetching project priorities');
