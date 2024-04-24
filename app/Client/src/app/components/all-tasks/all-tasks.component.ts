@@ -64,6 +64,7 @@ export class AllTasksComponent {
   visible : boolean[] = []
   tableSel: string = 't1';
   searchTerm: string = '';
+  selectedStatus: string = '';
 
   displayedColumns: string[] = ['name', 'startDate', 'dueDate', 'status', 'priority','action'];
   dataSource: any;
@@ -101,6 +102,19 @@ export class AllTasksComponent {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
+  onStatusChange(event: any): void {
+    this.selectedStatus = event.target.value;
+    this.filterMembersByStatus(this.selectedStatus);
+  }
+
+  filterMembersByStatus(status: string): void {
+    if (status === 'allTasks') {
+      this.dataSource = this.allTasks;
+    } else {
+      this.dataSource = this.allTasks.filter(task => status == task.taskStatus);
     }
   }
 
@@ -149,7 +163,6 @@ export class AllTasksComponent {
 
     this.dataSource = filteredTasks;
   }
-
 
   showMessage(){
     this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});

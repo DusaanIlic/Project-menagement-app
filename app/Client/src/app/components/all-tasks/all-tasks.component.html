@@ -29,11 +29,11 @@
       <div class="flex gap-4 text-accent-blue">
         <p class="flex items-center justify-center text-accent-blue font-bold">Show only:</p>
 
-        <mat-radio-group [(ngModel)]="tableSel" name="radio-filter" color="primary">
-          <mat-radio-button class="text-accent-blue" value="t1">All</mat-radio-button>
-          <mat-radio-button class="text-accent-blue" value="t2">New</mat-radio-button>
-          <mat-radio-button class="text-accent-blue" value="t3">In Progress</mat-radio-button>
-          <mat-radio-button class="text-accent-blue" value="t4">Completed</mat-radio-button>
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button id="allTasks" value="allTasks" (click)="onStatusChange($event)" checked color="primary">All Tasks</mat-radio-button>
+          <mat-radio-button id="new" value="New" (click)="onStatusChange($event)" color="primary">New</mat-radio-button>
+          <mat-radio-button id="inProgress" value="In Progress" (click)="onStatusChange($event)" color="primary">In Progress</mat-radio-button>
+          <mat-radio-button id="completed" value="Completed" (click)="onStatusChange($event)" color="primary">Completed</mat-radio-button>
         </mat-radio-group>
       </div>
     </div>
