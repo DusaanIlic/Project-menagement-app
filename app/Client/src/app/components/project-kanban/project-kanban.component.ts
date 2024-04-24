@@ -22,6 +22,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Member } from '../../models/member';
+import { MemberInfoComponent } from '../member-info/member-info.component';
 
 @Component({
   selector: 'app-project-kanban',
@@ -109,6 +111,16 @@ export class ProjectKanbanComponent implements OnInit {
       .subscribe(() => {
         this.cdr.detectChanges();
       });
+  }
+  
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
   }
 
   getProjectIdFromRoute(): any{
