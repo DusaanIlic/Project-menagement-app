@@ -21,6 +21,9 @@ namespace Server.Models
         [Required]
         public DateTime StartDate { get; set; }
         
+        public DateTime DateFinished { get; set; }
+
+
         public int ProjectStatusId { get; set; }
 
         public ProjectStatus ProjectStatus { get; set; }
