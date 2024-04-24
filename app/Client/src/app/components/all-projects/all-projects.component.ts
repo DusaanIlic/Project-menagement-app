@@ -17,13 +17,14 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
+import {MatOption, MatSelect} from "@angular/material/select";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: string = '';
@@ -31,7 +32,7 @@ export class AllProjectsComponent implements OnInit{
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
   selectedTable: string = "t1";
-  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', 'manager', 'details'];
+  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', 'manager', 'actions'];
   dataSource: any;
   searchTerm: string = '';
   @ViewChild(MatSort)sort: any;

@@ -13,7 +13,7 @@
         </mat-form-field>
 
         <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Show role</mat-label>
+          <mat-label>Filter by role</mat-label>
 
           <mat-select selected="_ALL">
             <mat-option value="_ALL">All Roles</mat-option>
@@ -28,22 +28,6 @@
         <button mat-raised-button color="primary" type="button" class="flex items-center justify-center w-48 text-white" (click)="openRoleDialog()">Manage Roles</button>
         <button mat-raised-button color="primary" type="button" class="flex items-center justify-center w-48 text-white" (click)="openMemberDialog()">Add Member</button>
       </div>
-
-
-
-<!--      <div class="flex flex-row items-center p-2 w-4/5">-->
-<!--        -->
-
-<!--        <h1 class="mr-2">Show only:</h1>-->
-<!--        <mat-radio-group aria-label="Select an option">-->
-<!--          <mat-radio-button id="allMembers" value="allMembers" (click)="onRoleChange($event)" checked color="primary">All Members</mat-radio-button>-->
-<!--          <mat-radio-button id="administrators" value="Administrator" (click)="onRoleChange($event)" color="primary">Administrators</mat-radio-button>-->
-<!--          <mat-radio-button id="projectManagers" value="Project Manager" (click)="onRoleChange($event)" color="primary">Project Manager</mat-radio-button>-->
-<!--          <mat-radio-button id="workers" value="Worker" (click)="onRoleChange($event)" color="primary">Worker</mat-radio-button>-->
-<!--        </mat-radio-group>-->
-
-<!--      </div>-->
-
 
       <div class="mat-elevation-z8 w-4/5">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
@@ -97,11 +81,11 @@
             </td>
           </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr class="select-none" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
+      <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
       </div>
 
     <ng-toast></ng-toast>
