@@ -1,19 +1,45 @@
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import { MemberService } from '../../services/member.service';
-import { FormsModule } from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { AddMemberForm } from '../../forms/add-member.form';
+import {MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatCard, MatCardActions, MatCardContent, MatCardHeader} from "@angular/material/card";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatError, MatOption, MatSelect} from "@angular/material/select";
 @Component({
   selector: 'app-add-member',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgToastModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    NgToastModule,
+    MatButton,
+    MatIcon,
+    MatToolbar,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatCardActions,
+    ReactiveFormsModule,
+    MatError
+  ],
   templateUrl: './add-member.component.html',
   styleUrl: './add-member.component.scss'
 })
-export class AddMemberComponent {
+export class AddMemberComponent implements OnInit {
+  memberForm!: FormGroup;
   firstName: string = '';
   lastName: string = '';
   email: string = '';
@@ -23,7 +49,19 @@ export class AddMemberComponent {
   @Output() memberAdded: EventEmitter<any> = new EventEmitter<any>();
 disableSelect: any;
 
-  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private memberService: MemberService, private _ngToastService: NgToastService){
+  constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
+              private memberService: MemberService, private _ngToastService: NgToastService,
+               private fb: FormBuilder){
+  }
+
+  ngOnInit() {
+    this.memberForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      roleId: ['', Validators.required]
+    });
+
     this.loadRoles();
   }
 
@@ -43,8 +81,8 @@ disableSelect: any;
     this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
   }
 
-  addMember(){
-    if (!this.firstName || !this.lastName || !this.roleId || !this.email) {
+  addMember(): void {
+    if (this.memberForm.invalid) {
       this._ngToastService.error({
         detail: 'Please fill up inputs',
         summary: 'Adding failed: Inputs cannot be empty'
@@ -52,31 +90,29 @@ disableSelect: any;
       return;
     }
 
-    const memberData = {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      roleId: this.roleId,
-      email: this.email
-    };
+    const memberData = this.memberForm.value;
 
-    this.memberService.addMember(memberData).subscribe(response => {
-      console.log('Member saved successfully:', response);
-      this.memberAdded.emit();
-      this.showMessage();
-      this.closeDialog();
-    }, error => {
-      if (error.status === 400) {
-        this._ngToastService.error({
-          detail: 'Error: Bad Request',
-          summary: 'Adding failed: Bad data form'
-        });
-      } else {
-        this._ngToastService.error({
-          detail: 'Server error',
-          summary: 'Adding failed: Server error'
-        });
+    this.memberService.addMember(memberData).subscribe({
+      next: response => {
+        console.log('Member saved successfully:', response);
+        this.memberAdded.emit();
+        this.showMessage();
+        this.closeDialog();
+      },
+      error: error => {
+        if (error.status === 400) {
+          this._ngToastService.error({
+            detail: 'Error: Bad Request',
+            summary: 'Adding failed: Bad data form'
+          });
+        } else {
+          this._ngToastService.error({
+            detail: 'Server error',
+            summary: 'Adding failed: Server error'
+          });
+        }
+        console.error('Error saving task', error);
       }
-      console.error('Error saving task', error);
     });
   }
 }
