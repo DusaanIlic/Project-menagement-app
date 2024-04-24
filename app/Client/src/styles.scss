@@ -7,5 +7,15 @@
 @import url('https://fonts.googleapis.com/css?family=Inter');
 
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.cdk-overlay-container {
+  z-index: 500 !important;
+}
