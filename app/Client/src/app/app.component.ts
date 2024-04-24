@@ -6,6 +6,7 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {NgIf} from "@angular/common";
 import { NgxEditorModule } from 'ngx-editor';
+import {ProgressBarComponent} from "./components/progress-bar/progress-bar.component";
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ import { NgxEditorModule } from 'ngx-editor';
     AddProjectComponent,
     NavbarComponent,
     NgIf,
-    NgxEditorModule
+    NgxEditorModule,
+    ProgressBarComponent
   ],
 })
 export class AppComponent {
