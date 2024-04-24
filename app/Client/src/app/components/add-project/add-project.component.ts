@@ -1,5 +1,4 @@
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
   EventEmitter,
   Inject,
@@ -8,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import {
-  AbstractControl,
+  AbstractControl, FormBuilder,
   FormControl,
   FormGroup,
   FormsModule,
@@ -18,44 +17,88 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ProjectService } from '../../services/add.project.service';
-import { NgxEditorModule } from 'ngx-editor';
-import { Editor } from 'ngx-editor';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectAddRequest } from '../../models/project-add';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import {MatButton} from "@angular/material/button";
+import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
+import {MatError, MatFormField, MatHint, MatLabel} from "@angular/material/form-field";
+import {MatIcon, MatIconModule} from "@angular/material/icon";
+import {MatInput} from "@angular/material/input";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatToolbar} from "@angular/material/toolbar";
+import {
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerModule,
+  MatDatepickerToggle
+} from "@angular/material/datepicker";
+import {MAT_DATE_LOCALE, MatNativeDateModule, provideNativeDateAdapter} from "@angular/material/core";
+import {ProjectServiceGet} from "../../services/project.service";
 
 @Component({
   selector: 'app-add-project',
   standalone: true,
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.scss'],
-  imports: [FormsModule, CommonModule, NgxEditorModule, NgToastModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    FormsModule,
+    CommonModule,
+    NgToastModule,
+    MatButton,
+    MatCard,
+    MatCardActions,
+    MatCardContent,
+    MatError,
+    MatFormField,
+    MatHint,
+    MatIcon,
+    MatInput,
+    MatLabel,
+    MatSelect,
+    MatToolbar,
+    ReactiveFormsModule,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatOption,
+    MatDatepickerModule
+  ],
+  providers: [
+    provideNativeDateAdapter()
+  ]
 })
-export class AddProjectComponent implements OnDestroy {
-  todayDate = new Date().toISOString().split('T')[0];
-
-  editor: Editor = new Editor();
-  html = '';
-
-  projectName!: string;
-  projectDescription!: string;
-  deadLine!: Date;
-
+export class AddProjectComponent implements OnInit {
   @Output() projectAdded: EventEmitter<any> = new EventEmitter<any>();
 
   projectForm!: FormGroup;
+  projectPriorities: any;
 
-  constructor(
-    public dialogRef: MatDialogRef<AddProjectComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private projectService: ProjectService,
-    private _ngToastService: NgToastService
-  ) {}
+  constructor(public dialogRef: MatDialogRef<AddProjectComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
+                private projectService: ProjectServiceGet, private _ngToastService: NgToastService,
+                  private fb: FormBuilder) { }
 
-  ngOnDestroy(): void {
-    this.editor?.destroy();
+  ngOnInit() {
+    this.projectForm = this.fb.group({
+      projectName: ['', Validators.required],
+      projectDescription: ['', Validators.required],
+      deadline: ['', Validators.required],
+      priorityId: ['', Validators.required]
+    });
+
+    this.projectService.getProjectPriorities().subscribe({
+      next: (data: any) => {
+        this.projectPriorities = data.map((priority: {projectPriorityId: number, name: string}) => {
+          return {
+            id: priority.projectPriorityId,
+            name: priority.name
+          };
+        })
+      },
+      error: error => {
+        console.log('error fetching project priorities');
+      }
+    });
   }
 
   closeDialog(): void {
@@ -78,46 +121,32 @@ export class AddProjectComponent implements OnDestroy {
     });
   }
 
-  public onSubmit() {
-    /*this.projectForm = new FormGroup({
-      projectName: new FormControl(this.projectName, Validators.required),
-      projectDescription: new FormControl(this.html, Validators.required),
-      deadLine: new FormControl(this.deadLine, Validators.required),
-    });*/
-    //const projectData: ProjectAddRequest = this.projectForm.value;
+  addProject() {
+    if (this.projectForm.valid) {
+      const projectData = this.projectForm.value;
 
-    const projectData = {
-      projectName: this.projectName,
-      projectDescription: this.html.trim(),
-      deadLine: this.deadLine,
-    };
-    if (!this.projectName) {
-      // Provera da li je uneti tekst prazan
-      alert('Morate uneti naziv projeta!');
-      return;
-    }
-    if (!this.html.trim()) {
-      // Provera da li je uneti tekst prazan
-      alert('Morate uneti opis projeta!');
-      return;
-    }
-    if (!this.deadLine) {
-      // Provera da li je uneti tekst prazan
-      alert('Morate uneti datum!');
-      return;
-    }
+      this.projectService.addProject(projectData).subscribe({
+        next: (response: any) => {
+          // Close the dialog
+          this.closeDialog();
 
-    this.projectService.createProject(projectData).subscribe(
-      (response) => {
-        //console.log('Project saved successfully:', response);
-        this.projectAdded.emit();
-        this.showMessage();
-        this.closeDialog();
-      },
-      (error) => {
-        this.showMessageError();
-        //console.error('Error saving project', error);
-      }
-    );
+          // Emit an event to notify parent component
+          this.projectAdded.emit(response);
+
+          // Show success message
+          this.showMessage();
+        },
+        error: (error: any) => {
+          // Show error message
+          this.showMessageError();
+
+          // Log the error
+          console.log('Error adding project:', error);
+        }
+      });
+    } else {
+      // Mark all form controls as touched to display validation errors
+      this.projectForm.markAllAsTouched();
+    }
   }
 }

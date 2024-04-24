@@ -4,7 +4,6 @@ import {ProjectServiceGet} from "../../services/project.service";
 import {TaskService} from "../../services/task.service";
 import {CommonModule} from "@angular/common";
 import {Member} from "../../models/member";
-import {ProjectService} from "../../services/add.project.service";
 import {MemberService} from "../../services/member.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 

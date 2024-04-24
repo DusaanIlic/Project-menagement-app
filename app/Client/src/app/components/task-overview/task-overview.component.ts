@@ -17,7 +17,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {EditMemberComponent} from "../edit-member/edit-member.component";
-import {ProjectService} from "../../services/add.project.service";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
 import { MemberInfoComponent } from '../member-info/member-info.component';
@@ -59,7 +58,7 @@ export class TaskOverviewComponent implements OnInit{
     lead: this.lead
   };
 
-  
+
     activitiesForThisTask : taskActivity[] = [];
     membersOnThisProject : Member[] = [];
     commentText = "";

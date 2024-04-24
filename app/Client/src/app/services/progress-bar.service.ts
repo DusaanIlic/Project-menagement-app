@@ -17,16 +17,20 @@ export class ProgressBarService {
   }
 
   show() {
-    if (this.progressBar) {
+    if (this.progressBar && this.isHidden) {
       console.log('SHOWED PROGRESS BAR');
-      this.isHidden = false;
+      setTimeout(() => {
+        this.isHidden = false;
+      });
     }
   }
 
   hide() {
     if (this.progressBar && !this.isHidden) {
       console.log('HIDDEN PROGRESS BAR');
-      this.isHidden = true;
+      setTimeout(() => {
+        this.isHidden = true;
+      });
     }
   }
 }
