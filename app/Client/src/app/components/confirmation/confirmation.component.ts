@@ -19,7 +19,7 @@ constructor(public dialogRef: MatDialogRef<ConfirmationComponent>, private _ngTo
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this._ngToastService.success({detail: "Success Message", summary: "Task deleted successfully", duration: 3000});
   }
 
   confirmDelete(): void{

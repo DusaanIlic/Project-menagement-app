@@ -63,6 +63,7 @@ export class AllMembersComponent implements AfterViewInit{
 
   }
 
+
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
@@ -147,7 +148,8 @@ export class AllMembersComponent implements AfterViewInit{
     if (searchTerm) {
       filteredMembers = filteredMembers.filter(member =>
         member.firstName.toLowerCase().includes(searchTerm) ||
-        member.lastName.toLowerCase().includes(searchTerm)
+        member.lastName.toLowerCase().includes(searchTerm) ||
+        member.email.toLowerCase().includes(searchTerm)
       );
     }
     else{
@@ -188,4 +190,3 @@ export class AllMembersComponent implements AfterViewInit{
 
     protected readonly environment = environment;
 }
-

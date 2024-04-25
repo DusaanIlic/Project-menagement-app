@@ -9,13 +9,13 @@
         <img [src]="avatarUrl" class="flex rounded-full border-solid border-black border-2  size-40 my-2 select-none">
 
         <div class="flex flex-col my-2 justify-between">
-            <h2 class="text-lg font-bold">Upload new avatar</h2>
-            <input (change)="onFileSelected($event)" type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray text-sm"/>
-            <!--
-            <button (click)="openAvatarDialog()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Upload new avatar</button>
-            -->
-            <hr class="border-1 border-black w-80">
-            <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2" (click)="deleteAvatar()">Remove current avatar</button>
+          <h2 class="text-lg font-bold">Upload new avatar</h2>
+          <input (change)="onFileSelected($event)" type="file" class="flex w-auto h-auto file:rounded-md file:border file:bg-gray text-sm"/>
+          <!--
+          <button (click)="openAvatarDialog()" type="button" class="flex items-center justify-center w-48 text-white bg-[#0E2954] font-medium rounded-md focus:ring-4 text-sm px-5 py-2.5 me-2 mb-2 xl:hover:bg-[#0B2043]">Upload new avatar</button>
+          -->
+          <hr class="border-1 border-black w-80">
+          <button type="button" class="flex w-48 text-white bg-red-700 xl:hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 mt-2" (click)="deleteAvatar()">Remove current avatar</button>
         </div>
     </div>
 

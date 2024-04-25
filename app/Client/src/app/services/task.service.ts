@@ -11,7 +11,7 @@ const TASK_API = `${environment.apiUrl}/Task`;
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const TASKACTIVITY_API = `${environment.apiUrl}/TaskActivity`;
 const TASKPRIOROTY_API = `${environment.apiUrl}/TaskPriority`;
-const TASK_CATEGORY_API = `${environment.apiUrl}/TaskCategory`;
+const TASKCATEGORY_API = `${environment.apiUrl}/TaskCategory`;
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -38,6 +38,10 @@ export class TaskService {
 
   saveTask(taskData: any): Observable<any>{
     return this.http.post<any>(`${TASK_API}`, taskData);
+  }
+
+  getAllTaskCategories(): Observable<any[]> {
+    return this.http.get<any[]>(TASKCATEGORY_API);
   }
 
   updateTaskStatus(taskId: number, statusId: number): Observable<any> {
@@ -114,7 +118,7 @@ export class TaskService {
   }
 
   getTaskCategories(projectId: number) {
-    return this.http.get(`${TASK_CATEGORY_API}/${projectId}/TaskCategories`);
+    return this.http.get(`${TASKCATEGORY_API}/${projectId}/TaskCategories`);
   }
 
   getDependantTasks(taskId: number) {
@@ -127,5 +131,9 @@ export class TaskService {
 
   addTaskDependency(taskId: number, dTaskId: number) {
     return this.http.post(`${TASK_API}/${taskId}/dependency/${dTaskId}`, null);
+  }
+
+  getTaskPriorities() {
+    return this.http.get(TASKPRIOROTY_API);
   }
 }

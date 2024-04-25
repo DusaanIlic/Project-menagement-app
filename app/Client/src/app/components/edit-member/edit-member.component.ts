@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Sanitizer} from '@angular/core';
+import {Component, input, OnDestroy, OnInit, Sanitizer} from '@angular/core';
 import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
@@ -108,6 +108,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     const maxSize: number = 512 * 1024; // 512KB
+
+    event.target.value = '';
 
     if (file && file.size > maxSize) {
       this.ngToastService.error({
