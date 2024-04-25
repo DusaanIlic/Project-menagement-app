@@ -1,21 +1,53 @@
 <div class="flex">
-  <mat-card>
-    <div class="flex flex-col justify-between m-2">
-      <h1 class="text-xl flex">Project completion rate</h1>
-      <ngx-charts-gauge class="flex"
-      [results]="dataForChart"
-      [angleSpan]="360" [startAngle]="270"
-      [view]="[400,400]"
-      [legend]="false"
-      [showText]="true"
-      [smallSegments]="2"
-      [units]="'%'"
-      [customColors]="customColors">
+  <mat-accordion>
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title class="text-2xl mr-3">
+          Pera
+        </mat-panel-title>
+        <mat-panel-description class="justify-self-end">
+          Click for details
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="flex flex-col justify-between m-2">
+        <h1 class="text-xl flex">Project completion rate</h1>
+        <ngx-charts-gauge class="flex"
+                          [results]="dataForChart"
+                          [angleSpan]="360" [startAngle]="270"
+                          [view]="[400,400]"
+                          [legend]="false"
+                          [showText]="true"
+                          [smallSegments]="2"
+                          [units]="'%'"
+                          [customColors]="customColors">
 
-      </ngx-charts-gauge>
+        </ngx-charts-gauge>
 
-    </div>
-  </mat-card>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+
+
+
+
+  <mat-sidenav-container>
+    <mat-sidenav>Start</mat-sidenav>
+    <mat-sidenav-content>Main</mat-sidenav-content>
+  </mat-sidenav-container>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <mat-card class="ml-2">
     <div class="flex flex-col justify-between m-2">
@@ -23,12 +55,32 @@
       <ngx-charts-bar-vertical
       [results]="namesForBarChart"
       [showXAxisLabel]="true"
-      [legend]="true"
-      [legendPosition]="below">
+      [noBarWhenZero]="false"
+      [xAxis]="namesForBarChart">
+
 
       </ngx-charts-bar-vertical>
 
     </div>
   </mat-card>
+
+  <mat-card class="ml-2">
+    <div class="flex flex-col justify-between m-2">
+      <h1 class="text-xl flex">Tasks per member</h1>
+      <ngx-charts-bar-horizontal
+        [results]="tasksPerMember"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [noBarWhenZero]="false"
+        [xAxis]="tasksPerMember"
+        [yAxis]="tasksPerMember"
+        (select)="onSelect($event)">
+
+
+      </ngx-charts-bar-horizontal>
+
+    </div>
+  </mat-card>
+
 
 </div>

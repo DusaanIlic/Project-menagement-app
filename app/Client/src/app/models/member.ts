@@ -17,4 +17,5 @@ export interface Member {
     dateOfBirth: Date;
     dateAdded: Date;
     numberOfTasks?: number;
+    tasks? : Task[];
 }
