@@ -27,7 +27,7 @@ export class ProjectOverviewComponent implements OnInit {
 
   routeSub: any;
   projectId: number = 0;
-  projectDetails: any; 
+  projectDetails: any;
   teamLeaderInfo: any;
   members : Member[] = [];
   numberOfMembers: number = 0;
@@ -46,9 +46,11 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.routeSub = this.route.params.subscribe(params => {
-      this.projectId = this.getProjectIdFromUrl(params);
-      this.getProjectDetails(); 
+      this.projectId = params['id'];
+      this.getProjectDetails();
     });
+
+    console.log(`My project id is: ${this.projectId}`);
     this.fetchMembersOnProject();
     this.loadTasksByProject(this.projectId);
     this.getTeamLeaderInfo(this.projectId);
@@ -71,7 +73,7 @@ export class ProjectOverviewComponent implements OnInit {
       // Pronađite odgovarajuću aktivnost i ažurirajte naziv zadatka
       const activityToUpdate = this.recentActivities.find(activity => activity.taskId === taskId);
       if (activityToUpdate) {
-        activityToUpdate.taskName = task.taskName; 
+        activityToUpdate.taskName = task.taskName;
       }
     });
   }
@@ -83,7 +85,7 @@ export class ProjectOverviewComponent implements OnInit {
     const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
     return daysDifference;
   }
-  
+
   fetchMembersOnProject()
   {
     this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
@@ -99,7 +101,7 @@ export class ProjectOverviewComponent implements OnInit {
       this.numberOfTasks = this.tasks.length;
       //console.log(this.members);
     })
-      
+
   }
 
   getTeamLeaderInfo(projectId: number): void {
@@ -139,8 +141,8 @@ export class ProjectOverviewComponent implements OnInit {
 
   openTaskDialog(): void {
     const dialogRef = this.dialog.open(AddTaskComponent, {
-      width: '400px',
-      data: this.projectId
+      width: '500px',
+      data: { projectId: this.projectId}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -158,10 +160,6 @@ export class ProjectOverviewComponent implements OnInit {
         console.error('Error fetching project details:', error);
       }
     );
-  }
-
-  private getProjectIdFromUrl(params: any): number {
-    return params['id'] ? +params['id'] : 0;
   }
 
   fetchTaskStatusData() {

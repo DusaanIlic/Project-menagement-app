@@ -878,10 +878,10 @@ namespace Server.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            if (taskActivities == null || !taskActivities.Any())
-            {
-                return NotFound(new { message = "No task activities found for the project" });
-            }
+            // if (taskActivities == null || !taskActivities.Any())
+            // {
+            //     return NotFound(new { message = "No task activities found for the project" });
+            // }
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {

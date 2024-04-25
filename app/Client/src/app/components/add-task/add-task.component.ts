@@ -129,16 +129,17 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   }
 
   getProjectMembers() {
+    console.log(`TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST!, ${this.projectId}`);
     if (this.projectId) {
-      this.taskService.getProjectMembers(this.projectId).subscribe(
-        (data: Member[]) => {
+      this.taskService.getProjectMembers(this.projectId).subscribe({
+        next: (data: Member[]) => {
           this.projectMembers = data;
-          console.log(data);
+          console.log(this.projectMembers);
         },
-        (error) => {
+        error: error => {
           console.log('Error fetching project members:', error);
         }
-      );
+      });
     }
   }
 
