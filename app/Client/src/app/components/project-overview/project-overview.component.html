@@ -74,26 +74,19 @@
 <div class="flex flex-row justify-center h-2/3 m-4">
   <div class="flex flex-col basis-1/2 pr-5 gap-2">
     <p class="text-xl pb-2">Recent activity</p>
-    <mat-card class="example-card" *ngIf="projectDetails">
+    <mat-card class="example-card" *ngFor="let activity of recentActivities">
       <mat-card-header>
-        <mat-card-title-group class="pb-3">
-          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
-          <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
-          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+        <mat-card-title-group>
+          <mat-card-title><p>{{activity.taskName}}</p></mat-card-title>
+          <mat-card-subtitle>{{activity.name}} {{activity.lastname}}</mat-card-subtitle>
+          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{activity.memberId}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
         </mat-card-title-group>
       </mat-card-header>
+      <mat-card-content>
+        <p>{{ activity.comment }}</p>
+      </mat-card-content>
     </mat-card>
 
-
-    <mat-card class="example-card" *ngIf="projectDetails">
-      <mat-card-header>
-        <mat-card-title-group class="pb-3">
-          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
-          <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
-          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
-        </mat-card-title-group>
-      </mat-card-header>
-    </mat-card>
   </div>
 
   <div class="flex flex-col basis-1/2 pr-5">

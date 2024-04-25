@@ -24,6 +24,10 @@ export class ProjectServiceGet{
     return this.http.get<Project[]>(`${PROJECT_API}`);
   }
 
+  getRecentActivity(projectId: number): Observable<any[]>{
+    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/Latest`);
+  }
+
   deleteProjectById(id? : number): Observable<any[]>
   {
     return this.http.delete<any>(`${PROJECT_API}/${id}`);

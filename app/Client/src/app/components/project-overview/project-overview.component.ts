@@ -34,6 +34,7 @@ export class ProjectOverviewComponent implements OnInit {
   tasks: Task[] = [];
   numberOfTasks: number = 0;
   taskStatusData: any[] = [];
+  recentActivities: any[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -52,6 +53,27 @@ export class ProjectOverviewComponent implements OnInit {
     this.loadTasksByProject(this.projectId);
     this.getTeamLeaderInfo(this.projectId);
     this.fetchTaskStatusData();
+    this.loadRecentActivity(this.projectId);
+  }
+
+  loadRecentActivity(projectId: number): void {
+    this.pService.getRecentActivity(projectId).subscribe((data: any[]) => {
+      this.recentActivities = data.slice(0, 5);
+      console.log("aktivnosti", this.recentActivities);
+      this.recentActivities.forEach(activity => {
+        this.getTaskName(activity.taskId);
+      });
+    });
+  }
+
+  getTaskName(taskId: number): void {
+    this.tService.getTaskById(taskId).subscribe((task: Task) => {
+      // Pronađite odgovarajuću aktivnost i ažurirajte naziv zadatka
+      const activityToUpdate = this.recentActivities.find(activity => activity.taskId === taskId);
+      if (activityToUpdate) {
+        activityToUpdate.taskName = task.taskName; 
+      }
+    });
   }
 
   calculateDaysRemaining(projectEndDate: Date): number {
@@ -67,7 +89,7 @@ export class ProjectOverviewComponent implements OnInit {
     this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
       this.members = data;
       this.numberOfMembers = this.members.length;
-      console.log(data);
+      //console.log(data);
     })
   }
 
@@ -75,7 +97,7 @@ export class ProjectOverviewComponent implements OnInit {
     this.tService.getTasksByProject(projectId).subscribe((data: Task[])=>{
       this.tasks = data;
       this.numberOfTasks = this.tasks.length;
-      console.log(this.members);
+      //console.log(this.members);
     })
       
   }
@@ -117,6 +139,7 @@ export class ProjectOverviewComponent implements OnInit {
 
   openTaskDialog(): void {
     const dialogRef = this.dialog.open(AddTaskComponent, {
+      width: '400px',
       data: this.projectId
     });
 
