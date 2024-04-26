@@ -1,6 +1,6 @@
 <div class="flex flex-col mt-5 max-w-80% items-center">
 
-        <div class="flex flex-row ml-2 items-center border-b-gray-300 border-b-2 pb-2 gap-5 w-4/5">
+        <div class="flex flex-row  mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 gap-5 w-4/5">
 
           <mat-form-field class="w-96" subscriptSizing="dynamic">
             <mat-label>
@@ -13,38 +13,20 @@
             <input matInput [(ngModel)]="searchTerm" (input)="search()">
           </mat-form-field>
 
+          <mat-form-field subscriptSizing="dynamic">
+            <mat-label>Filter by status</mat-label>
+
+            <mat-select>
+              <mat-option value="allProjects">All Projects</mat-option>
+              <mat-option value="activeProjects">Active Projects</mat-option>
+              <mat-option value="finishedProjects">Inactive Projects</mat-option>
+            </mat-select>
+          </mat-form-field>
+
           <span class="grow"></span>
 
-          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center w-48">New project</button>
-
+          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center w-48">Add Project</button>
         </div>
-
-
-        <div class="flex flex-row items-center p-2 w-4/5">
-          <h1 class="mr-2">Show only:</h1>
-          <mat-radio-group aria-label="Select an option">
-            <mat-radio-button  id="allProjects" value="allProjects" class="mr-2" (click)="onStatusChange($event)" checked color="primary">All Projects</mat-radio-button>
-            <mat-radio-button  id="activeProjects" value="activeProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Active projects</mat-radio-button>
-            <mat-radio-button  id="finishedProjects" value="finishedProjects" class="mr-2" (click)="onStatusChange($event)" color="primary">Finished projects</mat-radio-button>
-          </mat-radio-group>
-
-        </div>
-
-
-        <!--
-        <div class="flex flex-row items-center p-2 w-4/5">
-          <h1 class="mr-2">Show only:</h1>
-          <input type="radio" name="projectShow" id="allProjects" value="allProjects" class="mr-2" [(ngModel)] = "selectedTable" checked>
-          <label for="allProjects" class="mr-2">All projects</label>
-
-          <input type="radio" name="projectShow" id="activeProjects" value="activeProjects" class="mr-2" [(ngModel)] = "selectedTable">
-          <label for="activeProjects" class="mr-2">Active projects</label>
-
-          <input type="radio" name="projectShow" id="finishedProjects" value="finishedProjects" class="mr-2" [(ngModel)] = "selectedTable">
-          <label for="activeProjects" class="mr-2">Finished projects</label>
-
-        </div>-->
-
 
         <div class="mat-elevation-z8 w-4/5">
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
@@ -59,9 +41,14 @@
               <td mat-cell *matCellDef="let project"> {{project.startDate | date :'dd-MM-yyyy'}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="endDate">
+            <ng-container matColumnDef="deadline">
               <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by endDate"> DUE DATE </th>
-              <td mat-cell *matCellDef="let project"> {{project.endDate | date :'dd-MM-yyyy'}} </td>
+              <td mat-cell *matCellDef="let project"> {{project.deadline | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">PRIORITY</th>
+              <td mat-cell *matCellDef="let project"> {{project.projectPriority}} </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
@@ -71,26 +58,28 @@
 
             <ng-container matColumnDef="manager">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> PROJECT MANAGER  </th>
-              <td mat-cell *matCellDef="let project"> {{project.lead.firstName}} {{project.lead.lastName}} </td>
+              <td mat-cell *matCellDef="let project"> {{project.teamLider.firstName}} {{project.teamLider.lastName}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="details">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> DETAILS </th>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </th>
               <td mat-cell *matCellDef="let project">
                 <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">...</button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item [routerLink]="['/projects', project.id]">View</button>
-                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.id, project.status)">Delete</button>
+                  <button mat-menu-item [routerLink]="['/projects', project.projectId]">View</button>
+                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.projectId, project.status)">Delete</button>
                 </mat-menu>
               </td>
             </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr class="select-none" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
-        </div>
+        <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
+      </div>
+
+  <ng-toast></ng-toast>
  </div>
 
 

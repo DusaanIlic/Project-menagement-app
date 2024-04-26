@@ -35,26 +35,7 @@ export class AuthService {
           const jwtToken = data.jwtToken;
           const jwtTokenExpirationDate = data.jwtTokenExpirationDate;
           const refreshToken = data.refreshToken;
-
-          const dto = data.member;
-
-          const member: Member = {
-            id: dto.id,
-            firstName: dto.firstName,
-            lastName: dto.lastName,
-            roleId: dto.roleId,
-            roleName: dto.roleName,
-            email: dto.email,
-            linkedin: dto.linkedin,
-            github: dto.github,
-            status: dto.status,
-            phoneNumber: dto.phoneNumber,
-            country: dto.country,
-            city: dto.city,
-            dateOfBirth: new Date(dto.dateOfBirth),
-            dateAdded: new Date(dto.dateAdded),
-            numberOfTasks: 0
-          };
+          const member = data.member;
 
           localStorage.setItem('jwt-token', jwtToken);
           localStorage.setItem('jwt-token-expiration-date', jwtTokenExpirationDate);

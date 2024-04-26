@@ -68,8 +68,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   projectId: any;
   tasks: any;
   taskCategories: any;
-  ganttTasks: any;
-  ganttCategories: any;
+  ganttTasks: any = [];
   startRendering: boolean = false;
   private routeSubscription: any;
 
@@ -115,7 +114,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         this.projectId = projectId;
 
         const tasks$ = this.taskService.getTasksByProject(projectId);
-        const taskCategories$ = this.taskService.getTaskCategories();
+        const taskCategories$ = this.taskService.getTaskCategories(projectId);
 
         return combineLatest([tasks$, taskCategories$]).pipe(
           switchMap(([tasks, taskCategories]) => {

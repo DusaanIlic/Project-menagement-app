@@ -217,6 +217,75 @@ namespace Server.Controllers
         }
 
         [Authorize]
+        [HttpGet("Member/{memberId}")]
+        public async Task<IActionResult> GetProjectsWhereMember(int memberId)
+        {
+            var projects = await dbContext.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.ProjectTasks)
+                .ThenInclude(pts => pts.TaskStatus)
+                .Include(p => p.TeamLeader)
+                .ThenInclude(ptl => ptl.Role)
+                .Include(p => p.MemberProjects)
+                .Include(p => p.Priority)
+                .Where(p => p.MemberProjects.Any(mp => mp.MemberId == memberId))
+                .ToListAsync();
+            var projectDTOs = new List<ProjectDTO>();
+
+            foreach (var p in projects)
+            {
+                var taskDTOs = p.ProjectTasks.Select(t => new ProjectTaskDTO
+                {
+                    TaskId = t.TaskId,
+                    TaskName = t.TaskName,
+                    TaskDescription = t.TaskDescription,
+                    Deadline = t.Deadline,
+                    ProjectId = p.ProjectId,
+                    TaskStatus = t.TaskStatus.Name,
+                    TaskStatusId = t.TaskStatusId
+
+                }).ToList();
+
+                MemberDTO teamLeaderDTO = null;
+
+                if (p.TeamLeader != null)
+                {
+
+                    teamLeaderDTO = new MemberDTO
+                    {
+                        Id = p.TeamLeader.Id,
+                        FirstName = p.TeamLeader.FirstName,
+                        LastName = p.TeamLeader.LastName,
+                        Email = p.TeamLeader.Email,
+                        RoleId = p.TeamLeader.RoleId,
+                        RoleName = p.TeamLeader.Role.RoleName
+                    };
+                }
+
+                int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
+                int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == p.ProjectId);
+                projectDTOs.Add(new ProjectDTO
+                    {
+                        ProjectId = p.ProjectId,
+                        ProjectName = p.ProjectName,
+                        ProjectDescription = p.ProjectDescription,
+                        Deadline = p.Deadline,
+                        ProjectStatusId = p.ProjectStatusId,
+                        Status = p.ProjectStatus.Status,
+                        ProjectTasks = taskDTOs,
+                        TeamLider = teamLeaderDTO,
+                        StartDate = p.StartDate,
+                        NumberOfPeople = numberOfMembers,
+                        NumberOfTasks = numberOfTasks,
+                        ProjectPriority = p.Priority.Name,
+                        ProjectPriorityId = p.ProjectPriorityId
+                });
+            }
+
+            return Ok(projectDTOs);
+        }
+
+        [Authorize]
         [HttpGet("{projectId}")]
         public IActionResult GetProject(int projectId)
         {
@@ -451,6 +520,11 @@ namespace Server.Controllers
             if(statusId == 3 && project.StartDate == DateTime.MinValue)
             {
                 project.StartDate = DateTime.Now;
+            }
+
+            if(statusId == 2)
+            {
+                project.DateFinished = DateTime.Now;
             }
 
             project.ProjectStatus = status;
@@ -790,5 +864,43 @@ namespace Server.Controllers
             return Ok(projectsDTOs);
         }
 
+        [HttpGet("{projectId}/Latest")]
+        public async Task<IActionResult> GetLatestTaskActivitiesForProject(int projectId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId)
+                .OrderByDescending(ta => ta.ActivityDate)
+                .Take(5)
+                .ToListAsync();
+
+            // if (taskActivities == null || !taskActivities.Any())
+            // {
+            //     return NotFound(new { message = "No task activities found for the project" });
+            // }
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.LastName,
+                Email = ta.Member.Email,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                RoleName = ta.Member.Role.RoleName
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
+        }
     }
 }

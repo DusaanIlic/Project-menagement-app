@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
+using Server.DataTransferObjects;
 using Server.Models;
 
 namespace Server.Controllers
@@ -18,22 +19,34 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectPriority>>> GetAllProjectPriority()
+        public async Task<IActionResult> GetProjectPriority()
         {
-            return await _dbContext.ProjectPriorities.ToListAsync();
-           
+            var projectPriority = await _dbContext.ProjectPriorities.ToListAsync();
+            var projectPriorityDTO = projectPriority.Select(p => new ProjectPriorityDTO
+            {
+                PriorityId = p.ProjectPriorityId,
+                PriorityName = p.Name
+            }).ToList();
+            return Ok(projectPriorityDTO);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectPriority>> GetProjectPriorityById(int id)
+        [HttpGet("{projectPriorityId}")]
+        public IActionResult GetProjectPriorityName(int projectPriorityId)
         {
-            var projectPirority = await _dbContext.ProjectPriorities.FindAsync(id);
-            if(projectPirority == null)
+
+            var projectPriority = _dbContext.ProjectPriorities.SingleOrDefault(p => p.ProjectPriorityId == projectPriorityId);
+
+            if (projectPriority == null)
             {
-                return BadRequest(new { message = "Project priority with this id does not exists." });
+                return NotFound(new { message = "Project priority not found." });
             }
 
-            return projectPirority;
+            var projectPriorityDTO = new ProjectPriorityDTO
+            {
+                PriorityId= projectPriority.ProjectPriorityId,
+                PriorityName = projectPriority.Name
+            };
+            return Ok(projectPriorityDTO);
         }
 
     }

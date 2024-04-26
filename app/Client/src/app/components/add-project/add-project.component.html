@@ -1,99 +1,65 @@
-<div
-  id="default-modal"
-  tabindex="-1"
-  aria-hidden="true"
-  class="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative p-4 w-full max-w-4xl max-h-full">
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-      <div
-        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
-      >
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-          Add Project
-        </h3>
-        <button
-          type="button"
-          (click)="closeDialog()"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-          data-modal-hide="default-modal"
-        >
-          <svg
-            class="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 14"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-            />
-          </svg>
-          <span class="sr-only">Close modal</span>
-        </button>
-      </div>
-
-      <div class="p-4 md:p-5 flex justify-between flex-col">
-        <div class="flex-row justify-between mb-3">
-          <label for="name" class="">Project name</label>
-          <input
-            type="text"
-            placeholder="Project name..."
-            id="name"
-            [(ngModel)]="projectName"
-            class="ml-5 w-1/2"
-            required
-          />
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Add Project Form</h1>
+      <span class="grow"></span>
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
         </div>
-
-        <div class="flex-row justify-between mb-3">
-          <label for="name" class="pr-11">Deadline </label>
-          <input
-            type="date"
-            id="name"
-            class="w-1/2 ml-1"
-            [(ngModel)]="deadLine"
-            required
-            [min]="todayDate"
-          />
-          <div *ngIf="">Datum mora biti u budućnosti.</div>
-        </div>
-        <ng-container>
-          <span>
-            <div class="flex-row justify-between">
-              <label for="name">Description </label>
-              <div class="NgxEditor__Wrapper">
-                <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-                <ngx-editor
-                  [(ngModel)]="html"
-                  [editor]="editor"
-                  [disabled]="false"
-                  [placeholder]="'Type here...'"
-                  required
-                ></ngx-editor>
-              </div>
-            </div>
-          </span>
-        </ng-container>
-      </div>
-
-      <div
-        class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
-      >
-        <button
-          data-modal-hide="default-modal"
-          type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          (click)="onSubmit()"
-        >
-          Save
-        </button>
-      </div>
+      </button>
     </div>
-  </div>
-  <ng-toast></ng-toast>
+  </mat-toolbar>
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="projectForm">
+        <div class="flex flex-col gap-2">
+          <mat-form-field>
+            <mat-label>Choose a name</mat-label>
+            <input matInput type="text" placeholder="Ex. Project Management Software" formControlName="projectName" required>
+            <mat-error *ngIf="projectForm.get('projectName')?.hasError('required')">
+              Project Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priorityId" required>
+              <mat-option *ngFor="let priority of projectPriorities" [value]="priority.priorityId">{{ priority.priorityName }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="projectForm.get('priorityId')?.hasError('required')">
+              Priority is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Choose the deadline</mat-label>
+            <input matInput [matDatepicker]="picker" [min]="today" formControlName="deadline">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="projectForm.get('deadline')?.hasError('required')">
+              Date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="4" placeholder="Ex. This project is about making something similar to Jira..." formControlName="projectDescription" required></textarea>
+            <mat-error *ngIf="projectForm.get('projectDescription')?.hasError('required')">
+              Description is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="flex w-full p-2">
+        <span class="grow"></span>
+        <button mat-raised-button color="primary" (click)="addProject()">Add Project</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
 </div>

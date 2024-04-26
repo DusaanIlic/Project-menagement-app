@@ -1,4 +1,104 @@
-<div>
-  <button mat-raised-button color="primary" (click)="addMembersToProjects()" type="button">Add members to project</button>
+<div class="flex flex-row justify-between">
+  <div class="p-4 w-1/2 self-center">
+    <mat-accordion *ngIf="projectDetails">
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="flex flex-row justify-between">
+              <p class="text-3xl">{{projectDetails.projectName}}</p>
+              <mat-icon>add</mat-icon>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+          <div>
+            <p class="text-xl">{{projectDetails.projectDescription}}</p>  
+          </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 
+  <div class="flex flex-row p-5 w-1/2 gap-5 items-center justify-end">
+    <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addMembersToProject()" color="primary">Add members to project</button>
+    <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addTasksToProject()" color="primary">Add tasks to project</button>
+  </div>
 </div>
+
+<div class="flex flex-row justify-between">
+  <div class="basis-1/5 ml-4">
+    <mat-card class="example-card" *ngIf="teamLeaderInfo">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+            <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
+            <mat-card-subtitle>Project Manager</mat-card-subtitle>          
+          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <div class="basis-1/5">
+    <mat-card class="example-card" *ngIf="projectDetails">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
+          <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>    
+  </div>
+
+  <div class="basis-1/5">
+    <mat-card class="example-card" *ngIf="numberOfMembers !== null">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title>{{ numberOfMembers }}</mat-card-title>
+          <mat-card-subtitle>Number of assignees on project</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/employee_id_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2 p-1">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <div class="basis-1/5 mr-4">
+    <mat-card class="example-card" *ngIf="numberOfTasks !== null">
+      <mat-card-header>
+        <mat-card-title-group class="pb-3">
+          <mat-card-title>{{ numberOfTasks }}</mat-card-title>
+          <mat-card-subtitle>Number of tasks on project</mat-card-subtitle>
+          <img mat-card-sm-image src="../../../assets/icons/task_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2 p-1">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>
+
+<div class="flex flex-row justify-center h-2/3 m-4">
+  <div class="flex flex-col basis-1/2 pr-5 gap-2">
+    <p class="text-xl pb-2">Recent activity</p>
+    <mat-card class="example-card" *ngFor="let activity of recentActivities">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title><p>{{activity.taskName}}</p></mat-card-title>
+          <mat-card-subtitle>{{activity.name}} {{activity.lastname}}</mat-card-subtitle>
+          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{activity.memberId}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ activity.comment }}</p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <div class="flex flex-col basis-1/2 pr-5">
+    <p class="text-xl pb-2">Tasks on project</p>
+    <ngx-charts-pie-chart
+      [results]="taskStatusData"
+      [legend]="true"
+      [labels]="true"
+      [explodeSlices]="true">
+    </ngx-charts-pie-chart>
+  </div> 
+</div>
+
+
+

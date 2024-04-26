@@ -263,6 +263,7 @@ namespace Server.Migrations
                     ProjectDescription = table.Column<string>(type: "TEXT", nullable: false),
                     Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateFinished = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TeamLeaderId = table.Column<int>(type: "INTEGER", nullable: true),
                     ProjectPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -378,6 +379,7 @@ namespace Server.Migrations
                     TaskDescription = table.Column<string>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateFinished = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -580,9 +582,8 @@ namespace Server.Migrations
                     { 19, "Comment task" },
                     { 20, "Change project priority" },
                     { 21, "Change task category" },
-                    { 22, "Remove task category" },
-                    { 23, "Add task status" },
-                    { 24, "Remove task status" }
+                    { 22, "Add task status" },
+                    { 23, "Remove task status" }
                 });
 
             migrationBuilder.InsertData(
@@ -665,9 +666,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 23, 22, 26, 9, 556, DateTimeKind.Local).AddTicks(3264), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$oAuGVQp1xlV2KM/3U.o8IethMdf78AzH8V.yz1pGc9XqwDwBGbs/e", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 23, 22, 26, 9, 618, DateTimeKind.Local).AddTicks(6469), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$52KO9gcoZVvypvhm7Q/M/uVFqskgEuoY0TF0aH1tErbI.MUDK8Mom", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 23, 22, 26, 9, 681, DateTimeKind.Local).AddTicks(2751), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$oj0jFu/3vsL9ZEhpRat98.aRFFqv37DMHXlqLThXbO98FbhC3l.PS", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 76, DateTimeKind.Local).AddTicks(9323), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$kDzIng5U78uOiZbj/6pn8O2/TTgYCGb65Ar5RuhGkCTPRFCn.xbvG", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 211, DateTimeKind.Local).AddTicks(4606), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$UoKr7OdP4b0NgGAAg64Y8uvNi66fiu5oWbf2sYd8rNuN7xcap6rn2", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 349, DateTimeKind.Local).AddTicks(9089), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$jG.2SYs4IZz/uDcik.xtQO69AbjJJutCo8INKV6v4FHknArMWT/si", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(

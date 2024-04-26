@@ -10,6 +10,7 @@
     <PackageReference Include="BCrypt.Net" Version="0.1.0" />
     <PackageReference Include="MailKit" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
@@ -22,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Server.sln" />
     <None Remove="Files\default_avatar.png" />
     <Content Include="Files\default_avatar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -34,6 +36,9 @@
     <None Remove="UploadedFiles\8022953f-c2ed-4f35-9933-e7b25140f1c5.jpg" />
     <None Remove="UploadedFiles\a712239a-cdd9-4ca0-abf5-897492a80a69.jpg" />
     <None Remove="mydatabase.db" />
+    <Content Include="mydatabase.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

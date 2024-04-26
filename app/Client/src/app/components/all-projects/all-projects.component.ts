@@ -17,13 +17,15 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {NgToastModule} from "ng-angular-popup";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: string = '';
@@ -31,7 +33,7 @@ export class AllProjectsComponent implements OnInit{
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
   selectedTable: string = "t1";
-  displayedColumns: string[] = ['project',  'startDate', 'endDate', 'status', 'manager', 'details'];
+  displayedColumns: string[] = ['project',  'startDate', 'deadline', 'priority', 'status', 'manager', 'actions'];
   dataSource: any;
   searchTerm: string = '';
   @ViewChild(MatSort)sort: any;
@@ -40,16 +42,12 @@ export class AllProjectsComponent implements OnInit{
   constructor(private projectService : ProjectServiceGet, private location : Location, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
 
   openDialog() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogRef = this.dialog.open(AddProjectComponent, {
+      width: '35%',
+      data: {}
+    });
 
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-
-    const dialogRef = this.dialog.open(AddProjectComponent, dialogConfig);
-
-    dialogRef
-      .afterClosed()
-      .subscribe((data) => this.fetchProjects());
+    dialogRef.afterClosed().subscribe((data) => this.fetchProjects());
   }
 
   announceSortChange(sortState: Sort) {
@@ -92,7 +90,7 @@ export class AllProjectsComponent implements OnInit{
   {
     this.projectService.getAllProjects().subscribe((data : any[]) => {
       console.log(data);
-      this.allProjects = this.mapDataFromDTO(data);
+      this.allProjects = data;
       this.dataSource = new MatTableDataSource(this.allProjects);
       this.dataSource.paginator = this.paginator;
       console.log(this.allProjects);
@@ -108,19 +106,19 @@ export class AllProjectsComponent implements OnInit{
     })
   }
 
-  private mapDataFromDTO(projects : any[]) : Project[]
-  {
-    return projects.map(item => ({
-      id: item.projectId,
-      projectName: item.projectName,
-      endDate: new Date(item.deadline),
-      startDate: new Date(item.startDate),
-      description: item.projectDescription,
-      details: "",
-      status: item.status,
-      lead: item.teamLider
-    }));
-  }
+  // private mapDataFromDTO(projects : any[]) : Project[]
+  // {
+  //   return projects.map(item => ({
+  //     projectId: item.projectId,
+  //     projectName: item.projectName,
+  //     deadline: new Date(item.deadline),
+  //     startDate: new Date(item.startDate),
+  //     projectDescription: item.projectDescription,
+  //     details: "",
+  //     status: item.status,
+  //     teamLeader: item.teamLider
+  //   }));
+  // }
 
 
   search(): void {

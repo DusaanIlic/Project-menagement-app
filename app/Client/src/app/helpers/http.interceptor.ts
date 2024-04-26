@@ -1,11 +1,12 @@
 import {HttpErrorResponse, HttpInterceptor, HttpInterceptorFn} from "@angular/common/http";
 import {tap} from "rxjs/internal/operators/tap";
-import {catchError, throwError} from "rxjs";
+import {catchError, finalize, throwError} from "rxjs";
 import {inject} from "@angular/core";
 import {AuthService} from "../services/auth.service";
 import {Member} from "../models/member";
 import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
+import {ProgressBarService} from "../services/progress-bar.service";
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -17,6 +18,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       `Bearer ${jwtToken}`
     )
   });
+
+  const progressBarService = inject(ProgressBarService); // Inject ProgressBarService
+
+  progressBarService.show(); // Show progress bar when request starts
 
   console.log('Http Interceptor running');
 
@@ -31,25 +36,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
             const newJwtToken = data.jwtToken;
             const newJwtTokenExpirationDate = data.jwtTokenExpirationDate;
             const newRefreshToken = data.refreshToken;
-
-            const dto = data.member;
-
-            const member: Member = {
-              id: dto.id,
-              firstName: dto.firstName,
-              lastName: dto.lastName,
-              roleId: dto.roleId,
-              roleName: dto.roleName,
-              email: dto.email,
-              linkedin: dto.linkedin,
-              github: dto.github,
-              status: dto.status,
-              phoneNumber: dto.phoneNumber,
-              country: dto.country,
-              city: dto.city,
-              dateOfBirth: new Date(dto.dateOfBirth),
-              dateAdded: new Date(dto.dateAdded)
-            };
+            const member = data.member;
 
             localStorage.setItem('jwt-token', newJwtToken);
             localStorage.setItem('jwt-token-expiration-date', newJwtTokenExpirationDate);
@@ -65,21 +52,31 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
             const clonedReq = req.clone({
               setHeaders: {
-                Authorization: `Bearer ${newJwtToken}` // Fixed the colon typo here
+                Authorization: `Bearer ${newJwtToken}`
               }
             });
+
+            progressBarService.hide();
 
             return next(clonedReq);
           }),
           catchError((error) => {
             console.log(`Failed refreshing token.`);
+            progressBarService.hide();
             authService.logout();
             return throwError(() => error);
+          }),
+          finalize(() => {
+            progressBarService.hide(); // Hide progress bar whether there's an error or not
           })
         );
       }
 
+      progressBarService.hide(); // Hide progress bar on error
       return throwError(() => err);
+    }),
+    finalize(() => {
+      progressBarService.hide(); // Hide progress bar whether there's an error or not
     })
   );
 }

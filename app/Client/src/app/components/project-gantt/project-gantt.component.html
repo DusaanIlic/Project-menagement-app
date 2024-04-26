@@ -17,7 +17,7 @@
     <!--    <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>-->
   </div>
 
-  <ngx-gantt *ngIf="startRendering" #gantt
+  <ngx-gantt #gantt
              [items]="ganttTasks"
              [viewType]="viewType"
              [draggable]="true"

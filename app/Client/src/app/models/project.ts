@@ -1,12 +1,19 @@
 import { Member } from "./member";
+import {Task} from "./task";
 
 export interface Project {
-  id: number;
+  projectId: number;
   projectName: string;
-  endDate: Date;
+  projectDescription: string;
+  deadline: Date;
   startDate: Date;
-  description: string;
-  details: string;
+  dateFinished: Date;
+  projectStatusId: number;
   status: string;
-  lead: Member;
+  projectTasks: Task[];
+  teamLider: Member;
+  numberOfPeople: number;
+  numberOfTasks: number;
+  projectPriorityId: number;
+  projectPriority: string;
 }
