@@ -17,6 +17,7 @@ import {
 
 } from "@angular/material/expansion";
 import {MatSidenavContainer, MatSidenavModule} from "@angular/material/sidenav";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-project-analytics',
@@ -31,7 +32,8 @@ import {MatSidenavContainer, MatSidenavModule} from "@angular/material/sidenav";
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     MatSidenavContainer,
-    MatSidenavModule
+    MatSidenavModule,
+    MatIcon
   ],
   templateUrl: './project-analytics.component.html',
   styleUrl: './project-analytics.component.scss'
@@ -42,7 +44,6 @@ export class ProjectAnalyticsComponent implements OnInit{
   membersOnProject : any;
   taskCategories : any[] = [];
   customColors: any;
-  below = LegendPosition.Below
   projectId : number = 0;
   tasks : any;
   dataForChart : any;
