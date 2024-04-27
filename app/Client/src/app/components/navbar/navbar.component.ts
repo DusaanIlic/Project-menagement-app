@@ -13,6 +13,7 @@ import {Observable, Subscription} from "rxjs";
 import {ThemeService} from "../../services/theme.service";
 import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
 import {Theme} from "../../models/theme";
+import theme from "tailwindcss/defaultTheme";
 
 @Component({
   selector: 'app-navbar',
@@ -59,11 +60,18 @@ export class NavbarComponent implements OnInit {
       this.avatarUrl = avatarUrl;
     });
 
-    this.themeService.setTheme('deeppurple-amber');
+    let defaultTheme = localStorage.getItem('selected-theme');
+
+    if (!defaultTheme) {
+      defaultTheme = 'indigo-pink';
+    }
+
+    this.themeService.setTheme(defaultTheme);
   }
 
   changeTheme(themeToSet: string) {
     this.themeService.setTheme(themeToSet);
+    localStorage.setItem('selected-theme', themeToSet);
   }
 
   logout() {
