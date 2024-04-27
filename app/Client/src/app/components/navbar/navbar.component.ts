@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
+import {AsyncPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import {Member} from "../../models/member";
@@ -9,7 +9,11 @@ import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDivider} from "@angular/material/divider";
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
+import {ThemeService} from "../../services/theme.service";
+import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
+import {Theme} from "../../models/theme";
+import {ThemeMenuComponent} from "../theme-menu/theme-menu.component";
 
 @Component({
   selector: 'app-navbar',
@@ -28,6 +32,8 @@ import {Subscription} from "rxjs";
     MatMenuItem,
     MatMenuTrigger,
     MatDivider,
+    ThemeMenuComponent,
+    AsyncPipe,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
@@ -35,6 +41,7 @@ import {Subscription} from "rxjs";
 export class NavbarComponent implements OnInit {
   member: Member | null | undefined;
   avatarUrl: string | undefined;
+  options$: Observable<Theme[]> = this.themeService.getThemeOptions();
 
   buttons = [
     { link: '/dashboard', text: 'Dashboard', icon: 'home' },
@@ -42,7 +49,8 @@ export class NavbarComponent implements OnInit {
     { link: '/members/all', text: 'Members', icon: 'person' },
   ];
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router,
+                private themeService: ThemeService) { }
 
   ngOnInit() {
     this.authService.getAuthenticatedMember().subscribe(member => {
@@ -52,10 +60,15 @@ export class NavbarComponent implements OnInit {
     this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
       this.avatarUrl = avatarUrl;
     });
+
+    this.themeService.setTheme('deeppurple-amber');
+  }
+
+  themeChangeHandler(themeToSet: string) {
+    this.themeService.setTheme(themeToSet);
   }
 
   logout() {
     this.authService.logout();
   }
-
 }

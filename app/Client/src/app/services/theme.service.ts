@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import themes from "../../assets/themes.json";
 import { Theme } from "../models/theme";
+import {of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,10 @@ import { Theme } from "../models/theme";
 export class ThemeService {
   getThemeOptions() {
     const options: Theme[] = themes;
+    return of(options);
   }
 
-  setTheme(theme: Theme) {
+  setTheme(theme: string) {
 
   }
 }

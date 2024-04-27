@@ -11,6 +11,10 @@
 
   <span class="grow"></span>
 
+  <app-theme-menu [options]="options$ | async"
+                  (themeChange)="themeChangeHandler($event)">
+  </app-theme-menu>
+
   <button mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
     <div class="flex items-center justify-center">
       <img [src]="avatarUrl" alt="Avatar image" height="32" width="32">
