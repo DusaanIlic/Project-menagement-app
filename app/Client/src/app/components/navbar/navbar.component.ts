@@ -13,7 +13,6 @@ import {Observable, Subscription} from "rxjs";
 import {ThemeService} from "../../services/theme.service";
 import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
 import {Theme} from "../../models/theme";
-import {ThemeMenuComponent} from "../theme-menu/theme-menu.component";
 
 @Component({
   selector: 'app-navbar',
@@ -32,7 +31,6 @@ import {ThemeMenuComponent} from "../theme-menu/theme-menu.component";
     MatMenuItem,
     MatMenuTrigger,
     MatDivider,
-    ThemeMenuComponent,
     AsyncPipe,
   ],
   templateUrl: './navbar.component.html',
@@ -64,7 +62,7 @@ export class NavbarComponent implements OnInit {
     this.themeService.setTheme('deeppurple-amber');
   }
 
-  themeChangeHandler(themeToSet: string) {
+  changeTheme(themeToSet: string) {
     this.themeService.setTheme(themeToSet);
   }
 
