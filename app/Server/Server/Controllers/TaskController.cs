@@ -117,8 +117,8 @@ namespace Server.Controllers
                 return NotFound(new { message = "Project with this id not found." });
             }
 
-            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == addProjectTaskRequest.TaskPriorityId);
-            var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
+            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == addProjectTaskRequest.TaskPriorityId);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
             var projectTask = new ProjectTask()
