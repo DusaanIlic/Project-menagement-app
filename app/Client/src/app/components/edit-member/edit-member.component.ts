@@ -15,6 +15,9 @@ import {MatTab, MatTabGroup} from "@angular/material/tabs";
 import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
 import {MatButton} from "@angular/material/button";
 import {MatDivider} from "@angular/material/divider";
+import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-edit-member',
@@ -32,7 +35,16 @@ import {MatDivider} from "@angular/material/divider";
     MatCardTitle,
     MatButton,
     MatCardContent,
-    MatDivider
+    MatDivider,
+    MatFormField,
+    MatError,
+    MatInput,
+    MatLabel,
+    MatHint,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
@@ -40,6 +52,7 @@ import {MatDivider} from "@angular/material/divider";
 export class EditMemberComponent implements OnInit, OnDestroy {
   member: any;
   memberForm: any;
+  today: Date = new Date();
   avatarUrl: string | undefined;
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;

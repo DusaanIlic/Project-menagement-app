@@ -1,46 +1,127 @@
-<mat-tab-group>
-  <mat-tab label="Profile Settings">
-    <div class="flex p-2 gap-2 flex-col sm:flex-row">
-      <mat-card class="basis-1/4">
-        <mat-card-title class="p-4">
-          <div class="flex flex-col gap-4">
-            <p class="text-2xl flex justify-center items-center">Your Profile</p>
-          </div>
-        </mat-card-title>
-        <mat-card-content class="p-4">
-          <div class="flex flex-col items-center justify-center gap-8">
-            <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none"/>
-
-            <div class="flex flex-col items-center justify-center">
-              <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
-              <p>{{member?.roleName}}</p>
+<div class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
+  <mat-tab-group>
+    <mat-tab label="Profile Settings">
+      <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
+        <mat-card class="basis-1/4">
+          <mat-card-title class="p-4">
+            <div class="flex flex-col gap-4">
+              <p class="text-2xl flex justify-center items-center">Your Profile</p>
             </div>
+          </mat-card-title>
+          <mat-card-content class="p-4">
+            <div class="flex flex-col items-center justify-center gap-8">
+              <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none"/>
 
-            <div class="flex flex-col items-center justify-center gap-2 w-1/2">
-              <button color="primary" mat-raised-button class="w-full">UPLOAD NEW AVATAR</button>
-              <button color="warn" mat-stroked-button class="w-full">DELETE AVATAR</button>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="grow">
-        <mat-card-title class="p-4">
-          <div class="flex flex-col gap-4">
-            <div class="flex w-full justify-center">
-              <p class="text-2xl">Your Profile Settings</p>
-              <span class="grow"></span>
-              <button color="primary" mat-raised-button class="w-[120px]">SAVE</button>
-            </div>
-            <mat-divider class="w-full"></mat-divider>
-          </div>
-        </mat-card-title>
-      </mat-card>
-    </div>
-  </mat-tab>
-  <mat-tab label="Account Settings">
+              <div class="flex flex-col items-center justify-center">
+                <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
+                <p>{{member?.roleName}}</p>
+              </div>
 
-  </mat-tab>
-</mat-tab-group>
+              <div class="flex flex-col items-center justify-center gap-2 w-1/2">
+                <button color="primary" mat-raised-button class="w-full">UPLOAD NEW AVATAR</button>
+                <button color="warn" mat-stroked-button class="w-full" (click)="deleteAvatar()">DELETE AVATAR</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="grow">
+          <mat-card-title class="p-4">
+            <div class="flex flex-col gap-4">
+              <div class="flex w-full justify-center gap-2">
+                <p class="text-2xl">Your Profile Settings</p>
+                <span class="grow"></span>
+                <button color="warn" mat-stroked-button class="w-[120px]" routerLink="/members/all">CANCEL</button>
+                <button color="primary" mat-raised-button class="w-[120px]" (click)="saveChanges()">SAVE</button>
+              </div>
+              <mat-divider class="w-full"></mat-divider>
+            </div>
+          </mat-card-title>
+
+          <mat-card-content class="p-4" [formGroup]="memberForm">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4">
+                <p class="font-bold">Basic Information</p>
+                <mat-divider class="w-full"></mat-divider>
+                <div class="w-full flex flex-col gap-2 sm:flex-row">
+                  <mat-form-field class="grow">
+                    <mat-label>First Name</mat-label>
+                    <mat-hint>This is going to be displayed as your first name</mat-hint>
+                    <input matInput type="text" formControlName="firstName" required>
+                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('required')">
+                      First Name is required.
+                    </mat-error>
+                    <mat-error *ngIf="memberForm.get('firstName').errors?.['minLength']">
+                      First Name must be at least 2 characters long.
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field class="grow">
+                    <mat-label>Last Name</mat-label>
+                    <mat-hint>This is going to be displayed as your last name</mat-hint>
+                    <input matInput type="text" formControlName="lastName" required>
+                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('required')">
+                      Last Name is required.
+                    </mat-error>
+                    <mat-error *ngIf="memberForm.get('lastName').errors?.['minLength']">
+                      Last Name must be at least 2 characters long.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field>
+                  <mat-label>Date of Birth</mat-label>
+                  <input matInput [matDatepicker]="picker" [max]="today" formControlName="dateOfBirth" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-hint>Format of your birth date should be MM/DD/YYYY</mat-hint>
+                  <mat-error *ngIf="memberForm.get('dateOfBirth').errors?.['maxDate']">
+                    Date of birth can not be in the future
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="grow">
+                  <mat-label>Your Status</mat-label>
+                  <mat-hint>This is going to be displayed as your status</mat-hint>
+                  <input matInput type="text" formControlName="status">
+                </mat-form-field>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <p class="font-bold">Contact Information</p>
+                <mat-divider class="w-full"></mat-divider>
+                <div class="w-full flex flex-col gap-2 sm:flex-row">
+                  <mat-form-field class="grow">
+                    <mat-label>Country</mat-label>
+                    <mat-hint>Country where you live in</mat-hint>
+                    <input matInput type="text" formControlName="country">
+                  </mat-form-field>
+
+                  <mat-form-field class="grow">
+                    <mat-label>City</mat-label>
+                    <mat-hint>City where you live in</mat-hint>
+                    <input matInput type="text" formControlName="city">
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field class="grow">
+                  <mat-label>Phone Number</mat-label>
+                  <mat-hint>Your phone number. Should be in format xxx-xxx-xxxx</mat-hint>
+                  <input matInput type="text" formControlName="phoneNumber">
+                  <mat-error *ngIf="memberForm.get('phoneNumber').errors?.['pattern']">
+                    Bad number format
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+    <mat-tab label="Account Settings">
+
+    </mat-tab>
+  </mat-tab-group>
+</div>
 
 <!--<div class="w-8/12 m-auto" [formGroup]="memberForm">-->
 <!--  <div>-->
