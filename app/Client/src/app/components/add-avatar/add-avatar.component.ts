@@ -5,6 +5,10 @@ import {ImageCropperModule} from "ngx-image-cropper";
 import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { DomSanitizer } from '@angular/platform-browser';
 import {NgIf, NgOptimizedImage} from "@angular/common";
+import {MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
 
 
 @Component({
@@ -13,22 +17,26 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
   imports: [
     ImageCropperModule,
     NgOptimizedImage,
-    NgIf
+    NgIf,
+    MatButton,
+    MatIcon,
+    MatToolbar,
+    MatCardContent,
+    MatCard,
+    MatCardActions
   ],
   templateUrl: './add-avatar.component.html',
   styleUrl: './add-avatar.component.scss'
 })
 export class AddAvatarComponent {
-  imageChangedEvent: any = '';
+  selectedFile: any = '';
   croppedImage: any = '';
 
-  constructor(public dialogRef: MatDialogRef<EditMemberComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-                private sanitizer: DomSanitizer) {
+  constructor(public dialogRef: MatDialogRef<EditMemberComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any, private sanitizer: DomSanitizer) {
+    this.selectedFile = data.file;
   }
 
-  fileChangeEvent(event: any): void {
-    this.imageChangedEvent = event;
-  }
   imageCropped(event: ImageCroppedEvent) {
     if (event.objectUrl != null) {
       this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
@@ -43,5 +51,9 @@ export class AddAvatarComponent {
   }
   loadImageFailed() {
     // show message
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 }

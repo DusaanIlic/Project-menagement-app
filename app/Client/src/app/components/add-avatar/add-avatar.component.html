@@ -1,16 +1,41 @@
-<input type="file" (change)="fileChangeEvent($event)" />
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Crop Avatar</h1>
 
-<image-cropper
-  [imageChangedEvent]="imageChangedEvent"
-  [containWithinAspectRatio]="true"
-  [maintainAspectRatio]="true"
-  [roundCropper]="true"
-  [autoCrop]="true"
-  [aspectRatio]="1"
-  (imageCropped)="imageCropped($event)"
-  (imageLoaded)="imageLoaded($event)"
-  (cropperReady)="cropperReady()"
-  (loadImageFailed)="loadImageFailed()"
-></image-cropper>
+      <span class="grow"></span>
 
-<img *ngIf="croppedImage" [src]="croppedImage" height="256" width="256"/>
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+
+
+  <mat-card>
+    <mat-card-content>
+      <image-cropper
+        [imageFile]="selectedFile"
+        [containWithinAspectRatio]="true"
+        [maintainAspectRatio]="true"
+        [roundCropper]="true"
+        [autoCrop]="true"
+        [aspectRatio]="1"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded($event)"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+    </mat-card-content>
+    <mat-card-actions>
+      <div class="flex w-full justify-center">
+        <span class="grow"></span>
+        <button mat-raised-button color="primary">UPLOAD</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+
