@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col select-none">
+<div class="flex flex-col select-none">
   <mat-toolbar>
     <div class="flex w-full gap-2 items-center min-h-16">
       <h1>Crop Avatar</h1>
@@ -13,29 +13,23 @@
     </div>
   </mat-toolbar>
 
+  <div class="flex flex-col p-2">
+    <image-cropper
+      [imageFile]="selectedFile"
+      [roundCropper]="true"
+      [resizeToWidth]="256"
+      [resizeToHeight]="256"
+      (imageCropped)="imageCropped($event)"
+      (imageLoaded)="imageLoaded($event)"
+      (cropperReady)="cropperReady()"
+      (loadImageFailed)="loadImageFailed()"
+    ></image-cropper>
 
-  <mat-card>
-    <mat-card-content>
-      <image-cropper
-        [imageFile]="selectedFile"
-        [containWithinAspectRatio]="true"
-        [maintainAspectRatio]="true"
-        [roundCropper]="true"
-        [autoCrop]="true"
-        [aspectRatio]="1"
-        (imageCropped)="imageCropped($event)"
-        (imageLoaded)="imageLoaded($event)"
-        (cropperReady)="cropperReady()"
-        (loadImageFailed)="loadImageFailed()"
-      ></image-cropper>
-    </mat-card-content>
-    <mat-card-actions>
-      <div class="flex w-full justify-center">
-        <span class="grow"></span>
-        <button mat-raised-button color="primary">UPLOAD</button>
-      </div>
-    </mat-card-actions>
-  </mat-card>
+    <div class="flex w-full justify-center">
+      <span class="grow"></span>
+      <button mat-raised-button color="primary" (click)="uploadAvatar()">UPLOAD</button>
+    </div>
+  </div>
 </div>
 
 

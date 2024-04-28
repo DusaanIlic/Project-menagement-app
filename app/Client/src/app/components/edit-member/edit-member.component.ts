@@ -134,11 +134,21 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0] ?? null;
-    const maxSize: number = 512 * 1024; // 512KB
+    const maxSize: number = 1024 * 1024; // 1MB
+
+    if ( this.selectedFile &&  this.selectedFile.size > maxSize) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'File size exceeds 1MB.'
+      });
+
+      event.target.value = '';
+
+      return;
+    }
 
     this.matDialog.open(AddAvatarComponent, {
-      width: '400px',
-      height: '400px',
+      width: '420px',
       data: {
         memberId: this.member.id,
         file: this.selectedFile
