@@ -54,6 +54,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   memberForm: any;
   today: Date = new Date();
   avatarUrl: string | undefined;
+  selectedFile: any = null;
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
@@ -123,6 +124,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   openAvatarDialog() {
     const dialogRef = this.matDialog.open(AddAvatarComponent, {
+      width: '50%',
+      height: '50%',
       data: {
         memberId: this.member.id
       }
@@ -143,22 +146,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       // Clear the file input field
       event.target.value = '';
     } else {
-      this.memberService.setAvatar(this.member.id, file).subscribe({
-        next: data => {
-          this.ngToastService.success({
-            detail: 'Success',
-            summary: 'Successfully changed avatar.'
-          });
-
-          this.authService.updateAuthenticatedMembersAvatar();
-        },
-        error: err => {
-          this.ngToastService.error({
-            detail: 'Error',
-            summary: err.statusText
-          });
-        }
-      });
+      console.log(file);
     }
   }
 
