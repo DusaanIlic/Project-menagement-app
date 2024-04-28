@@ -12,7 +12,9 @@ import {AuthService} from "../../services/auth.service";
 import {MatDialog} from "@angular/material/dialog";
 import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
 import {MatTab, MatTabGroup} from "@angular/material/tabs";
-import {MatCard, MatCardTitle} from "@angular/material/card";
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
+import {MatButton} from "@angular/material/button";
+import {MatDivider} from "@angular/material/divider";
 
 @Component({
   selector: 'app-edit-member',
@@ -27,7 +29,10 @@ import {MatCard, MatCardTitle} from "@angular/material/card";
     MatTabGroup,
     MatTab,
     MatCard,
-    MatCardTitle
+    MatCardTitle,
+    MatButton,
+    MatCardContent,
+    MatDivider
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'

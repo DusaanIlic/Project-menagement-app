@@ -1,17 +1,39 @@
 <mat-tab-group>
   <mat-tab label="Profile Settings">
-    <div class="flex p-2 gap-2">
+    <div class="flex p-2 gap-2 flex-col sm:flex-row">
       <mat-card class="basis-1/4">
-        <div class="flex flex-col items-center justify-center">
-          <p class="text-2xl">Your Profile</p>
-          <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128"/>
-        </div>
-      </mat-card>
+        <mat-card-title class="p-4">
+          <div class="flex flex-col gap-4">
+            <p class="text-2xl flex justify-center items-center">Your Profile</p>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="p-4">
+          <div class="flex flex-col items-center justify-center gap-8">
+            <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none"/>
 
+            <div class="flex flex-col items-center justify-center">
+              <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
+              <p>{{member?.roleName}}</p>
+            </div>
+
+            <div class="flex flex-col items-center justify-center gap-2 w-1/2">
+              <button color="primary" mat-raised-button class="w-full">UPLOAD NEW AVATAR</button>
+              <button color="warn" mat-stroked-button class="w-full">DELETE AVATAR</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
       <mat-card class="grow">
-        <div>
-          Settings section
-        </div>
+        <mat-card-title class="p-4">
+          <div class="flex flex-col gap-4">
+            <div class="flex w-full justify-center">
+              <p class="text-2xl">Your Profile Settings</p>
+              <span class="grow"></span>
+              <button color="primary" mat-raised-button class="w-[120px]">SAVE</button>
+            </div>
+            <mat-divider class="w-full"></mat-divider>
+          </div>
+        </mat-card-title>
       </mat-card>
     </div>
   </mat-tab>
