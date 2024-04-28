@@ -11,6 +11,8 @@ import {maxDateValidator} from "../../validators/max-date.validator";
 import {AuthService} from "../../services/auth.service";
 import {MatDialog} from "@angular/material/dialog";
 import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
+import {MatTab, MatTabGroup} from "@angular/material/tabs";
+import {MatCard, MatCardTitle} from "@angular/material/card";
 
 @Component({
   selector: 'app-edit-member',
@@ -21,7 +23,11 @@ import {AddAvatarComponent} from "../add-avatar/add-avatar.component";
     DatePipe,
     RouterLink,
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    MatTabGroup,
+    MatTab,
+    MatCard,
+    MatCardTitle
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
