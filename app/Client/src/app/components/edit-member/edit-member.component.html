@@ -1,31 +1,32 @@
 <div class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
-  <mat-tab-group>
-    <mat-tab label="Profile Settings">
-      <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
-        <mat-card class="basis-1/4">
-          <mat-card-title class="p-4">
-            <div class="flex flex-col gap-4">
-              <p class="text-2xl flex justify-center items-center">Your Profile</p>
-            </div>
-          </mat-card-title>
-          <mat-card-content class="p-4">
-            <div class="flex flex-col items-center justify-center gap-8">
-              <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
+  <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
+    <mat-card class="basis-1/4">
+      <mat-card-title class="p-4">
+        <div class="flex flex-col gap-4">
+          <p class="text-2xl flex justify-center items-center">Your Profile</p>
+        </div>
+      </mat-card-title>
+      <mat-card-content class="p-4">
+        <div class="flex flex-col items-center justify-center gap-8">
+          <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
 
-              <div class="flex flex-col items-center justify-center">
-                <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
-                <p>{{member?.roleName}}</p>
-              </div>
+          <div class="flex flex-col items-center justify-center">
+            <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
+            <p>{{member?.roleName}}</p>
+          </div>
 
-              <div class="flex flex-col items-center justify-center gap-2 w-1/2">
-                <button type="button" color="primary" class="w-full" mat-raised-button (click)="fileInput.click()">UPLOAD AVATAR</button>
-                <input hidden (change)="onFileSelected($event)" #fileInput type="file">
-                <button color="warn" mat-stroked-button class="w-full" (click)="deleteAvatar()">DELETE AVATAR</button>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-        <mat-card class="grow">
+          <div class="flex flex-col items-center justify-center gap-2 w-1/2">
+            <button type="button" color="primary" class="w-full" mat-raised-button (click)="fileInput.click()">UPLOAD AVATAR</button>
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file">
+            <button color="warn" mat-stroked-button class="w-full" (click)="deleteAvatar()">DELETE AVATAR</button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-tab-group class="grow">
+      <mat-tab label="Profile Settings">
+        <mat-card class="grow mt-2">
           <mat-card-title class="p-4">
             <div class="flex flex-col gap-4">
               <div class="flex w-full justify-center gap-2">
@@ -133,12 +134,12 @@
             </div>
           </mat-card-content>
         </mat-card>
-      </div>
-    </mat-tab>
-    <mat-tab label="Account Settings">
+      </mat-tab>
+      <mat-tab label="Account Settings">
 
-    </mat-tab>
-  </mat-tab-group>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
 
   <ng-toast></ng-toast>
 </div>
