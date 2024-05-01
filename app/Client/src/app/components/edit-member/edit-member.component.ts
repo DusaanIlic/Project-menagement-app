@@ -2,8 +2,8 @@ import {Component, input, OnDestroy, OnInit, Sanitizer} from '@angular/core';
 import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
-import {Subscription, switchMap} from "rxjs";
-import {DatePipe, NgIf, NgOptimizedImage} from "@angular/common";
+import {async, Observable, Subscription, switchMap} from "rxjs";
+import {AsyncPipe, DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
@@ -19,6 +19,9 @@ import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/mat
 import {MatInput} from "@angular/material/input";
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 import {MatIcon} from "@angular/material/icon";
+import {RoleService} from "../../services/role.service";
+import {Role} from "../../models/role";
+import {MatOption, MatSelect} from "@angular/material/select";
 
 @Component({
   selector: 'app-edit-member',
@@ -46,7 +49,11 @@ import {MatIcon} from "@angular/material/icon";
     MatDatepickerInput,
     MatDatepickerToggle,
     MatSuffix,
-    MatIcon
+    MatIcon,
+    MatSelect,
+    MatOption,
+    NgForOf,
+    AsyncPipe
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
@@ -57,12 +64,13 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   today: Date = new Date();
   avatarUrl: string | undefined;
   selectedFile: any = null;
+  roles: Observable<Role[]> = this.roleService.getAllRoles();
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
   private _routeSubscription: any;
 
   constructor(private route: ActivatedRoute, private memberService: MemberService,
                 private ngToastService: NgToastService, private authService: AuthService,
-                  private matDialog: MatDialog) { }
+                  private matDialog: MatDialog, private roleService: RoleService) { }
 
   ngOnInit() {
     this.memberForm = new FormGroup({
@@ -207,4 +215,6 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  protected readonly async = async;
 }

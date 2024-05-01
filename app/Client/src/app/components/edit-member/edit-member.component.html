@@ -156,7 +156,12 @@
                   </div>
                   <p class="font-bold">Change Your Email</p>
                   <span class="grow"></span>
-                  <button color="primary" mat-raised-button>CHANGE EMAIL</button>
+                  <button color="primary" mat-raised-button>
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>CHANGE EMAIL</p>
+                    </div>
+                  </button>
                 </div>
                 <mat-divider class="w-full"></mat-divider>
                 <div class="w-full flex flex-col gap-2">
@@ -170,6 +175,34 @@
                     <mat-label>New Email</mat-label>
                     <mat-hint>If you wish to change it, please contact one of your administrators</mat-hint>
                     <input matInput type="email" required>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex w-full justify-center items-center gap-2">
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="scale-[1.25]">admin_panel_settings</mat-icon>
+                  </div>
+                  <p class="font-bold">Change Your Role</p>
+                  <span class="grow"></span>
+                  <button color="primary" mat-raised-button>
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>CHANGE ROLE</p>
+                    </div>
+                  </button>
+                </div>
+
+                <mat-divider class="w-full"></mat-divider>
+
+                <div class="w-full flex flex-col gap-2">
+                  <mat-form-field>
+                    <mat-label>Your Current Role</mat-label>
+                    <mat-select required [value]="member?.roleId">
+                      <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
+                    </mat-select>
+                    <mat-hint>Only your administrator can change your role.</mat-hint>
                   </mat-form-field>
                 </div>
               </div>
