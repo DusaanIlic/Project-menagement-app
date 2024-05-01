@@ -163,13 +163,49 @@
                   <mat-form-field>
                     <mat-label>Current Email</mat-label>
                     <mat-hint>Your email was set by your administrator</mat-hint>
-                    <input matInput [value]="member?.email" disabled>
+                    <input matInput [value]="member?.email" disabled type="email">
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>New Email</mat-label>
                     <mat-hint>If you wish to change it, please contact one of your administrators</mat-hint>
                     <input matInput type="email" required>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex w-full justify-center items-center gap-2">
+                  <p class="font-bold">Change Your Password</p>
+                  <span class="grow"></span>
+                  <button color="warn" mat-stroked-button>
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>RESET PASSWORD</p>
+                    </div>
+                  </button>
+                  <button color="primary" mat-raised-button>CHANGE PASSWORD</button>
+                </div>
+
+                <mat-divider class="w-full"></mat-divider>
+
+                <div class="w-full flex flex-col gap-2">
+                  <mat-form-field>
+                    <mat-label>Current Password</mat-label>
+                    <mat-hint>Enter your current password</mat-hint>
+                    <input matInput type="password" required>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>New Password</mat-label>
+                    <mat-hint>Enter your new password</mat-hint>
+                    <input matInput  type="password" required>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Confirm New Password</mat-label>
+                    <mat-hint>Confirm your new password</mat-hint>
+                    <input matInput type="password" required>
                   </mat-form-field>
                 </div>
               </div>
