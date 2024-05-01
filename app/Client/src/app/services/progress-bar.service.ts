@@ -21,7 +21,7 @@ export class ProgressBarService {
       console.log('SHOWED PROGRESS BAR');
       setTimeout(() => {
         this.isHidden = false;
-      });
+      }, 0);
     }
   }
 
@@ -30,7 +30,7 @@ export class ProgressBarService {
       console.log('HIDDEN PROGRESS BAR');
       setTimeout(() => {
         this.isHidden = true;
-      });
+      }, 0);
     }
   }
 }

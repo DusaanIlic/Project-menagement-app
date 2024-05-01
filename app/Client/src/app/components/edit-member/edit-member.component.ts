@@ -18,6 +18,7 @@ import {MatDivider} from "@angular/material/divider";
 import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-edit-member',
@@ -44,7 +45,8 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
-    MatSuffix
+    MatSuffix,
+    MatIcon
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
