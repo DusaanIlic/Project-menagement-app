@@ -18,6 +18,8 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class MemberService {
+  private memberSubject: BehaviorSubject<Member | null> = new BehaviorSubject<Member | null>(null);
+
   constructor(private http: HttpClient) { }
 
   addMember(memberData: any): Observable<any> {
@@ -26,6 +28,14 @@ export class MemberService {
 
   getMember(memberId: number): Observable<any>{
     return this.http.get<any>(`${API}/${memberId}`);
+  }
+
+  setMemberSubject(member: Member) {
+    this.memberSubject.next(member);
+  }
+
+  getMemberSubject() {
+    return this.memberSubject.asObservable();
   }
 
   getMembers(): Observable<any[]>{

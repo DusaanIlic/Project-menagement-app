@@ -3,7 +3,7 @@ import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
 import {async, Observable, Subscription, switchMap} from "rxjs";
-import {AsyncPipe, DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
+import {AsyncPipe, DatePipe, JsonPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
@@ -22,6 +22,7 @@ import {MatIcon} from "@angular/material/icon";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
 import {MatOption, MatSelect} from "@angular/material/select";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-edit-member',
@@ -53,76 +54,93 @@ import {MatOption, MatSelect} from "@angular/material/select";
     MatSelect,
     MatOption,
     NgForOf,
-    AsyncPipe
+    AsyncPipe,
+    JsonPipe
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
 })
 export class EditMemberComponent implements OnInit, OnDestroy {
-  member: any;
-  memberForm: any;
   today: Date = new Date();
-  avatarUrl: string | undefined;
   selectedFile: any = null;
-  roles: Observable<Role[]> = this.roleService.getAllRoles();
+  member!: Observable<Member | null>;
+  roles!: Observable<Role[]>;
+  memberId!: number;
+  private avatarLink: string = '';
+  private timeStamp: number = new Date().getTime();
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
-  private _routeSubscription: any;
+  private routeSubscription!: Subscription;
+
+
+  memberForm: FormGroup = new FormGroup({
+    firstName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2)
+    ]),
+    lastName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2)
+    ]),
+    linkedin: new FormControl(''),
+    phoneNumber: new FormControl('', [
+      Validators.pattern('^[0-9]{3}-[0-9]{3}-[0-9]{4}$')
+    ]),
+    country: new FormControl(''),
+    city: new FormControl(''),
+    github: new FormControl(''),
+    status: new FormControl(''),
+    dateOfBirth: new FormControl('', [
+      maxDateValidator(this.todayDate())
+    ])
+  });
 
   constructor(private route: ActivatedRoute, private memberService: MemberService,
                 private ngToastService: NgToastService, private authService: AuthService,
                   private matDialog: MatDialog, private roleService: RoleService) { }
 
   ngOnInit() {
-    this.memberForm = new FormGroup({
-      firstName: new FormControl('', [
-        Validators.required,
-        Validators.minLength(2)
-      ]),
-      lastName: new FormControl('', [
-        Validators.required,
-        Validators.minLength(2)
-      ]),
-      linkedin: new FormControl(''),
-      phoneNumber: new FormControl('', [
-        Validators.pattern('^[0-9]{3}-[0-9]{3}-[0-9]{4}$')
-      ]),
-      country: new FormControl(''),
-      city: new FormControl(''),
-      github: new FormControl(''),
-      status: new FormControl(''),
-      dateOfBirth: new FormControl('', [
-        maxDateValidator(this.todayDate())
-      ])
-    });
-
-    this._routeSubscription = this.route.params.pipe(
+    this.routeSubscription = this.route.params.pipe(
       switchMap(params => {
-        const memberID = params['id'];
-        return this.memberService.getMember(memberID);
+        this.memberId = params['id'];
+        return this.memberService.getMember(this.memberId);
       })
     ).subscribe(member => {
-      this.member = member;
+      this.memberService.setMemberSubject(member)
 
       this.memberForm.patchValue({
-        firstName: this.member.firstName,
-        lastName: this.member.lastName,
-        linkedin: this.member.linkedin,
-        phoneNumber: this.member.phoneNumber,
-        country: this.member.country,
-        city: this.member.city,
-        github: this.member.github,
-        status: this.member.status,
-        dateOfBirth: this.datePipe.transform(this.member.dateOfBirth, 'yyyy-MM-dd')
+        firstName: member.firstName,
+        lastName: member.lastName,
+        linkedin: member.linkedin,
+        phoneNumber: member.phoneNumber,
+        country: member.country,
+        city: member.city,
+        github: member.github,
+        status: member.status,
+        dateOfBirth: this.datePipe.transform(member.dateOfBirth, 'yyyy-MM-dd')
       });
 
-      this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
-        this.avatarUrl = avatarUrl;
-      })
+      this.setAvatarLink(`${environment.apiUrl}/Member/${member.id}/Avatar`);
     });
+
+    this.roles = this.roleService.getAllRoles();
+    this.member = this.memberService.getMemberSubject();
   }
 
   ngOnDestroy() {
-    this._routeSubscription.unsubscribe();
+    this.routeSubscription.unsubscribe();
+  }
+
+  getAvatarLink() {
+    if (this.timeStamp) {
+      return this.avatarLink + '?' + this.timeStamp;
+    }
+
+    return this.avatarLink;
+  }
+
+  setAvatarLink(url: string) {
+    this.avatarLink = url;
+    this.timeStamp = (new Date()).getTime();
   }
 
   todayDate(): string {
@@ -130,16 +148,6 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     return `${today.getFullYear()}-${month}-${day}`;
-  }
-
-  openAvatarDialog() {
-    const dialogRef = this.matDialog.open(AddAvatarComponent, {
-      width: '50%',
-      height: '50%',
-      data: {
-        memberId: this.member.id
-      }
-    });
   }
 
   onFileSelected(event: any): void {
@@ -160,7 +168,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     this.matDialog.open(AddAvatarComponent, {
       width: '420px',
       data: {
-        memberId: this.member.id,
+        memberId: this.memberId,
         file: this.selectedFile
       }
     });
@@ -170,7 +178,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   deleteAvatar() {
     console.log('runs');
-    this.memberService.deleteAvatar(this.member.id).subscribe({
+    this.memberService.deleteAvatar(this.memberId).subscribe({
       next: data => {
         this.ngToastService.success({
           detail: 'Success',
@@ -192,7 +200,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     if (this.memberForm.valid) {
       const editProfileForm: EditProfileForm = this.memberForm.value;
 
-      this.memberService.editMemberProfile(this.member.id, editProfileForm).subscribe({
+      this.memberService.editMemberProfile(this.memberId, editProfileForm).subscribe({
         next: (data: any) => {
           this.authService.updateAuthenticatedMember(data);
 
@@ -215,6 +223,4 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-  protected readonly async = async;
 }

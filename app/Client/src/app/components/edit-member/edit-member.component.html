@@ -1,4 +1,4 @@
-<div class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
+<div *ngIf="member | async as memberData" class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
   <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
     <mat-card class="basis-1/4">
       <mat-card-title class="p-4">
@@ -8,11 +8,11 @@
       </mat-card-title>
       <mat-card-content class="p-4">
         <div class="flex flex-col items-center justify-center gap-8">
-          <img [src]="avatarUrl" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
+          <img [src]="getAvatarLink()" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
 
           <div class="flex flex-col items-center justify-center">
-            <p class="text-xl font-bold" md-colors="{color:'primary'}">{{member?.firstName}} {{member?.lastName}}</p>
-            <p>{{member?.roleName}}</p>
+            <p class="text-xl font-bold" md-colors="{color:'primary'}">{{memberData.firstName}} {{memberData.lastName}}</p>
+            <p>{{memberData.roleName}}</p>
           </div>
 
           <div class="flex flex-col items-center justify-center gap-2 w-1/2">
@@ -52,7 +52,7 @@
                     <mat-error *ngIf="memberForm.get('firstName')?.hasError('required')">
                       First Name is required.
                     </mat-error>
-                    <mat-error *ngIf="memberForm.get('firstName').errors?.['minLength']">
+                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('minLength')">
                       First Name must be at least 2 characters long.
                     </mat-error>
                   </mat-form-field>
@@ -64,7 +64,7 @@
                     <mat-error *ngIf="memberForm.get('lastName')?.hasError('required')">
                       Last Name is required.
                     </mat-error>
-                    <mat-error *ngIf="memberForm.get('lastName').errors?.['minLength']">
+                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('minLength')">
                       Last Name must be at least 2 characters long.
                     </mat-error>
                   </mat-form-field>
@@ -76,7 +76,7 @@
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                   <mat-hint>Format of your birth date should be MM/DD/YYYY</mat-hint>
-                  <mat-error *ngIf="memberForm.get('dateOfBirth').errors?.['maxDate']">
+                  <mat-error *ngIf="memberForm.get('dateOfBirth')?.hasError('maxDate')">
                     Date of birth can not be in the future
                   </mat-error>
                 </mat-form-field>
@@ -109,7 +109,7 @@
                   <mat-label>Phone Number</mat-label>
                   <mat-hint>Your phone number. Should be in format xxx-xxx-xxxx</mat-hint>
                   <input matInput type="text" formControlName="phoneNumber">
-                  <mat-error *ngIf="memberForm.get('phoneNumber').errors?.['pattern']">
+                  <mat-error *ngIf="memberForm.get('phoneNumber')?.hasError('pattern')">
                     Bad number format
                   </mat-error>
                 </mat-form-field>
@@ -168,7 +168,7 @@
                   <mat-form-field>
                     <mat-label>Current Email</mat-label>
                     <mat-hint>Your email was set by your administrator</mat-hint>
-                    <input matInput [value]="member?.email" disabled type="email">
+                    <input matInput [value]="memberData.email" disabled type="email">
                   </mat-form-field>
 
                   <mat-form-field>
@@ -199,7 +199,7 @@
                 <div class="w-full flex flex-col gap-2">
                   <mat-form-field>
                     <mat-label>Your Current Role</mat-label>
-                    <mat-select required [value]="member?.roleId">
+                    <mat-select required [value]="memberData.roleId">
                       <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
                     </mat-select>
                     <mat-hint>Only your administrator can change your role.</mat-hint>
