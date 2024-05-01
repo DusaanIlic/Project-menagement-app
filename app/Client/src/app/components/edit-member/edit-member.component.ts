@@ -171,6 +171,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         memberId: this.memberId,
         file: this.selectedFile
       }
+    }).afterClosed().subscribe(result => {
+      this.setAvatarLink(`${environment.apiUrl}/Member/${this.memberId}/Avatar`);
     });
 
     event.target.value = '';
@@ -186,6 +188,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         });
 
         this.authService.updateAuthenticatedMembersAvatar();
+        this.setAvatarLink(`${environment.apiUrl}/Member/${this.memberId}/Avatar`);
       },
       error: err => {
         this.ngToastService.error({
@@ -202,6 +205,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
       this.memberService.editMemberProfile(this.memberId, editProfileForm).subscribe({
         next: (data: any) => {
+          this.memberService.setMemberSubject(data);
           this.authService.updateAuthenticatedMember(data);
 
           this.ngToastService.success({
