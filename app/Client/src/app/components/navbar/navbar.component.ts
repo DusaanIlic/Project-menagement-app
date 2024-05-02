@@ -14,6 +14,7 @@ import {ThemeService} from "../../services/theme.service";
 import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
 import {Theme} from "../../models/theme";
 import theme from "tailwindcss/defaultTheme";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @Component({
   selector: 'app-navbar',
@@ -33,6 +34,8 @@ import theme from "tailwindcss/defaultTheme";
     MatMenuTrigger,
     MatDivider,
     AsyncPipe,
+    MatRadioButton,
+    MatRadioGroup,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
@@ -41,6 +44,7 @@ export class NavbarComponent implements OnInit {
   member: Member | null | undefined;
   avatarUrl: string | undefined;
   options$: Observable<Theme[]> = this.themeService.getThemeOptions();
+  defaultTheme: any;
 
   buttons = [
     { link: '/dashboard', text: 'Dashboard', icon: 'home' },
@@ -60,18 +64,19 @@ export class NavbarComponent implements OnInit {
       this.avatarUrl = avatarUrl;
     });
 
-    let defaultTheme = localStorage.getItem('selected-theme');
+    this.defaultTheme = localStorage.getItem('selected-theme');
 
-    if (!defaultTheme) {
-      defaultTheme = 'indigo-pink';
+    if (!this.defaultTheme) {
+      this.defaultTheme = 'indigo-pink';
     }
 
-    this.themeService.setTheme(defaultTheme);
+    this.themeService.setTheme(this.defaultTheme);
   }
 
   changeTheme(themeToSet: string) {
     this.themeService.setTheme(themeToSet);
     localStorage.setItem('selected-theme', themeToSet);
+    this.defaultTheme = themeToSet;
   }
 
   logout() {

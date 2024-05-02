@@ -140,10 +140,9 @@ namespace Server.Controllers
                 <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
                 
                 <ol>
-                    <li>Visit our website at <a href=""http://localhost:4200"" target=""_blank"">this link<a/>.</li>
+                    <li>Visit our website at <a href=""http://softeng.pmf.kg.ac.rs:10141"" target=""_blank"">this link<a/>.</li>
                     <li>Click on the ""Login"" button.</li>
                     <li>Enter your username/email and the temporary password provided above.</li>
-                    <li>Follow the prompts to create a new, secure password.</li>
                 </ol>
                                 
                 <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
@@ -389,16 +388,11 @@ namespace Server.Controllers
         [HttpPost("{id}/ChangePassword")]
         public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(id);
 
-            if (userId != id)
+            if (!isBearer)
             {
-                return Forbid();
+                return BadRequest(new { message = "You don't have permission to do this" });
             }
 
             var member = await _dbContext.Members.FindAsync(id);
@@ -435,33 +429,24 @@ namespace Server.Controllers
             }
             
             var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
-            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
 
-            if (!isAuthedUser && !isAdmin)
+            if (!isAdmin)
             {
-                return Forbid("You can only change your own email address");
-            }
-            
-
-            if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
-            {
-                return BadRequest(new { message = "Password is incorrect" });
+                return BadRequest(new { message = "You can only change email if you have edit member permission" });
             }
             
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
 
             if (existingMember != null)
             {
-                return Conflict(new { message = "Email address already exists" });
+                return Conflict(new { message = "Email address is already used" });
             }
-
             
             member.Email = changeEmailRequest.NewEmail;
 
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Email changed successfully." });
-
         }
 
         [Authorize]
@@ -491,6 +476,109 @@ namespace Server.Controllers
             }).ToList();
 
             return Ok(projects);
+        }
+        
+        [Authorize]
+        [HttpPut("{id}/ChangeRole")]
+        public async Task<IActionResult> ChangeMembersRole(int id, RoleChangeRequest request)
+        {
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+
+            if (!hasPermission)
+            {
+                return BadRequest(new { message = "You don't have the permission to change someones role" });
+            }
+            
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
+            
+            if (member == null)
+            {
+                return NotFound(new {message = "Member with given id doesn't exist"});
+            }
+
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == request.RoleId);
+
+            if (role == null)
+            {
+                return NotFound(new { message = "Role with given id doesn't exist"});
+            }
+
+            if (member.RoleId == role.RoleId)
+            {
+                return BadRequest(new { message = "Member already has that role" });
+            }
+
+            member.RoleId = role.RoleId;
+            
+            await _dbContext.SaveChangesAsync();
+
+            var roleDTO = new RoleDTO
+            {
+                Id = role.RoleId,
+                Name = role.RoleName,
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
+            };
+            
+            return Ok(roleDTO);
+        }
+
+        [HttpPost("{id}/ForcePasswordReset")]
+        public async Task<IActionResult> PasswordReset(int id)
+        {
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+
+            if (!hasPermission)
+            {
+                return BadRequest(new { message = "You don't have permission to do this" });
+            }
+
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found" });
+            }
+
+            var generatedPassword = GenerateRandomPassword(6);
+            
+            member.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
+            member.RefreshToken = null;
+            member.RefreshTokenExpiresAt = null;
+            member.PasswordToken = null;
+            member.PasswordTokenExpiresAt = null;
+
+            await _dbContext.SaveChangesAsync();
+            
+            var request = new EmailDTO
+            {
+                To = member.Email,
+                Subject = "LogicTenacity - An administrator reset your password",
+                Body = $@"
+                <p>Hello {member.FirstName} {member.LastName},</p>
+                
+                <p>It seems that an administrator has reset your password.</p>
+                
+                <p>Below is your new temporary password:</p>
+                
+                <ul>
+                    <li><strong>Temporary Password:</strong> {generatedPassword}</li>
+                </ul>
+                
+                <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
+                
+                <ol>
+                    <li>Visit our website at <a href=""http://localhost:4200"" target=""_blank"">this link<a/>.</li>
+                    <li>Click on the ""Login"" button.</li>
+                    <li>Enter your username/email and the temporary password provided above.</li>
+                </ol>
+                                
+                <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
+            };
+
+            var result = _emailService.SendEmail(request);
+
+            return Ok(new { message = "Successfully reset password" });
         }
     }
 }
