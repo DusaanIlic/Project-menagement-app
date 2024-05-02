@@ -389,16 +389,11 @@ namespace Server.Controllers
         [HttpPost("{id}/ChangePassword")]
         public async Task<IActionResult> ChangePassword(int id, PasswordChangeRequest changePasswordRequest)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            
-            if (!int.TryParse(userIdClaim.Value, out var userId))
-            {
-                return BadRequest(new { message = "Invalid user ID in token" });
-            }
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(id);
 
-            if (userId != id)
+            if (!isBearer)
             {
-                return Forbid();
+                return BadRequest(new { message = "You don't have permission to do this" });
             }
 
             var member = await _dbContext.Members.FindAsync(id);

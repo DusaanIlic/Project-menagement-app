@@ -33,7 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
         Validators.required,
         Validators.minLength(6)
       ]),
-      newPassword1: new FormControl('', [
+      confirmPassword: new FormControl('', [
         Validators.required,
         Validators.minLength(6)
       ])

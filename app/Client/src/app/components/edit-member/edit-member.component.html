@@ -1,13 +1,13 @@
 <div *ngIf="member | async as memberData" class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
   <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
     <mat-card class="basis-1/4">
-      <mat-card-title class="p-4">
-        <div class="flex flex-col gap-4">
-          <p class="text-2xl flex justify-center items-center">Your Profile</p>
-        </div>
-      </mat-card-title>
-      <mat-card-content class="p-4">
-        <div class="flex flex-col items-center justify-center gap-8">
+<!--      <mat-card-title class="p-4">-->
+<!--        <div class="flex flex-col gap-4">-->
+<!--          <p class="text-2xl flex justify-center items-center">Your Profile</p>-->
+<!--        </div>-->
+<!--      </mat-card-title>-->
+      <mat-card-content class="p-4 h-full">
+        <div class="flex flex-col items-center justify-center gap-8 h-full">
           <img [src]="getAvatarLink()" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
 
           <div class="flex flex-col items-center justify-center">
@@ -192,7 +192,7 @@
                   </div>
                   <p class="font-bold">Change Your Role</p>
                   <span class="grow"></span>
-                  <button color="primary" mat-raised-button>
+                  <button color="primary" mat-raised-button (click)="submitRole()">
                     <div class="flex items-center justify-center gap-2">
                       <mat-icon>admin_panel_settings</mat-icon>
                       <p>CHANGE ROLE</p>
@@ -202,13 +202,27 @@
 
                 <mat-divider class="w-full"></mat-divider>
 
-                <div class="w-full flex flex-col gap-2">
+                <div class="w-full flex flex-col gap-2" [formGroup]="roleForm">
                   <mat-form-field>
-                    <mat-label>Your Current Role</mat-label>
-                    <mat-select required [value]="memberData.roleId">
+                    <mat-label>Current Role</mat-label>
+                    <mat-select required formControlName="oldRoleId">
                       <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
                     </mat-select>
                     <mat-hint>Only your administrator can change your role.</mat-hint>
+                    <mat-error *ngIf="roleForm.get('oldRoleId')?.hasError('required')">
+                      Role is required
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>New Role</mat-label>
+                    <mat-select required formControlName="roleId">
+                      <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
+                    </mat-select>
+                    <mat-hint>Only your administrator can change your role.</mat-hint>
+                    <mat-error *ngIf="roleForm.get('roleId')?.hasError('required')">
+                      Role is required
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>
@@ -223,28 +237,43 @@
                       <p>RESET PASSWORD</p>
                     </div>
                   </button>
-                  <button color="primary" mat-raised-button>CHANGE PASSWORD</button>
+                  <button color="primary" mat-raised-button (click)="submitPassword()">CHANGE PASSWORD</button>
                 </div>
 
                 <mat-divider class="w-full"></mat-divider>
 
-                <div class="w-full flex flex-col gap-2">
+                <div class="w-full flex flex-col gap-2" [formGroup]="passwordForm">
                   <mat-form-field>
                     <mat-label>Current Password</mat-label>
                     <mat-hint>Enter your current password</mat-hint>
-                    <input matInput type="password" required>
+                    <input matInput type="password" required formControlName="oldPassword">
+                    <mat-error *ngIf="passwordForm.get('oldPassword')?.hasError('required')">
+                      Current password is required
+                    </mat-error>
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>New Password</mat-label>
                     <mat-hint>Enter your new password</mat-hint>
-                    <input matInput  type="password" required>
+                    <input matInput  type="password" required formControlName="newPassword">
+                    <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+                      New password is required
+                    </mat-error>
+                    <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+                      New password must be at least 6 characters long
+                    </mat-error>
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>Confirm New Password</mat-label>
                     <mat-hint>Confirm your new password</mat-hint>
-                    <input matInput type="password" required>
+                    <input matInput type="password" required formControlName="confirmPassword">
+                    <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+                      You must confirm your new password
+                    </mat-error>
+                    <mat-error *ngIf="passwordForm?.hasError('passwordMismatch')">
+                      New password and confirm password must match
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>

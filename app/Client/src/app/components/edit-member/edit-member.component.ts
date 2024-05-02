@@ -5,7 +5,7 @@ import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
 import {async, Observable, Subscription, switchMap} from "rxjs";
 import {AsyncPipe, DatePipe, JsonPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators} from "@angular/forms";
 import {EditProfileForm} from "../../forms/edit-profile.form";
 import {maxDateValidator} from "../../validators/max-date.validator";
 import {AuthService} from "../../services/auth.service";
@@ -107,6 +107,26 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     ])
   });
 
+  roleForm: FormGroup = new FormGroup({
+    oldRoleId: new FormControl({value: '', disabled: true}, [Validators.required]),
+    roleId: new FormControl('', [Validators.required])
+  });
+
+  passwordForm: FormGroup = new FormGroup({
+    oldPassword: new FormControl('', [
+      Validators.required
+    ]),
+    newPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
+    confirmPassword: new FormControl(
+      '',
+      Validators.compose([Validators.required])
+    )},
+    this.passwordMatch('newPassword', 'confirmPassword')
+  );
+
   constructor(private route: ActivatedRoute, private memberService: MemberService,
                 private ngToastService: NgToastService, private authService: AuthService,
                   private matDialog: MatDialog, private roleService: RoleService,
@@ -135,6 +155,10 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
       this.emailForm.patchValue({
         oldEmail: member.email
+      });
+
+      this.roleForm.patchValue({
+        oldRoleId: member.roleId
       });
 
       this.setAvatarLink(`${environment.apiUrl}/Member/${member.id}/Avatar`);
@@ -223,7 +247,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
       this.memberService.editMemberProfile(this.memberId, editProfileForm).subscribe({
         next: (data: any) => {
-          this.memberService.setMemberSubject(data);
+          this.memberService.updateMemberSubject(data);
           this.authService.updateAuthenticatedMember(data);
 
           this.ngToastService.success({
@@ -299,5 +323,107 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  submitRole() {
+    if (!this.roleForm.valid) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'Input validation failed.'
+      });
+
+      return;
+    }
+
+    const formData = this.roleForm.value;
+
+    this.memberService.changeRole(this.memberId, formData).subscribe({
+      next: (data: Role) => {
+        this.ngToastService.success({
+          detail: 'Success',
+          summary: 'Role changed successfully.'
+        });
+
+        this.roleForm.patchValue({
+          oldRoleId: formData.roleId,
+          roleId: ''
+        });
+
+        this.roleForm.markAsPristine();
+        this.roleForm.markAsUntouched();
+
+        const updatedMember: Partial<Member> = {
+          id: this.memberId,
+          roleId: data.id,
+          roleName: data.name
+        };
+
+        this.authService.updateAuthenticatedMember(updatedMember);
+        this.memberService.updateMemberSubject(updatedMember);
+      },
+      error: error => {
+        this.ngToastService.error({
+          detail: 'Error',
+          summary: error.error.message
+        });
+      }
+    });
+  }
+
+  submitPassword() {
+    if (!this.passwordForm.valid) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'Input validation failed.'
+      });
+
+      return;
+    }
+
+    const formData = this.passwordForm.value;
+
+    this.memberService.changePassword(this.memberId, formData).subscribe({
+      next: data => {
+        this.ngToastService.success({
+          detail: 'Success',
+          summary: 'Password changed successfully.'
+        });
+
+
+        this.passwordForm.reset();
+      },
+      error: error => {
+        this.ngToastService.error({
+          detail: 'Error',
+          summary: error.error.message
+        });
+      }
+    });
+  }
+
+  passwordMatch(password: string, confirmPassword: string): ValidatorFn {
+    return (formGroup: AbstractControl): { [key: string]: any } | null => {
+      const passwordControl = formGroup.get(password);
+      const confirmPasswordControl = formGroup.get(confirmPassword);
+
+      if (!passwordControl || !confirmPasswordControl) {
+        return null;
+      }
+
+      if (
+        confirmPasswordControl.errors &&
+        !confirmPasswordControl.errors['passwordMismatch']
+      ) {
+        return null;
+      }
+
+      if (passwordControl.value !== confirmPasswordControl.value) {
+        confirmPasswordControl.setErrors({ passwordMismatch: true });
+        return { passwordMismatch: true };
+      } else {
+        confirmPasswordControl.setErrors(null);
+        return null;
+      }
+    };
   }
 }

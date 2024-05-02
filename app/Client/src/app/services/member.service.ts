@@ -79,4 +79,12 @@ export class MemberService {
   changeEmail(memberId: number, formData: any) {
     return this.http.post(`${API}/${memberId}/ChangeEmail`, formData);
   }
+
+  changeRole(memberId: number, formData: { roleId: number }): Observable<Role> {
+    return this.http.put<Role>(`${API}/${memberId}/ChangeRole`, formData);
+  }
+
+  changePassword(memberId: number, formData: { oldPassword: string, newPassword: string}) {
+    return this.http.post(`${API}/${memberId}/ChangePassword`, formData);
+  }
 }
