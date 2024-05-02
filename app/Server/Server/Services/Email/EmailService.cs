@@ -18,14 +18,16 @@ namespace Server.Services.EmailService
             try
             {
                 var email = new MimeMessage();
-                email.From.Add(MailboxAddress.Parse(_configuration["EmailService:EmailUsername"]));
+                email.From.Add(MailboxAddress.Parse(_configuration["EmailService:EmailSender"]));
                 email.To.Add(MailboxAddress.Parse(request.To));
                 email.Subject = request.Subject;
                 email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
 
                 using var smtp = new SmtpClient();
+                
                 smtp.Connect(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
                 smtp.Authenticate(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
+                smtp.Send(email);
                 
                 Console.WriteLine($"SENT MAIL TO {request.To}");
                 

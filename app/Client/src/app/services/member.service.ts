@@ -89,6 +89,6 @@ export class MemberService {
   }
 
   resetPassword(memberId: number) {
-    return this.http.post(`${API}/${memberId}/ResetPassword`, null);
+    return this.http.post(`${API}/${memberId}/ForcePasswordReset`, null);
   }
 }

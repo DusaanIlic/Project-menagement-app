@@ -438,19 +438,24 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       }
     });
 
-    const dialogSub = dialogRef.afterClosed().pipe(take(1)).subscribe({
-      next: data => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Password reset successfully.'
-        });
-      },
-      error: error => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: error.error.message
-        });
+    const dialogSub = dialogRef.afterClosed().pipe(take(1)).subscribe(result => {
+        if (result) {
+          this.memberService.resetPassword(this.memberId).subscribe({
+            next: data => {
+              this.ngToastService.success({
+                detail: 'Success',
+                summary: 'Password reset successfully.'
+              });
+            },
+            error: error => {
+              this.ngToastService.error({
+                detail: 'Error',
+                summary: error.error.message
+              });
+            }
+          });
+        }
       }
-    });
+    );
   }
 }
