@@ -518,7 +518,15 @@ namespace Server.Controllers
             
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new { message = "Successfully updated role!" });
+            var roleDTO = new RoleDTO
+            {
+                Id = role.RoleId,
+                Name = role.RoleName,
+                IsDefault = role.IsDefault,
+                IsFallback = role.IsFallback
+            };
+            
+            return Ok(roleDTO);
         }
     }
 }
