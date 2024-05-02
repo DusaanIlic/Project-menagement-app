@@ -18,7 +18,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class MemberService {
-  private memberSubject: BehaviorSubject<Member | null> = new BehaviorSubject<Member | null>(null);
+  private memberSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient) { }
 
@@ -36,6 +36,12 @@ export class MemberService {
 
   getMemberSubject() {
     return this.memberSubject.asObservable();
+  }
+
+  updateMemberSubject(member: Partial<Member>) {
+    const updatedMember = {...this.memberSubject.value, ...member};
+
+    this.memberSubject.next(updatedMember);
   }
 
   getMembers(): Observable<any[]>{

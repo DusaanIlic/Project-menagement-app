@@ -277,12 +277,20 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         });
 
         this.emailForm.patchValue({
-          oldEmail: this.emailForm.get('newEmail')?.value,
+          oldEmail: formData.newEmail,
           newEmail: ''
         });
 
         this.emailForm.markAsPristine();
         this.emailForm.markAsUntouched();
+
+        const updatedMember: Partial<Member> = {
+          id: this.memberId,
+          email: formData.newEmail
+        };
+
+        this.authService.updateAuthenticatedMember(updatedMember);
+        this.memberService.updateMemberSubject(updatedMember);
       },
       error: error => {
         this.ngToastService.error({

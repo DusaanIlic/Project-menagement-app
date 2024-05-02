@@ -98,14 +98,22 @@ export class AuthService {
     }
   }
 
-  updateAuthenticatedMember(member: Member) {
-    const id: any = localStorage.getItem('authenticated-member-id');
+  updateAuthenticatedMember(member: Partial<Member>) {
+    const authMemberString = localStorage.getItem('authenticated-member');
+
+    if (!authMemberString) {
+      return;
+    }
+
+    const authMember = JSON.parse(authMemberString);
 
     console.log('updated member');
 
-    if (id && parseInt(id) == member.id) {
-      localStorage.setItem('authenticated-member', JSON.stringify(member));
-      this.authenticatedMemberSubject.next(member);
+    if (authMember && authMember.id == member.id) {
+      const updatedMember = {...authMember, ...member};
+
+      localStorage.setItem('authenticated-member', JSON.stringify(updatedMember));
+      this.authenticatedMemberSubject.next(updatedMember);
     }
   }
 
