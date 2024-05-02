@@ -149,7 +149,7 @@
 
           <mat-card-content class="p-4">
             <div class="flex flex-col gap-4">
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4" [formGroup]="emailForm">
                 <div class="flex w-full justify-center items-center gap-2">
                   <div class="flex items-center justify-center">
                     <mat-icon class="scale-[1.25]">admin_panel_settings</mat-icon>
@@ -174,7 +174,13 @@
                   <mat-form-field>
                     <mat-label>New Email</mat-label>
                     <mat-hint>If you wish to change it, please contact one of your administrators</mat-hint>
-                    <input matInput type="email" required>
+                    <input matInput type="email" required formControlName="newEmail">
+                    <mat-error *ngIf="emailForm.get('newEmail')?.hasError('required')">
+                      New Email is required.
+                    </mat-error>
+                    <mat-error *ngIf="emailForm.get('newEmail')?.hasError('email')">
+                      New Email is not properly formatted.
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>

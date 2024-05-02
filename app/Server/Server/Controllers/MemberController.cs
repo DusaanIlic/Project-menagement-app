@@ -435,17 +435,10 @@ namespace Server.Controllers
             }
             
             var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
-            var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
 
-            if (!isAuthedUser && !isAdmin)
+            if (!isAdmin)
             {
-                return Forbid("You can only change your own email address");
-            }
-            
-
-            if (!isAdmin && !BCrypt.Net.BCrypt.Verify(changeEmailRequest.Password, member.Password))
-            {
-                return BadRequest(new { message = "Password is incorrect" });
+                return BadRequest(new { message = "You can only change email if you have edit member permission" });
             }
             
             var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
@@ -454,14 +447,12 @@ namespace Server.Controllers
             {
                 return Conflict(new { message = "Email address already exists" });
             }
-
             
             member.Email = changeEmailRequest.NewEmail;
 
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Email changed successfully." });
-
         }
 
         [Authorize]

@@ -66,6 +66,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   member!: Observable<Member | null>;
   roles!: Observable<Role[]>;
   memberId!: number;
+
   private avatarLink: string = '';
   private timeStamp: number = new Date().getTime();
   private datePipe: DatePipe = new DatePipe('en-US'); // Create an instance of DatePipe
@@ -94,6 +95,13 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     ])
   });
 
+  emailForm: FormGroup = new FormGroup({
+    newEmail: new FormControl('', [
+      Validators.required,
+      Validators.email
+    ])
+  });
+
   constructor(private route: ActivatedRoute, private memberService: MemberService,
                 private ngToastService: NgToastService, private authService: AuthService,
                   private matDialog: MatDialog, private roleService: RoleService) { }
@@ -118,7 +126,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         status: member.status,
         dateOfBirth: this.datePipe.transform(member.dateOfBirth, 'yyyy-MM-dd')
       });
-
+      
       this.setAvatarLink(`${environment.apiUrl}/Member/${member.id}/Avatar`);
     });
 
