@@ -483,5 +483,42 @@ namespace Server.Controllers
 
             return Ok(projects);
         }
+        
+        [Authorize]
+        [HttpPut("{id}/ChangeRole")]
+        public async Task<IActionResult> ChangeMembersRole(int id, RoleChangeRequest request)
+        {
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+
+            if (!hasPermission)
+            {
+                return BadRequest(new { message = "You don't have the permission to change someones role" });
+            }
+            
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
+            
+            if (member == null)
+            {
+                return NotFound(new {message = "Member with given id doesn't exist"});
+            }
+
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == request.RoleId);
+
+            if (role == null)
+            {
+                return NotFound(new { message = "Role with given id doesn't exist"});
+            }
+
+            if (member.RoleId == role.RoleId)
+            {
+                return BadRequest(new { message = "Member already has that role" });
+            }
+
+            member.RoleId = role.RoleId;
+            
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Successfully updated role!" });
+        }
     }
 }

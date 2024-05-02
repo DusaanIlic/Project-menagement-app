@@ -52,7 +52,7 @@
                     <mat-error *ngIf="memberForm.get('firstName')?.hasError('required')">
                       First Name is required.
                     </mat-error>
-                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('minLength')">
+                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('minlength')">
                       First Name must be at least 2 characters long.
                     </mat-error>
                   </mat-form-field>
@@ -64,7 +64,7 @@
                     <mat-error *ngIf="memberForm.get('lastName')?.hasError('required')">
                       Last Name is required.
                     </mat-error>
-                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('minLength')">
+                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('minlength')">
                       Last Name must be at least 2 characters long.
                     </mat-error>
                   </mat-form-field>
