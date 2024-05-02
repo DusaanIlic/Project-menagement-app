@@ -445,7 +445,7 @@ namespace Server.Controllers
 
             if (existingMember != null)
             {
-                return Conflict(new { message = "Email address already exists" });
+                return Conflict(new { message = "Email address is already used" });
             }
             
             member.Email = changeEmailRequest.NewEmail;

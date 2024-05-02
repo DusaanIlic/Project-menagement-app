@@ -156,7 +156,7 @@
                   </div>
                   <p class="font-bold">Change Your Email</p>
                   <span class="grow"></span>
-                  <button color="primary" mat-raised-button>
+                  <button color="primary" mat-raised-button (click)="submitEmail()">
                     <div class="flex items-center justify-center gap-2">
                       <mat-icon>admin_panel_settings</mat-icon>
                       <p>CHANGE EMAIL</p>
@@ -168,7 +168,7 @@
                   <mat-form-field>
                     <mat-label>Current Email</mat-label>
                     <mat-hint>Your email was set by your administrator</mat-hint>
-                    <input matInput [value]="memberData.email" disabled type="email">
+                    <input matInput type="email" required formControlName="oldEmail">
                   </mat-form-field>
 
                   <mat-form-field>

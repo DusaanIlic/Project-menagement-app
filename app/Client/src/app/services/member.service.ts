@@ -65,7 +65,12 @@ export class MemberService {
   deleteAvatar(memberId: number) {
     return this.http.delete(`${API}/${memberId}/Avatar`);
   }
+
   getRoleById(id:number): Observable<Role> {
     return this.http.get<Role>(`${API_ROLES}/${id}`);
+  }
+
+  changeEmail(memberId: number, formData: any) {
+    return this.http.post(`${API}/${memberId}/ChangeEmail`, formData);
   }
 }

@@ -23,6 +23,7 @@ import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {environment} from "../../../environments/environment";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-edit-member',
@@ -96,6 +97,10 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   });
 
   emailForm: FormGroup = new FormGroup({
+    oldEmail: new FormControl({ value: '', disabled: true }, [
+      Validators.required,
+      Validators.email,
+    ]),
     newEmail: new FormControl('', [
       Validators.required,
       Validators.email
@@ -104,7 +109,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, private memberService: MemberService,
                 private ngToastService: NgToastService, private authService: AuthService,
-                  private matDialog: MatDialog, private roleService: RoleService) { }
+                  private matDialog: MatDialog, private roleService: RoleService,
+                    private matSnackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -126,7 +132,11 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         status: member.status,
         dateOfBirth: this.datePipe.transform(member.dateOfBirth, 'yyyy-MM-dd')
       });
-      
+
+      this.emailForm.patchValue({
+        oldEmail: member.email
+      });
+
       this.setAvatarLink(`${environment.apiUrl}/Member/${member.id}/Avatar`);
     });
 
@@ -234,5 +244,52 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         summary: 'Input validation failed.'
       });
     }
+  }
+
+  submitEmail() {
+    if (!this.emailForm.valid) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'Input validation failed.'
+      });
+
+      return;
+    }
+
+    if (this.emailForm.get('newEmail')?.value == this.emailForm.get('oldEmail')?.value) {
+      this.ngToastService.error({
+        detail: 'Error',
+        summary: 'New Email can not match old email!.'
+      });
+
+      return;
+    }
+
+    const formData = {
+      newEmail: this.emailForm.get('newEmail')?.value
+    };
+
+    this.memberService.changeEmail(this.memberId, formData).subscribe({
+      next: (data: any) => {
+        this.ngToastService.success({
+          detail: 'Success',
+          summary: 'Email updated successfully.'
+        });
+
+        this.emailForm.patchValue({
+          oldEmail: this.emailForm.get('newEmail')?.value,
+          newEmail: ''
+        });
+
+        this.emailForm.markAsPristine();
+        this.emailForm.markAsUntouched();
+      },
+      error: error => {
+        this.ngToastService.error({
+          detail: 'Error',
+          summary: error.error.message
+        });
+      }
+    });
   }
 }
