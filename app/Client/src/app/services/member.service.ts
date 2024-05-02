@@ -87,4 +87,8 @@ export class MemberService {
   changePassword(memberId: number, formData: { oldPassword: string, newPassword: string}) {
     return this.http.post(`${API}/${memberId}/ChangePassword`, formData);
   }
+
+  resetPassword(memberId: number) {
+    return this.http.post(`${API}/${memberId}/ResetPassword`, null);
+  }
 }

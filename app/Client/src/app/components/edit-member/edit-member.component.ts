@@ -2,7 +2,7 @@ import {Component, input, OnDestroy, OnInit, Sanitizer} from '@angular/core';
 import {MemberService} from "../../services/member.service";
 import {Member} from "../../models/member";
 import {ActivatedRoute, ParamMap, Params, RouterLink} from "@angular/router";
-import {async, Observable, Subscription, switchMap} from "rxjs";
+import {async, finalize, Observable, Subscription, switchMap, take} from "rxjs";
 import {AsyncPipe, DatePipe, JsonPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {NgToastModule, NgToastService} from "ng-angular-popup";
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators} from "@angular/forms";
@@ -24,6 +24,7 @@ import {Role} from "../../models/role";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {environment} from "../../../environments/environment";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-edit-member',
@@ -425,5 +426,31 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         return null;
       }
     };
+  }
+
+  submitPasswordReset() {
+    const dialogRef = this.matDialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm Reset',
+        message1: `Are you sure you want to reset their password?`,
+        message2: `They will be forced to login again`
+      }
+    });
+
+    const dialogSub = dialogRef.afterClosed().pipe(take(1)).subscribe({
+      next: data => {
+        this.ngToastService.success({
+          detail: 'Success',
+          summary: 'Password reset successfully.'
+        });
+      },
+      error: error => {
+        this.ngToastService.error({
+          detail: 'Error',
+          summary: error.error.message
+        });
+      }
+    });
   }
 }

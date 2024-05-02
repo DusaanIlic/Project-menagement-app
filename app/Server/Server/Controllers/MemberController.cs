@@ -140,10 +140,9 @@ namespace Server.Controllers
                 <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
                 
                 <ol>
-                    <li>Visit our website at <a href=""http://localhost:4200"" target=""_blank"">this link<a/>.</li>
+                    <li>Visit our website at <a href=""http://softeng.pmf.kg.ac.rs:10141"" target=""_blank"">this link<a/>.</li>
                     <li>Click on the ""Login"" button.</li>
                     <li>Enter your username/email and the temporary password provided above.</li>
-                    <li>Follow the prompts to create a new, secure password.</li>
                 </ol>
                                 
                 <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
@@ -522,6 +521,64 @@ namespace Server.Controllers
             };
             
             return Ok(roleDTO);
+        }
+
+        [HttpPost("{id}/ForcePasswordReset")]
+        public async Task<IActionResult> PasswordReset(int id)
+        {
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
+
+            if (!hasPermission)
+            {
+                return BadRequest(new { message = "You don't have permission to do this" });
+            }
+
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found" });
+            }
+
+            var generatedPassword = GenerateRandomPassword(6);
+            
+            member.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
+            member.RefreshToken = null;
+            member.RefreshTokenExpiresAt = null;
+            member.PasswordToken = null;
+            member.PasswordTokenExpiresAt = null;
+
+            await _dbContext.SaveChangesAsync();
+            
+            var request = new EmailDTO
+            {
+                To = member.Email,
+                Subject = "LogicTenacity - An administrator reset your password",
+                Body = $@"
+                <p>Hello {member.FirstName} {member.LastName},</p>
+                
+                <p>It seems that an administrator has reset your password.</p>
+                
+                <p>Below is your new temporary password:</p>
+                
+                <ul>
+                    <li><strong>Temporary Password:</strong> {generatedPassword}</li>
+                </ul>
+                
+                <p>For security reasons, we recommend that you change your password as soon as possible after logging in for the first time. Please follow these steps to set up your new password:</p>
+                
+                <ol>
+                    <li>Visit our website at <a href=""http://localhost:4200"" target=""_blank"">this link<a/>.</li>
+                    <li>Click on the ""Login"" button.</li>
+                    <li>Enter your username/email and the temporary password provided above.</li>
+                </ol>
+                                
+                <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
+            };
+
+            var result = _emailService.SendEmail(request);
+
+            return Ok(new { message = "Successfully reset password" });
         }
     }
 }
