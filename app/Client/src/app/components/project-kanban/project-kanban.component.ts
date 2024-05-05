@@ -24,6 +24,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { Member } from '../../models/member';
 import { MemberInfoComponent } from '../member-info/member-info.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-project-kanban',
@@ -32,7 +33,7 @@ import { MemberInfoComponent } from '../member-info/member-info.component';
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
   imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent]
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule]
 })
 
 export class ProjectKanbanComponent implements OnInit {
