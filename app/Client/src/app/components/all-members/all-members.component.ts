@@ -127,36 +127,9 @@ export class AllMembersComponent implements AfterViewInit{
 
 
 
-  search(): void {
-    let searchTerm = this.searchTerm.toLowerCase().trim();
-    let filteredMembers = [...this.filteredMembers];
-
-    if (this.selectedRole) {
-      switch (this.selectedRole) {
-        case 'allMembers':
-          break;
-        case 'administrators':
-        case 'projectManagers':
-        case 'workers':
-          filteredMembers = filteredMembers.filter(member => this.getRoleName(member.roleId) === this.selectedRole);
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (searchTerm) {
-      filteredMembers = filteredMembers.filter(member =>
-        member.firstName.toLowerCase().includes(searchTerm) ||
-        member.lastName.toLowerCase().includes(searchTerm) ||
-        member.email.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredMembers = this.members;
-    }
-
-    this.dataSource = filteredMembers;
+  search(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 

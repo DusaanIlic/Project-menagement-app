@@ -9,7 +9,7 @@
             </div>
           </mat-label>
 
-          <input matInput [(ngModel)]="searchTerm" (input)="search()">
+          <input matInput (keyup)="search($event)">
         </mat-form-field>
 
         <mat-form-field subscriptSizing="dynamic">

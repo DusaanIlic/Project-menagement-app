@@ -34,6 +34,7 @@ export class AllProjectsComponent implements OnInit{
   allProjects : Project[] = [];
   selectedTable: string = "t1";
   displayedColumns: string[] = ['project',  'startDate', 'deadline', 'priority', 'status', 'manager', 'actions'];
+  projectStatuses !: any;
   dataSource: any;
   searchTerm: string = '';
   @ViewChild(MatSort)sort: any;
@@ -124,7 +125,6 @@ export class AllProjectsComponent implements OnInit{
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    console.log(filterValue);
   }
 
 
