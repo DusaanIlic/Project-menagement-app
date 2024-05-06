@@ -58,11 +58,12 @@
                     (cdkDropListDropped)="drop($event)" >
                     <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
                         <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
-                            <mat-card class="flex flex-row items-center justify-between border-b-2 cursor-move task-item" cdkDrag [cdkDragData]="item" [ngClass]="{
+                            <mat-card class="border-b-2 cursor-move task-item" cdkDrag [cdkDragData]="item" [ngClass]="{
                                 'low-priority': item.taskPriorityId === 1,
                                 'medium-priority': item.taskPriorityId === 2,
                                 'high-priority': item.taskPriorityId === 3
                             }">
+                            <div class="flex flex-row items-center justify-between ml-3 py-2">
                                 <div class=" flex flex-col">
                                     <p class="text-lg font-medium">{{item.taskName}}</p>
                                     <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
@@ -70,6 +71,8 @@
                                 <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
+                            </div>
+                                
                             </mat-card>
                         </ng-container>
                     </ng-container>
