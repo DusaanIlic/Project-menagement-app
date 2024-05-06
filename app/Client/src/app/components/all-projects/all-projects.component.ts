@@ -121,20 +121,10 @@ export class AllProjectsComponent implements OnInit{
   // }
 
 
-  search(): void {
-    let searchTerm = this.searchTerm.toLowerCase().trim();
-    let filteredProjects = [...this.allProjects];
-
-    if (searchTerm) {
-      filteredProjects = filteredProjects.filter(project =>
-        project.projectName.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredProjects = this.allProjects;
-    }
-
-    this.dataSource = filteredProjects;
+  search(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    console.log(filterValue);
   }
 
 
