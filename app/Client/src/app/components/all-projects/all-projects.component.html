@@ -16,10 +16,11 @@
           <mat-form-field subscriptSizing="dynamic">
             <mat-label>Filter by status</mat-label>
 
-            <mat-select>
-              <mat-option value="allProjects">All Projects</mat-option>
-              <mat-option value="activeProjects">Active Projects</mat-option>
-              <mat-option value="finishedProjects">Inactive Projects</mat-option>
+            <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange($event)">
+              <mat-option value="All Projects">All Projects</mat-option>
+              @for (projectStatus of projectStatuses; track projectStatus.projectStatusId) {
+                <mat-option [value]="projectStatus.projectStatus">{{projectStatus.projectStatus}}</mat-option>
+              }
             </mat-select>
           </mat-form-field>
 

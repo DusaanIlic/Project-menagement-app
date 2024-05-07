@@ -108,7 +108,7 @@ export class ProjectServiceGet{
   }
 
   getAllProjectStatuses() {
-    return this.http.get<ProjectStatus>(`${PROJECT_API}/Status`);
+    return this.http.get<ProjectStatus[]>(`${PROJECT_API}/Status`);
   }
 }
 

@@ -29,19 +29,17 @@ import {ProjectStatus} from "../../models/project-status";
   imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule]
 })
 export class AllProjectsComponent implements OnInit{
-  selectedStatus: string = '';
+  selectedStatus: string = 'All Projects';
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
-  selectedTable: string = "t1";
   displayedColumns: string[] = ['project',  'startDate', 'deadline', 'priority', 'status', 'manager', 'actions'];
-  projectStatuses !: ProjectStatus;
+  projectStatuses !: ProjectStatus[];
   dataSource: any;
-  searchTerm: string = '';
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private projectService : ProjectServiceGet, private location : Location, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
+  constructor(private projectService : ProjectServiceGet, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectComponent, {
@@ -59,34 +57,6 @@ export class AllProjectsComponent implements OnInit{
       this._liveAnnouncer.announce('Sorting cleared');
     }
   }
-
-  onStatusChange(event: any): void {
-    this.selectedStatus = event.target.value;
-    this.filterProjects(this.selectedStatus);
-  }
-
-  filterProjects(status: string): void {
-    if (status === 'allProjects') {
-      this.dataSource = this.allProjects;
-    } else if (status == 'finishedProjects') {
-      this.dataSource = this.allProjects.filter(project => project.status === 'Closed');
-    }
-    else{
-      this.dataSource = this.allProjects.filter(project => project.status === 'In Progress' || project.status === 'In Preparation');
-    }
-  }
-
-
-  /*filterProjects() {
-    switch (this.selectedStatus) {
-      case 'activeProjects':
-        return this.allProjects.filter(project => project.status === 'in progress' || project.status === 'in preparation');
-      case 'finishedProjects':
-        return this.allProjects.filter(project => project.status === 'closed');
-      default:
-        return this.allProjects;
-    }
-  }*/
 
   fetchProjects() : void
   {
@@ -108,25 +78,38 @@ export class AllProjectsComponent implements OnInit{
     })
   }
 
-  // private mapDataFromDTO(projects : any[]) : Project[]
-  // {
-  //   return projects.map(item => ({
-  //     projectId: item.projectId,
-  //     projectName: item.projectName,
-  //     deadline: new Date(item.deadline),
-  //     startDate: new Date(item.startDate),
-  //     projectDescription: item.projectDescription,
-  //     details: "",
-  //     status: item.status,
-  //     teamLeader: item.teamLider
-  //   }));
-  // }
-
 
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.applyFilter(); // Call applyFilter to include selected status in filtering
   }
+
+  onStatusChange(event: any) {
+    this.selectedStatus = event;
+    console.log(this.selectedStatus);
+    this.applyFilter();
+  }
+
+  applyFilter(): void {
+    const filterValue = this.dataSource.filter.trim().toLowerCase();
+
+    this.dataSource.filterPredicate = (data : any , filter: string) => {
+      const textFilter = !filterValue || // If no search text provided, always include
+        (data.name && data.name.toLowerCase().includes(filterValue)) || // Include if name matches search text
+        (data.description && data.description.toLowerCase().includes(filterValue)); // Include if description matches search text
+
+      const statusFilter = this.selectedStatus === 'All Projects' || // If "All Projects" selected, always include
+        data.status === this.selectedStatus; // Include if status matches selectedStatusId
+
+      // Return true if both filters match
+      return textFilter && statusFilter;
+    };
+
+    // Apply the filter
+    this.dataSource.filter = filterValue;
+  }
+
 
 
   ngOnInit(): void
@@ -134,7 +117,7 @@ export class AllProjectsComponent implements OnInit{
     this.fetchProjects();
 
     this.projectService.getAllProjectStatuses().subscribe({
-      next: (data: ProjectStatus) => {
+      next: (data: ProjectStatus[]) => {
         this.projectStatuses = data;
       },
       error: error => {
