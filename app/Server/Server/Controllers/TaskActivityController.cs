@@ -63,16 +63,19 @@ namespace Server.Controllers
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
 
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            
-            if (idClaim == null)
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
             {
-                return BadRequest(new { message = "Member id claim is missing in jwt token" });
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
-            var memberId = int.Parse(idClaim.Value);
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
 
-            var member = await dbContext.Members.FindAsync(memberId);
+            var member = await dbContext.Members.FindAsync(userId);
             if (member == null)
             {
                 return BadRequest(new { message = "Member not found" });
