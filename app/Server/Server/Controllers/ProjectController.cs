@@ -42,6 +42,8 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p => p.ProjectTasks)
+                .ThenInclude(pts => pts.TaskPriority)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -59,8 +61,9 @@ namespace Server.Controllers
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.TaskStatus.Name,
-                    TaskStatusId = t.TaskStatusId
-
+                    TaskStatusId = t.TaskStatusId,
+                    TaskPriorityId = t.TaskPriorityId,
+                    TaskPriorityName = t.TaskPriority.Name
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
