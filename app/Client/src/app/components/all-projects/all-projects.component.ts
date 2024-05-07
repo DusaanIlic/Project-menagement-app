@@ -19,6 +19,7 @@ import {MatInput} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {NgToastModule} from "ng-angular-popup";
+import {ProjectStatus} from "../../models/project-status";
 
 @Component({
   selector: 'app-all-projects',
@@ -34,7 +35,7 @@ export class AllProjectsComponent implements OnInit{
   allProjects : Project[] = [];
   selectedTable: string = "t1";
   displayedColumns: string[] = ['project',  'startDate', 'deadline', 'priority', 'status', 'manager', 'actions'];
-  projectStatuses !: any;
+  projectStatuses !: ProjectStatus;
   dataSource: any;
   searchTerm: string = '';
   @ViewChild(MatSort)sort: any;
@@ -131,6 +132,15 @@ export class AllProjectsComponent implements OnInit{
   ngOnInit(): void
   {
     this.fetchProjects();
+
+    this.projectService.getAllProjectStatuses().subscribe({
+      next: (data: ProjectStatus) => {
+        this.projectStatuses = data;
+      },
+      error: error => {
+        console.log('failed fetching project statuses');
+      }
+    })
   }
 
 

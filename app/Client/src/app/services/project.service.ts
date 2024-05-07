@@ -107,7 +107,7 @@ export class ProjectServiceGet{
     return this.http.get<Project[]>(`${PROJECT_API}/Member/${memberId}`);
   }
 
-  getAllProjectTasks() {
+  getAllProjectStatuses() {
     return this.http.get<ProjectStatus>(`${PROJECT_API}/Status`);
   }
 }
