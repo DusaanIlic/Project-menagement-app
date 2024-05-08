@@ -520,12 +520,12 @@ namespace Server.Controllers
             if (status == null)
                 return NotFound(new { message = "Status not found" });
 
-            if(statusId == 3 && project.StartDate == DateTime.MinValue)
+            if(statusId == 2 && project.StartDate == DateTime.MinValue)
             {
                 project.StartDate = DateTime.Now;
             }
 
-            if(statusId == 2)
+            if(statusId == 3)
             {
                 project.DateFinished = DateTime.Now;
             }
