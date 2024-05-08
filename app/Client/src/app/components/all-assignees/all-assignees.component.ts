@@ -137,16 +137,16 @@ export class AllAssigneesComponent implements OnInit{
 
   removeAssignee(assignee: Member)
   {
-        this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
-          next : data =>{
-            console.log("Removed successfully.");
-          },
-          error : error =>{
-            console.log("Error removing");
-            this.fetchMembersOnProject()
-          }
-        })
-    }
+    this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
+      next : data =>{
+        console.log("Removed successfully.");
+      },
+      error : error =>{
+        console.log("Error removing");
+        this.fetchMembersOnProject()
+      }
+    })
+  }
 
   openRoleDialog() {
     const dialogRef = this.dialog.open(ProjectRoleOverviewComponent, {
