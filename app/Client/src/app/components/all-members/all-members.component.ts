@@ -72,11 +72,7 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   }
 
   filterMembersByRole(role: number): void {
-    if (role === 0) {
-      this.dataSource = this.members;
-    } else {
-      this.dataSource = this.members.filter(member => member.roleId == role);
-    }
+    this.dataSource.data = this.members.filter(member => role == 0 || member.roleId == role);
   }
 
   onRoleChange(event: any): void {
