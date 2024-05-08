@@ -35,9 +35,9 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
   imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger],
   providers: [DatePipe]
 })
-export class AllMembersComponent implements AfterViewInit{
-
-  selectedRole: string = '';
+export class AllMembersComponent implements OnInit, AfterViewInit{
+  selectedRole: number = 0;
+  defaultRole: number = 0;
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
@@ -55,14 +55,13 @@ export class AllMembersComponent implements AfterViewInit{
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
-    this.selectedRole = 'allMembers';
+    this.selectedRole = 0;
   }
 
   ngAfterViewInit(): void {
 
 
   }
-
 
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
@@ -72,16 +71,16 @@ export class AllMembersComponent implements AfterViewInit{
     }
   }
 
-  filterMembersByRole(role: string): void {
-    if (role === 'allMembers') {
+  filterMembersByRole(role: number): void {
+    if (role === 0) {
       this.dataSource = this.members;
     } else {
-      this.dataSource = this.members.filter(member => this.getRoleName(member.roleId) === role);
+      this.dataSource = this.members.filter(member => member.roleId == role);
     }
   }
 
   onRoleChange(event: any): void {
-    this.selectedRole = event.target.value;
+    this.selectedRole = event;
     this.filterMembersByRole(this.selectedRole);
   }
 

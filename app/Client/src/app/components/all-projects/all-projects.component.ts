@@ -30,6 +30,7 @@ import {ProjectStatus} from "../../models/project-status";
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: number = 0;
+  defaultStatus: number = 0;
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
@@ -61,14 +62,11 @@ export class AllProjectsComponent implements OnInit{
   fetchProjects() : void
   {
     this.projectService.getAllProjects().subscribe((data : any[]) => {
-      console.log(data);
       this.allProjects = data;
       this.dataSource = new MatTableDataSource(this.allProjects);
       this.dataSource.paginator = this.paginator;
-      console.log(this.allProjects);
+      this.dataSource.sort = this.sort;
     });
-
-
   }
 
   deleteProject(id?: number)
@@ -87,7 +85,6 @@ export class AllProjectsComponent implements OnInit{
   onStatusChange(event: any) {
     this.selectedStatus = event;
     console.log(this.selectedStatus);
-
     this.dataSource.data = this.allProjects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
   }
 
