@@ -10,6 +10,9 @@ namespace Server.Models
         public int TaskPriorityId { get; set; }
         public string Name { get; set; }
 
+        public string PriorityColorHex { get; set; } = string.Empty;
+
         public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+
     }
 }
