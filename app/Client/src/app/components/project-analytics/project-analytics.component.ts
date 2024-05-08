@@ -5,7 +5,7 @@ import {ProjectServiceGet} from "../../services/project.service";
 import {MemberService} from "../../services/member.service";
 import {TaskService} from "../../services/task.service";
 import { Task } from '../../models/task';
-import {LegendPosition, LineChartModule, NgxChartsModule} from "@swimlane/ngx-charts";
+import { LineChartModule, NgxChartsModule} from "@swimlane/ngx-charts";
 import {Member} from "../../models/member";
 import {MatCard} from "@angular/material/card";
 import {
@@ -51,6 +51,8 @@ export class ProjectAnalyticsComponent implements OnInit{
   finishedTasksCount : number = 0;
   namesForBarChart : any;
   array : any[] = [];
+  tasksByStatuses : any[] = [];
+  loaded : boolean = false;
 
 
   constructor(private route: ActivatedRoute,
@@ -69,8 +71,11 @@ export class ProjectAnalyticsComponent implements OnInit{
         return this.tService.getTasksByProject(this.projectId);
       }),
 
+
        concatMap((tasks : Task[]) =>{
 
+
+          this.tasksByStatuses.pop()
            this.tasks = tasks
            for(let i = 0; i < tasks.length; i++)
            {
@@ -78,8 +83,22 @@ export class ProjectAnalyticsComponent implements OnInit{
              if(tasks[i].taskStatus === 'Completed')
                this.finishedTasksCount++;
 
+
+
+             const foundStatus = this.tasksByStatuses.findIndex(status => status.name === tasks[i].taskStatus);
+
+             if(foundStatus == -1)
+             {
+               this.tasksByStatuses.push({name: tasks[i].taskStatus, value: 1})
+             }
+             else
+               this.tasksByStatuses[foundStatus].value++;
+
+
            }
-           //console.log(this.finishedTasksCount)
+
+           //console.log(this.tasksByStatuses)
+            this.loaded = true;
 
            this.dataForChart = [{name: "Finished", value: (this.finishedTasksCount / this.allTasksCount) * 100}];
            this.customColors = [{name: "Finished", value: "#3F51B5"}]
@@ -117,6 +136,8 @@ export class ProjectAnalyticsComponent implements OnInit{
          return from(members).pipe(
            mergeMap(member =>{
              return this.tService.getTasksByMember(member.id).pipe(
+               map(tasks => tasks.filter(task => task.projectId == this.projectId)),
+
                map(tasks =>({
                  name: member.firstName + " " + member.lastName,
                  id: member.id,
@@ -151,7 +172,14 @@ export class ProjectAnalyticsComponent implements OnInit{
 
   openMemberOverview(id : number)
   {
+  }
 
+  axisFormat(val : number) {
+    if (val % 1 === 0) {
+      return val.toLocaleString();
+    } else {
+      return '';
+    }
   }
 
 }
