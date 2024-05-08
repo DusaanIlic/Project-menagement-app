@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240508092656_New")]
-    partial class New
+    [Migration("20240508185757_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 11, 26, 55, 37, DateTimeKind.Local).AddTicks(109),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 169, DateTimeKind.Local).AddTicks(4970),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$8s5HYO7jcTnEgrLcBxudzOLnPTOuJ6bFiVrj4U6/8aUWjv25NoG2C",
+                            Password = "$2a$10$9IuongYV4qoLKoOIJEpmFO9.QkamwkTIxGZB9X4qt9ceobcKe0mWy",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 11, 26, 55, 135, DateTimeKind.Local).AddTicks(2931),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 251, DateTimeKind.Local).AddTicks(1955),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$vdhcnF/aIsCHW6ev8qpaV.BLIlg5u.yHnXyhl5KD3LUnIJI3mP7Kq",
+                            Password = "$2a$10$9dqQMGcPQ6NMNjMEp37wjeVdqVQCvJL1ht4V3MlZzOALZPRWyBBi2",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 11, 26, 55, 259, DateTimeKind.Local).AddTicks(1629),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 337, DateTimeKind.Local).AddTicks(8283),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$FDm9ie7jPEGVXfBiezDLp.LdR84//yeuJxqR079KiYEyh56f9Pi0O",
+                            Password = "$2a$10$T2ajLlAaudButHKHPUGkwuD3XdUqD07foU2HHe0blezen9fQoksOu",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -446,6 +446,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PriorityColorHex")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ProjectPriorityId");
 
                     b.ToTable("ProjectPriorities");
@@ -454,17 +458,20 @@ namespace Server.Migrations
                         new
                         {
                             ProjectPriorityId = 1,
-                            Name = "Low"
+                            Name = "Low",
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             ProjectPriorityId = 2,
-                            Name = "Medium"
+                            Name = "Medium",
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             ProjectPriorityId = 3,
-                            Name = "High"
+                            Name = "High",
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 
@@ -1028,6 +1035,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PriorityColorHex")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
@@ -1036,17 +1047,20 @@ namespace Server.Migrations
                         new
                         {
                             TaskPriorityId = 1,
-                            Name = "Low"
+                            Name = "Low",
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             TaskPriorityId = 2,
-                            Name = "Medium"
+                            Name = "Medium",
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             TaskPriorityId = 3,
-                            Name = "High"
+                            Name = "High",
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 

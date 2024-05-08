@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 52, 46, 114, DateTimeKind.Local).AddTicks(8265),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 169, DateTimeKind.Local).AddTicks(4970),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$lKWSpKmvTL2XvmJLC4LRLua3GCGfesR2lxUEzW5.t1HxVL8S6dBmW",
+                            Password = "$2a$10$9IuongYV4qoLKoOIJEpmFO9.QkamwkTIxGZB9X4qt9ceobcKe0mWy",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 52, 46, 245, DateTimeKind.Local).AddTicks(245),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 251, DateTimeKind.Local).AddTicks(1955),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$ZlomzYQRVEVV1h9Ff9fapOtnHWLPaEJCQDxP8k4yxpJ/Oj7/aSeBm",
+                            Password = "$2a$10$9dqQMGcPQ6NMNjMEp37wjeVdqVQCvJL1ht4V3MlZzOALZPRWyBBi2",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 52, 46, 410, DateTimeKind.Local).AddTicks(6163),
+                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 337, DateTimeKind.Local).AddTicks(8283),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$9ndbyMIzO.ctIChz9H2SreNkRlnG26p8k2we8yATJYDjCjmhZFoQe",
+                            Password = "$2a$10$T2ajLlAaudButHKHPUGkwuD3XdUqD07foU2HHe0blezen9fQoksOu",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -456,19 +456,19 @@ namespace Server.Migrations
                         {
                             ProjectPriorityId = 1,
                             Name = "Low",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             ProjectPriorityId = 2,
                             Name = "Medium",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             ProjectPriorityId = 3,
                             Name = "High",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 
@@ -1045,19 +1045,19 @@ namespace Server.Migrations
                         {
                             TaskPriorityId = 1,
                             Name = "Low",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             TaskPriorityId = 2,
                             Name = "Medium",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             TaskPriorityId = 3,
                             Name = "High",
-                            PriorityColorHex = ""
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 

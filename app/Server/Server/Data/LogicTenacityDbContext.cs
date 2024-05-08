@@ -276,15 +276,15 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<TaskPriority>().HasData(
-                new TaskPriority { TaskPriorityId = 1, Name = "Low" },
-                new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
-                new TaskPriority { TaskPriorityId = 3, Name = "High" }
+                new TaskPriority { TaskPriorityId = 1, Name = "Low" , PriorityColorHex = "#00FF00" },
+                new TaskPriority { TaskPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
+                new TaskPriority { TaskPriorityId = 3, Name = "High" , PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<ProjectPriority>().HasData(
-                new ProjectPriority { ProjectPriorityId = 1, Name = "Low" },
-                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium" },
-                new ProjectPriority { ProjectPriorityId = 3, Name = "High" }
+                new ProjectPriority { ProjectPriorityId = 1, Name = "Low", PriorityColorHex = "#00FF00" },
+                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High" , PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<TaskCategory>().HasData(

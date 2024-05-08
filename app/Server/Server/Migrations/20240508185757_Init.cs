@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class New : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,7 +45,8 @@ namespace Server.Migrations
                 {
                     ProjectPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    PriorityColorHex = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +129,8 @@ namespace Server.Migrations
                 {
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    PriorityColorHex = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -588,12 +590,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "ProjectPriorities",
-                columns: new[] { "ProjectPriorityId", "Name" },
+                columns: new[] { "ProjectPriorityId", "Name", "PriorityColorHex" },
                 values: new object[,]
                 {
-                    { 1, "Low" },
-                    { 2, "Medium" },
-                    { 3, "High" }
+                    { 1, "Low", "#00FF00" },
+                    { 2, "Medium", "#FFFF00" },
+                    { 3, "High", "#FF0000" }
                 });
 
             migrationBuilder.InsertData(
@@ -643,12 +645,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "TaskPriority",
-                columns: new[] { "TaskPriorityId", "Name" },
+                columns: new[] { "TaskPriorityId", "Name", "PriorityColorHex" },
                 values: new object[,]
                 {
-                    { 1, "Low" },
-                    { 2, "Medium" },
-                    { 3, "High" }
+                    { 1, "Low", "#00FF00" },
+                    { 2, "Medium", "#FFFF00" },
+                    { 3, "High", "#FF0000" }
                 });
 
             migrationBuilder.InsertData(
@@ -666,9 +668,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 8, 11, 26, 55, 37, DateTimeKind.Local).AddTicks(109), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$8s5HYO7jcTnEgrLcBxudzOLnPTOuJ6bFiVrj4U6/8aUWjv25NoG2C", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 8, 11, 26, 55, 135, DateTimeKind.Local).AddTicks(2931), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$vdhcnF/aIsCHW6ev8qpaV.BLIlg5u.yHnXyhl5KD3LUnIJI3mP7Kq", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 8, 11, 26, 55, 259, DateTimeKind.Local).AddTicks(1629), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$FDm9ie7jPEGVXfBiezDLp.LdR84//yeuJxqR079KiYEyh56f9Pi0O", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 8, 20, 57, 56, 169, DateTimeKind.Local).AddTicks(4970), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$9IuongYV4qoLKoOIJEpmFO9.QkamwkTIxGZB9X4qt9ceobcKe0mWy", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 8, 20, 57, 56, 251, DateTimeKind.Local).AddTicks(1955), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$9dqQMGcPQ6NMNjMEp37wjeVdqVQCvJL1ht4V3MlZzOALZPRWyBBi2", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 8, 20, 57, 56, 337, DateTimeKind.Local).AddTicks(8283), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$T2ajLlAaudButHKHPUGkwuD3XdUqD07foU2HHe0blezen9fQoksOu", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
