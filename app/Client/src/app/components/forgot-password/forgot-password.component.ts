@@ -1,10 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgIf, NgOptimizedImage} from "@angular/common";
-import {NgToastModule, NgToastService} from "ng-angular-popup";
-import {AuthService} from "../../services/auth.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ForgotPasswordCompleteForm} from "../../forms/forgot-password-complete.form";
+import { Component, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { NgIf, NgOptimizedImage } from '@angular/common';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { AuthService } from '../../services/auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ForgotPasswordCompleteForm } from '../../forms/forgot-password-complete.form';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,46 +23,53 @@ import {ForgotPasswordCompleteForm} from "../../forms/forgot-password-complete.f
     NgIf,
     NgOptimizedImage,
     NgToastModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
   ],
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss'
+  styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent implements OnInit {
-  form: any;
+  form: FormGroup;
   passwordMismatch: boolean = false;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute,
-                private ngToastService: NgToastService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private ngToastService: NgToastService,
+    private router: Router
+  ) {
     this.form = new FormGroup({
-      passwordToken: new FormControl('', [
-        Validators.required
-      ]),
+      passwordToken: new FormControl('', [Validators.required]),
       newPassword: new FormControl('', [
         Validators.required,
-        Validators.minLength(6)
+        Validators.minLength(6),
       ]),
       confirmPassword: new FormControl('', [
         Validators.required,
-        Validators.minLength(6)
-      ])
+        Validators.minLength(6),
+      ]),
     });
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const refreshToken = params['token'];
 
       console.log(refreshToken);
 
-      this.form.patchValue({passwordToken: refreshToken});
+      this.form.patchValue({ passwordToken: refreshToken });
     });
   }
 
-
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.get('newPassword')?.value !== this.form.get('newPassword1')?.value) {
+      if (
+        this.form.get('newPassword')?.value !==
+        this.form.get('newPassword1')?.value
+      ) {
         this.passwordMismatch = true;
         return;
       }
@@ -63,7 +79,7 @@ export class ForgotPasswordComponent implements OnInit {
       const data: ForgotPasswordCompleteForm = this.form.value;
 
       this.authService.completeForgotPasswordRequest(data).subscribe({
-        next: data => {
+        next: (data) => {
           // Handle success response
           this.ngToastService.success({
             detail: 'Password reset successfully.',
@@ -78,17 +94,18 @@ export class ForgotPasswordComponent implements OnInit {
             this.router.navigate(['/login']);
           }, 4000);
         },
-        error: error => {
+        error: (error) => {
           // Handle error response
           this.ngToastService.error({
             detail: 'Failed to reset password. Please try again later.',
             summary: 'Something went wrong with your request',
           });
-        }
+        },
       });
     } else {
       this.ngToastService.error({
-        detail: 'Failed submitting form. Please check your input and try again.',
+        detail:
+          'Failed submitting form. Please check your input and try again.',
         summary: 'Input validation failed',
       });
     }
