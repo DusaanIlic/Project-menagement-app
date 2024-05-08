@@ -29,7 +29,7 @@ import {ProjectStatus} from "../../models/project-status";
   imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule]
 })
 export class AllProjectsComponent implements OnInit{
-  selectedStatus: string = 'All Projects';
+  selectedStatus: number = 0;
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
@@ -82,35 +82,14 @@ export class AllProjectsComponent implements OnInit{
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.applyFilter(); // Call applyFilter to include selected status in filtering
   }
 
   onStatusChange(event: any) {
     this.selectedStatus = event;
     console.log(this.selectedStatus);
-    this.applyFilter();
+
+    this.dataSource.data = this.allProjects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
   }
-
-  applyFilter(): void {
-    const filterValue = this.dataSource.filter.trim().toLowerCase();
-
-    this.dataSource.filterPredicate = (data : any , filter: string) => {
-      const textFilter = !filterValue || // If no search text provided, always include
-        (data.name && data.name.toLowerCase().includes(filterValue)) || // Include if name matches search text
-        (data.description && data.description.toLowerCase().includes(filterValue)); // Include if description matches search text
-
-      const statusFilter = this.selectedStatus === 'All Projects' || // If "All Projects" selected, always include
-        data.status === this.selectedStatus; // Include if status matches selectedStatusId
-
-      // Return true if both filters match
-      return textFilter && statusFilter;
-    };
-
-    // Apply the filter
-    this.dataSource.filter = filterValue;
-  }
-
-
 
   ngOnInit(): void
   {

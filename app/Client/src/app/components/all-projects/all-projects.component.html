@@ -17,9 +17,9 @@
             <mat-label>Filter by status</mat-label>
 
             <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange($event)">
-              <mat-option value="All Projects">All Projects</mat-option>
+              <mat-option value="0">All Projects</mat-option>
               @for (projectStatus of projectStatuses; track projectStatus.projectStatusId) {
-                <mat-option [value]="projectStatus.projectStatus">{{projectStatus.projectStatus}}</mat-option>
+                <mat-option [value]="projectStatus.projectStatusId">{{projectStatus.projectStatus}}</mat-option>
               }
             </mat-select>
           </mat-form-field>
