@@ -38,7 +38,7 @@
   <a mat-menu-item (click)="logout()">Logout</a>
 </mat-menu>
 
-<mat-menu #themeMenu="matMenu" class="p-2">
+<mat-menu #themeMenu="matMenu" class="p-2 select-none">
     <mat-radio-group>
       <div *ngFor="let option of (options$ | async)" (click)="changeTheme(option.value)" class="flex items-center gap-2">
         <mat-radio-button [value]="option.value" [checked]="defaultTheme == option.value">{{option.label}}</mat-radio-button>

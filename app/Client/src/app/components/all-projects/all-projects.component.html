@@ -2,7 +2,7 @@
     <div class="flex flex-row items-center gap-5 w-4/5">
 
           <mat-form-field class="w-96" subscriptSizing="dynamic">
-            <mat-label>
+            <mat-label class="select-none">
               <div class="flex items-center justify-between gap-2">
                 <p>Search</p>
                 <mat-icon class="scale-125">search</mat-icon>
@@ -13,7 +13,7 @@
           </mat-form-field>
 
           <mat-form-field subscriptSizing="dynamic">
-            <mat-label>Filter by status</mat-label>
+            <mat-label class="select-none">Filter by status</mat-label>
 
             <mat-select [value]="selectedStatus" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange($event)">
               <mat-option [value]="defaultStatus">All Projects</mat-option>
