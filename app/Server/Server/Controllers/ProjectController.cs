@@ -906,9 +906,29 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
+        [Authorize]
         [HttpPut("{projectId}/updateDeadline/{newDeadline}")]
         public async Task<IActionResult> UpdateDeadlineModified(int projectId, DateTime newDeadline)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Chaneg project deadline");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var project = await dbContext.Projects.FindAsync(projectId);
 
             if (project == null)

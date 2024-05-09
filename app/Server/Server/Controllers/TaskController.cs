@@ -1069,6 +1069,7 @@ namespace Server.Controllers
             return Ok(taskDTOs);
         }
 
+        [Authorize]
         [HttpPut("{taskId}/updateDeadline/{newDeadline}")]
         public async Task<IActionResult> UpdateDeadlineModified(int taskId, DateTime newDeadline)
         {
