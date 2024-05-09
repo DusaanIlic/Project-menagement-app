@@ -211,5 +211,39 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities/dailyCount")]
+        public async Task<IActionResult> GetDailyTaskActivityCount(int projectId)
+        {
+            var today = DateTime.Today;
+            var sevenDaysAgo = today.AddDays(-6);
+
+            var dailyTaskActivityCount = await dbContext.TaskActivities
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= sevenDaysAgo && ta.ActivityDate <= today)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            
+            var dailyActivityCounts = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = dailyTaskActivityCount.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+
+            return Ok(dailyActivityCounts);
+        }
+
     }
 }
