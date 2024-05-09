@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240509100838_Init")]
+    [Migration("20240509101437_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 155, DateTimeKind.Local).AddTicks(6782),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 14, 36, 88, DateTimeKind.Local).AddTicks(8189),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$htilwQ2DwcK3XYuw/gwIMuIOlB4ABN/6xqijj.846LyoZ.T9ldeji",
+                            Password = "$2a$10$4i1sYpDmm.bkNgtlh.OW9e4L4cE/OOvQl8ag9QrskGRhwoUoAd1Hm",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 286, DateTimeKind.Local).AddTicks(8548),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 14, 36, 179, DateTimeKind.Local).AddTicks(828),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$4ZK3TBmldV181x/KYrZWhOYrobSx27.zdNnMdnxzFheNYbubFTk/W",
+                            Password = "$2a$10$Be.55OhxCm2Swa21o/V9Duq4nRl0IGB1JfM6S.GsOMwpEcikJUNZy",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 412, DateTimeKind.Local).AddTicks(8710),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 14, 36, 273, DateTimeKind.Local).AddTicks(5981),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$sYT0fXTF.8rBD5M7gjtQi.vBYv6w8TEj9llEEa0.rcGd53EnNWm8i",
+                            Password = "$2a$10$eY92EU0phYJ8/P0oMAOHn..ivjIOD0fZk/9HjiHstyKqnpqAXNPoy",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -273,6 +273,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
@@ -743,6 +746,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProjectId")
