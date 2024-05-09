@@ -48,7 +48,11 @@
     <div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
         <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background border-2 border-solid border-black rounded-lg w-1/3 p-5" [style.display]="columnVisibility[column] ? 'block' : 'none'">
             <mat-card-header>
-                <mat-card-title>{{ column | titlecase }}</mat-card-title>
+                <mat-card-title>
+                    <div class="pb-2 pt-0">
+                        {{ column | titlecase }}
+                    </div>
+                </mat-card-title>
             </mat-card-header>
             <mat-card-content>
                 <div
