@@ -63,7 +63,8 @@ namespace Server.Controllers
                     TaskStatus = t.TaskStatus.Name,
                     TaskStatusId = t.TaskStatusId,
                     TaskPriorityId = t.TaskPriorityId,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    DeadlineModified = t.DeadlineModified
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -98,7 +99,9 @@ namespace Server.Controllers
                         NumberOfPeople = numberOfMembers,
                         NumberOfTasks = numberOfTasks,
                         ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId
+                        ProjectPriorityId = p.ProjectPriorityId,
+                        DeadlineModifed = p.DeadlineModified,
+                        DateFinished = p.DateFinished
                 });
             }
 
@@ -245,7 +248,9 @@ namespace Server.Controllers
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.TaskStatus.Name,
-                    TaskStatusId = t.TaskStatusId
+                    TaskStatusId = t.TaskStatusId,
+                    DateFinished = t.DateFinished,
+                    DeadlineModified = t.DeadlineModified
 
                 }).ToList();
 
@@ -281,7 +286,9 @@ namespace Server.Controllers
                         NumberOfPeople = numberOfMembers,
                         NumberOfTasks = numberOfTasks,
                         ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId
+                        ProjectPriorityId = p.ProjectPriorityId,
+                        DateFinished = p.DateFinished,
+                        DeadlineModifed = p.DeadlineModified
                 });
             }
 
@@ -292,7 +299,6 @@ namespace Server.Controllers
         [HttpGet("{projectId}")]
         public IActionResult GetProject(int projectId)
         {
-       
             var project = dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
@@ -316,7 +322,9 @@ namespace Server.Controllers
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.TaskStatusId
+                TaskStatusId = t.TaskStatusId,
+                DeadlineModified = t.DeadlineModified,
+                DateFinished = t.DateFinished
             }).ToList();
 
             int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
@@ -354,7 +362,9 @@ namespace Server.Controllers
                 NumberOfPeople = numberOfMembers,
                 NumberOfTasks = numberOfTasks,
                 ProjectPriority = project.Priority.Name,
-                ProjectPriorityId = project.ProjectPriorityId
+                ProjectPriorityId = project.ProjectPriorityId,
+                DateFinished = project.DateFinished,
+                DeadlineModifed = project.DeadlineModified
             };
 
             return Ok(projectDTO);
@@ -434,7 +444,9 @@ namespace Server.Controllers
                 NumberOfPeople = numberOfMembers,
                 NumberOfTasks = numberOfTasks,
                 ProjectPriority = project.Priority.Name,
-                ProjectPriorityId = project.ProjectPriorityId
+                ProjectPriorityId = project.ProjectPriorityId,
+                DateFinished = project.DateFinished,
+                DeadlineModifed = project.DeadlineModified
             };
 
             return Ok(projectDTO);
