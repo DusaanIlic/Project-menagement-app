@@ -32,8 +32,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent implements OnInit {
+  newPassword: string | undefined;
+  confirmPassword: string | undefined;
+
   form: FormGroup;
   passwordMismatch: boolean = false;
+  newPasswordFormControl!: FormControl;
+  confirmPasswordFormControl!: FormControl;
 
   constructor(
     private authService: AuthService,
@@ -41,16 +46,19 @@ export class ForgotPasswordComponent implements OnInit {
     private ngToastService: NgToastService,
     private router: Router
   ) {
+    this.newPasswordFormControl = new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]);
+    this.confirmPasswordFormControl = new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]);
     this.form = new FormGroup({
       passwordToken: new FormControl('', [Validators.required]),
-      newPassword: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
-      confirmPassword: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
+
+      newPassword: this.newPasswordFormControl,
+      confirmPassword: this.confirmPasswordFormControl,
     });
   }
 
@@ -68,7 +76,7 @@ export class ForgotPasswordComponent implements OnInit {
     if (this.form.valid) {
       if (
         this.form.get('newPassword')?.value !==
-        this.form.get('newPassword1')?.value
+        this.form.get('confirmPassword')?.value
       ) {
         this.passwordMismatch = true;
         return;
