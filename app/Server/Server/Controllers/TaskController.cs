@@ -1072,14 +1072,34 @@ namespace Server.Controllers
         [HttpPut("{taskId}/updateDeadline/{newDeadline}")]
         public async Task<IActionResult> UpdateDeadlineModified(int taskId, DateTime newDeadline)
         {
-            var task = await dbContext.ProjectTasks.FindAsync(taskId);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
-            if (task == null)
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task deadline");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            if (projectTask == null)
             {
                 return NotFound(new { message = "Task not found" });
             }
 
-            task.DeadlineModified = newDeadline;
+            projectTask.DeadlineModified = newDeadline;
 
             await dbContext.SaveChangesAsync();
 
