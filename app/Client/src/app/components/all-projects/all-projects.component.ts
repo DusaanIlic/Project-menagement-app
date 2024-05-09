@@ -20,13 +20,14 @@ import {MatIcon} from "@angular/material/icon";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {NgToastModule} from "ng-angular-popup";
 import {ProjectStatus} from "../../models/project-status";
+import {MatDivider} from "@angular/material/divider";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: number = 0;
