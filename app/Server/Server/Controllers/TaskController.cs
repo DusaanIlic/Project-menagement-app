@@ -78,7 +78,9 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = taskPriority.Name
+                    TaskPriorityName = taskPriority.Name,
+                    DateFinished = t.DateFinished,
+                    DeadlineModified = t.DeadlineModified
                     
                 });
 
@@ -273,7 +275,9 @@ namespace Server.Controllers
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
-                TaskPriorityName = projectTask.TaskPriority.Name
+                TaskPriorityName = projectTask.TaskPriority.Name,
+                DateFinished = projectTask.DateFinished,
+                DeadlineModified = projectTask.DeadlineModified
             };
 
             return Ok(tasksDTO);
@@ -320,7 +324,7 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = projectTask.TaskCategoryId
+                TaskCategoryId = projectTask.TaskCategoryId,
             };
 
             return Ok(tasksDTO);
@@ -402,7 +406,9 @@ namespace Server.Controllers
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
                 AssignedMembers = assignedMembers,
-                TaskPriorityName = projectTask.TaskPriority.Name
+                TaskPriorityName = projectTask.TaskPriority.Name,
+                DateFinished = projectTask.DateFinished,
+                DeadlineModified = projectTask.DeadlineModified
             };
 
             return Ok(taskDTO); 
@@ -503,7 +509,9 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    DeadlineModified = t.DeadlineModified,
+                    DateFinished = t.DateFinished
                 });
             }
 
