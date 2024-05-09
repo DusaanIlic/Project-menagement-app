@@ -1096,7 +1096,7 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks
                                              .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
 
-            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task deadline");
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change deadline");
 
             if (!hasPermission)
             {
