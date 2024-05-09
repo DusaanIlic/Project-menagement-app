@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240508185757_Init")]
+    [Migration("20240509100838_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 169, DateTimeKind.Local).AddTicks(4970),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 155, DateTimeKind.Local).AddTicks(6782),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$9IuongYV4qoLKoOIJEpmFO9.QkamwkTIxGZB9X4qt9ceobcKe0mWy",
+                            Password = "$2a$10$htilwQ2DwcK3XYuw/gwIMuIOlB4ABN/6xqijj.846LyoZ.T9ldeji",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 251, DateTimeKind.Local).AddTicks(1955),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 286, DateTimeKind.Local).AddTicks(8548),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$9dqQMGcPQ6NMNjMEp37wjeVdqVQCvJL1ht4V3MlZzOALZPRWyBBi2",
+                            Password = "$2a$10$4ZK3TBmldV181x/KYrZWhOYrobSx27.zdNnMdnxzFheNYbubFTk/W",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 8, 20, 57, 56, 337, DateTimeKind.Local).AddTicks(8283),
+                            DateAdded = new DateTime(2024, 5, 9, 12, 8, 35, 412, DateTimeKind.Local).AddTicks(8710),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$T2ajLlAaudButHKHPUGkwuD3XdUqD07foU2HHe0blezen9fQoksOu",
+                            Password = "$2a$10$sYT0fXTF.8rBD5M7gjtQi.vBYv6w8TEj9llEEa0.rcGd53EnNWm8i",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -255,6 +255,11 @@ namespace Server.Migrations
                         {
                             PermissionId = 5,
                             PermissionName = "Create project"
+                        },
+                        new
+                        {
+                            PermissionId = 6,
+                            PermissionName = "Change project deadline"
                         });
                 });
 
@@ -433,6 +438,11 @@ namespace Server.Migrations
                         {
                             Id = 23,
                             Name = "Remove task status"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Name = "Change task deadline"
                         });
                 });
 
@@ -631,11 +641,6 @@ namespace Server.Migrations
                         },
                         new
                         {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 10
-                        },
-                        new
-                        {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 16
                         },
@@ -651,17 +656,7 @@ namespace Server.Migrations
                         },
                         new
                         {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 17
-                        },
-                        new
-                        {
                             ProjectRoleId = 1,
-                            ProjectPermissionId = 19
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
                             ProjectPermissionId = 19
                         },
                         new
@@ -688,6 +683,21 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 24
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 10
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 17
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 19
                         });
                 });
 
@@ -887,6 +897,11 @@ namespace Server.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 6
                         });
                 });
 

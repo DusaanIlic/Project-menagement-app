@@ -242,7 +242,6 @@ namespace Server.Data
                 new Permission { PermissionId = 4, PermissionName = "Deactivate member" },
                 new Permission { PermissionId = 5, PermissionName = "Create project" },
                 new Permission { PermissionId = 6, PermissionName = "Change project deadline" }
-
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -329,7 +328,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 20, Name = "Change project priority" },
                 new ProjectPermission { Id = 21, Name = "Change task category" },
                 new ProjectPermission { Id = 22, Name = "Add task status" },
-                new ProjectPermission { Id = 23, Name = "Remove task status" }
+                new ProjectPermission { Id = 23, Name = "Remove task status" },
+                new ProjectPermission { Id = 24, Name = "Change task deadline" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -349,18 +349,19 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 13 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 14 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 15 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 16 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 18 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 19 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 20 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 21 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 22 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 23 },
-                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 }
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
+
             );
 
            
