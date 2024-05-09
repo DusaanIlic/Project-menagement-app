@@ -361,9 +361,7 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
-
             );
-
            
         }
     }
