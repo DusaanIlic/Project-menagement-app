@@ -906,7 +906,7 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
-        [HttpPut("{projectId}/deadlineModified/{newDeadline}")]
+        [HttpPut("{projectId}/updateDeadline/{newDeadline}")]
         public async Task<IActionResult> UpdateDeadlineModified(int projectId, DateTime newDeadline)
         {
             var project = await dbContext.Projects.FindAsync(projectId);
