@@ -240,7 +240,9 @@ namespace Server.Data
                 new Permission { PermissionId = 2, PermissionName = "Add member" },
                 new Permission { PermissionId = 3, PermissionName = "Edit member" },
                 new Permission { PermissionId = 4, PermissionName = "Deactivate member" },
-                new Permission { PermissionId = 5, PermissionName = "Create project" }
+                new Permission { PermissionId = 5, PermissionName = "Create project" },
+                new Permission { PermissionId = 6, PermissionName = "Change project deadline" }
+
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -260,7 +262,8 @@ namespace Server.Data
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 1, PermissionId = 3 },
                 new RolePermission { RoleId = 1, PermissionId = 4 },
-                new RolePermission { RoleId = 2, PermissionId = 5 }
+                new RolePermission { RoleId = 2, PermissionId = 5 },
+                new RolePermission { RoleId = 2, PermissionId = 6 }
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
