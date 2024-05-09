@@ -905,5 +905,22 @@ namespace Server.Controllers
 
             return Ok(taskActivityDTOs);
         }
+
+        [HttpPut("{projectId}/deadlineModified/{newDeadline}")]
+        public async Task<IActionResult> UpdateDeadlineModified(int projectId, DateTime newDeadline)
+        {
+            var project = await dbContext.Projects.FindAsync(projectId);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found" });
+            }
+
+            project.DeadlineModified = newDeadline;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Project deadline changed successfully." });
+        }
     }
 }
