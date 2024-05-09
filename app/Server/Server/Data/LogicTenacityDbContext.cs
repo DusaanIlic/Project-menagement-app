@@ -329,7 +329,7 @@ namespace Server.Data
                 new ProjectPermission { Id = 21, Name = "Change task category" },
                 new ProjectPermission { Id = 22, Name = "Add task status" },
                 new ProjectPermission { Id = 23, Name = "Remove task status" },
-                new ProjectPermission { Id = 24, Name = "Change task deadline" }
+                new ProjectPermission { Id = 24, Name = "Change deadline" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -348,7 +348,6 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 12 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 13 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 14 },
-                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 15 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 16 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 18 },
@@ -360,9 +359,7 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
-            );
-           
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 });
         }
     }
 }

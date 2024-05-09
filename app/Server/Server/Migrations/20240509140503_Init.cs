@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initi : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -589,7 +589,7 @@ namespace Server.Migrations
                     { 21, "Change task category" },
                     { 22, "Add task status" },
                     { 23, "Remove task status" },
-                    { 24, "Change task deadline" }
+                    { 24, "Change deadline" }
                 });
 
             migrationBuilder.InsertData(
@@ -672,23 +672,10 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 9, 15, 43, 52, 593, DateTimeKind.Local).AddTicks(2041), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$z83SBSN6NOOO0O7xMOpqTu5cDmrKGNUs84ht0/nlxl5c.1SJ23jW.", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 9, 15, 43, 52, 710, DateTimeKind.Local).AddTicks(1621), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$zeYvgJ.62sccf60k0INH1e/904omsqyEeFxg4dqsA3oMrX7z/1ij2", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 9, 15, 43, 52, 799, DateTimeKind.Local).AddTicks(9166), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$QoWjUsU9df3Nwnf.6cYh5OAXIQIwUUqLjCj4zU2y.l6OpnYrfrAxe", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 9, 16, 5, 1, 621, DateTimeKind.Local).AddTicks(8580), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$8wA1hWMkmYqp.Xy9F5j31.gsL3hLaW31Qk19FcXjWdKQV/UW.WqA6", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 9, 16, 5, 1, 798, DateTimeKind.Local).AddTicks(2901), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$h8dQMlJOC60Lr4Z28ecaCOI6v2DuLYJBtNeLiQ0nyKERYaToOJQbq", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 9, 16, 5, 2, 39, DateTimeKind.Local).AddTicks(8781), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$hDInVwnvVqFvgELZn9RdyOL.msavIHUCve7mDFcFFXdgHH1LInubK", null, null, "", null, null, 3, "" }
                 });
-
-            migrationBuilder.InsertData(
-               table: "RolePermissions",
-               columns: new[] { "PermissionId", "RoleId" },
-               values: new object[,]
-               {
-                    { 1, 1 },
-                    { 2, 1 },
-                    { 3, 1 },
-                    { 4, 1 },
-                    { 5, 2 },
-                    { 6, 2 }
-               });
 
             migrationBuilder.InsertData(
                 table: "ProjectRolePermissions",
@@ -710,7 +697,6 @@ namespace Server.Migrations
                     { 12, 1 },
                     { 13, 1 },
                     { 14, 1 },
-                    { 15, 1 },
                     { 16, 1 },
                     { 17, 1 },
                     { 18, 1 },
@@ -723,6 +709,19 @@ namespace Server.Migrations
                     { 10, 2 },
                     { 17, 2 },
                     { 19, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 1 },
+                    { 4, 1 },
+                    { 5, 2 },
+                    { 6, 2 }
                 });
 
             migrationBuilder.CreateIndex(

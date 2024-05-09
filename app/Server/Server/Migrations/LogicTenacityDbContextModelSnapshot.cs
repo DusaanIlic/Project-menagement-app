@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 15, 43, 52, 593, DateTimeKind.Local).AddTicks(2041),
+                            DateAdded = new DateTime(2024, 5, 9, 16, 5, 1, 621, DateTimeKind.Local).AddTicks(8580),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$z83SBSN6NOOO0O7xMOpqTu5cDmrKGNUs84ht0/nlxl5c.1SJ23jW.",
+                            Password = "$2a$10$8wA1hWMkmYqp.Xy9F5j31.gsL3hLaW31Qk19FcXjWdKQV/UW.WqA6",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 15, 43, 52, 710, DateTimeKind.Local).AddTicks(1621),
+                            DateAdded = new DateTime(2024, 5, 9, 16, 5, 1, 798, DateTimeKind.Local).AddTicks(2901),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$zeYvgJ.62sccf60k0INH1e/904omsqyEeFxg4dqsA3oMrX7z/1ij2",
+                            Password = "$2a$10$h8dQMlJOC60Lr4Z28ecaCOI6v2DuLYJBtNeLiQ0nyKERYaToOJQbq",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 9, 15, 43, 52, 799, DateTimeKind.Local).AddTicks(9166),
+                            DateAdded = new DateTime(2024, 5, 9, 16, 5, 2, 39, DateTimeKind.Local).AddTicks(8781),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$QoWjUsU9df3Nwnf.6cYh5OAXIQIwUUqLjCj4zU2y.l6OpnYrfrAxe",
+                            Password = "$2a$10$hDInVwnvVqFvgELZn9RdyOL.msavIHUCve7mDFcFFXdgHH1LInubK",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -442,7 +442,7 @@ namespace Server.Migrations
                         new
                         {
                             Id = 24,
-                            Name = "Change task deadline"
+                            Name = "Change deadline"
                         });
                 });
 
@@ -633,11 +633,6 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 14
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            ProjectPermissionId = 15
                         },
                         new
                         {
