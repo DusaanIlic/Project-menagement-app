@@ -74,11 +74,9 @@ export class ForgotPasswordComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      if (
-        this.form.get('newPassword')?.value !==
-        this.form.get('confirmPassword')?.value
-      ) {
+      if (this.newPassword !== this.confirmPassword) {
         this.passwordMismatch = true;
+
         return;
       }
 
