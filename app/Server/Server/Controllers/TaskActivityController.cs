@@ -213,7 +213,7 @@ namespace Server.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("{projectId}/taskActivities/dailyCount")]
+        [Route("project/{projectId}/taskActivities/dailyCountLastWeek")]
         public async Task<IActionResult> GetDailyTaskActivityCount(int projectId)
         {
             var today = DateTime.Today;
@@ -288,7 +288,7 @@ namespace Server.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("project/{projectId}/taskActivities/countByDate")]
+        [Route("project/{projectId}/taskActivities/activitiesCountByDateLastTwoWeeks")]
         public async Task<IActionResult> GetTaskActivitiesCountByDate(int projectId)
         {
             var today = DateTime.Today;
