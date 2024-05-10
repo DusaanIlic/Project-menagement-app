@@ -987,7 +987,7 @@ namespace Server.Controllers
                     Count = dailyTaskActivityCount.FirstOrDefault(d => d.Date == date)?.Count ?? 0
                 })
                 .ToList();
-
+           
             return Ok(dailyActivityCounts);
         }
 
@@ -1004,11 +1004,6 @@ namespace Server.Controllers
                 .Include(ta => ta.TaskActivityType)
                 .Where(ta => ta.ProjectTask.ProjectId == projectId)
                 .ToListAsync();
-
-            /*if (taskActivities == null || !taskActivities.Any())
-            {
-                return NotFound(new { message = "No task activities found for the project" });
-            }*/
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
