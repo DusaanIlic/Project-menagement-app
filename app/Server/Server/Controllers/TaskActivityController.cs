@@ -217,10 +217,13 @@ namespace Server.Controllers
         public async Task<IActionResult> GetDailyTaskActivityCount(int projectId)
         {
             var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
             var sevenDaysAgo = today.AddDays(-6);
 
             var dailyTaskActivityCount = await dbContext.TaskActivities
-                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= sevenDaysAgo && ta.ActivityDate <= today)
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= sevenDaysAgo && ta.ActivityDate < tomorrow)
                 .GroupBy(ta => ta.ActivityDate.Date)
                 .Select(group => new
                 {
@@ -233,7 +236,6 @@ namespace Server.Controllers
                 .Select(offset => today.AddDays(-offset))
                 .ToList();
 
-            
             var dailyActivityCounts = dateRange
                 .Select(date => new
                 {
