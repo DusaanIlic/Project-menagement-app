@@ -59,7 +59,7 @@ namespace Server.Controllers
         }
 
         [Authorize]
-        [HttpPost] 
+        [HttpPost]
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
 
@@ -125,10 +125,10 @@ namespace Server.Controllers
 
             if (taskActivity == null)
             {
-                return NotFound(new {message = "Task activity not found"});
+                return NotFound(new { message = "Task activity not found" });
             }
 
-         
+
             dbContext.TaskActivities.Remove(taskActivity);
             await dbContext.SaveChangesAsync();
 
@@ -150,7 +150,7 @@ namespace Server.Controllers
 
             if (taskActivity == null)
             {
-                return NotFound(new {message = "Task activity not found"});
+                return NotFound(new { message = "Task activity not found" });
             }
 
             var taskActivityDTO = new TaskActivityDTO
@@ -170,7 +170,7 @@ namespace Server.Controllers
                 RoleName = taskActivity.Member.Role.RoleName
             };
 
-            
+
             return Ok(taskActivityDTO);
         }
 
@@ -284,6 +284,43 @@ namespace Server.Controllers
             }).ToList();
 
             return Ok(taskActivityDTOs);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("project/{projectId}/taskActivities/countByDate")]
+        public async Task<IActionResult> GetTaskActivitiesCountByDate(int projectId)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var twoWeeksAgo = today.AddDays(-14);
+
+            var taskActivitiesCountByDate = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= twoWeeksAgo && ta.ActivityDate < tomorrow)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 14)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            var activityCountsByDate = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = taskActivitiesCountByDate.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+
+            return Ok(activityCountsByDate);
+
         }
     }
 }
