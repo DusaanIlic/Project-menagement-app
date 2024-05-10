@@ -59,20 +59,23 @@ namespace Server.Controllers
         }
 
         [Authorize]
-        [HttpPost] 
+        [HttpPost]
         public async Task<IActionResult> AddTaskActivity(AddTaskActivityRequest addTaskActivityRequest)
         {
 
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            
-            if (idClaim == null)
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
             {
-                return BadRequest(new { message = "Member id claim is missing in jwt token" });
+                return NotFound(new { message = "User ID claim not found in token" });
             }
 
-            var memberId = int.Parse(idClaim.Value);
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
 
-            var member = await dbContext.Members.FindAsync(memberId);
+            var member = await dbContext.Members.FindAsync(userId);
             if (member == null)
             {
                 return BadRequest(new { message = "Member not found" });
@@ -122,10 +125,10 @@ namespace Server.Controllers
 
             if (taskActivity == null)
             {
-                return NotFound(new {message = "Task activity not found"});
+                return NotFound(new { message = "Task activity not found" });
             }
 
-         
+
             dbContext.TaskActivities.Remove(taskActivity);
             await dbContext.SaveChangesAsync();
 
@@ -147,7 +150,7 @@ namespace Server.Controllers
 
             if (taskActivity == null)
             {
-                return NotFound(new {message = "Task activity not found"});
+                return NotFound(new { message = "Task activity not found" });
             }
 
             var taskActivityDTO = new TaskActivityDTO
@@ -167,7 +170,7 @@ namespace Server.Controllers
                 RoleName = taskActivity.Member.Role.RoleName
             };
 
-            
+
             return Ok(taskActivityDTO);
         }
 
@@ -207,6 +210,5 @@ namespace Server.Controllers
 
             return Ok(taskActivityDTOs);
         }
-
     }
 }

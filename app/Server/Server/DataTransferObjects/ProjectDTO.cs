@@ -10,6 +10,8 @@ namespace Server.DataTransferObjects
         public DateTime Deadline { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime DateFinished { get; set; }
+        public DateTime DeadlineModifed { get; set; }
+
 
         public int ProjectStatusId { get; set; }
         public string Status { get; set; } = string.Empty;

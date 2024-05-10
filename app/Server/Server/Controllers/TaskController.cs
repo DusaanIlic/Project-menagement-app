@@ -78,7 +78,9 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = taskPriority.Name
+                    TaskPriorityName = taskPriority.Name,
+                    DateFinished = t.DateFinished,
+                    DeadlineModified = t.DeadlineModified
                     
                 });
 
@@ -117,8 +119,8 @@ namespace Server.Controllers
                 return NotFound(new { message = "Project with this id not found." });
             }
 
-            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == addProjectTaskRequest.TaskPriorityId);
-            var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == 1);
+            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
+            var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == addProjectTaskRequest.TaskPriorityId);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
             var projectTask = new ProjectTask()
@@ -132,8 +134,6 @@ namespace Server.Controllers
                 StartDate = DateTime.Now,
                 TaskCategory = taskCategory,
             };
-
-            Console.WriteLine(taskPriority.Name);
 
             dbContext.ProjectTasks.Add(projectTask);
             await dbContext.SaveChangesAsync();
@@ -275,7 +275,9 @@ namespace Server.Controllers
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
-                TaskPriorityName = projectTask.TaskPriority.Name
+                TaskPriorityName = projectTask.TaskPriority.Name,
+                DateFinished = projectTask.DateFinished,
+                DeadlineModified = projectTask.DeadlineModified
             };
 
             return Ok(tasksDTO);
@@ -322,7 +324,7 @@ namespace Server.Controllers
                 StartDate = projectTask.StartDate,
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
-                TaskCategoryId = projectTask.TaskCategoryId
+                TaskCategoryId = projectTask.TaskCategoryId,
             };
 
             return Ok(tasksDTO);
@@ -404,7 +406,9 @@ namespace Server.Controllers
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
                 AssignedMembers = assignedMembers,
-                TaskPriorityName = projectTask.TaskPriority.Name
+                TaskPriorityName = projectTask.TaskPriority.Name,
+                DateFinished = projectTask.DateFinished,
+                DeadlineModified = projectTask.DeadlineModified
             };
 
             return Ok(taskDTO); 
@@ -505,7 +509,9 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    DeadlineModified = t.DeadlineModified,
+                    DateFinished = t.DateFinished
                 });
             }
 
@@ -810,10 +816,6 @@ namespace Server.Controllers
                 .Select(td => td.DependentTaskId)
                 .ToListAsync();
 
-            // if (dependentTaskIds == null || dependentTaskIds.Count == 0)
-            // {
-            //     return NotFound(new { message = "Specified task has no dependent tasks" });
-            // }
 
             var dependentTasks = await dbContext.ProjectTasks
                 .Where(pt => dependentTaskIds.Contains(pt.TaskId))
@@ -1073,6 +1075,44 @@ namespace Server.Controllers
             }
 
             return Ok(taskDTOs);
+        }
+
+        [Authorize]
+        [HttpPut("{taskId}/updateDeadline/{newDeadline}")]
+        public async Task<IActionResult> UpdateDeadlineModified(int taskId, DateTime newDeadline)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                                             .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change deadline");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found" });
+            }
+
+            projectTask.DeadlineModified = newDeadline;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task deadline changed successfully." });
         }
 
     }
