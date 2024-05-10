@@ -954,5 +954,117 @@ namespace Server.Controllers
 
             return Ok(new { message = "Project deadline changed successfully." });
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities/dailyCountLastWeek")]
+        public async Task<IActionResult> GetDailyTaskActivityCount(int projectId)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var sevenDaysAgo = today.AddDays(-6);
+
+            var dailyTaskActivityCount = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= sevenDaysAgo && ta.ActivityDate < tomorrow)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            var dailyActivityCounts = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = dailyTaskActivityCount.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+
+            return Ok(dailyActivityCounts);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities")]
+        public async Task<IActionResult> GetTaskActivitiesByProjectId(int projectId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId)
+                .ToListAsync();
+
+            /*if (taskActivities == null || !taskActivities.Any())
+            {
+                return NotFound(new { message = "No task activities found for the project" });
+            }*/
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.LastName,
+                Email = ta.Member.Email,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                RoleName = ta.Member.Role.RoleName
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities/activitiesCountByDateLastTwoWeeks")]
+        public async Task<IActionResult> GetTaskActivitiesCountByDate(int projectId)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var twoWeeksAgo = today.AddDays(-14);
+
+            var taskActivitiesCountByDate = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= twoWeeksAgo && ta.ActivityDate < tomorrow)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 14)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            var activityCountsByDate = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = taskActivitiesCountByDate.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+
+            return Ok(activityCountsByDate);
+
+        }
     }
 }
