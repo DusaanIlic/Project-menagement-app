@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   GANTT_GLOBAL_CONFIG,
   GanttBarClickEvent,
-  GanttDragEvent,
+  GanttDragEvent, GanttGroup,
   GanttItem,
   GanttLinkDragEvent,
   GanttPrintService,
@@ -34,6 +34,7 @@ import {MatInput} from "@angular/material/input";
 import {GanttTask} from "../../models/gantTask";
 import {taskPriority} from "../../models/taskPriority";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {taskCategory} from "../../models/taskCategory";
 
 @Component({
   selector: 'app-project-gantt',
@@ -79,18 +80,14 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   tasks: any;
   taskCategories: any;
   taskPriorities!: taskPriority[];
-  startRendering: boolean = false;
-  filteredTasks: GanttItem[] = [];
-  private ganttTasks: any = [];
+  ganttGroups: GanttGroup[] = [];
+  ganttItems: GanttItem[] = [];
+  private originalGanttItems: any = [];
   private routeSubscription: any;
 
   @ViewChild('gantt') ganttComponent: any;
 
   views = [
-    {
-      name: 'Hour',
-      value: GanttViewType.hour
-    },
     {
       name: 'Day',
       value: GanttViewType.day
@@ -103,14 +100,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       name: 'Month',
       value: GanttViewType.month
     },
-    {
-      name: 'Quarter',
-      value: GanttViewType.quarter
-    },
-    {
-      name: 'Year',
-      value: GanttViewType.year
-    }
   ];
 
   viewType: GanttViewType = GanttViewType.day;
@@ -158,7 +147,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       }
     });
 
-    this.taskService.getTaskPriorities().pipe(takeUntilDestroyed()).subscribe({
+    this.taskService.getTaskPriorities().subscribe({
       next: (data: taskPriority[]) => {
         this.taskPriorities = data;
       },
@@ -174,74 +163,38 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.filteredTasks = this.ganttTasks.filter((task: GanttItem) => task.title.toLowerCase().includes(filterValue));
+    this.ganttItems = this.originalGanttItems.filter((task: GanttItem) => task.title.toLowerCase().includes(filterValue));
     console.log(filterValue);
   }
 
   private mapTasksToGanttItems(): void {
-    this.ganttTasks = this.taskCategories
-      .filter((taskCategory: { taskCategoryID: number; }) => taskCategory.taskCategoryID !== 1)
-      .map((taskCategory: any) => {
-      const tasks = this.tasks.filter((task: { taskCategoryId: any; }) => task.taskCategoryId == taskCategory.taskCategoryID);
-
-      const children = tasks.map((task: Task) => {
-        const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
-        const links = dependentTaskIds.length ? dependentTaskIds : undefined;
-
-        return {
-          id: String(task.taskId),
-          title: task.taskName,
-          start: new Date(task.startDate).getTime(),
-          end: new Date(task.deadline).getTime(),
-          links: links,
-          color: '#3F51B5',
-          progress: 100, // Call your progress calculation method,
-          itemDraggable: true,
-          linkable: true,
-          parent: { id: `C${taskCategory.taskCategoryID}` } // Reference to parent
-        };
-      });
-
-      const currTime = new Date().getTime();
-
+    this.ganttGroups = this.taskCategories.map((category: { taskCategoryID: any; categoryName: any; }) => {
       return {
-        id: `C${taskCategory.taskCategoryID}`,
-        title: taskCategory.taskCategoryID == 1 ? '' : taskCategory.categoryName,
-        start: currTime + 100000000,
-        end: currTime - 1000000000,
-        children: children,
-        expanded: true,
-        linkable: false,
-        itemDraggable: true,
-        draggable: false
-      };
+        id: String(category.taskCategoryID),
+        title: category.categoryName,
+        expanded: true
+      }
     });
 
-    // Taskovi koji nemaju kategoriju
-    const tasks = this.tasks
-      .filter((task: Task) => task.taskCategoryId == 1)
-      .map((task: Task) => {
+    this.originalGanttItems = this.tasks.map((task: Task) => {
       const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
       const links = dependentTaskIds.length ? dependentTaskIds : undefined;
 
       return {
         id: String(task.taskId),
+        group_id: String(task.taskCategoryId),
         title: task.taskName,
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
-        color: '#3F51B5',
         links: links,
+        color: '#3F51B5',
         progress: 100, // Call your progress calculation method,
         itemDraggable: true,
         linkable: true,
-        parent: { id: 'uncategorized' } // Reference to parent
       };
     });
 
-    this.ganttTasks = [...this.ganttTasks, ...tasks];
-    this.filteredTasks = this.ganttTasks;
-
-    this.startRendering = true;
+    this.ganttItems = this.originalGanttItems;
   }
 
   private calculateProgress(task: Task): number {

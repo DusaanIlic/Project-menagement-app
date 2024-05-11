@@ -4,7 +4,7 @@
       <mat-form-field class="w-96" subscriptSizing="dynamic">
         <mat-label class="select-none">
           <div class="flex items-center justify-between gap-2">
-            <p>Search</p>
+            <p>Search tasks</p>
             <mat-icon class="scale-125">search</mat-icon>
           </div>
         </mat-label>
@@ -29,7 +29,8 @@
   </div>
 
   <ngx-gantt #gantt
-             [items]="filteredTasks"
+             [items]="ganttItems"
+             [groups]="ganttGroups"
              [viewType]="viewType"
              [draggable]="true"
              [selectable]="true"
