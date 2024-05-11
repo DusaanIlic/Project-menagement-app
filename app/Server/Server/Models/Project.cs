@@ -23,6 +23,7 @@ namespace Server.Models
         
         public DateTime DateFinished { get; set; }
 
+        public DateTime DeadlineModified { get; set; }
 
         public int ProjectStatusId { get; set; }
 
@@ -33,7 +34,6 @@ namespace Server.Models
 
         public int ProjectPriorityId { get; set; }
         public ProjectPriority Priority { get; set; }
-
 
         public ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
         

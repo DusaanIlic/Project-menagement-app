@@ -42,6 +42,8 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p => p.ProjectTasks)
+                .ThenInclude(pts => pts.TaskPriority)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -59,8 +61,10 @@ namespace Server.Controllers
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.TaskStatus.Name,
-                    TaskStatusId = t.TaskStatusId
-
+                    TaskStatusId = t.TaskStatusId,
+                    TaskPriorityId = t.TaskPriorityId,
+                    TaskPriorityName = t.TaskPriority.Name,
+                    DeadlineModified = t.DeadlineModified
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -95,7 +99,9 @@ namespace Server.Controllers
                         NumberOfPeople = numberOfMembers,
                         NumberOfTasks = numberOfTasks,
                         ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId
+                        ProjectPriorityId = p.ProjectPriorityId,
+                        DeadlineModifed = p.DeadlineModified,
+                        DateFinished = p.DateFinished
                 });
             }
 
@@ -242,7 +248,9 @@ namespace Server.Controllers
                     Deadline = t.Deadline,
                     ProjectId = p.ProjectId,
                     TaskStatus = t.TaskStatus.Name,
-                    TaskStatusId = t.TaskStatusId
+                    TaskStatusId = t.TaskStatusId,
+                    DateFinished = t.DateFinished,
+                    DeadlineModified = t.DeadlineModified
 
                 }).ToList();
 
@@ -278,7 +286,9 @@ namespace Server.Controllers
                         NumberOfPeople = numberOfMembers,
                         NumberOfTasks = numberOfTasks,
                         ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId
+                        ProjectPriorityId = p.ProjectPriorityId,
+                        DateFinished = p.DateFinished,
+                        DeadlineModifed = p.DeadlineModified
                 });
             }
 
@@ -289,7 +299,6 @@ namespace Server.Controllers
         [HttpGet("{projectId}")]
         public IActionResult GetProject(int projectId)
         {
-       
             var project = dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
@@ -313,7 +322,9 @@ namespace Server.Controllers
                 Deadline = t.Deadline,
                 ProjectId = t.ProjectId,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.TaskStatusId
+                TaskStatusId = t.TaskStatusId,
+                DeadlineModified = t.DeadlineModified,
+                DateFinished = t.DateFinished
             }).ToList();
 
             int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
@@ -351,7 +362,9 @@ namespace Server.Controllers
                 NumberOfPeople = numberOfMembers,
                 NumberOfTasks = numberOfTasks,
                 ProjectPriority = project.Priority.Name,
-                ProjectPriorityId = project.ProjectPriorityId
+                ProjectPriorityId = project.ProjectPriorityId,
+                DateFinished = project.DateFinished,
+                DeadlineModifed = project.DeadlineModified
             };
 
             return Ok(projectDTO);
@@ -431,7 +444,9 @@ namespace Server.Controllers
                 NumberOfPeople = numberOfMembers,
                 NumberOfTasks = numberOfTasks,
                 ProjectPriority = project.Priority.Name,
-                ProjectPriorityId = project.ProjectPriorityId
+                ProjectPriorityId = project.ProjectPriorityId,
+                DateFinished = project.DateFinished,
+                DeadlineModifed = project.DeadlineModified
             };
 
             return Ok(projectDTO);
@@ -517,12 +532,12 @@ namespace Server.Controllers
             if (status == null)
                 return NotFound(new { message = "Status not found" });
 
-            if(statusId == 3 && project.StartDate == DateTime.MinValue)
+            if(statusId == 2 && project.StartDate == DateTime.MinValue)
             {
                 project.StartDate = DateTime.Now;
             }
 
-            if(statusId == 2)
+            if(statusId == 3)
             {
                 project.DateFinished = DateTime.Now;
             }
@@ -902,8 +917,7 @@ namespace Server.Controllers
 
             return Ok(taskActivityDTOs);
         }
-        
-            
+
         [HttpGet("Status")]
         public async Task<IActionResult> GetProjectStatuses()
         {
@@ -916,6 +930,149 @@ namespace Server.Controllers
             }).ToList();
 
             return Ok(projectStatusDto);
+        }
+
+        [Authorize]
+        [HttpPut("{projectId}/updateDeadline/{newDeadline}")]
+        public async Task<IActionResult> UpdateDeadlineModified(int projectId, DateTime newDeadline)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Chaneg project deadline");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            var project = await dbContext.Projects.FindAsync(projectId);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found" });
+            }
+
+            project.DeadlineModified = newDeadline;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Project deadline changed successfully." });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities/dailyCountLastWeek")]
+        public async Task<IActionResult> GetDailyTaskActivityCount(int projectId)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var sevenDaysAgo = today.AddDays(-6);
+
+            var dailyTaskActivityCount = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= sevenDaysAgo && ta.ActivityDate < tomorrow)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            var dailyActivityCounts = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = dailyTaskActivityCount.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+           
+            return Ok(dailyActivityCounts);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities")]
+        public async Task<IActionResult> GetTaskActivitiesByProjectId(int projectId)
+        {
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.Member)
+                    .ThenInclude(ta => ta.Role)
+                .Include(ta => ta.TaskActivityType)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId)
+                .ToListAsync();
+
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            {
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.LastName,
+                Email = ta.Member.Email,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                RoleName = ta.Member.Role.RoleName
+            }).ToList();
+
+            return Ok(taskActivityDTOs);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{projectId}/taskActivities/activitiesCountByDateLastTwoWeeks")]
+        public async Task<IActionResult> GetTaskActivitiesCountByDate(int projectId)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var twoWeeksAgo = today.AddDays(-14);
+
+            var taskActivitiesCountByDate = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                    .ThenInclude(pt => pt.Project)
+                .Where(ta => ta.ProjectTask.ProjectId == projectId && ta.ActivityDate >= twoWeeksAgo && ta.ActivityDate < tomorrow)
+                .GroupBy(ta => ta.ActivityDate.Date)
+                .Select(group => new
+                {
+                    Date = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            var dateRange = Enumerable.Range(0, 14)
+                .Select(offset => today.AddDays(-offset))
+                .ToList();
+
+            var activityCountsByDate = dateRange
+                .Select(date => new
+                {
+                    Date = date,
+                    Count = taskActivitiesCountByDate.FirstOrDefault(d => d.Date == date)?.Count ?? 0
+                })
+                .ToList();
+
+            return Ok(activityCountsByDate);
         }
     }
 }

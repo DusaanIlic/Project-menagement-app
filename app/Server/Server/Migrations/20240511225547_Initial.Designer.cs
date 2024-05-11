@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240502183134_Initial")]
+    [Migration("20240511225547_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 2, 20, 31, 33, 609, DateTimeKind.Local).AddTicks(6785),
+                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 45, 975, DateTimeKind.Local).AddTicks(3234),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$d3LSTdX/RmhvITdko6hpr.cV1V78ksPNVmrznwWPisWjuN7A0R/8G",
+                            Password = "$2a$10$UdFr0TzP9tCSa0F9.DfA..yDChSzBW02Py2JXn8q1y1fMAAHDXy8O",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 2, 20, 31, 33, 672, DateTimeKind.Local).AddTicks(5707),
+                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 39, DateTimeKind.Local).AddTicks(8123),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$hw8tWzsgxwtu.Y6hbNITOOVKRggC4SX8bsNUxJhebduXzkm7uNKSG",
+                            Password = "$2a$10$fxJ4VPKnSlvTPDi1u6032upyc63zFvUk3Iid2BFTO6I7l7y0162QG",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 2, 20, 31, 33, 735, DateTimeKind.Local).AddTicks(6261),
+                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 107, DateTimeKind.Local).AddTicks(3300),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$gTrhJbqyxEBNOtI6TvRIK.89ZQk.XIeCx956UVJ.YPVucllBEgeZG",
+                            Password = "$2a$10$mCXXfzk0RqD4L5NJyozLw.tJzM.8/dwW3bBPdQmyMTJ4wg1RVr67.",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -255,6 +255,11 @@ namespace Server.Migrations
                         {
                             PermissionId = 5,
                             PermissionName = "Create project"
+                        },
+                        new
+                        {
+                            PermissionId = 6,
+                            PermissionName = "Change project deadline"
                         });
                 });
 
@@ -268,6 +273,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
@@ -433,6 +441,11 @@ namespace Server.Migrations
                         {
                             Id = 23,
                             Name = "Remove task status"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Name = "Change deadline"
                         });
                 });
 
@@ -446,6 +459,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PriorityColorHex")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ProjectPriorityId");
 
                     b.ToTable("ProjectPriorities");
@@ -454,17 +471,20 @@ namespace Server.Migrations
                         new
                         {
                             ProjectPriorityId = 1,
-                            Name = "Low"
+                            Name = "Low",
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             ProjectPriorityId = 2,
-                            Name = "Medium"
+                            Name = "Medium",
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             ProjectPriorityId = 3,
-                            Name = "High"
+                            Name = "High",
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 
@@ -620,16 +640,6 @@ namespace Server.Migrations
                         new
                         {
                             ProjectRoleId = 1,
-                            ProjectPermissionId = 15
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 10
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
                             ProjectPermissionId = 16
                         },
                         new
@@ -644,17 +654,7 @@ namespace Server.Migrations
                         },
                         new
                         {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 17
-                        },
-                        new
-                        {
                             ProjectRoleId = 1,
-                            ProjectPermissionId = 19
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
                             ProjectPermissionId = 19
                         },
                         new
@@ -681,6 +681,21 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 24
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 10
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 17
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 19
                         });
                 });
 
@@ -707,12 +722,12 @@ namespace Server.Migrations
                         new
                         {
                             Id = 2,
-                            Status = "Closed"
+                            Status = "In Progress"
                         },
                         new
                         {
                             Id = 3,
-                            Status = "In Progress"
+                            Status = "Closed"
                         });
                 });
 
@@ -726,6 +741,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProjectId")
@@ -880,6 +898,11 @@ namespace Server.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 6
                         });
                 });
 
@@ -1028,6 +1051,10 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PriorityColorHex")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
@@ -1036,17 +1063,20 @@ namespace Server.Migrations
                         new
                         {
                             TaskPriorityId = 1,
-                            Name = "Low"
+                            Name = "Low",
+                            PriorityColorHex = "#00FF00"
                         },
                         new
                         {
                             TaskPriorityId = 2,
-                            Name = "Medium"
+                            Name = "Medium",
+                            PriorityColorHex = "#FFFF00"
                         },
                         new
                         {
                             TaskPriorityId = 3,
-                            Name = "High"
+                            Name = "High",
+                            PriorityColorHex = "#FF0000"
                         });
                 });
 

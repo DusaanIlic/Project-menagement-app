@@ -25,7 +25,8 @@ namespace Server.Controllers
             var taskPriorityDTO = taskPriority.Select(p => new TaskPriorityDTO
             {
                 TaskPriorityId = p.TaskPriorityId,
-                Name = p.Name
+                Name = p.Name,
+                Color = p.PriorityColorHex
             }).ToList();
             return Ok(taskPriorityDTO);
         }
@@ -44,7 +45,8 @@ namespace Server.Controllers
             var taskPriorityDTO = new TaskPriorityDTO
             {
                 TaskPriorityId = taskPriority.TaskPriorityId,
-                Name = taskPriority.Name
+                Name = taskPriority.Name,
+                Color = taskPriority.PriorityColorHex
             };
             return Ok(taskPriorityDTO);
         }

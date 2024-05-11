@@ -23,6 +23,7 @@ namespace Server.Models
 
         public DateTime DateFinished { get; set; }
 
+        public DateTime DeadlineModified { get; set; }
 
         public int ProjectId { get; set; }
         public Project Project { get; set; }
