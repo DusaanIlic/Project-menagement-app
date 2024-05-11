@@ -33,6 +33,17 @@
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>
+
+      <ngx-gantt-column name="Start Date" width="120px">
+        <ng-template #cell let-item="item">
+          {{ item.start * 1000 | date : 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-gantt-column>
+      <ngx-gantt-column name="End Date" width="120px">
+        <ng-template #cell let-item="item">
+          {{ item.end * 1000 | date : 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-gantt-column>
     </ngx-gantt-table>
   </ngx-gantt>
 </div>
