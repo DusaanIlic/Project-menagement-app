@@ -32,6 +32,8 @@ import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
 import {MatInput} from "@angular/material/input";
 import {GanttTask} from "../../models/gantTask";
+import {taskPriority} from "../../models/taskPriority";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-project-gantt',
@@ -76,6 +78,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   projectId: any;
   tasks: any;
   taskCategories: any;
+  taskPriorities!: taskPriority[];
   startRendering: boolean = false;
   filteredTasks: GanttItem[] = [];
   private ganttTasks: any = [];
@@ -154,6 +157,15 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         console.log(`Failed fetching tasks for project with id ${this.projectId}`);
       }
     });
+
+    this.taskService.getTaskPriorities().pipe(takeUntilDestroyed()).subscribe({
+      next: (data: taskPriority[]) => {
+        this.taskPriorities = data;
+      },
+      error: error => {
+        console.log('failed fetching task priorities');
+      }
+    })
   }
 
   ngOnDestroy() {

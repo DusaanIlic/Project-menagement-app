@@ -134,6 +134,6 @@ export class TaskService {
   }
 
   getTaskPriorities() {
-    return this.http.get(TASKPRIOROTY_API);
+    return this.http.get<taskPriority[]>(TASKPRIOROTY_API);
   }
 }
