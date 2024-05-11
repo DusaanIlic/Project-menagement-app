@@ -1,6 +1,17 @@
-<div class="flex flex-col justify-center h-[100%] border-[1px]">
+<div class="flex flex-col justify-center h-[100%]">
   <div class="p-4 flex gap-4 items-center justify-center">
-    <div class="flex gap-4 border-[1px] p-2">
+    <div class="flex gap-4 p-2">
+      <mat-form-field class="w-96" subscriptSizing="dynamic">
+        <mat-label class="select-none">
+          <div class="flex items-center justify-between gap-2">
+            <p>Search</p>
+            <mat-icon class="scale-125">search</mat-icon>
+          </div>
+        </mat-label>
+
+        <input matInput (keyup)="search($event)">
+      </mat-form-field>
+
       <p class="flex justify-center items-center">Show:</p>
       <mat-radio-group [(ngModel)]="selectedViewType" color="primary">
         <mat-radio-button *ngFor="let view of views" [value]="view.value" (click)="selectView(view.value)">
@@ -18,7 +29,7 @@
   </div>
 
   <ngx-gantt #gantt
-             [items]="ganttTasks"
+             [items]="filteredTasks"
              [viewType]="viewType"
              [draggable]="true"
              [selectable]="true"

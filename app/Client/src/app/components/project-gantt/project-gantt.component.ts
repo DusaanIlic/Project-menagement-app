@@ -28,6 +28,10 @@ import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {AddTaskComponent} from "../add-task/add-task.component";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatIcon} from "@angular/material/icon";
+import {MatInput} from "@angular/material/input";
+import {GanttTask} from "../../models/gantTask";
 
 @Component({
   selector: 'app-project-gantt',
@@ -43,6 +47,10 @@ import {AddTaskComponent} from "../add-task/add-task.component";
     MatRadioButton,
     MatRadioGroup,
     FormsModule,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatLabel,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -68,8 +76,9 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   projectId: any;
   tasks: any;
   taskCategories: any;
-  ganttTasks: any = [];
   startRendering: boolean = false;
+  filteredTasks: GanttItem[] = [];
+  private ganttTasks: any = [];
   private routeSubscription: any;
 
   @ViewChild('gantt') ganttComponent: any;
@@ -151,6 +160,12 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     this.routeSubscription.unsubscribe();
   }
 
+  search(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.filteredTasks = this.ganttTasks.filter((task: GanttItem) => task.title.toLowerCase().includes(filterValue));
+    console.log(filterValue);
+  }
+
   private mapTasksToGanttItems(): void {
     this.ganttTasks = this.taskCategories
       .filter((taskCategory: { taskCategoryID: number; }) => taskCategory.taskCategoryID !== 1)
@@ -212,6 +227,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     });
 
     this.ganttTasks = [...this.ganttTasks, ...tasks];
+    this.filteredTasks = this.ganttTasks;
 
     this.startRendering = true;
   }
