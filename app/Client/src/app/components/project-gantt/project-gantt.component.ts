@@ -162,7 +162,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       error: error => {
         console.log('failed fetching task priorities');
       }
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -296,6 +296,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   onStatusChange($event: any) {
-    
+
   }
 }

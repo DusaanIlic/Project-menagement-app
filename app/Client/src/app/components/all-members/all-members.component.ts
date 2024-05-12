@@ -41,7 +41,6 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
-  searchTerm: string = '';
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date', 'actions'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
@@ -78,10 +77,6 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   onRoleChange(event: any): void {
     this.selectedRole = event;
     this.filterMembersByRole(this.selectedRole);
-  }
-
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
   }
 
   getMembersFromServer(): void {

@@ -45,7 +45,7 @@
              (dragEnded)="dragEnded($event)"
              (linkDragEnded)="linkEnded($event)">
 
-    <ngx-gantt-table>
+    <ngx-gantt-table class="mat-elevation-z8">
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>

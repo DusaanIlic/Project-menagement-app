@@ -74,7 +74,11 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </th>
               <td mat-cell *matCellDef="let project">
-                <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">...</button>
+                <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                  <div class="flex items-center justify-center">
+                    <mat-icon>view_headline</mat-icon>
+                  </div>
+                </button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item [routerLink]="['/projects', project.projectId]">View</button>
                   <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.projectId, project.status)">Delete</button>

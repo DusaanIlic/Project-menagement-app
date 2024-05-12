@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
 import {AddTaskComponent} from '../add-task/add-task.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import {MatSort, MatSortModule, Sort} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
+import {taskPriority} from "../../models/taskPriority";
 
 
 @Component({
@@ -55,15 +56,13 @@ import {MatDivider} from "@angular/material/divider";
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
 })
-export class AllTasksComponent {
-  progress: Task[] = [];
+export class AllTasksComponent implements OnInit {
+  taskPriorities!: taskPriority[];
   projectId: number = 0;
   allTasks: Task[] = [];
   taskCategories : taskCategory[] = [];
-  visible : boolean[] = []
-  selectedStatus: string = '';
 
-  displayedColumns: string[] = ['name', 'startDate', 'dueDate', 'status', 'priority','action'];
+  displayedColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskStatus', 'taskPriorityName','action'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
@@ -79,8 +78,6 @@ export class AllTasksComponent {
   ngOnInit(): void{
     this.getProjectIdFromRoute();
     this.loadTasksByProject(this.projectId);
-    for(let i=0;i<this.taskCategories.length;i++)
-      this.visible.push(false)
   }
 
   openDialog(): void{
@@ -102,19 +99,6 @@ export class AllTasksComponent {
     }
   }
 
-  onStatusChange(event: any): void {
-    this.selectedStatus = event.target.value;
-    this.filterMembersByStatus(this.selectedStatus);
-  }
-
-  filterMembersByStatus(status: string): void {
-    if (status === 'allTasks') {
-      this.dataSource = this.allTasks;
-    } else {
-      this.dataSource = this.allTasks.filter(task => status == task.taskStatus);
-    }
-  }
-
   loadTasksByProject(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
@@ -133,6 +117,15 @@ export class AllTasksComponent {
       .subscribe(() => {
         this.cdr.detectChanges();
       });
+
+    this.taskService.getTaskPriorities().subscribe({
+      next: (data: taskPriority[]) => {
+        this.taskPriorities = data;
+      },
+      error: error => {
+        console.log('failed fetching task priorities');
+      }
+    });
   }
 
   getProjectIdFromRoute(){
@@ -143,11 +136,6 @@ export class AllTasksComponent {
 
   search(event: Event): void {
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    console.log(this.dataSource.filter);
-  }
-
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
   }
 
   openDialogOverview(taskId : number)
