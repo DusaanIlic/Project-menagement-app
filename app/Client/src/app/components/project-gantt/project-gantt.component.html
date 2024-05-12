@@ -1,32 +1,36 @@
-<div class="flex flex-col justify-center h-[100%]">
-  <div class="p-4 flex gap-4 items-center justify-center">
-    <div class="flex gap-4 p-2">
-      <mat-form-field class="w-96" subscriptSizing="dynamic">
-        <mat-label class="select-none">
-          <div class="flex items-center justify-between gap-2">
-            <p>Search tasks</p>
-            <mat-icon class="scale-125">search</mat-icon>
-          </div>
-        </mat-label>
+<div class="flex flex-col gap-4 justify-center h-[100%]">
+  <div class="flex gap-4 items-center">
+    <mat-form-field class="w-96" subscriptSizing="dynamic">
+      <mat-label class="select-none">
+        <div class="flex items-center justify-between gap-2">
+          <p>Search tasks</p>
+          <mat-icon class="scale-125">search</mat-icon>
+        </div>
+      </mat-label>
 
-        <input matInput (keyup)="search($event)">
-      </mat-form-field>
+      <input matInput (keyup)="search($event)">
+    </mat-form-field>
 
-      <p class="flex justify-center items-center">Show:</p>
-      <mat-radio-group [(ngModel)]="selectedViewType" color="primary">
-        <mat-radio-button *ngFor="let view of views" [value]="view.value" (click)="selectView(view.value)">
-          {{ view.name }}
-        </mat-radio-button>
-      </mat-radio-group>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
 
-      <button mat-raised-button color="primary" (click)="scrollToToday()">Scroll to today</button>
-    </div>
+      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onStatusChange($event)">
+        <mat-option [value]="defaultPrioty">All Priorities</mat-option>
+        @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
+          <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
 
     <span class="grow"></span>
 
-    <!--    <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>-->
+    <button mat-raised-button color="primary" (click)="scrollToToday()">Scroll to today</button>
+
+    <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>
   </div>
+
+  <mat-divider class="w-full"></mat-divider>
 
   <ngx-gantt #gantt
              [items]="ganttItems"

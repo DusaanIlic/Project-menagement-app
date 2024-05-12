@@ -35,6 +35,9 @@ import {GanttTask} from "../../models/gantTask";
 import {taskPriority} from "../../models/taskPriority";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {taskCategory} from "../../models/taskCategory";
+import {MatDivider} from "@angular/material/divider";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatSelect} from "@angular/material/select";
 
 @Component({
   selector: 'app-project-gantt',
@@ -54,6 +57,9 @@ import {taskCategory} from "../../models/taskCategory";
     MatIcon,
     MatInput,
     MatLabel,
+    MatDivider,
+    MatOption,
+    MatSelect,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -67,7 +73,7 @@ import {taskCategory} from "../../models/taskCategory";
           month: 'LLLL',
           week: 'LLLL',
           yearWeek: 'LLLL',
-          yearMonth: `LLLL yyyy'(week' w ')'`,
+          yearMonth: `LLLL yyyy`,
           year: 'yyyy',
           locale: enUS
         },
@@ -82,6 +88,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   taskPriorities!: taskPriority[];
   ganttGroups: GanttGroup[] = [];
   ganttItems: GanttItem[] = [];
+  defaultPrioty: number = 0;
+  selectedPriority: number = this.defaultPrioty;
   private originalGanttItems: any = [];
   private routeSubscription: any;
 
@@ -187,7 +195,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         start: new Date(task.startDate).getTime(),
         end: new Date(task.deadline).getTime(),
         links: links,
-        color: '#3F51B5',
+        color: this.taskPriorities.find(priority => priority.taskPriorityId == task.taskPriorityId)?.color,
         progress: 100, // Call your progress calculation method,
         itemDraggable: true,
         linkable: true,
@@ -285,5 +293,9 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  onStatusChange($event: any) {
+    
   }
 }
