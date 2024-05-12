@@ -1,16 +1,16 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
-import { AddTaskComponent } from '../add-task/add-task.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { TaskService } from '../../services/task.service';
-import { catchError, map } from 'rxjs/operators';
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { ActivatedRoute } from '@angular/router';
-import { Task } from '../../models/task';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { FormsModule } from '@angular/forms';
-import { TaskOverviewComponent } from '../task-overview/task-overview.component';
+import {AddTaskComponent} from '../add-task/add-task.component';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {TaskService} from '../../services/task.service';
+import {catchError, map} from 'rxjs/operators';
+import {NgToastModule, NgToastService} from 'ng-angular-popup';
+import {ActivatedRoute} from '@angular/router';
+import {Task} from '../../models/task';
+import {MatButtonModule} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
+import {FormsModule} from '@angular/forms';
+import {TaskOverviewComponent} from '../task-overview/task-overview.component';
 import {ProjectServiceGet} from "../../services/project.service";
 import {taskCategory} from "../../models/taskCategory";
 import {environment} from "../../../environments/environment";
@@ -20,10 +20,10 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule, Sort} from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
 
 
@@ -56,16 +56,11 @@ import {MatDivider} from "@angular/material/divider";
   styleUrl: './all-tasks.component.scss'
 })
 export class AllTasksComponent {
-  todo: Task[] = [];
   progress: Task[] = [];
-  done: Task[] = [];
   projectId: number = 0;
   allTasks: Task[] = [];
-  filteredTasks: Task[] = [];
   taskCategories : taskCategory[] = [];
   visible : boolean[] = []
-  tableSel: string = 't1';
-  searchTerm: string = '';
   selectedStatus: string = '';
 
   displayedColumns: string[] = ['name', 'startDate', 'dueDate', 'status', 'priority','action'];
@@ -124,13 +119,9 @@ export class AllTasksComponent {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          console.log(data)
           this.allTasks = data
-          this.dataSource = data;
-          this.filteredTasks = data;
-          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.dataSource = new MatTableDataSource(data)
+          this.dataSource.paginator = this.paginator
           this.getAllTaskCategoriesOnProject()
         return data;
         }),
@@ -150,20 +141,9 @@ export class AllTasksComponent {
     });
   }
 
-  search(): void {
-    let searchTerm = this.searchTerm.toLowerCase().trim();
-    let filteredTasks = [...this.filteredTasks];
-
-    if (searchTerm) {
-      filteredTasks = filteredTasks.filter(task =>
-        task.taskName.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredTasks = this.allTasks;
-    }
-
-    this.dataSource = filteredTasks;
+  search(event: Event): void {
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    console.log(this.dataSource.filter);
   }
 
   showMessage(){
@@ -211,13 +191,6 @@ export class AllTasksComponent {
 
     })
   }
-
-
-  showNHide(i: number)
-  {
-    this.visible[i] = !this.visible[i];
-  }
-
 
   protected readonly environment = environment;
 }
