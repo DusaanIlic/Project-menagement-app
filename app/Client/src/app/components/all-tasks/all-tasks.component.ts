@@ -24,6 +24,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {MatDivider} from "@angular/material/divider";
 
 
 @Component({
@@ -46,9 +47,10 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
     MatSelect,
     MatRadioGroup,
     MatRadioButton,
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatSortModule
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDivider
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -93,7 +95,7 @@ export class AllTasksComponent {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(this.projectId); 
+      this.loadTasksByProject(this.projectId);
     });
   }
 
