@@ -111,6 +111,7 @@ export class AllTasksComponent implements OnInit {
           this.allTasks = data
           this.dataSource = new MatTableDataSource(data)
           this.dataSource.paginator = this.paginator
+          this.dataSource.sort = this.sort;
           this.getAllTaskCategoriesOnProject()
         return data;
         }),
