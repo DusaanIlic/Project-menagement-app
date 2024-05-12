@@ -15,7 +15,7 @@
       <mat-label class="select-none">Filter by priority</mat-label>
 
       <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onStatusChange($event)">
-        <mat-option [value]="defaultPrioty">All Priorities</mat-option>
+        <mat-option [value]="defaultPriority">All Priorities</mat-option>
         @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
           <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
         }

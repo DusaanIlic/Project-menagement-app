@@ -26,6 +26,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
 import {taskPriority} from "../../models/taskPriority";
+import {TaskStatus} from "../../models/task-status";
 
 
 @Component({
@@ -58,10 +59,14 @@ import {taskPriority} from "../../models/taskPriority";
 })
 export class AllTasksComponent implements OnInit {
   taskPriorities!: taskPriority[];
+  taskStatuses!: TaskStatus[];
   projectId: number = 0;
   allTasks: Task[] = [];
   taskCategories : taskCategory[] = [];
-
+  defaultStatus: number = 0;
+  selectedStatus: number = 0;
+  defaultPriority: number = 0;
+  selectedPriority: number = 0;
   displayedColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskStatus', 'taskPriorityName','action'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
@@ -126,6 +131,15 @@ export class AllTasksComponent implements OnInit {
         console.log('failed fetching task priorities');
       }
     });
+
+    this.taskService.getTaskStatusesByProject(this.projectId).subscribe({
+      next: (data: TaskStatus[]) => {
+        this.taskStatuses = data;
+      },
+      error: err => {
+        console.log('failed fetching task statuses');
+      }
+    })
   }
 
   getProjectIdFromRoute(){
@@ -178,6 +192,23 @@ export class AllTasksComponent implements OnInit {
      }
 
     })
+  }
+
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
+
+  onPriorityFilterChange(event: any) {
+    this.selectedPriority = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.allTasks.filter(task =>
+      (this.selectedStatus == this.defaultStatus || this.selectedStatus == task.taskStatusId) &&
+        (this.selectedPriority == this.defaultPriority || this.selectedPriority == task.taskPriorityId)
+    );
   }
 
   protected readonly environment = environment;

@@ -88,8 +88,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   taskPriorities!: taskPriority[];
   ganttGroups: GanttGroup[] = [];
   ganttItems: GanttItem[] = [];
-  defaultPrioty: number = 0;
-  selectedPriority: number = this.defaultPrioty;
+  defaultPriority: number = 0;
+  selectedPriority: number = this.defaultPriority;
   private originalGanttItems: any = [];
   private routeSubscription: any;
 

@@ -1,7 +1,7 @@
 <div class="flex flex-col justify-center">
   <div class="flex flex-col gap-4 rounded-t-xl">
     <div class="flex flex-col gap-4 select-none justify-center">
-      <div class="flex gap-10">
+      <div class="flex gap-4">
         <mat-form-field class="w-96" subscriptSizing="dynamic">
           <mat-label>
             <div class="flex items-center justify-between gap-2">
@@ -11,6 +11,28 @@
           </mat-label>
 
           <input matInput (keyup)="search($event)">
+        </mat-form-field>
+
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label class="select-none">Filter by status</mat-label>
+
+          <mat-select [value]="selectedStatus" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusFilterChange($event)">
+            <mat-option [value]="defaultStatus">All Statuses</mat-option>
+            @for (taskStatus of taskStatuses; track taskStatus.id) {
+              <mat-option [value]="taskStatus.id">{{taskStatus.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label class="select-none">Filter by priority</mat-label>
+
+          <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onPriorityFilterChange($event)">
+            <mat-option [value]="defaultPriority">All Priorities</mat-option>
+            @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
+              <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <span class="grow"></span>

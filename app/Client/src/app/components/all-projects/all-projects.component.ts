@@ -85,7 +85,6 @@ export class AllProjectsComponent implements OnInit{
 
   onStatusChange(event: any) {
     this.selectedStatus = event;
-    console.log(this.selectedStatus);
     this.dataSource.data = this.allProjects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
   }
 
