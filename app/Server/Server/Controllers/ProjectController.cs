@@ -918,6 +918,20 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
+        [HttpGet("Status")]
+        public async Task<IActionResult> GetProjectStatuses()
+        {
+            var projectStatus = await dbContext.ProjectStatuses.ToListAsync();
+
+            var projectStatusDto = projectStatus.Select(ps => new ProjectStatusDTO
+            {
+                ProjectStatusId = ps.Id,
+                ProjectStatus = ps.Status
+            }).ToList();
+
+            return Ok(projectStatusDto);
+        }
+
         [Authorize]
         [HttpPut("{projectId}/updateDeadline/{newDeadline}")]
         public async Task<IActionResult> UpdateDeadlineModified(int projectId, DateTime newDeadline)
@@ -1059,7 +1073,6 @@ namespace Server.Controllers
                 .ToList();
 
             return Ok(activityCountsByDate);
-
         }
     }
 }

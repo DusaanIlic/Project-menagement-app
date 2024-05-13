@@ -53,7 +53,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Wrong password" });
             }
 
-            var expireAt = DateTime.UtcNow.AddMinutes(15);
+            var expireAt = DateTime.UtcNow.AddMinutes(30);
             
             var jwtToken = GenerateJwtToken(member, expireAt);
             var refreshToken = GenerateRefreshToken();
@@ -112,7 +112,7 @@ namespace Server.Controllers
                 return BadRequest("Refresh token has expired");
             }
 
-            var expireAt = DateTime.UtcNow.AddMinutes(15);
+            var expireAt = DateTime.UtcNow.AddMinutes(30);
             var jwtToken = GenerateJwtToken(member, expireAt);
 
             // Generate a new refresh token

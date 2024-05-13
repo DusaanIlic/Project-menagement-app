@@ -1,5 +1,5 @@
 export interface taskCategory
 {
-  "taskCategoryId": number,
-  "taskCategoryName": string
+  taskCategoryId: number,
+  taskCategoryName: string
 }

@@ -8,11 +8,12 @@ import { Member } from '../../models/member';
 import { MemberOverviewComponent } from '../member-overview/member-overview.component';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {environment} from "../../../environments/environment";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-member-info',
   standalone: true,
-  imports: [FormsModule, CommonModule,  MatIconModule, NgOptimizedImage, MemberOverviewComponent, RouterLink, RouterLinkActive],
+  imports: [FormsModule, CommonModule, MatIconModule, NgOptimizedImage, MemberOverviewComponent, RouterLink, RouterLinkActive, MatButton],
   templateUrl: './member-info.component.html',
   styleUrl: './member-info.component.scss'
 })

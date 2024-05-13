@@ -5,10 +5,10 @@
             <!-- Modal header -->
             <div class="flex flex-col items-start justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h1 class="text-2xl text-gray-900 dark:text-white">
-                    {{task.taskName}}
+                    {{task?.taskName}}
                 </h1>
                 <h2 class="text-l flex text-gray-900">
-                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task.projectId]" class="underline flex ml-2 cursor-pointer">{{project.projectName}}</p>
+                    in <p (click)="closeDialog()" [routerLink]="['/projects/', task?.projectId]" class="underline flex ml-2 cursor-pointer">{{project?.projectName}}</p>
                 </h2>
             </div>
             <!-- Modal body -->
