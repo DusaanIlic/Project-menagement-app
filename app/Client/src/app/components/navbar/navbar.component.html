@@ -4,7 +4,7 @@
        routerLinkActive="selected">
       <span class="flex justify-center items-center gap-2">
         <mat-icon>{{button.icon}}</mat-icon>
-        <p>{{ button.text }}</p>
+        <p class="hidden sm:block">{{ button.text }}</p>
       </span>
     </a>
   </span>
@@ -14,7 +14,7 @@
   <button mat-button [matMenuTriggerFor]="themeMenu" (click)="$event.stopPropagation()">
     <div class="flex items-center justify-center gap-2">
       <mat-icon>palette</mat-icon>
-      <p>Themes</p>
+      <p class="hidden sm:block">Themes</p>
     </div>
   </button>
 
