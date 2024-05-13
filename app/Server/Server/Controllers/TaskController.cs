@@ -80,8 +80,8 @@ namespace Server.Controllers
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = taskPriority.Name,
                     DateFinished = t.DateFinished,
-                    DeadlineModified = t.DeadlineModified
-                    
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 });
 
             }
@@ -191,7 +191,8 @@ namespace Server.Controllers
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs,
-                TaskPriorityName = taskPriority.Name
+                TaskPriorityName = taskPriority.Name,
+                TaskCategoryName = taskCategory.CategoryName
             };
 
             var projectTaskCategory = new ProjectTaskCategories
@@ -277,7 +278,8 @@ namespace Server.Controllers
                 TaskCategoryId = projectTask.TaskCategoryId,
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
-                DeadlineModified = projectTask.DeadlineModified
+                DeadlineModified = projectTask.DeadlineModified,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(tasksDTO);
@@ -325,6 +327,7 @@ namespace Server.Controllers
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(tasksDTO);
@@ -408,7 +411,8 @@ namespace Server.Controllers
                 AssignedMembers = assignedMembers,
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
-                DeadlineModified = projectTask.DeadlineModified
+                DeadlineModified = projectTask.DeadlineModified,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(taskDTO); 
@@ -511,7 +515,8 @@ namespace Server.Controllers
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = t.TaskPriority.Name,
                     DeadlineModified = t.DeadlineModified,
-                    DateFinished = t.DateFinished
+                    DateFinished = t.DateFinished,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 });
             }
 
@@ -548,7 +553,9 @@ namespace Server.Controllers
                     TaskPriorityId = t.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    TaskCategoryName = t.TaskCategory.CategoryName
+
                 });
             }
 
@@ -747,7 +754,8 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = mt.Task.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = mt.Task.TaskPriority.Name
+                    TaskPriorityName = mt.Task.TaskPriority.Name,
+                    TaskCategoryName = mt.Task.TaskCategory.CategoryName
                 });
             }
 
@@ -838,7 +846,9 @@ namespace Server.Controllers
                 TaskPriorityId = dt.TaskPriorityId,
                 IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
                 TaskCategoryId = dt.TaskCategoryId,
-                TaskPriorityName = dt.TaskPriority.Name
+                TaskPriorityName = dt.TaskPriority.Name,
+                TaskCategoryName = dt.TaskCategory.CategoryName
+
             }).ToList();
 
             return Ok(dependentTaskDTOs);
@@ -1069,7 +1079,8 @@ namespace Server.Controllers
                         TaskPriorityId = mt.Task.TaskPriorityId,
                         TaskCategoryId = mt.Task.TaskCategoryId,
                         IsTaskDependentOn = isTaskDependent,
-                        TaskPriorityName = mt.Task.TaskPriority.Name
+                        TaskPriorityName = mt.Task.TaskPriority.Name,
+                        TaskCategoryName = mt.Task.TaskCategory.CategoryName
                     }
                 });
             }
