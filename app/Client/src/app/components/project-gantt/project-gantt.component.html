@@ -60,11 +60,13 @@
              [selectable]="true"
              [multiple]="true"
              [linkable]="true"
+             [showTodayLine]="true"
              (barClick)="barClick($event)"
              (selectedChange)="selectedChange($event)"
              (dragEnded)="dragEnded($event)"
+             (lineClick)="linkClick($event)"
              (linkDragEnded)="linkEnded($event)"
-             class="mat-elevation-z8 select-none">
+             class="mat-elevation-z8 select-none mat-pr">
 
     <ngx-gantt-table>
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
@@ -80,7 +82,10 @@
       <ngx-gantt-column name="Priority" width="120px">
         <ng-template #cell let-item="item">
           <ng-container *ngIf="item.taskStatusId != 3">
-            {{item.taskPriorityName}}
+            <div class="flex gap-2 items-center justify-around">
+              <p>{{item.taskPriorityName}}</p>
+              <div class="h-4 w-4" [ngStyle]="{'background-color': item.taskPriorityColor}"></div>
+            </div>
           </ng-container>
           <ng-container *ngIf="item.taskStatusId === 3">
             /
@@ -99,5 +104,9 @@
         </ng-template>
       </ngx-gantt-column>
     </ngx-gantt-table>
+
+    <ng-template #bar let-item="item">
+      <span class="text-white">&nbsp;&nbsp;{{ item.title }} </span>
+    </ng-template>
   </ngx-gantt>
 </div>

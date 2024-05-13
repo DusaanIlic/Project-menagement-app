@@ -4,8 +4,8 @@ import {
   GanttBarClickEvent,
   GanttDragEvent,
   GanttGroup,
-  GanttItem,
-  GanttLinkDragEvent,
+  GanttItem, GanttLineClickEvent,
+  GanttLinkDragEvent, GanttLinkLineType,
   GanttSelectedEvent,
   GanttViewType,
   NgxGanttComponent,
@@ -13,7 +13,7 @@ import {
   NgxGanttTableComponent
 } from "@worktile/gantt";
 import {enUS} from "date-fns/locale";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ActivatedRoute} from "@angular/router";
 import {TaskService} from "../../services/task.service";
 import {switchMap} from "rxjs/operators";
@@ -56,6 +56,7 @@ import {TaskStatus} from "../../models/task-status";
     MatDivider,
     MatOption,
     MatSelect,
+    NgStyle,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -73,6 +74,10 @@ import {TaskStatus} from "../../models/task-status";
           year: 'yyyy',
           locale: enUS
         },
+        linkOptions: {
+          lineOption: GanttLinkLineType.straight,
+          showArrow: true
+        }
       }
     }
   ]
@@ -147,7 +152,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       next: ({ tasks, taskCategories }) => {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
-
+        console.log(this.tasks);
         this.mapTasksToGanttItems();
       },
       error: error => {
@@ -183,7 +188,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  private mapTasksToGanttItems(): void {
+  private mapTasksToGanttItems(changeView: boolean = true): void {
     this.ganttGroups = this.taskCategories.map((category: { taskCategoryID: any; categoryName: any; }) => {
       return {
         id: String(category.taskCategoryID),
@@ -200,21 +205,27 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         id: String(task.taskId),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
-        start: task.startDate,
-        end: task.deadline,
+        start: new Date(task.startDate).getTime(),
+        end: new Date(task.deadline).getTime(),
         color: '#3F51B5',
-        progress: task.taskStatusId === 3 ? 0 : 100, // Call your progress calculation method,
+        barStyle: {
+          border: '1px solid black'
+        },
+        links: links,
+        progress: task.taskStatusId === 3 ? 0 : -1, // Call your progress calculation method,
         itemDraggable: task.taskStatusId !== 3,
         draggable:  task.taskStatusId !== 3,
         linkable: task.taskStatusId !== 3,
         taskStatusId:  task.taskStatusId,
         taskPriorityId: task.taskPriorityId,
         taskStatusName: task.taskStatus,
-        taskPriorityName: task.taskPriorityName
+        taskPriorityName: task.taskPriorityName,
+        taskPriorityColor: this.taskPriorities.find((tp: taskPriority) => tp.taskPriorityId == task.taskPriorityId)?.color
       };
     });
 
     this.ganttItems = this.originalGanttItems;
+    this.applyFilters(changeView);
   }
 
   scrollToToday() {
@@ -304,15 +315,41 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  applyFilters() {
+  applyFilters(changeView: boolean = true) {
     this.ganttItems = this.originalGanttItems.filter((task: { title: string, taskStatusId: number; taskPriorityId: number; }) =>
       (this.selectedStatus == this.defaultStatus || this.selectedStatus == task.taskStatusId) &&
       (this.selectedPriority == this.defaultPriority || this.selectedPriority == task.taskPriorityId) &&
       (task.title.toLowerCase().includes(this.searchedTerm))
     );
 
-    if (this.ganttItems.length != 0) {
-      this.ganttComponent.scrollToDate();
+    if (this.ganttItems.length != 0 && changeView) {
+      this.ganttComponent.scrollToDate(this.ganttItems[0].start);
+    }
+  }
+  
+  linkClick(event: GanttLineClickEvent<unknown>) {
+    if (event.source && event.target) {
+      const taskId= Number(event.source.id);
+      const dTaskId= Number(event.target.id);
+
+      this.taskService.removeTaskDependency(taskId, dTaskId).subscribe({
+        next: data => {
+          const taskToRemoveDependencyFrom = this.tasks.find((task: Task) => task.taskId === taskId);
+          if (taskToRemoveDependencyFrom) {
+            const indexToRemove = taskToRemoveDependencyFrom.dependentTasks.findIndex((task: any) => task.taskId === dTaskId);
+
+            if (indexToRemove !== -1) {
+              taskToRemoveDependencyFrom.dependentTasks.splice(indexToRemove, 1);
+            }
+          }
+
+          this.mapTasksToGanttItems(false);
+          this.snackBar.open('Successfully removed dependency!', 'Close', { duration: 1500 });
+        },
+        error: error => {
+          this.snackBar.open('Failed removing dependency', 'Close', { duration: 1500 });
+        }
+      });
     }
   }
 }

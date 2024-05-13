@@ -134,6 +134,10 @@ export class TaskService {
     return this.http.post(`${TASK_API}/${taskId}/dependency/${dTaskId}`, null);
   }
 
+  removeTaskDependency(taskId: number, dTaskId: number) {
+    return this.http.delete(`${TASK_API}/${taskId}/dependency/${dTaskId}`);
+  }
+
   getTaskPriorities() {
     return this.http.get<taskPriority[]>(TASKPRIOROTY_API);
   }
