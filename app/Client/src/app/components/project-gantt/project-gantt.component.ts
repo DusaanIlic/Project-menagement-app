@@ -200,15 +200,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         id: String(task.taskId),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
-        start: new Date(task.startDate).getTime(),
-        end: new Date(task.deadline).getTime(),
-        links: links,
-        color: this.taskPriorities.find(priority => priority.taskPriorityId == task.taskPriorityId)?.color,
-        progress: 100, // Call your progress calculation method,
-        itemDraggable: true,
-        linkable: true,
+        start: task.startDate,
+        end: task.deadline,
+        color: '#3F51B5',
+        progress: task.taskStatusId === 3 ? 0 : 100, // Call your progress calculation method,
+        itemDraggable: task.taskStatusId !== 3,
+        linkable: task.taskStatusId !== 3,
         taskStatusId:  task.taskStatusId,
-        taskPriorityId: task.taskPriorityId
+        taskPriorityId: task.taskPriorityId,
+        taskStatusName: task.taskStatus,
+        taskPriorityName: task.taskPriorityName
       };
     });
 

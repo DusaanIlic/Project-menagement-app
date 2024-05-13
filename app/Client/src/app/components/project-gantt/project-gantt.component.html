@@ -62,14 +62,31 @@
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>
 
-      <ngx-gantt-column name="Start Date" width="120px">
+      <ngx-gantt-column name="Status" width="120px">
         <ng-template #cell let-item="item">
-          {{ item.start * 1000 | date : 'dd-MM-yyyy' }}
+          {{item.taskStatusName}}
         </ng-template>
       </ngx-gantt-column>
-      <ngx-gantt-column name="End Date" width="120px">
+
+      <ngx-gantt-column name="Priority" width="120px">
         <ng-template #cell let-item="item">
-          {{ item.end * 1000 | date : 'dd-MM-yyyy' }}
+          <ng-container *ngIf="item.taskStatusId != 3">
+            {{item.taskPriorityName}}
+          </ng-container>
+          <ng-container *ngIf="item.taskStatusId === 3">
+            /
+          </ng-container>
+        </ng-template>
+      </ngx-gantt-column>
+
+      <ngx-gantt-column name="Deadline" width="120px">
+        <ng-template #cell let-item="item">
+          <ng-container *ngIf="item.taskStatusId != 3">
+            {{ item.end | date : 'dd-MM-yyyy' }}
+          </ng-container>
+          <ng-container *ngIf="item.taskStatusId === 3">
+            /
+          </ng-container>
         </ng-template>
       </ngx-gantt-column>
     </ngx-gantt-table>
