@@ -25,7 +25,8 @@ namespace Server.Controllers
             var projectPriorityDTO = projectPriority.Select(p => new ProjectPriorityDTO
             {
                 PriorityId = p.ProjectPriorityId,
-                PriorityName = p.Name
+                PriorityName = p.Name,
+                Color = p.PriorityColorHex
             }).ToList();
             return Ok(projectPriorityDTO);
         }
@@ -44,7 +45,8 @@ namespace Server.Controllers
             var projectPriorityDTO = new ProjectPriorityDTO
             {
                 PriorityId= projectPriority.ProjectPriorityId,
-                PriorityName = projectPriority.Name
+                PriorityName = projectPriority.Name,
+                Color = projectPriority.PriorityColorHex
             };
             return Ok(projectPriorityDTO);
         }

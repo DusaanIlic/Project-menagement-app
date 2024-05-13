@@ -45,7 +45,8 @@ namespace Server.Migrations
                 {
                     ProjectPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    PriorityColorHex = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +129,8 @@ namespace Server.Migrations
                 {
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    PriorityColorHex = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -264,6 +266,7 @@ namespace Server.Migrations
                     Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateFinished = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DeadlineModified = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TeamLeaderId = table.Column<int>(type: "INTEGER", nullable: true),
                     ProjectPriorityId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -380,6 +383,7 @@ namespace Server.Migrations
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateFinished = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DeadlineModified = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -553,7 +557,8 @@ namespace Server.Migrations
                     { 2, "Add member" },
                     { 3, "Edit member" },
                     { 4, "Deactivate member" },
-                    { 5, "Create project" }
+                    { 5, "Create project" },
+                    { 6, "Change project deadline" }
                 });
 
             migrationBuilder.InsertData(
@@ -583,17 +588,18 @@ namespace Server.Migrations
                     { 20, "Change project priority" },
                     { 21, "Change task category" },
                     { 22, "Add task status" },
-                    { 23, "Remove task status" }
+                    { 23, "Remove task status" },
+                    { 24, "Change deadline" }
                 });
 
             migrationBuilder.InsertData(
                 table: "ProjectPriorities",
-                columns: new[] { "ProjectPriorityId", "Name" },
+                columns: new[] { "ProjectPriorityId", "Name", "PriorityColorHex" },
                 values: new object[,]
                 {
-                    { 1, "Low" },
-                    { 2, "Medium" },
-                    { 3, "High" }
+                    { 1, "Low", "#00FF00" },
+                    { 2, "Medium", "#FFFF00" },
+                    { 3, "High", "#FF0000" }
                 });
 
             migrationBuilder.InsertData(
@@ -612,8 +618,8 @@ namespace Server.Migrations
                 values: new object[,]
                 {
                     { 1, "In Preparation" },
-                    { 2, "Closed" },
-                    { 3, "In Progress" }
+                    { 2, "In Progress" },
+                    { 3, "Closed" }
                 });
 
             migrationBuilder.InsertData(
@@ -643,12 +649,12 @@ namespace Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "TaskPriority",
-                columns: new[] { "TaskPriorityId", "Name" },
+                columns: new[] { "TaskPriorityId", "Name", "PriorityColorHex" },
                 values: new object[,]
                 {
-                    { 1, "Low" },
-                    { 2, "Medium" },
-                    { 3, "High" }
+                    { 1, "Low", "#00FF00" },
+                    { 2, "Medium", "#FFFF00" },
+                    { 3, "High", "#FF0000" }
                 });
 
             migrationBuilder.InsertData(
@@ -666,9 +672,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 76, DateTimeKind.Local).AddTicks(9323), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$kDzIng5U78uOiZbj/6pn8O2/TTgYCGb65Ar5RuhGkCTPRFCn.xbvG", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 211, DateTimeKind.Local).AddTicks(4606), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$UoKr7OdP4b0NgGAAg64Y8uvNi66fiu5oWbf2sYd8rNuN7xcap6rn2", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 4, 25, 15, 19, 59, 349, DateTimeKind.Local).AddTicks(9089), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$jG.2SYs4IZz/uDcik.xtQO69AbjJJutCo8INKV6v4FHknArMWT/si", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 11, 0, 3, 51, 980, DateTimeKind.Local).AddTicks(8079), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$qU3PDlUFhPWCC5lvxM7mVOH4UE74VqQ4Us5oe82Td0KBqtD/NmZYW", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 11, 0, 3, 52, 50, DateTimeKind.Local).AddTicks(6981), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$IFyALSbYxL657ZjH4a6tFegYma5e5SbiQCEHw9i0Wyi/gddoiSzOC", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 11, 0, 3, 52, 121, DateTimeKind.Local).AddTicks(6967), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$AfzkRcgVvIhSBkI3hHsuh.ZHBnMcDd193U.Hj.YWrY.EAU.DHbvCO", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -691,7 +697,6 @@ namespace Server.Migrations
                     { 12, 1 },
                     { 13, 1 },
                     { 14, 1 },
-                    { 15, 1 },
                     { 16, 1 },
                     { 17, 1 },
                     { 18, 1 },
@@ -715,7 +720,8 @@ namespace Server.Migrations
                     { 2, 1 },
                     { 3, 1 },
                     { 4, 1 },
-                    { 5, 2 }
+                    { 5, 2 },
+                    { 6, 2 }
                 });
 
             migrationBuilder.CreateIndex(

@@ -2,7 +2,6 @@
 {
     public class EmailChangeRequest
     {
-        public string Password { get; set; }
         public string NewEmail { get; set; }
     }
 }

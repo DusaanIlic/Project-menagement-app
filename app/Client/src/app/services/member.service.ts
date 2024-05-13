@@ -18,6 +18,8 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class MemberService {
+  private memberSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
   constructor(private http: HttpClient) { }
 
   addMember(memberData: any): Observable<any> {
@@ -26,6 +28,20 @@ export class MemberService {
 
   getMember(memberId: number): Observable<any>{
     return this.http.get<any>(`${API}/${memberId}`);
+  }
+
+  setMemberSubject(member: Member) {
+    this.memberSubject.next(member);
+  }
+
+  getMemberSubject() {
+    return this.memberSubject.asObservable();
+  }
+
+  updateMemberSubject(member: Partial<Member>) {
+    const updatedMember = {...this.memberSubject.value, ...member};
+
+    this.memberSubject.next(updatedMember);
   }
 
   getMembers(): Observable<any[]>{
@@ -55,7 +71,24 @@ export class MemberService {
   deleteAvatar(memberId: number) {
     return this.http.delete(`${API}/${memberId}/Avatar`);
   }
+
   getRoleById(id:number): Observable<Role> {
     return this.http.get<Role>(`${API_ROLES}/${id}`);
+  }
+
+  changeEmail(memberId: number, formData: any) {
+    return this.http.post(`${API}/${memberId}/ChangeEmail`, formData);
+  }
+
+  changeRole(memberId: number, formData: { roleId: number }): Observable<Role> {
+    return this.http.put<Role>(`${API}/${memberId}/ChangeRole`, formData);
+  }
+
+  changePassword(memberId: number, formData: { oldPassword: string, newPassword: string}) {
+    return this.http.post(`${API}/${memberId}/ChangePassword`, formData);
+  }
+
+  resetPassword(memberId: number) {
+    return this.http.post(`${API}/${memberId}/ForcePasswordReset`, null);
   }
 }
