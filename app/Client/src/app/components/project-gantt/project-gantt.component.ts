@@ -205,6 +205,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         color: '#3F51B5',
         progress: task.taskStatusId === 3 ? 0 : 100, // Call your progress calculation method,
         itemDraggable: task.taskStatusId !== 3,
+        draggable:  task.taskStatusId !== 3,
         linkable: task.taskStatusId !== 3,
         taskStatusId:  task.taskStatusId,
         taskPriorityId: task.taskPriorityId,
@@ -303,7 +304,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     );
 
     if (this.ganttItems.length != 0) {
-      this.ganttComponent.scrollToDate(this.ganttItems[0].start);
+      this.ganttComponent.scrollToDate();
     }
   }
 }
