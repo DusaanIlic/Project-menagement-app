@@ -221,6 +221,14 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     this.ganttComponent.scrollToToday();
   }
 
+  selectView(type: GanttViewType) {
+    this.viewType = type;
+    this.selectedViewType = type;
+
+    this.scrollToToday();
+  }
+
+
   selectedChange(event: GanttSelectedEvent) {
     event.current && this.ganttComponent.scrollToDate(event.current?.start);
   }

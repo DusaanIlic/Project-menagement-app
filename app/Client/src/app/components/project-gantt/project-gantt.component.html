@@ -33,10 +33,19 @@
       </mat-select>
     </mat-form-field>
 
-
     <span class="grow"></span>
 
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Selected view</mat-label>
+
+      <mat-select [value]="selectedViewType" [(ngModel)]="selectedViewType" (ngModelChange)="selectView($event)">
+          <mat-option *ngFor="let view of views" [value]="view.value">{{view.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <button mat-raised-button color="primary" (click)="scrollToToday()">Scroll to today</button>
+
+    <span class="grow"></span>
 
     <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>
   </div>
