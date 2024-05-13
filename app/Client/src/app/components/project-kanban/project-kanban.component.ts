@@ -40,7 +40,7 @@ export class ProjectKanbanComponent implements OnInit {
   todo: any[] = [];
   progress: any[] = [];
   done: any[] = [];
-  dropList: any[] = ['todo', 'progress', 'done'];
+  dropList: any[] = ['to do', 'progress', 'done'];
   newStatuses: any[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
@@ -170,7 +170,7 @@ export class ProjectKanbanComponent implements OnInit {
 
   getStatusIdFromColumnName(columnName: string): number {
     const columnMap: { [key: string]: number } = {
-      'todo': 1,
+      'to do': 1,
       'progress': 2,
       'done': 3,
     };
@@ -202,7 +202,7 @@ export class ProjectKanbanComponent implements OnInit {
       let taskList: any[];
 
       switch (column) {
-        case 'todo':
+        case 'to do':
           taskList = this.todo;
           break;
         case 'progress':
@@ -220,7 +220,7 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   deleteTask(column: string, index: number) {
-    if (column === 'todo') {
+    if (column === 'to do') {
       this.todo.splice(this.findTaskIndex(index, column), 1);
       this.showMessage();
       this.taskService.deleteTask(index).subscribe(
