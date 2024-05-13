@@ -153,7 +153,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
         console.log(this.tasks);
-        this.mapTasksToGanttItems();
+        this.mapTasksToGanttItems(false);
       },
       error: error => {
         console.log(`Failed fetching tasks for project with id ${this.projectId}`);
@@ -253,12 +253,20 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       width: '250px',
       data: taskId
     });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   openAddTask() {
     const dialogRef = this.matDialog.open(AddTaskComponent, {
       width: '500px',
       data: { projectId: this.projectId}
+    });
+
+    dialogRef.componentInstance.taskAdded.subscribe(() => {
+      this.ngOnInit();
     });
   }
 
@@ -280,6 +288,12 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
       this.taskService.changeTaskDates(taskId, utcStartDate, utcEndDate).subscribe({
         next: data => {
+          const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
+          task.startDate = utcStartDate;
+          task.deadline = utcEndDate;
+
+          this.mapTasksToGanttItems(false);
+
           this.snackBar.open('Successfully changed task date!', 'Close', { duration: 1500 });
         },
         error: error => {
@@ -296,6 +310,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
       this.taskService.addTaskDependency(taskId, dTaskId).subscribe({
         next: data => {
+          const taskToAddDependencyTo = this.tasks.find((task: Task) => task.taskId === taskId);
+          if (taskToAddDependencyTo) {
+            taskToAddDependencyTo.dependentTasks.push({taskId: dTaskId});
+          }
+
+          this.mapTasksToGanttItems(false);
+
           this.snackBar.open('Successfully added dependency!', 'Close', { duration: 1500 });
         },
         error: error => {
@@ -326,7 +347,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       this.ganttComponent.scrollToDate(this.ganttItems[0].start);
     }
   }
-  
+
   linkClick(event: GanttLineClickEvent<unknown>) {
     if (event.source && event.target) {
       const taskId= Number(event.source.id);
