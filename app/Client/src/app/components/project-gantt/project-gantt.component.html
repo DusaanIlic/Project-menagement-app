@@ -12,9 +12,20 @@
     </mat-form-field>
 
     <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by status</mat-label>
+
+      <mat-select [value]="selectedStatus" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusFilterChange($event)">
+        <mat-option [value]="defaultStatus">All Statuses</mat-option>
+        @for (taskStatus of taskStatuses; track taskStatus.id) {
+          <mat-option [value]="taskStatus.id">{{taskStatus.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field subscriptSizing="dynamic">
       <mat-label class="select-none">Filter by priority</mat-label>
 
-      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onStatusChange($event)">
+      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onPriorityFilterChange($event)">
         <mat-option [value]="defaultPriority">All Priorities</mat-option>
         @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
           <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
@@ -43,9 +54,10 @@
              (barClick)="barClick($event)"
              (selectedChange)="selectedChange($event)"
              (dragEnded)="dragEnded($event)"
-             (linkDragEnded)="linkEnded($event)">
+             (linkDragEnded)="linkEnded($event)"
+             class="mat-elevation-z8 select-none">
 
-    <ngx-gantt-table class="mat-elevation-z8">
+    <ngx-gantt-table>
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>

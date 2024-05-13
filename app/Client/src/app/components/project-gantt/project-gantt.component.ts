@@ -2,12 +2,11 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   GANTT_GLOBAL_CONFIG,
   GanttBarClickEvent,
-  GanttDragEvent, GanttGroup,
+  GanttDragEvent,
+  GanttGroup,
   GanttItem,
   GanttLinkDragEvent,
-  GanttPrintService,
-  GanttSelectedEvent, GanttTableDragEndedEvent, GanttTableDragEnterPredicateContext,
-  GanttToolbarOptions,
+  GanttSelectedEvent,
   GanttViewType,
   NgxGanttComponent,
   NgxGanttTableColumnComponent,
@@ -24,20 +23,17 @@ import {MatButton} from "@angular/material/button";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatDialog} from "@angular/material/dialog";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
-import {toNumbers} from "@angular/compiler-cli/src/version_helpers";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {AddTaskComponent} from "../add-task/add-task.component";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
 import {MatInput} from "@angular/material/input";
-import {GanttTask} from "../../models/gantTask";
 import {taskPriority} from "../../models/taskPriority";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {taskCategory} from "../../models/taskCategory";
 import {MatDivider} from "@angular/material/divider";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
+import {TaskStatus} from "../../models/task-status";
 
 @Component({
   selector: 'app-project-gantt',
@@ -86,10 +82,14 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   tasks: any;
   taskCategories: any;
   taskPriorities!: taskPriority[];
+  taskStatuses!: TaskStatus[];
   ganttGroups: GanttGroup[] = [];
   ganttItems: GanttItem[] = [];
+  defaultStatus: number = 0;
+  selectedStatus: number = 0;
   defaultPriority: number = 0;
-  selectedPriority: number = this.defaultPriority;
+  selectedPriority: number = 0;
+  searchedTerm: string = '';
   private originalGanttItems: any = [];
   private routeSubscription: any;
 
@@ -163,6 +163,15 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         console.log('failed fetching task priorities');
       }
     });
+
+    this.taskService.getTaskStatusesByProject(this.projectId).subscribe({
+      next: (data: TaskStatus[]) => {
+        this.taskStatuses = data;
+      },
+      error: err => {
+        console.log('failed fetching task statuses');
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -170,9 +179,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   search(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.ganttItems = this.originalGanttItems.filter((task: GanttItem) => task.title.toLowerCase().includes(filterValue));
-    console.log(filterValue);
+    this.searchedTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.applyFilters();
   }
 
   private mapTasksToGanttItems(): void {
@@ -199,23 +207,12 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         progress: 100, // Call your progress calculation method,
         itemDraggable: true,
         linkable: true,
+        taskStatusId:  task.taskStatusId,
+        taskPriorityId: task.taskPriorityId
       };
     });
 
     this.ganttItems = this.originalGanttItems;
-  }
-
-  private calculateProgress(task: Task): number {
-    // Implement your logic to calculate progress, for example:
-    // return (completedTasks / totalTasks) * 100;
-    return 100; // Default progress
-  }
-
-  selectView(type: GanttViewType) {
-    this.viewType = type;
-    this.selectedViewType = type;
-
-    this.scrollToToday();
   }
 
   scrollToToday() {
@@ -223,18 +220,10 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   selectedChange(event: GanttSelectedEvent) {
-    if (event.current && event.current.id.includes('C')) {
-      return;
-    }
-
     event.current && this.ganttComponent.scrollToDate(event.current?.start);
   }
 
   barClick($event: GanttBarClickEvent) {
-    if ($event.item.id.includes('C')) {
-      return;
-    }
-
     this.openTaskOverview(Number($event.item.id));
   }
 
@@ -281,8 +270,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   linkEnded(event: GanttLinkDragEvent) {
     if (event.source && event.target) {
-      const taskId = Number(event.source.id);
-      const dTaskId = Number(event.target.id);
+      const taskId= Number(event.source.id);
+      const dTaskId= Number(event.target.id);
 
       this.taskService.addTaskDependency(taskId, dTaskId).subscribe({
         next: data => {
@@ -295,7 +284,25 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     }
   }
 
-  onStatusChange($event: any) {
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
 
+  onPriorityFilterChange(event: any) {
+    this.selectedPriority = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.ganttItems = this.originalGanttItems.filter((task: { title: string, taskStatusId: number; taskPriorityId: number; }) =>
+      (this.selectedStatus == this.defaultStatus || this.selectedStatus == task.taskStatusId) &&
+      (this.selectedPriority == this.defaultPriority || this.selectedPriority == task.taskPriorityId) &&
+      (task.title.toLowerCase().includes(this.searchedTerm))
+    );
+
+    if (this.ganttItems.length != 0) {
+      this.ganttComponent.scrollToDate(this.ganttItems[0].start);
+    }
   }
 }
