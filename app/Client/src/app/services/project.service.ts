@@ -10,6 +10,7 @@ import {Permission} from "../models/permission";
 import {UpdateRoleForm} from "../forms/update-role.form";
 import {AddRoleForm} from "../forms/add-role.form";
 import {RoleMember} from "../models/role-member";
+import {taskActivity} from "../models/taskActivity";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -104,6 +105,11 @@ export class ProjectServiceGet{
 
   getAllProjectsWhereMemberIsAssigned(memberId: number) {
     return this.http.get<Project[]>(`${PROJECT_API}/Member/${memberId}`);
+  }
+
+  getAllActivitiesInLastTwoWeeks(projectId: number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/taskActivities/activitiesCountByDateLastTwoWeeks`);
   }
 }
 

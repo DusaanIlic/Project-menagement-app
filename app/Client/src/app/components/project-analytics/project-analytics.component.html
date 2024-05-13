@@ -106,6 +106,30 @@
     </mat-expansion-panel>
   </mat-accordion>
 
+  <mat-accordion *ngIf="loaded2">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between ">
+          <h1 class="text-xl flex">Task activities created in last 2 weeks</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-line-chart class="flex"
+                                     [results]="taskActivitiesInLast2weeks"
+                                     [showXAxisLabel]="true"
+                                     [showYAxisLabel]="true"
+                                     [xAxis]="true"
+                                     [yAxis]="true"
+                                     [yAxisTickFormatting]="axisFormat">
+
+          </ngx-charts-line-chart>
+
+        </div>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+
 
 
 

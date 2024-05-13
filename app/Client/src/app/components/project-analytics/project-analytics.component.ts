@@ -53,6 +53,9 @@ export class ProjectAnalyticsComponent implements OnInit{
   array : any[] = [];
   tasksByStatuses : any[] = [];
   loaded : boolean = false;
+  loaded2 : boolean = false;
+  taskActivitiesInLast2weeks : any[] = []
+  seriesOfData : any[] = []
 
 
   constructor(private route: ActivatedRoute,
@@ -98,7 +101,7 @@ export class ProjectAnalyticsComponent implements OnInit{
            }
 
            //console.log(this.tasksByStatuses)
-            this.loaded = true;
+           this.loaded = true;
 
            this.dataForChart = [{name: "Finished", value: (this.finishedTasksCount / this.allTasksCount) * 100}];
            this.customColors = [{name: "Finished", value: "#3F51B5"}]
@@ -158,7 +161,19 @@ export class ProjectAnalyticsComponent implements OnInit{
 
 
 
+    this.pService.getAllActivitiesInLastTwoWeeks(1).subscribe(data =>{
 
+      let temp;
+      for(let i=0;i<data.length;i++)
+      {
+        temp = {value: data[i].count, name: data[i].date.split('T')[0]};
+        this.seriesOfData.push(temp)
+
+      }
+      this.taskActivitiesInLast2weeks.push({name: "", series:this.seriesOfData})
+      this.loaded2 = true;
+      }
+    )
 
   }//ONINIT END
 
