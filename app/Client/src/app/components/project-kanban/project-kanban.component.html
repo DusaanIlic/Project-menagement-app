@@ -19,7 +19,7 @@
                             <p><b>{{teamLeaderInfo?.roleName}}</b></p>
                             <p> {{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</p>
                         </div>
-                        <img src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden rounded-full border-solid border-black border-2 xl:w-12 xl:h-12 xl:table-cell" (click)="openMemberInfoDialog(teamLeaderInfo)">
+                        <img [src]="environment.apiUrl + '/Member/' + teamLeaderInfo.id + '/Avatar'" class="hidden rounded-full xl:w-12 xl:h-12 xl:table-cell" (click)="openMemberInfoDialog(teamLeaderInfo)">
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
@@ -75,7 +75,7 @@
                                         <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
                                     </div>
                                     <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)">
-                                        <mat-icon>delete</mat-icon>
+                                        <i class="material-icons">delete</i>
                                     </button>
                                 </div>
                                     

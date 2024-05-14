@@ -4,7 +4,7 @@ import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Observable} from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { FormControl, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,12 +19,13 @@ import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { Member } from '../../models/member';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import { MatCardModule } from '@angular/material/card';
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-project-kanban',
@@ -285,5 +286,5 @@ export class ProjectKanbanComponent implements OnInit {
     });
 }
 
-
+  protected readonly environment = environment;
 }
