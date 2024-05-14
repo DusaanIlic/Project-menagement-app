@@ -1070,6 +1070,7 @@ namespace Server.Controllers
                     Date = date,
                     Count = taskActivitiesCountByDate.FirstOrDefault(d => d.Date == date)?.Count ?? 0
                 })
+                .OrderBy(item => item.Date)
                 .ToList();
 
             return Ok(activityCountsByDate);
