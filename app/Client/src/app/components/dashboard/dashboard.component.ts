@@ -27,11 +27,13 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {MatPaginator} from "@angular/material/paginator";
 import {Task} from "../../models/task";
 import {TaskService} from "../../services/task.service";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
+    FormsModule,
     MatTable,
     MatHeaderRow,
     MatHeaderRowDef,
@@ -64,8 +66,10 @@ import {TaskService} from "../../services/task.service";
 })
 export class DashboardComponent implements OnInit {
   projects!: Project[];
+  dataSource: any;
   tasks!: Task[];
 
+  searchProjects: string = '';
   memberId!: any;
 
   projectSource: any;
@@ -106,6 +110,22 @@ export class DashboardComponent implements OnInit {
         console.log('failed fetching task data');
       }
     });
+  }
+
+  search(): void {
+    let searchTerm = this.searchProjects.toLowerCase().trim();
+    let filteredProjects = [...this.projects];
+
+    if (searchTerm) {
+      filteredProjects = filteredProjects.filter(project =>
+        project.projectName.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredProjects = this.projects;
+    }
+
+    this.projectSource = filteredProjects;
   }
 
   protected readonly data = data;
