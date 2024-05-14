@@ -8,7 +8,7 @@
         </div>
       </mat-label>
 
-      <input matInput [(ngModel)]="searchProjects" (input)="search()">
+      <input matInput [(ngModel)]="searchProjects" (input)="searchProj()">
     </mat-form-field>
 
     <mat-form-field subscriptSizing="dynamic">
@@ -80,7 +80,7 @@
         </div>
       </mat-label>
 
-      <input matInput>
+      <input matInput [(ngModel)]="searchTasks" (input)="searchTas()">
     </mat-form-field>
 
     <mat-form-field subscriptSizing="dynamic">

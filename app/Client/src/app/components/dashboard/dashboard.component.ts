@@ -70,6 +70,8 @@ export class DashboardComponent implements OnInit {
   tasks!: Task[];
 
   searchProjects: string = '';
+  searchTasks: string = '';
+
   memberId!: any;
 
   projectSource: any;
@@ -112,7 +114,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  search(): void {
+  searchProj(): void {
     let searchTerm = this.searchProjects.toLowerCase().trim();
     let filteredProjects = [...this.projects];
 
@@ -124,8 +126,22 @@ export class DashboardComponent implements OnInit {
     else{
       filteredProjects = this.projects;
     }
-
     this.projectSource = filteredProjects;
+  }
+
+  searchTas(): void {
+    let searchTerm = this.searchTasks.toLowerCase().trim();
+    let filteredTasks = [...this.tasks];
+
+    if (searchTerm) {
+      filteredTasks = filteredTasks.filter(task =>
+        task.taskName.toLowerCase().includes(searchTerm)
+      );
+    }
+    else{
+      filteredTasks = this.tasks;
+    }
+    this.taskSource = filteredTasks;
   }
 
   protected readonly data = data;
