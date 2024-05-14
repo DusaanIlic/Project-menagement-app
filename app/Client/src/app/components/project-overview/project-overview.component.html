@@ -28,7 +28,7 @@
         <mat-card-title-group class="pb-3">
             <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
             <mat-card-subtitle>Project Manager</mat-card-subtitle>          
-          <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
+          <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + teamLeaderInfo.id + '/Avatar'" class="rounded-full hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
         </mat-card-title-group>
       </mat-card-header>
     </mat-card>
