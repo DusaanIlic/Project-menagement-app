@@ -42,6 +42,7 @@ export class ProjectKanbanComponent implements OnInit {
   progress: any[] = [];
   done: any[] = [];
   dropList: any[] = ['to do', 'progress', 'done'];
+  redosled: any[] = [];
   newStatuses: any[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
@@ -59,7 +60,9 @@ export class ProjectKanbanComponent implements OnInit {
     this.getProjectIdFromRoute();
     this.dropList.forEach(column => {
       this.columnVisibility[column] = true;
-  });
+      this.redosled.push(column);
+    });
+    console.log("Redosled kolona: " + this.redosled);
   }
 
 
@@ -76,7 +79,7 @@ export class ProjectKanbanComponent implements OnInit {
     }, error => {
       console.error('Greška prilikom dobijanja podataka o projektu:', error);
     });
-}
+  }
 
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
@@ -135,35 +138,7 @@ export class ProjectKanbanComponent implements OnInit {
     });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-        const taskId = event.item.data.taskId;
-        const newColumn = event.container.id;
-        const newStatusId = this.getStatusIdFromColumnName(newColumn);
-
-        if (event.container.data.length === 0) {
-            event.container.data.push(event.previousContainer.data[event.previousIndex]);
-        } else {
-            transferArrayItem(
-                event.previousContainer.data,
-                event.container.data,
-                event.previousIndex,
-                event.currentIndex,
-            );
-        }
-
-        this.updateTaskStatus(taskId, newStatusId)
-            .subscribe(
-                () => {
-                  this.loadTasksByProject(this.projectId);
-                  //console.log('Task status updated successfully.')
-                },
-                error => console.error('Error updating task status:', error)
-            );
-    }
-}
+  
 
   updateTaskStatus(taskId: number, newStatusId: number): Observable<any> {
     return this.taskService.updateTaskStatus(taskId, newStatusId);
@@ -187,16 +162,16 @@ export class ProjectKanbanComponent implements OnInit {
 
 
   getTasksByStatus(statusId: number): any[] {
-  switch (statusId) {
-    case 1:
-      return this.todo;
-    case 2:
-      return this.progress
-    case 3:
-      return this.done;
-    default:
-      return [];
-  }
+    switch (statusId) {
+      case 1:
+        return this.todo;
+      case 2:
+        return this.progress
+      case 3:
+        return this.done;
+      default:
+        return [];
+    }
   }
 
   findTaskIndex(taskId: number, column: string): number {
@@ -284,7 +259,43 @@ export class ProjectKanbanComponent implements OnInit {
             console.log(this.dropList);
         }
     });
-}
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+        const taskId = event.item.data.taskId;
+        const newColumn = event.container.id;
+        const newStatusId = this.getStatusIdFromColumnName(newColumn);
+
+        if (event.container.data.length === 0) {  
+            event.container.data.push(event.previousContainer.data[event.previousIndex]);
+        } else {
+            transferArrayItem(
+                event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex,
+            );
+        }
+
+        this.updateTaskStatus(taskId, newStatusId)
+            .subscribe(
+                () => {
+                  this.loadTasksByProject(this.projectId);
+                  //console.log('Task status updated successfully.')
+                },
+                error => console.error('Error updating task status:', error)
+            );
+    }
+  }
+
+  dropColumn(event: CdkDragDrop<string[]>) {
+    if (event.previousIndex !== event.currentIndex) {
+        moveItemInArray(this.dropList, event.previousIndex, event.currentIndex);
+    }
+  }
 
   protected readonly environment = environment;
 }
