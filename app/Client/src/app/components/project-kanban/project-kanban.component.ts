@@ -84,6 +84,7 @@ export class ProjectKanbanComponent implements OnInit {
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
       const projectId = params['id'];
+      console.log(params);
       if (projectId) {
         this.projectService.getProjectById(projectId)
           .subscribe((data: any) => {

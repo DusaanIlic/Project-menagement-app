@@ -16,6 +16,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatButtonModule } from '@angular/material/button';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import {environment} from "../../../environments/environment";
+import { ConfirmationProjectComponent } from '../confirmation-project/confirmation-project.component';
 
 @Component({
   selector: 'app-project-overview',
@@ -195,5 +196,15 @@ export class ProjectOverviewComponent implements OnInit {
     });
   }
 
+
+  openProjectDeleteDialog(projectId: number): void {
+    const dialogRef = this.dialog.open(ConfirmationProjectComponent, {
+      data: { projectId: this.projectId}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
+  }
   protected readonly environment = environment;
 }
