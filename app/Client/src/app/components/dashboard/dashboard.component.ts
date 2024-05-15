@@ -132,21 +132,13 @@ export class DashboardComponent implements OnInit {
       }
     })
   }
-
-  searchProj(): void {
-    let searchTerm = this.searchProjects.toLowerCase().trim();
-    let filteredProjects = [...this.projects];
-
-    if (searchTerm) {
-      filteredProjects = filteredProjects.filter(project =>
-        project.projectName.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredProjects = this.projects;
-    }
-    this.projectSource = filteredProjects;
+  
+  searchProj(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.projectSource.filter = filterValue.trim().toLowerCase();
   }
+
+  
 
   searchTas(): void {
     let searchTerm = this.searchTasks.toLowerCase().trim();

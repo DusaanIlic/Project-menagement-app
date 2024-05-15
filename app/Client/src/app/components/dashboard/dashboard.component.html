@@ -1,14 +1,14 @@
 <div class="flex flex-col mt-5 max-w-80% items-center">
   <div class="flex flex-row  gap-5 mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 w-4/5">
     <mat-form-field class="w-96" subscriptSizing="dynamic">
-      <mat-label>
+      <mat-label class="select-none">
         <div class="flex items-center justify-between gap-2">
-          <p>Search Projects</p>
+          <p>Search</p>
           <mat-icon class="scale-125">search</mat-icon>
         </div>
       </mat-label>
 
-      <input matInput [(ngModel)]="searchProjects" (input)="searchProj()">
+      <input matInput (keyup)="search($event)">
     </mat-form-field>
 
     <mat-form-field subscriptSizing="dynamic">
@@ -71,7 +71,7 @@
 
     <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
   </div>
-
+  
   <div class="flex flex-row gap-5  mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 gap-5 w-4/5">
     <mat-form-field class="w-96" subscriptSizing="dynamic">
       <mat-label>
