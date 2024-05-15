@@ -9,7 +9,7 @@ import {MatAnchor, MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDivider} from "@angular/material/divider";
-import {Observable, Subscription} from "rxjs";
+import {first, Observable, Subscription} from "rxjs";
 import {ThemeService} from "../../services/theme.service";
 import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
 import {Theme} from "../../models/theme";
@@ -20,6 +20,7 @@ import {SignalRService} from "../../services/signal-r.service";
 import {Notification} from "../../models/notification";
 import {List} from "postcss/lib/list";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {switchMap} from "rxjs/operators";
 
 @Component({
   selector: 'app-navbar',
@@ -54,10 +55,11 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/mat
 })
 export class NavbarComponent implements OnInit {
   member: Member | null | undefined;
+  memberId!: number;
   avatarUrl: string | undefined;
   options$: Observable<Theme[]> = this.themeService.getThemeOptions();
   defaultTheme: any;
-  notRead = 0;
+  notRead: number = 0;
   today: Date = new Date();
   notifications: Notification[] = [];
 
@@ -68,13 +70,36 @@ export class NavbarComponent implements OnInit {
   ];
 
   constructor(private authService: AuthService, private router: Router,
-                private themeService: ThemeService, private signalRService: SignalRService) { }
+                private themeService: ThemeService, private signalRService: SignalRService,
+                  private memberService: MemberService) { }
 
   ngOnInit() {
     this.signalRService.startConnection();
 
-    this.authService.getAuthenticatedMember().subscribe(member => {
-      this.member = member;
+    this.authService.getAuthenticatedMember().pipe(
+      switchMap(member => {
+        this.member = member;
+        this.memberId = member.id;
+        return this.memberService.getNotifications(member.id); // Assuming your service has a method to fetch notifications
+      })
+      ).pipe(first()).subscribe(notifications => {
+        console.log('received notifications through login');
+
+        this.notifications = notifications.map(n => {
+          if (!n.isRead)
+            this.notRead += 1;
+
+          const utcDate = new Date(n.createdAt);
+          const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset()*60*1000);
+
+          return {
+            id: n.id,
+            title: n.title,
+            description: n.description,
+            createdAt: localDate,
+            isRead: n.isRead
+          }
+        });
     });
 
     this.authService.getAuthenticatedMembersAvatar().subscribe(avatarUrl => {
@@ -84,13 +109,20 @@ export class NavbarComponent implements OnInit {
     this.signalRService.getNotification().subscribe({
       next: data => {
         if (data != null) {
-          data.createdAt = new Date(data.createdAt);
+          console.log('received notification through socket');
+
+          if (!data.isRead)
+            this.notRead += 1;
+
+          const utcDate = new Date(data.createdAt);
+          const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset()*60*1000);
+
+          data.createdAt = new Date(localDate);
           this.notifications.unshift(data);
-          this.notRead += 1;
         }
       },
       error: err => {
-        console.log('failed receiving notification');
+        console.log('failed receiving notification through socket');
       }
     })
 
@@ -113,7 +145,56 @@ export class NavbarComponent implements OnInit {
     this.authService.logout();
   }
 
-  clearNotifications() {
+  readNotifications() {
     this.notRead = 0;
+
+    let notificationIds: number[] = this.notifications.map((n: Notification) => {
+      return n.id
+    });
+
+    this.memberService.readNotifications(this.memberId, notificationIds).subscribe({
+      next: data => {
+        console.log('successfully read all notifications');
+
+        this.notifications.forEach(n => n.isRead = true);
+      },
+      error: err => {
+        console.log('failed reading all notifications');
+      }
+    });
+  }
+
+  clearNotifications() {
+    let notificationIds: number[] = this.notifications.map((n: Notification) => {
+      return n.id
+    });
+
+    this.memberService.deleteNotifications(this.memberId, notificationIds).subscribe({
+      next: data => {
+        console.log('successfully cleared all notifications');
+        this.notifications = [];
+      },
+      error: err => {
+        console.log('failed clearing all notifications');
+      }
+    })
+  }
+
+  clearNotification(id: number) {
+    let notificationIds: number[] = [id];
+
+    this.memberService.deleteNotifications(this.memberId, notificationIds).subscribe({
+      next: data => {
+        console.log(`successfully cleared notification with id ${id}`);
+
+        const index = this.notifications.findIndex(notification => notification.id === id);
+        // If found, remove it from the array using splice
+        if (index !== -1)
+          this.notifications.splice(index, 1);
+      },
+      error: err => {
+        console.log('failed clearing all notifications');
+      }
+    })
   }
 }

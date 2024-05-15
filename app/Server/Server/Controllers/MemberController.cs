@@ -661,7 +661,7 @@ namespace Server.Controllers
             return Ok();
         }
         
-        [HttpDelete("{memberId}/Notifications")]
+        [HttpPost("{memberId}/Notifications")]
         public async Task<IActionResult> DeleteNotifications(int memberId, DeleteNotificationsRequest request)
         {
             var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(memberId);

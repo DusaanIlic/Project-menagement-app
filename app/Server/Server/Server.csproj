@@ -37,4 +37,11 @@
     <None Remove="UploadedFiles\a712239a-cdd9-4ca0-abf5-897492a80a69.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="mydatabase.db" />
+    <Compile Include="mydatabase.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>
