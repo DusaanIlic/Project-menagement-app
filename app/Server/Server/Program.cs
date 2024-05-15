@@ -19,6 +19,11 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     ContentRootPath = Directory.GetCurrentDirectory(),
     WebRootPath = "wwwroot/client/browser"
 });
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 var config = builder.Configuration;
 
 // Add services to the container.

@@ -1,25 +1,100 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Hubs
 {
-  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-  public class SignalRHub : Hub
-  {
-    private static Dictionary<string, string> memberIdToConnectionIdMap = new Dictionary<string, string>();
-    
-    public override async Task OnConnectedAsync()
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class SignalRHub : Hub
     {
-      await Clients.All.SendAsync("MemberConnected", Context.ConnectionId);
-      await base.OnConnectedAsync();
+        private static readonly Dictionary<long, List<string>> Connections = new Dictionary<long, List<string>>();
+        private readonly ILogger<SignalRHub> _logger;
+
+        public SignalRHub(ILogger<SignalRHub> logger)
+        {
+            _logger = logger;
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            var memberId = GetMemberId();
+            if (memberId != null)
+            {
+                List<long> connectedMemberIds;
+                lock (Connections)
+                {
+                    if (!Connections.ContainsKey(memberId.Value))
+                    {
+                        Connections[memberId.Value] = new List<string>();
+                    }
+                    Connections[memberId.Value].Add(Context.ConnectionId);
+                    connectedMemberIds = Connections.Keys.ToList();
+                }
+
+                _logger.LogInformation($"Member {memberId} connected with Connection ID: {Context.ConnectionId}");
+
+                // Notify all clients about the new connection
+                await Clients.Others.SendAsync("MemberConnected", memberId.Value);
+
+                // Send the list of all connected members to the newly connected client
+                await Clients.Caller.SendAsync("ConnectedMembers", connectedMemberIds);
+            }
+
+            await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var memberId = GetMemberId();
+            if (memberId != null)
+            {
+                bool memberDisconnected = false;
+                lock (Connections)
+                {
+                    if (Connections.ContainsKey(memberId.Value))
+                    {
+                        Connections[memberId.Value].Remove(Context.ConnectionId);
+                        if (!Connections[memberId.Value].Any())
+                        {
+                            Connections.Remove(memberId.Value);
+                            memberDisconnected = true;
+                        }
+                    }
+                }
+
+                if (memberDisconnected)
+                {
+                    _logger.LogInformation($"Member {memberId} disconnected with Connection ID: {Context.ConnectionId}");
+
+                    // Notify all clients about the disconnection
+                    await Clients.All.SendAsync("MemberDisconnected", memberId.Value);
+                }
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
+        private long? GetMemberId()
+        {
+            var user = Context.User;
+            if (user == null)
+            {
+                return null;
+            }
+
+            var memberIdClaim = user.Claims.FirstOrDefault(claim => claim.Type == "Id");
+            if (memberIdClaim == null || !long.TryParse(memberIdClaim.Value, out var memberId))
+            {
+                return null;
+            }
+
+            return memberId;
+        }
     }
-    
-    public override async Task OnDisconnectedAsync(Exception exception)
-    {
-      await Clients.All.SendAsync("MemberDisconnected", Context.ConnectionId);
-      await base.OnDisconnectedAsync(exception);
-    }
-  }
 }
