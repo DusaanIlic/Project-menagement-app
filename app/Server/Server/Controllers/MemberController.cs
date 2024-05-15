@@ -12,9 +12,12 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.DataTransferObjects.Request;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.Member;
+using Server.DataTransferObjects.Request.Notification;
+using Server.Services.Notification;
 using Server.Services.Permission;
 
 namespace Server.Controllers
@@ -27,13 +30,17 @@ namespace Server.Controllers
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
         private readonly IPermissionService _permissionService;
+        private readonly INotificationService _notificationService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IPermissionService permissionService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService,
+            IFileService fileService, IPermissionService permissionService,
+            INotificationService notificationService)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
             _permissionService = permissionService;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -43,26 +50,26 @@ namespace Server.Controllers
 
             var members = await _dbContext.Members.Include(m => m.Role).ToListAsync();
 
-            var memberDTOs = 
+            var memberDTOs =
                 members.Where(m => !m.IsDisabled)
-                .Select(m => new MemberDTO
-            {
-                Id = m.Id,
-                FirstName = m.FirstName,
-                LastName = m.LastName,
-                Email = m.Email,
-                RoleId = m.RoleId,
-                DateAdded = m.DateAdded,
-                Country = m.Country,
-                City = m.City,
-                Status = m.Status,
-                Github = m.Github,
-                Linkedin = m.Linkedin,
-                PhoneNumber = m.PhoneNumber,
-                DateOfBirth = m.DateOfBirth,
-                RoleName = m.Role.RoleName,
-                IsDisabled = m.IsDisabled
-            }).ToList();
+                    .Select(m => new MemberDTO
+                    {
+                        Id = m.Id,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Email = m.Email,
+                        RoleId = m.RoleId,
+                        DateAdded = m.DateAdded,
+                        Country = m.Country,
+                        City = m.City,
+                        Status = m.Status,
+                        Github = m.Github,
+                        Linkedin = m.Linkedin,
+                        PhoneNumber = m.PhoneNumber,
+                        DateOfBirth = m.DateOfBirth,
+                        RoleName = m.Role.RoleName,
+                        IsDisabled = m.IsDisabled
+                    }).ToList();
             return Ok(memberDTOs);
         }
 
@@ -81,7 +88,7 @@ namespace Server.Controllers
 
             if (existingMember != null)
             {
-                return Conflict(new {message = "Member with this email already exists."});
+                return Conflict(new { message = "Member with this email already exists." });
             }
 
             String randomPassword = GenerateRandomPassword(8);
@@ -159,13 +166,13 @@ namespace Server.Controllers
         public async Task<IActionResult> GetMember(int id)
         {
             var member = await _dbContext.Members
-                         .Include(m => m.Role)
-                         .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(m => m.Role)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
 
             if (member == null)
             {
-                return NotFound(new {message = "Member not found."});
+                return NotFound(new { message = "Member not found." });
             }
 
             var memberDTO = new MemberDTO
@@ -186,7 +193,7 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName,
                 IsDisabled = member.IsDisabled
             };
-            
+
             return Ok(memberDTO);
         }
 
@@ -195,17 +202,17 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest memberDTO)
         {
             var member = await _dbContext.Members
-                                            .Include(m => m.Role)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
-            
+                .Include(m => m.Role)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (member == null)
             {
-                return NotFound(new {message = "Member not found."});
+                return NotFound(new { message = "Member not found." });
             }
-            
+
             var hasPermission = await _permissionService.HasGlobalPermissionAsync("Edit member");
             var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
-            
+
             if (!isAuthedUser && !hasPermission)
             {
                 return Forbid();
@@ -242,7 +249,7 @@ namespace Server.Controllers
                 RoleName = member.Role.RoleName,
                 IsDisabled = member.IsDisabled
             };
-            
+
             return Ok(updatedMemberDTO);
         }
 
@@ -261,7 +268,7 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound(new {message = "Member not found."});
+                return NotFound(new { message = "Member not found." });
             }
 
             member.IsDisabled = true;
@@ -282,21 +289,21 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound(new {message = "Member not found."});
+                return NotFound(new { message = "Member not found." });
             }
 
-            
+
             if (member.AvatarId == null)
             {
-               var bytes = await System.IO.File.ReadAllBytesAsync("Files/default_avatar.png");
-               var mime = "image/png";
-               
-               return File(bytes, mime);
+                var bytes = await System.IO.File.ReadAllBytesAsync("Files/default_avatar.png");
+                var mime = "image/png";
+
+                return File(bytes, mime);
             }
             else
             {
                 var (bytes, mime) = await _fileService.GetFileData(member.AvatarId.Value);
-                
+
                 return File(bytes, mime);
             }
         }
@@ -309,9 +316,9 @@ namespace Server.Controllers
 
             if (member == null)
             {
-                return NotFound(new {message = "Member not found."});
+                return NotFound(new { message = "Member not found." });
             }
-            
+
             var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
             var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
 
@@ -349,8 +356,8 @@ namespace Server.Controllers
 
             var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
             var isAuthedUser = await _permissionService.IsCurrentUserIdMatchAsync(member.Id);
-            
-            if (!isAuthedUser &&  !isAdmin)
+
+            if (!isAuthedUser && !isAdmin)
             {
                 return Forbid();
             }
@@ -359,7 +366,7 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Member avatar not found." });
             }
-            
+
             await _fileService.DeleteFile(member.AvatarId.Value);
             member.AvatarId = null;
 
@@ -427,21 +434,22 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Member not found." });
             }
-            
+
             var isAdmin = await _permissionService.HasGlobalPermissionAsync("Edit member");
 
             if (!isAdmin)
             {
                 return BadRequest(new { message = "You can only change email if you have edit member permission" });
             }
-            
-            var existingMember = await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
+
+            var existingMember =
+                await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == changeEmailRequest.NewEmail);
 
             if (existingMember != null)
             {
                 return Conflict(new { message = "Email address is already used" });
             }
-            
+
             member.Email = changeEmailRequest.NewEmail;
 
             await _dbContext.SaveChangesAsync();
@@ -454,10 +462,10 @@ namespace Server.Controllers
         public async Task<IActionResult> GetMemberProjects(int id)
         {
             var member = await _dbContext.Members
-                          .Include(m => m.MemberProjects)
-                              .ThenInclude(pm => pm.Project)
-                              .ThenInclude(pm => pm.ProjectStatus)
-                          .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(m => m.MemberProjects)
+                .ThenInclude(pm => pm.Project)
+                .ThenInclude(pm => pm.ProjectStatus)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (member == null)
             {
@@ -477,7 +485,7 @@ namespace Server.Controllers
 
             return Ok(projects);
         }
-        
+
         [Authorize]
         [HttpPut("{id}/ChangeRole")]
         public async Task<IActionResult> ChangeMembersRole(int id, RoleChangeRequest request)
@@ -488,19 +496,19 @@ namespace Server.Controllers
             {
                 return BadRequest(new { message = "You don't have the permission to change someones role" });
             }
-            
+
             var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
-            
+
             if (member == null)
             {
-                return NotFound(new {message = "Member with given id doesn't exist"});
+                return NotFound(new { message = "Member with given id doesn't exist" });
             }
 
             var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == request.RoleId);
 
             if (role == null)
             {
-                return NotFound(new { message = "Role with given id doesn't exist"});
+                return NotFound(new { message = "Role with given id doesn't exist" });
             }
 
             if (member.RoleId == role.RoleId)
@@ -509,7 +517,7 @@ namespace Server.Controllers
             }
 
             member.RoleId = role.RoleId;
-            
+
             await _dbContext.SaveChangesAsync();
 
             var roleDTO = new RoleDTO
@@ -519,7 +527,16 @@ namespace Server.Controllers
                 IsDefault = role.IsDefault,
                 IsFallback = role.IsFallback
             };
-            
+
+            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+            {
+                Title = "Your role got changed!",
+                Description = "Your new role was set to " + roleDTO.Name,
+                MemberId = member.Id
+            };
+
+            await _notificationService.SendNotification(sendNotificationRequest);
+
             return Ok(roleDTO);
         }
 
@@ -541,7 +558,7 @@ namespace Server.Controllers
             }
 
             var generatedPassword = GenerateRandomPassword(6);
-            
+
             member.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
             member.RefreshToken = null;
             member.RefreshTokenExpiresAt = null;
@@ -549,7 +566,7 @@ namespace Server.Controllers
             member.PasswordTokenExpiresAt = null;
 
             await _dbContext.SaveChangesAsync();
-            
+
             var request = new EmailDTO
             {
                 To = member.Email,
@@ -579,6 +596,96 @@ namespace Server.Controllers
             var result = _emailService.SendEmail(request);
 
             return Ok(new { message = "Successfully reset password" });
+        }
+
+        [HttpGet("{memberId}/Notifications")]
+        public async Task<IActionResult> GetNotifications(int memberId)
+        {
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(memberId);
+
+            if (!isBearer)
+            {
+                return BadRequest(new { message = "You are not allowed to do this" });
+            }
+
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member does not exist with given id" });
+            }
+
+            var notifications = await _dbContext.Notifications.Where(n => n.MemberId == memberId)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToListAsync();
+            var notificationDtos = notifications.Select(n => new NotificationDTO
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Description = n.Description,
+                CreatedAt = n.CreatedAt,
+                IsRead = n.IsRead
+            });
+
+            return Ok(notificationDtos);
+        }
+
+        [HttpPut("{memberId}/Notifications")]
+        public async Task<IActionResult> ReadNotifications(int memberId, ReadNotificationsRequest request)
+        {
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(memberId);
+
+            if (!isBearer)
+            {
+                return BadRequest(new { message = "You are not allowed to do this" });
+            }
+
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member does not exist with given id" });
+            }
+
+            var notifications = await _dbContext.Notifications
+                .Where(n => n.MemberId == memberId && request.NotificationIds.Contains(n.Id))
+                .ToListAsync();
+
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
+        [HttpPost("{memberId}/Notifications")]
+        public async Task<IActionResult> DeleteNotifications(int memberId, DeleteNotificationsRequest request)
+        {
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(memberId);
+
+            if (!isBearer)
+            {
+                return BadRequest(new { message = "You are not allowed to do this" });
+            }
+
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member does not exist with given id" });
+            }
+
+            var notifications = await _dbContext.Notifications
+                .Where(n => n.MemberId == memberId && request.NotificationIds.Contains(n.Id))
+                .ToListAsync();
+
+            _dbContext.Notifications.RemoveRange(notifications);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

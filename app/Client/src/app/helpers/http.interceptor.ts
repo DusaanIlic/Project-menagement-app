@@ -7,9 +7,11 @@ import {Member} from "../models/member";
 import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
 import {ProgressBarService} from "../services/progress-bar.service";
+import {SignalRService} from "../services/signal-r.service";
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const signalRService = inject(SignalRService);
   const jwtToken = authService.getJwtToken();
 
   const cloned = req.clone({
@@ -29,7 +31,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
         console.log('Caught unauthorized error, attempting to refresh token...');
+        console.log('Stopping signalr')
         console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
+
+        signalRService.stopConnection();
 
         return authService.refreshJwtToken().pipe(
           switchMap((data) => {
@@ -49,6 +54,9 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
             authService.updateAuthenticatedMembersAvatar();
 
             console.log('Successfully refreshed token');
+            console.log('Starting signalr again');
+
+            signalRService.startConnection();
 
             const clonedReq = req.clone({
               setHeaders: {

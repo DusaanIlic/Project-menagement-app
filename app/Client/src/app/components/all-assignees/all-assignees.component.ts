@@ -29,6 +29,8 @@ import { MemberInfoComponent } from '../member-info/member-info.component';
 import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
 import { AddMembersToProjectComponent } from '../add-members-to-project/add-members-to-project.component';
 import {MatDivider} from "@angular/material/divider";
+import {AvatarComponent} from "../avatar/avatar.component";
+import {SignalRService} from "../../services/signal-r.service";
 
 @Component({
   selector: 'app-all-assignees',
@@ -52,7 +54,7 @@ import {MatDivider} from "@angular/material/divider";
     MatSelect,
     MatRadioButton,
     MatTableModule,
-    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
@@ -62,6 +64,7 @@ export class AllAssigneesComponent implements OnInit{
   selectedStatus: string = '';
   assignees : Member[] = [];
   filteredAssignees : Member[] = [];
+  onlineAssignees: Set<number> = new Set<number>();
   projectId : number = 0;
   searchTerm: string = '';
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
@@ -69,11 +72,10 @@ export class AllAssigneesComponent implements OnInit{
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private route: ActivatedRoute,
-              private pService : ProjectServiceGet,
-              private tService : TaskService,
-              private mService : MemberService,
-              public dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) { }
+  constructor(private route: ActivatedRoute, private pService : ProjectServiceGet,
+                private tService : TaskService, private mService : MemberService,
+                  public dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer,
+                    private signalRService: SignalRService) { }
 
 
 
@@ -83,6 +85,15 @@ export class AllAssigneesComponent implements OnInit{
       this.projectId = params['id'];
       this.fetchMembersOnProject();
       this.selectedStatus = 'allAssignees';
+    })
+
+    this.signalRService.getConnectedMemberIds().subscribe({
+      next: data => {
+        this.onlineAssignees = data;
+      },
+      error: err => {
+        console.log('failed fetching online members')
+      }
     })
   }
 

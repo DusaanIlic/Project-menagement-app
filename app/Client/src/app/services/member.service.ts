@@ -6,6 +6,7 @@ import {EditProfileForm} from "../forms/edit-profile.form";
 import { Member } from "../models/member";
 import { Role } from "../models/role";
 import { environment} from "../../environments/environment";
+import {Notification} from "../models/notification";
 
 const API = `${environment.apiUrl}/Member`;
 const API_ROLES = `${environment.apiUrl}/Role`;
@@ -90,5 +91,17 @@ export class MemberService {
 
   resetPassword(memberId: number) {
     return this.http.post(`${API}/${memberId}/ForcePasswordReset`, null);
+  }
+
+  getNotifications(memberId: number): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${API}/${memberId}/Notifications`);
+  }
+
+  readNotifications(memberId: number, notificationIds: number[]) {
+    return this.http.put(`${API}/${memberId}/Notifications`, { notificationIds });
+  }
+
+  deleteNotifications(memberId: number, notificationIds: number[]) {
+    return this.http.post(`${API}/${memberId}/Notifications`, { notificationIds });
   }
 }

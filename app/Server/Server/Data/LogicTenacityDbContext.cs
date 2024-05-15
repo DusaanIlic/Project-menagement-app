@@ -36,6 +36,7 @@ namespace Server.Data
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
         public DbSet<ProjectPriority> ProjectPriorities { get; set; }
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -233,6 +234,11 @@ namespace Server.Data
                 .HasMany(tc => tc.ProjectTaskCategories)
                 .WithOne(ptc => ptc.TaskCategory)
                 .HasForeignKey(pts => pts.TaskCategoryId);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Member)
+                .WithMany(m => m.Notifications)
+                .HasForeignKey(n => n.MemberId);
 
 
             modelBuilder.Entity<Permission>().HasData(

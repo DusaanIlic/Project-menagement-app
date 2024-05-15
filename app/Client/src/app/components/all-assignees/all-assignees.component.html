@@ -30,10 +30,12 @@
         <ng-container matColumnDef="avatar">
           <th mat-header-cell *matHeaderCellDef > AVATAR </th>
           <td mat-cell *matCellDef="let member">
-            <button mat-button>
-              <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar"
-                   height="30" width="30" alt="user-avatar" (click)="openMemberInfoDialog(member)">
-            </button>
+            <app-avatar [member]="member"
+                        [width]="30"
+                        [height]="30"
+                        [status]="onlineAssignees.has(member.id)">
+
+            </app-avatar>
           </td>
         </ng-container>
 
