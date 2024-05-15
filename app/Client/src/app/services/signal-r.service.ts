@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import {BehaviorSubject, Observable} from "rxjs";
 import { environment } from "../../environments/environment";
 import { AuthService } from "./auth.service";
 
@@ -8,10 +9,10 @@ import { AuthService } from "./auth.service";
 })
 export class SignalRService {
   private hubConnection: HubConnection;
-  private connectedMembers: Set<number>;
+  private connectedMembersSubject: BehaviorSubject<Set<number>>;
 
   constructor() {
-    this.connectedMembers = new Set<number>();
+    this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/SignalR`, {
         withCredentials: localStorage.getItem('jwt-token') != null,
@@ -31,21 +32,19 @@ export class SignalRService {
 
   private registerServerEvents() {
     this.hubConnection.on('MemberConnected', (memberId: number) => {
-      console.log('Member connected: ', memberId);
-      this.connectedMembers.add(memberId);
-      console.log('Current connected members: ', Array.from(this.connectedMembers));
+      const connectedMembers = this.connectedMembersSubject.getValue();
+      connectedMembers.add(memberId);
+      this.connectedMembersSubject.next(connectedMembers);
     });
 
     this.hubConnection.on('MemberDisconnected', (memberId: number) => {
-      console.log('Member disconnected: ', memberId);
-      this.connectedMembers.delete(memberId);
-      console.log('Current connected members: ', Array.from(this.connectedMembers));
+      const connectedMembers = this.connectedMembersSubject.getValue();
+      connectedMembers.delete(memberId);
+      this.connectedMembersSubject.next(connectedMembers);
     });
 
     this.hubConnection.on('ConnectedMembers', (memberIds: number[]) => {
-      console.log('Initial connected members: ', memberIds);
-      this.connectedMembers = new Set(memberIds);
-      console.log('Current connected members: ', Array.from(this.connectedMembers));
+      this.connectedMembersSubject.next(new Set(memberIds));
     });
   }
 
@@ -53,13 +52,18 @@ export class SignalRService {
     this.hubConnection
       .start()
       .then(() => console.log('SignalR connection started'))
-      .catch(err => console.log('Error while starting SignalR connection: ', err));
+      .catch(err => console.log('Error while starting SignalR connection'));
   }
 
   public stopConnection() {
     this.hubConnection
       .stop()
       .then(() => console.log('SignalR connection stopped'))
-      .catch(err => console.log('Error while stopping SignalR connection: ', err));
+      .catch(err => console.log('Error while stopping SignalR connection'));
+  }
+
+  // Method to get connected member IDs as an Observable
+  public getConnectedMemberIds(): Observable<Set<number>> {
+    return this.connectedMembersSubject.asObservable();
   }
 }
