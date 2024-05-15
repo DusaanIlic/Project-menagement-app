@@ -13,14 +13,14 @@
 
     <div
       *ngIf="!showForgotPasswordForm"
-      class="grow flex flex-col justify-center items-center gap-10"
+      class="grow flex flex-col justify-center items-center gap-4"
     >
       <div class="flex flex-col justify-center items-center gap-2 select-none">
         <h1 class="font-bold text-6xl">WELCOME</h1>
         <h2 class="text-2xl">Please login</h2>
       </div>
 
-      <div class="flex flex-col min-w-80 items-center justify-between gap-10">
+      <div class="flex flex-col min-w-80 items-center justify-between gap-4">
         <mat-form-field class="w-full">
           <mat-label class="select-none" for="email">Email</mat-label>
           <input
@@ -92,12 +92,12 @@
 
     <div
       *ngIf="showForgotPasswordForm"
-      class="grow flex flex-col justify-center items-center gap-10"
+      class="grow flex flex-col justify-center items-center gap-4"
     >
-      <div class="flex flex-col min-w-80 items-center justify-between gap-10">
+      <div class="flex flex-col min-w-80 items-center justify-between gap-4">
         <mat-form-field
           [formGroup]="forgotForm"
-          class="flex flex-col gap-2 w-full"
+          class="flex flex-col w-full"
         >
           <mat-label class="text-xl select-none" for="femail">Email</mat-label>
           <!--

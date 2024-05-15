@@ -1,5 +1,6 @@
 export interface taskPriority
 {
     taskPriorityId : number,
-    name: string
+    name: string,
+    color: string
 }

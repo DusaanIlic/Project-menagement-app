@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, Event, RouterLink} from "@angular/router";
 import {Member} from "../../models/member";
 import {ProjectServiceGet} from "../../services/project.service";
 import {TaskService} from "../../services/task.service";
@@ -28,6 +28,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MemberInfoComponent } from '../member-info/member-info.component';
 import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
 import { AddMembersToProjectComponent } from '../add-members-to-project/add-members-to-project.component';
+import {MatDivider} from "@angular/material/divider";
 
 @Component({
   selector: 'app-all-assignees',
@@ -51,7 +52,7 @@ import { AddMembersToProjectComponent } from '../add-members-to-project/add-memb
     MatSelect,
     MatRadioButton,
     MatTableModule,
-    MatRadioGroup, MatPaginatorModule, MatSortModule
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
@@ -63,7 +64,7 @@ export class AllAssigneesComponent implements OnInit{
   filteredAssignees : Member[] = [];
   projectId : number = 0;
   searchTerm: string = '';
-  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'status', 'date', 'action'];
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
@@ -101,7 +102,6 @@ export class AllAssigneesComponent implements OnInit{
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
-      console.log(data);
     })
   }
 
@@ -158,32 +158,8 @@ export class AllAssigneesComponent implements OnInit{
     });
   }
 
-  search(): void {
-    let searchTerm = this.searchTerm.toLowerCase().trim();
-    let filteredAssignees = [...this.filteredAssignees];
-
-    /*if (this.selectedStatus) {
-      switch (this.selectedStatus) {
-        case 'allStatuses':
-          filteredAssignees = filteredAssignees.filter(member => this.selectedStatus);
-          break;
-        default:
-          break;
-      }
-    }*/
-
-    if (searchTerm) {
-      filteredAssignees = filteredAssignees.filter(assignee =>
-        assignee.firstName.toLowerCase().includes(searchTerm) ||
-        assignee.lastName.toLowerCase().includes(searchTerm) ||
-        assignee.email.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredAssignees = this.assignees;
-    }
-
-    this.dataSource = filteredAssignees;
+  search(event: any): void {
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
   openMemberInfoDialog(member: Member): void {

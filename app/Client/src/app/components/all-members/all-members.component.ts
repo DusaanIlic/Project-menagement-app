@@ -35,13 +35,12 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
   imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger],
   providers: [DatePipe]
 })
-export class AllMembersComponent implements AfterViewInit{
-
-  selectedRole: string = '';
+export class AllMembersComponent implements OnInit, AfterViewInit{
+  selectedRole: number = 0;
+  defaultRole: number = 0;
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
-  searchTerm: string = '';
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date', 'actions'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
@@ -55,14 +54,13 @@ export class AllMembersComponent implements AfterViewInit{
     this.getMembersFromServer();
     this.getRolesFromServer();
     this.filterMembersByRole(this.selectedRole);
-    this.selectedRole = 'allMembers';
+    this.selectedRole = 0;
   }
 
   ngAfterViewInit(): void {
 
 
   }
-
 
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
@@ -72,21 +70,13 @@ export class AllMembersComponent implements AfterViewInit{
     }
   }
 
-  filterMembersByRole(role: string): void {
-    if (role === 'allMembers') {
-      this.dataSource = this.members;
-    } else {
-      this.dataSource = this.members.filter(member => this.getRoleName(member.roleId) === role);
-    }
+  filterMembersByRole(role: number): void {
+    this.dataSource.data = this.members.filter(member => role == 0 || member.roleId == role);
   }
 
   onRoleChange(event: any): void {
-    this.selectedRole = event.target.value;
+    this.selectedRole = event;
     this.filterMembersByRole(this.selectedRole);
-  }
-
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
   }
 
   getMembersFromServer(): void {
@@ -127,36 +117,9 @@ export class AllMembersComponent implements AfterViewInit{
 
 
 
-  search(): void {
-    let searchTerm = this.searchTerm.toLowerCase().trim();
-    let filteredMembers = [...this.filteredMembers];
-
-    if (this.selectedRole) {
-      switch (this.selectedRole) {
-        case 'allMembers':
-          break;
-        case 'administrators':
-        case 'projectManagers':
-        case 'workers':
-          filteredMembers = filteredMembers.filter(member => this.getRoleName(member.roleId) === this.selectedRole);
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (searchTerm) {
-      filteredMembers = filteredMembers.filter(member =>
-        member.firstName.toLowerCase().includes(searchTerm) ||
-        member.lastName.toLowerCase().includes(searchTerm) ||
-        member.email.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredMembers = this.members;
-    }
-
-    this.dataSource = filteredMembers;
+  search(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 
