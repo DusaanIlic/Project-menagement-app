@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
         this.projects = data;
         this.projectSource = new MatTableDataSource(this.projects);
         this.projectSource.sort = this.sort.toArray()[0];
-        this.projectSource.paginator = this.paginator.toArray()[1];
+        this.projectSource.paginator = this.paginator.toArray()[0];
       },
       error: error => {
         console.log('failed fetching project data');
