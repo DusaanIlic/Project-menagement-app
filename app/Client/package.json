@@ -20,7 +20,7 @@
     "@angular/platform-browser": "^17.2.0",
     "@angular/platform-browser-dynamic": "^17.2.0",
     "@angular/router": "^17.2.0",
-    "@microsoft/signalr": "^8.0.0",
+    "@microsoft/signalr": "^7.0.0",
     "@swimlane/ngx-charts": "^20.5.0",
     "@worktile/gantt": "^17.0.0-next.0",
     "angular-gantt": "^2.0.0-rc.1",
