@@ -3,13 +3,14 @@
     <mat-form-field class="w-96" subscriptSizing="dynamic">
       <mat-label class="select-none">
         <div class="flex items-center justify-between gap-2">
-          <p>Search</p>
+          <p>Search projects</p>
           <mat-icon class="scale-125">search</mat-icon>
         </div>
       </mat-label>
 
-      <input matInput (keyup)="search($event)">
+      <input matInput (input)="searchProj($event)">
     </mat-form-field>
+
 
     <mat-form-field subscriptSizing="dynamic">
       <mat-label class="select-none">Filter by status</mat-label>
@@ -71,18 +72,18 @@
 
     <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
   </div>
-  
+
   <div class="flex flex-row gap-5  mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 gap-5 w-4/5">
     <mat-form-field class="w-96" subscriptSizing="dynamic">
-      <mat-label>
-        <div class="flex items-center justify-between gap-2">
-          <p>Search Tasks</p>
-          <mat-icon class="scale-125">search</mat-icon>
-        </div>
-      </mat-label>
+    <mat-label class="select-none">
+      <div class="flex items-center justify-between gap-2">
+        <p>Search tasks</p>
+        <mat-icon class="scale-125">search</mat-icon>
+      </div>
+    </mat-label>
 
-      <input matInput [(ngModel)]="searchTasks" (input)="searchTas()">
-    </mat-form-field>
+    <input matInput (keyup)="searchTask($event)">
+  </mat-form-field>
 
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Filter by status</mat-label>

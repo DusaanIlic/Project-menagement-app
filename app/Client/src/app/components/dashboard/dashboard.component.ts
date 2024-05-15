@@ -134,25 +134,19 @@ export class DashboardComponent implements OnInit {
   }
   
   searchProj(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.projectSource.filter = filterValue.trim().toLowerCase();
+    const inputValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.projectSource.filterPredicate = (data: any, filter: string) => {
+      return data.projectName.toLowerCase().includes(filter);
+    };
+    this.projectSource.filter = inputValue === '' ? null : inputValue;
   }
 
-  
-
-  searchTas(): void {
-    let searchTerm = this.searchTasks.toLowerCase().trim();
-    let filteredTasks = [...this.tasks];
-
-    if (searchTerm) {
-      filteredTasks = filteredTasks.filter(task =>
-        task.taskName.toLowerCase().includes(searchTerm)
-      );
-    }
-    else{
-      filteredTasks = this.tasks;
-    }
-    this.taskSource = filteredTasks;
+  searchTask(event: Event): void {
+    const inputValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.taskSource.filterPredicate = (data: any, filter: string) => {
+    return data.taskName.toLowerCase().includes(filter);
+    };
+    this.taskSource.filter = inputValue === '' ? null : inputValue;
   }
 
   protected readonly data = data;
