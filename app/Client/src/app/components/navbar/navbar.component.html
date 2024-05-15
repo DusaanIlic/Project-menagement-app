@@ -11,12 +11,14 @@
 
   <span class="grow"></span>
 
-  <button mat-button [matMenuTriggerFor]="themeMenu" (click)="$event.stopPropagation()">
-    <div class="flex items-center justify-center gap-2">
-      <mat-icon>palette</mat-icon>
-      <p class="hidden sm:block">Themes</p>
+
+
+  <button mat-button (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-center">
+      <mat-icon matBadge="+3" matBadgeColor="warn">notifications</mat-icon>
     </div>
   </button>
+
 
   <button mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
     <div class="flex items-center justify-center">
@@ -35,6 +37,7 @@
   <a mat-menu-item routerLink="/members/{{member?.id}}">View Profile</a>
   <a mat-menu-item routerLink="/members/{{member?.id}}/edit">Edit Profile</a>
   <mat-divider></mat-divider>
+  <button mat-menu-item [matMenuTriggerFor]="themeMenu" (click)="$event.stopPropagation()">Themes</button>
   <a mat-menu-item (click)="logout()">Logout</a>
 </mat-menu>
 
@@ -74,4 +77,8 @@
         </mat-icon>
       </div>
     </mat-radio-group>
+</mat-menu>
+
+<mat-menu #notificationMenu>
+
 </mat-menu>

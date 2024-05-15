@@ -15,6 +15,7 @@ import {Option} from "@angular/cli/src/command-builder/utilities/json-schema";
 import {Theme} from "../../models/theme";
 import theme from "tailwindcss/defaultTheme";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {MatBadge} from "@angular/material/badge";
 
 @Component({
   selector: 'app-navbar',
@@ -36,6 +37,7 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     AsyncPipe,
     MatRadioButton,
     MatRadioGroup,
+    MatBadge,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'

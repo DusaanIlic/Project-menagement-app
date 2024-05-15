@@ -1,8 +1,7 @@
-import { Injectable } from "@angular/core";
-import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import {Injectable} from "@angular/core";
+import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel} from "@microsoft/signalr";
 import {BehaviorSubject, Observable} from "rxjs";
-import { environment } from "../../environments/environment";
-import { AuthService } from "./auth.service";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +48,10 @@ export class SignalRService {
   }
 
   public startConnection() {
+    if (this.hubConnection.state == HubConnectionState.Connected) {
+      return;
+    }
+
     this.hubConnection
       .start()
       .then(() => console.log('SignalR connection started'))
