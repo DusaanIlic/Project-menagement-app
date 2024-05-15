@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240511225547_Initial")]
+    [Migration("20240515184057_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 45, 975, DateTimeKind.Local).AddTicks(3234),
+                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 551, DateTimeKind.Local).AddTicks(1102),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$UdFr0TzP9tCSa0F9.DfA..yDChSzBW02Py2JXn8q1y1fMAAHDXy8O",
+                            Password = "$2a$10$vJ8QfE3WBOYNaMCf2SzDGeYH0rIirR7mDQ.2Dap22cmsDTgbRhAza",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 39, DateTimeKind.Local).AddTicks(8123),
+                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 615, DateTimeKind.Local).AddTicks(5439),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$fxJ4VPKnSlvTPDi1u6032upyc63zFvUk3Iid2BFTO6I7l7y0162QG",
+                            Password = "$2a$10$rMsgXYY0rKym2j1kUhgC3uZYQNkQspMwzm3dX6QA19pd2j8w9isQu",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 107, DateTimeKind.Local).AddTicks(3300),
+                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 681, DateTimeKind.Local).AddTicks(2250),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$mCXXfzk0RqD4L5NJyozLw.tJzM.8/dwW3bBPdQmyMTJ4wg1RVr67.",
+                            Password = "$2a$10$yuRdyRJyVYrPS5yedJl7jeqtIh0PpgZqUvfcCc/eiHJhok43CUZV2",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -214,6 +214,36 @@ namespace Server.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("MemberTasks");
+                });
+
+            modelBuilder.Entity("Server.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Server.Models.Permission", b =>
@@ -1192,6 +1222,17 @@ namespace Server.Migrations
                     b.Navigation("Task");
                 });
 
+            modelBuilder.Entity("Server.Models.Notification", b =>
+                {
+                    b.HasOne("Server.Models.Member", "Member")
+                        .WithMany("Notifications")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.HasOne("Server.Models.ProjectPriority", "Priority")
@@ -1407,6 +1448,8 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
                     b.Navigation("MemberProjects");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("ProjectsLead");
 

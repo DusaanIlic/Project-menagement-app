@@ -234,6 +234,11 @@ namespace Server.Data
                 .WithOne(ptc => ptc.TaskCategory)
                 .HasForeignKey(pts => pts.TaskCategoryId);
 
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Member)
+                .WithMany(m => m.Notifications)
+                .HasForeignKey(n => n.MemberId);
+
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global role" },
