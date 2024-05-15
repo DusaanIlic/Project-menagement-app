@@ -13,7 +13,7 @@ namespace Server.Hubs
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SignalRHub : Hub
     {
-        private static readonly Dictionary<long, List<string>> Connections = new Dictionary<long, List<string>>();
+        private static readonly Dictionary<int, List<string>> Connections = new();
         private readonly ILogger<SignalRHub> _logger;
 
         public SignalRHub(ILogger<SignalRHub> logger)
@@ -26,7 +26,7 @@ namespace Server.Hubs
             var memberId = GetMemberId();
             if (memberId != null)
             {
-                List<long> connectedMemberIds;
+                List<int> connectedMemberIds;
                 lock (Connections)
                 {
                     if (!Connections.ContainsKey(memberId.Value))
@@ -37,11 +37,10 @@ namespace Server.Hubs
                     connectedMemberIds = Connections.Keys.ToList();
                 }
 
-                _logger.LogInformation($"Member {memberId} connected with Connection ID: {Context.ConnectionId}");
+                _logger.LogInformation($"Member {memberId.Value} connected with Connection ID: {Context.ConnectionId}");
 
                 // Notify all clients about the new connection
                 await Clients.Others.SendAsync("MemberConnected", memberId.Value);
-
                 // Send the list of all connected members to the newly connected client
                 await Clients.Caller.SendAsync("ConnectedMembers", connectedMemberIds);
             }
@@ -80,7 +79,7 @@ namespace Server.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        private long? GetMemberId()
+        private int? GetMemberId()
         {
             var user = Context.User;
             if (user == null)
@@ -89,7 +88,7 @@ namespace Server.Hubs
             }
 
             var memberIdClaim = user.Claims.FirstOrDefault(claim => claim.Type == "Id");
-            if (memberIdClaim == null || !long.TryParse(memberIdClaim.Value, out var memberId))
+            if (memberIdClaim == null || !int.TryParse(memberIdClaim.Value, out var memberId))
             {
                 return null;
             }

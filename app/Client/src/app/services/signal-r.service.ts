@@ -1,15 +1,17 @@
-import {Injectable} from "@angular/core";
-import {HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
-import {environment} from "../../environments/environment";
-import {AuthService} from "./auth.service";
+import { Injectable } from "@angular/core";
+import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { environment } from "../../environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
   private hubConnection: HubConnection;
+  private connectedMembers: Set<number>;
 
   constructor() {
+    this.connectedMembers = new Set<number>();
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/SignalR`, {
         withCredentials: localStorage.getItem('jwt-token') != null,
@@ -21,26 +23,36 @@ export class SignalRService {
         transport: HttpTransportType.WebSockets
       })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
+      .configureLogging(LogLevel.Debug)  // Use Debug level for more detailed logging
       .build();
 
     this.registerServerEvents();
   }
 
   private registerServerEvents() {
-    this.hubConnection.on('MemberConnected', (connectionId: string) => {
-      console.log('Member connected: ', connectionId);
+    this.hubConnection.on('MemberConnected', (memberId: number) => {
+      console.log('Member connected: ', memberId);
+      this.connectedMembers.add(memberId);
+      console.log('Current connected members: ', Array.from(this.connectedMembers));
     });
 
-    this.hubConnection.on('MemberDisconnected', (connectionId: string) => {
-      console.log('Member disconnected: ', connectionId);
+    this.hubConnection.on('MemberDisconnected', (memberId: number) => {
+      console.log('Member disconnected: ', memberId);
+      this.connectedMembers.delete(memberId);
+      console.log('Current connected members: ', Array.from(this.connectedMembers));
+    });
+
+    this.hubConnection.on('ConnectedMembers', (memberIds: number[]) => {
+      console.log('Initial connected members: ', memberIds);
+      this.connectedMembers = new Set(memberIds);
+      console.log('Current connected members: ', Array.from(this.connectedMembers));
     });
   }
 
   public startConnection() {
     this.hubConnection
       .start()
-      .then(() => console.log('SignalR connectioned started'))
+      .then(() => console.log('SignalR connection started'))
       .catch(err => console.log('Error while starting SignalR connection: ', err));
   }
 
