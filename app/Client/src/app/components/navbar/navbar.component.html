@@ -36,8 +36,8 @@
   <mat-divider></mat-divider>
   <a mat-menu-item routerLink="/members/{{member?.id}}">View Profile</a>
   <a mat-menu-item routerLink="/members/{{member?.id}}/edit">Edit Profile</a>
-  <mat-divider></mat-divider>
   <button mat-menu-item [matMenuTriggerFor]="themeMenu" (click)="$event.stopPropagation()">Themes</button>
+  <mat-divider></mat-divider>
   <a mat-menu-item (click)="logout()">Logout</a>
 </mat-menu>
 

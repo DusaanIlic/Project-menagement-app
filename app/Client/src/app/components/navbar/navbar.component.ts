@@ -16,6 +16,7 @@ import {Theme} from "../../models/theme";
 import theme from "tailwindcss/defaultTheme";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatBadge} from "@angular/material/badge";
+import {SignalRService} from "../../services/signal-r.service";
 
 @Component({
   selector: 'app-navbar',
@@ -55,9 +56,11 @@ export class NavbarComponent implements OnInit {
   ];
 
   constructor(private authService: AuthService, private router: Router,
-                private themeService: ThemeService) { }
+                private themeService: ThemeService, private signalRService: SignalRService) { }
 
   ngOnInit() {
+    this.signalRService.startConnection();
+
     this.authService.getAuthenticatedMember().subscribe(member => {
       this.member = member;
     });

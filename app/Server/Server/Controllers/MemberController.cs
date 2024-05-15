@@ -12,9 +12,12 @@ using Server.Data;
 using Server.DataTransferObjects;
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.DataTransferObjects.Request;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.Member;
+using Server.DataTransferObjects.Request.Notification;
+using Server.Services.Notification;
 using Server.Services.Permission;
 
 namespace Server.Controllers
@@ -27,13 +30,17 @@ namespace Server.Controllers
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
         private readonly IPermissionService _permissionService;
+        private readonly INotificationService _notificationService;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, IFileService fileService, IPermissionService permissionService)
+        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService, 
+                                    IFileService fileService, IPermissionService permissionService,
+                                        INotificationService notificationService)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
             _permissionService = permissionService;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -519,6 +526,15 @@ namespace Server.Controllers
                 IsDefault = role.IsDefault,
                 IsFallback = role.IsFallback
             };
+
+            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+            {
+                Title = "Your role got changed!",
+                Description = "Your new role was set to " + roleDTO.Name,
+                MemberId = member.Id
+            };
+
+            await _notificationService.SendNotification(sendNotificationRequest);
             
             return Ok(roleDTO);
         }

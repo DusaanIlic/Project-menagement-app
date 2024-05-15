@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel} from "@microsoft/signalr";
 import {BehaviorSubject, Observable} from "rxjs";
 import {environment} from "../../environments/environment";
+import {Notification} from "../models/notification";
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,10 @@ export class SignalRService {
 
     this.hubConnection.on('ConnectedMembers', (memberIds: number[]) => {
       this.connectedMembersSubject.next(new Set(memberIds));
+    });
+
+    this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
+      console.log(notification);
     });
   }
 

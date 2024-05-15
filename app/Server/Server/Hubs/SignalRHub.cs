@@ -7,13 +7,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Server.DataTransferObjects.Request;
+using Server.Models;
 
 namespace Server.Hubs
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SignalRHub : Hub
     {
-        private static readonly Dictionary<int, List<string>> Connections = new();
+        public static readonly Dictionary<int, List<string>> Connections = new();
         private readonly ILogger<SignalRHub> _logger;
 
         public SignalRHub(ILogger<SignalRHub> logger)
@@ -78,7 +80,7 @@ namespace Server.Hubs
 
             await base.OnDisconnectedAsync(exception);
         }
-
+        
         private int? GetMemberId()
         {
             var user = Context.User;

@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 551, DateTimeKind.Local).AddTicks(1102),
+                            DateAdded = new DateTime(2024, 5, 15, 22, 30, 2, 886, DateTimeKind.Local).AddTicks(271),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$vJ8QfE3WBOYNaMCf2SzDGeYH0rIirR7mDQ.2Dap22cmsDTgbRhAza",
+                            Password = "$2a$10$/wX9Pc5da5mkPGdRwOc1kuQh8k/tYbSzHQHlmArCitDu6RCsBARZm",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 615, DateTimeKind.Local).AddTicks(5439),
+                            DateAdded = new DateTime(2024, 5, 15, 22, 30, 2, 952, DateTimeKind.Local).AddTicks(9986),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$rMsgXYY0rKym2j1kUhgC3uZYQNkQspMwzm3dX6QA19pd2j8w9isQu",
+                            Password = "$2a$10$9pPj93ZhXIw6PpogjgOPKeuZt7Q4WVyZxBBlv6RUXnDsX7fftLGGK",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 15, 20, 40, 56, 681, DateTimeKind.Local).AddTicks(2250),
+                            DateAdded = new DateTime(2024, 5, 15, 22, 30, 3, 20, DateTimeKind.Local).AddTicks(6018),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$yuRdyRJyVYrPS5yedJl7jeqtIh0PpgZqUvfcCc/eiHJhok43CUZV2",
+                            Password = "$2a$10$o4Fy6GcRZEbap6tVkFGTsu4z1Be7K3BB/JhkOB18KXCMTEmA0ilBi",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -240,7 +240,7 @@ namespace Server.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Server.Models.Permission", b =>

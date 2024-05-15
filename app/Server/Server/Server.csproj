@@ -35,7 +35,6 @@
     <None Remove="UploadedFiles\957ecf92-401d-4dad-81ad-fa9f910a0950.jpg" />
     <None Remove="UploadedFiles\8022953f-c2ed-4f35-9933-e7b25140f1c5.jpg" />
     <None Remove="UploadedFiles\a712239a-cdd9-4ca0-abf5-897492a80a69.jpg" />
-    <None Remove="mydatabase.db" />
   </ItemGroup>
 
 </Project>

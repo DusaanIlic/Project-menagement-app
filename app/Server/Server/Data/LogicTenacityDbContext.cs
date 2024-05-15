@@ -36,6 +36,7 @@ namespace Server.Data
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
         public DbSet<ProjectPriority> ProjectPriorities { get; set; }
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

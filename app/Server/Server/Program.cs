@@ -10,6 +10,7 @@ using Server.Models;
 using Server.Services.File;
 using Server.Services.Permission;
 using Server.Hubs;
+using Server.Services.Notification;
 
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -108,6 +109,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
