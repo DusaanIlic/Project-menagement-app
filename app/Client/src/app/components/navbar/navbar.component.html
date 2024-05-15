@@ -13,9 +13,11 @@
 
 
 
-  <button mat-button (click)="$event.stopPropagation()">
+  <button mat-button [matMenuTriggerFor]="notificationMenu" (click)="$event.stopPropagation(); clearNotifications()">
     <div class="flex items-center justify-center">
-      <mat-icon matBadge="+3" matBadgeColor="warn">notifications</mat-icon>
+      <mat-icon *ngIf="notifications.length === 0">notifications_none</mat-icon>
+      <mat-icon *ngIf="notifications.length !== 0 && notRead === 0">notifications</mat-icon>
+      <mat-icon *ngIf="notifications.length !== 0 && notRead !== 0" [matBadge]="notRead" matBadgeColor="warn">notifications_active</mat-icon>
     </div>
   </button>
 
@@ -79,6 +81,57 @@
     </mat-radio-group>
 </mat-menu>
 
-<mat-menu #notificationMenu>
+<mat-menu #notificationMenu class="p-2 w-[380px]">
+  <ng-container class="w-[600px]" *ngIf="notifications.length > 0; else noNotifications">
+    <div class="flex flex-col gap-4" (click)="$event.stopPropagation()">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center">
+          <p class="select-none font-bold">TODAY</p>
+          <span class="grow"></span>
+          <button mat-button>CLEAR</button>
+        </div>
 
+        <mat-divider class="w-full"></mat-divider>
+      </div>
+
+      <div *ngFor="let notification of notifications">
+        <div *ngIf="notification.createdAt.toDateString() === today.toDateString()">
+          <div class="flex flex-col">
+            <div class="flex items-center">
+              <p class="text-sm font-bold">{{notification.title}}</p>
+              <span class="grow"></span>
+              <button class="flex items-center justify-center"><mat-icon class="scale-75">close</mat-icon></button>
+            </div>
+            <p class="text-sm"><span class="font-bold">&#8226; </span>{{notification.createdAt | date : 'MM-yyyy'}}</p>
+            <p class="text-sm">{{notification.description}}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="flex items-center">
+        <p class="select-none font-bold">EARLIER</p>
+        <span class="grow"></span>
+      </div>
+
+      <mat-divider class="w-full"></mat-divider>
+
+      <div *ngFor="let notification of notifications">
+        <div *ngIf="notification.createdAt.toDateString() !== today.toDateString()">
+          <div class="flex flex-col">
+            <div class="flex items-center">
+              <p class="text-sm font-bold">{{notification.title}}</p>
+              <span class="grow"></span>
+              <button class="flex items-center justify-center"><mat-icon class="scale-75">close</mat-icon></button>
+            </div>
+            <p class="text-sm"><span class="font-bold">&#8226; </span>{{notification.createdAt | date : 'MM-yyyy'}}</p>
+            <p class="text-sm">{{notification.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noNotifications>
+    <button mat-menu-item disabled>No notifications</button>
+  </ng-template>
 </mat-menu>

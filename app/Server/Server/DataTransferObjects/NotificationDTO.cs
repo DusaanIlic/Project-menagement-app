@@ -5,6 +5,9 @@ namespace Server.DataTransferObjects.Request;
 public class NotificationDTO
 {
     [Required]
+    public int Id { get; set; }
+    
+    [Required]
     public String Title { get; set; }
     
     [Required]

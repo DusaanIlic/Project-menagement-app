@@ -38,6 +38,7 @@ public class NotificationService : INotificationService
         {
             NotificationDTO notificationDto = new NotificationDTO()
             {
+                Id = notification.Id,
                 Title = notification.Title,
                 Description = notification.Description,
                 CreatedAt = notification.CreatedAt,

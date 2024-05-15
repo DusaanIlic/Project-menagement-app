@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel} from "@microsoft/signalr";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, skipWhile} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
 
@@ -10,6 +10,7 @@ import {Notification} from "../models/notification";
 export class SignalRService {
   private hubConnection: HubConnection;
   private connectedMembersSubject: BehaviorSubject<Set<number>>;
+  private notificationSubject: BehaviorSubject<Notification | null> = new BehaviorSubject<Notification | null>(null);
 
   constructor() {
     this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
@@ -48,7 +49,8 @@ export class SignalRService {
     });
 
     this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
-      console.log(notification);
+      console.log('received notification');
+      this.notificationSubject.next(notification);
     });
   }
 
@@ -73,5 +75,11 @@ export class SignalRService {
   // Method to get connected member IDs as an Observable
   public getConnectedMemberIds(): Observable<Set<number>> {
     return this.connectedMembersSubject.asObservable();
+  }
+
+  public getNotification(): Observable<Notification | null> {
+    return this.notificationSubject.pipe(
+      skipWhile(notification => notification === null)
+    );
   }
 }

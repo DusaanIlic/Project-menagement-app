@@ -596,5 +596,20 @@ namespace Server.Controllers
 
             return Ok(new { message = "Successfully reset password" });
         }
+
+        [HttpGet("{memberId}/Notifications")]
+        public async Task<IActionResult> GetNotifications(int memberId)
+        {
+            var isBearer = await _permissionService.IsCurrentUserIdMatchAsync(memberId);
+
+            return Ok();
+        }
+
+        [HttpPut("{memberId}/Notifications")]
+        public async Task<IActionResult> ReadNotifications()
+        {
+
+            return Ok();
+        }
     }
 }
