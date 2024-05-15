@@ -28,6 +28,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {Task} from "../../models/task";
 import {TaskService} from "../../services/task.service";
 import { FormsModule } from '@angular/forms';
+import { ProjectStatus } from '../../models/project-status';
 
 @Component({
   selector: 'app-dashboard',
@@ -69,9 +70,13 @@ export class DashboardComponent implements OnInit {
   dataSource: any;
   tasks!: Task[];
 
+  selectedStatus: number = 0;
+  defaultStatus: number = 0;
+
   searchProjects: string = '';
   searchTasks: string = '';
-
+  projectStatuses !: ProjectStatus[];
+  
   memberId!: any;
 
   projectSource: any;
@@ -85,6 +90,11 @@ export class DashboardComponent implements OnInit {
 
   constructor(private authService: AuthService, private _liveAnnouncer: LiveAnnouncer,
                 private projectService: ProjectServiceGet, private taskService: TaskService) { }
+   
+  onStatusChange(event: any) {
+      this.selectedStatus = event;
+      this.projectSource.data = this.projects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
+  }
 
   ngOnInit(): void {
     this.memberId = this.authService.getAuthenticatedMembersId();
@@ -112,6 +122,15 @@ export class DashboardComponent implements OnInit {
         console.log('failed fetching task data');
       }
     });
+
+    this.projectService.getAllProjectStatuses().subscribe({
+      next: (data: ProjectStatus[]) => {
+        this.projectStatuses = data;
+      },
+      error: error => {
+        console.log('failed fetching project statuses');
+      }
+    })
   }
 
   searchProj(): void {
