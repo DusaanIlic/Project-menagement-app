@@ -8,7 +8,7 @@ namespace Server.Services.File
     {
         public Task<Models.File> PostFileAsync(int uploaderId, AddFileRequest fileData);
 
-        // public Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileData);
+        public Task<List<Models.File>> PostMultiFileAsync(int uploaderId, AddFilesRequest fileData);
 
         public Task<(byte[], string)> GetFileData(int fileId);
 

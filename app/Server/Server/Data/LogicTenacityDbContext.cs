@@ -15,7 +15,7 @@ namespace Server.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
-        public DbSet<ProjectTask> ProjectTasks{ get; set; }
+        public DbSet<ProjectTask> ProjectTasks { get; set; }
         public DbSet<ProjectTaskStatus> ProjectTaskStatuses { get; set; }
         public DbSet<TaskStatus> TaskStatuses { get; set; }
         public DbSet<TaskPriority> TaskPriority { get; set; }
@@ -23,7 +23,7 @@ namespace Server.Data
         public DbSet<TaskDependency> TaskDependencies { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
         public DbSet<File> Files { get; set; }
-        public DbSet<Role> Roles {  get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<TaskActivity> TaskActivities { get; set; }
@@ -36,6 +36,8 @@ namespace Server.Data
         public DbSet<ProjectProjectRole> ProjectProjectRoles { get; set; }
         public DbSet<ProjectPriority> ProjectPriorities { get; set; }
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
+        public DbSet<ProjectFile> ProjectFile { get; set; }
+
         public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,7 +50,7 @@ namespace Server.Data
                 .HasOne(m => m.Avatar)
                 .WithMany()
                 .HasForeignKey(m => m.AvatarId);
-                
+
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.ProjectStatus)
                 .WithMany(ps => ps.Projects)
@@ -153,12 +155,12 @@ namespace Server.Data
                 .HasMany(p => p.ProjectTaskStatuses)
                 .WithOne(pts => pts.Project)
                 .HasForeignKey(pts => pts.ProjectId);
-            
+
             modelBuilder.Entity<TaskStatus>()
                 .HasMany(ts => ts.ProjectTaskStatuses)
                 .WithOne(pts => pts.TaskStatus)
                 .HasForeignKey(pts => pts.TaskStatusId);
-            
+
             modelBuilder.Entity<TaskActivity>()
                 .HasOne(a => a.ProjectTask)
                 .WithMany(pt => pt.TaskActivities)
@@ -178,7 +180,7 @@ namespace Server.Data
                  .HasKey(mp => new { mp.MemberId, mp.ProjectId });
 
             modelBuilder.Entity<MemberProject>()
-                .HasOne(mp => mp.Member)    
+                .HasOne(mp => mp.Member)
                 .WithMany(m => m.MemberProjects)
                 .HasForeignKey(mp => mp.MemberId);
 
@@ -196,7 +198,7 @@ namespace Server.Data
                 .HasMany(pr => pr.ProjectRolePermissions)
                 .WithOne(prm => prm.ProjectRole)
                 .HasForeignKey(prm => prm.ProjectRoleId);
-            
+
             modelBuilder.Entity<ProjectPermission>()
                 .HasIndex(pp => pp.Name)
                 .IsUnique();
@@ -216,7 +218,7 @@ namespace Server.Data
                 .HasMany(p => p.ProjectProjectRoles)
                 .WithOne(pra => pra.Project)
                 .HasForeignKey(pra => pra.ProjectId);
-            
+
             modelBuilder.Entity<ProjectRole>()
                 .HasMany(pr => pr.ProjectProjectRoles)
                 .WithOne(pra => pra.ProjectRole)
@@ -234,6 +236,19 @@ namespace Server.Data
                 .HasMany(tc => tc.ProjectTaskCategories)
                 .WithOne(ptc => ptc.TaskCategory)
                 .HasForeignKey(pts => pts.TaskCategoryId);
+
+            modelBuilder.Entity<ProjectFile>()
+                 .HasKey(pf => new { pf.ProjectId, pf.FileId });
+
+            modelBuilder.Entity<ProjectFile>()
+                .HasOne(pf => pf.Project)
+                .WithMany(p => p.ProjectFiles)
+                .HasForeignKey(pf => pf.ProjectId);
+
+            modelBuilder.Entity<ProjectFile>()
+                .HasOne(pf => pf.File)
+                .WithMany()
+                .HasForeignKey(pf => pf.FileId);
 
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Member)
@@ -255,7 +270,7 @@ namespace Server.Data
                 new Member { Id = 2, FirstName = "Pera", LastName = "Peric", RoleId = 2, Password = BCrypt.Net.BCrypt.HashPassword("pera"), Email = "pera@gmail.com" },
                 new Member { Id = 3, FirstName = "Toma", LastName = "Tomic", RoleId = 3, Password = BCrypt.Net.BCrypt.HashPassword("toma"), Email = "toma@gmail.com" }
             );
-            
+
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Administrator", IsDefault = true },
                 new Role { RoleId = 2, RoleName = "Project Manager", IsDefault = true },
@@ -276,7 +291,7 @@ namespace Server.Data
                 new ProjectStatus { Id = 2, Status = "In Progress" },
                 new ProjectStatus { Id = 3, Status = "Closed" }
             );
-            
+
             modelBuilder.Entity<TaskStatus>().HasData(
                 new TaskStatus { Id = 1, Name = "New", IsDefault = true },
                 new TaskStatus { Id = 2, Name = "In Progress", IsDefault = true },
@@ -284,21 +299,21 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<TaskPriority>().HasData(
-                new TaskPriority { TaskPriorityId = 1, Name = "Low" , PriorityColorHex = "#00FF00" },
+                new TaskPriority { TaskPriorityId = 1, Name = "Low", PriorityColorHex = "#00FF00" },
                 new TaskPriority { TaskPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
-                new TaskPriority { TaskPriorityId = 3, Name = "High" , PriorityColorHex = "#FF0000" }
+                new TaskPriority { TaskPriorityId = 3, Name = "High", PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<ProjectPriority>().HasData(
                 new ProjectPriority { ProjectPriorityId = 1, Name = "Low", PriorityColorHex = "#00FF00" },
                 new ProjectPriority { ProjectPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
-                new ProjectPriority { ProjectPriorityId = 3, Name = "High" , PriorityColorHex = "#FF0000" }
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High", PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<TaskCategory>().HasData(
-                new TaskCategory { TaskCategoryID = 1, CategoryName = "None", IsDefault = true}
+                new TaskCategory { TaskCategoryID = 1, CategoryName = "None", IsDefault = true }
             );
-            
+
             modelBuilder.Entity<TaskActivityType>().HasData(
                 new TaskActivityType { TaskActivityTypeId = 1, TaskActivityName = "Review" },
                 new TaskActivityType { TaskActivityTypeId = 2, TaskActivityName = "Update" },

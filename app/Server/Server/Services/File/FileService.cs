@@ -17,7 +17,7 @@ namespace Server.Services.File
             _dbContext = dbContextClass;
             _configuration = configuration;
         }
-        
+
         public async Task<Models.File> PostFileAsync(int uploaderId, AddFileRequest addFileRequest)
         {
             var fileName = Guid.NewGuid() + Path.GetExtension(addFileRequest.FileDetails.FileName);
@@ -28,7 +28,7 @@ namespace Server.Services.File
             {
                 Directory.CreateDirectory(directory);
             }
-            
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await addFileRequest.FileDetails.CopyToAsync(stream);
@@ -47,12 +47,18 @@ namespace Server.Services.File
             return uploadedFile;
         }
 
-        public async Task PostMultiFileAsync(int uploaderId, List<AddFileRequest> fileDatas)
+        public async Task<List<Models.File>> PostMultiFileAsync(int uploaderId, AddFilesRequest fileDatas)
         {
-            foreach (var fileData in fileDatas)
+            var uploadedFiles = new List<Models.File>();
+
+            foreach (var fileData in fileDatas.Files)
             {
-                await PostFileAsync(uploaderId, fileData);
+                var addFileRequest = new AddFileRequest { FileDetails = fileData };
+                var uploadedFile = await PostFileAsync(uploaderId, addFileRequest);
+                uploadedFiles.Add(uploadedFile);
             }
+
+            return uploadedFiles;
         }
 
         public async Task<(byte[], string)> GetFileData(int fileId)
@@ -72,16 +78,16 @@ namespace Server.Services.File
             var fileContentBytes = System.IO.File.ReadAllBytes(file.FilePath);
             var fileExtension = Path.GetExtension(file.FilePath);
             var contentType = GetContentType(fileExtension);
-            
+
             return (fileContentBytes, contentType);
         }
 
         public async Task DeleteFile(int fileId)
         {
             var file = await _dbContext.Files.FindAsync(fileId);
-            
+
             System.IO.File.Delete(file.FilePath);
-            
+
             _dbContext.Remove(file);
             await _dbContext.SaveChangesAsync();
         }
@@ -90,7 +96,7 @@ namespace Server.Services.File
         public static string GetContentType(String fileExtension)
         {
             String contentType;
-            
+
             switch (fileExtension.ToLowerInvariant())
             {
                 case ".txt":
