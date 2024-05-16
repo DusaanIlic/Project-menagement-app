@@ -965,5 +965,35 @@ namespace Server.Controllers
             return Ok(new { message = "Files posted successfully." });
         }
 
+        [Authorize]
+        [HttpDelete("{id}/files/{fileId}")]
+        public async Task<IActionResult> DeleteAvatar(int id, int fileId)
+        {
+
+            var project = await dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found." });
+            }
+
+            var projectFile = await dbContext.ProjectFile
+                .FirstOrDefaultAsync(pf => pf.ProjectId == id && pf.FileId == fileId);
+
+            if (projectFile == null)
+            {
+                return NotFound(new { message = "File not found in project." });
+            }
+
+            dbContext.ProjectFile.Remove(projectFile);
+
+            project.ProjectFiles.Remove(projectFile);
+
+            await _fileService.DeleteFile(fileId);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "File deleted successfully." });
+        }
     }
 }
