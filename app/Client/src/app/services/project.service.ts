@@ -12,6 +12,7 @@ import {AddRoleForm} from "../forms/add-role.form";
 import {RoleMember} from "../models/role-member";
 import {ProjectStatus} from "../models/project-status";
 import {taskActivity} from "../models/taskActivity";
+import {ProjectPriority} from "../models/project-priority";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -96,8 +97,8 @@ export class ProjectServiceGet{
     return this.http.get<RoleMember[]>(`${PROJECT_API}/${projectId}/Roles/${roleId}/Members`);
   }
 
-  getProjectPriorities() {
-    return this.http.get(PROJECT_PRIORITY);
+  getProjectPriorities(): Observable<ProjectPriority[]> {
+    return this.http.get<ProjectPriority[]>(PROJECT_PRIORITY);
   }
 
   addProject(projectData: any) {
