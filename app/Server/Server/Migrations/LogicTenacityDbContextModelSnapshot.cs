@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 871, DateTimeKind.Local).AddTicks(2517),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 36, 975, DateTimeKind.Local).AddTicks(8279),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$QyAu36huU7zZhTXQB4oTCOlkXxHdCvMtlEIUcO1uwGWvDHkutkU0G",
+                            Password = "$2a$10$k0NTtMfSrlqQWQvE6yLeK.sc4QO82xCGnzOrKpdAP3j9B7ihvDS5G",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 933, DateTimeKind.Local).AddTicks(5170),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 37, 84, DateTimeKind.Local).AddTicks(4098),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$xgA8jCzkT0Kb6DNEmb9vqubJEX7OSXp1h6ar8ino.I/QKa64vl8zu",
+                            Password = "$2a$10$C/I1lZyygFZFTMrCNPj.eOMEy2b4G.3TbPGOZKJ3YnM2couhmdHSa",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 4, 24, 21, 14, 17, 996, DateTimeKind.Local).AddTicks(1226),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 37, 181, DateTimeKind.Local).AddTicks(5154),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$mtqtYllhFMiHqqu3O9/0wOr5vjSnOj1WVZnpANxUAMYfJZCpMED8e",
+                            Password = "$2a$10$GO39f1jzz1PsF8BTd.JRduOed/raQ5UJwdgFwKjLzcMCp4zGrcRQi",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -296,6 +296,21 @@ namespace Server.Migrations
                     b.HasIndex("TeamLeaderId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectFile", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FileId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProjectId", "FileId");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("ProjectFile");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectPermission", b =>
@@ -1184,6 +1199,25 @@ namespace Server.Migrations
                     b.Navigation("TeamLeader");
                 });
 
+            modelBuilder.Entity("Server.Models.ProjectFile", b =>
+                {
+                    b.HasOne("Server.Models.File", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Project", "Project")
+                        .WithMany("ProjectFiles")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
                 {
                     b.HasOne("Server.Models.Project", "Project")
@@ -1392,6 +1426,8 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.Navigation("MemberProjects");
+
+                    b.Navigation("ProjectFiles");
 
                     b.Navigation("ProjectProjectRoles");
 
