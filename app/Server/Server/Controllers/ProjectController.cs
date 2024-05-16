@@ -933,5 +933,37 @@ namespace Server.Controllers
 
             return Ok(projectFiles);
         }
+
+        [Authorize]
+        [HttpPost("{id}/files")]
+        public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
+        {
+            var project = await dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found." });
+            }
+
+            // Add permissions
+
+            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                var projectFile = new ProjectFile
+                {
+                    ProjectId = id,
+                    FileId = uploadedFile.FileId
+                };
+                project.ProjectFiles.Add(projectFile);
+
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Files posted successfully." });
+        }
+
     }
 }
