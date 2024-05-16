@@ -116,8 +116,9 @@ export class MemberOverviewComponent implements OnInit{
 
   openDialog(task: Task): void {
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: task.taskId
+      width: '800px',
+      height: '700px',
+      data: task
     });
 
     dialogRef.afterClosed().subscribe(result => {

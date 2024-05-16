@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Task } from '../../models/task';
 import { NgxEditorModule, Editor } from 'ngx-editor';
 import { TaskService } from '../../services/task.service';
@@ -14,50 +14,46 @@ import { Member } from '../../models/member';
 import { Project } from '../../models/project';
 import { taskActivityType } from '../../models/taskActivityType';
 import { DomSanitizer } from '@angular/platform-browser';
-import {MatButton} from "@angular/material/button";
+import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {EditMemberComponent} from "../edit-member/edit-member.component";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
 import { MemberInfoComponent } from '../member-info/member-info.component';
-import {forkJoin, Subscription, switchMap} from "rxjs";
+import {concatMap, forkJoin, Subscription, switchMap} from "rxjs";
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatIcon} from "@angular/material/icon";
+import {MatInput} from "@angular/material/input";
+import {MatListItem, MatNavList} from "@angular/material/list";
+import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/material/sidenav";
+import {MatTab, MatTabGroup} from "@angular/material/tabs";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatButtonToggle} from "@angular/material/button-toggle";
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule, NgToastModule, MatButton, MatMenu, MatMenuItem],
+  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule, NgToastModule, MatButton, MatMenu, MatMenuItem, MatAnchor, MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
 export class TaskOverviewComponent implements OnInit{
 
-  lead: any;
 
-  project : any;
-
-
+    project : any;
     activitiesForThisTask : taskActivity[] = [];
-    membersOnThisProject : Member[] = [];
-    commentText = "";
     activities : taskActivity[] = [];
     editor: Editor = new Editor;
-    editor1: Editor = new Editor;
     taskActivityDesc: any;
     description: any;
-    descriptionForP : any;
-    task : any;
-
-    depTasks : Task[] = [];
-
     selectedType: any;
-    allTypes : taskActivityType[] = [];
-
-
     show: any;
     showEditorForDesc: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
-              @Inject(MAT_DIALOG_DATA) public taskId: number,
+              @Inject(MAT_DIALOG_DATA) public task: Task,
               private tService : TaskService,
               private mService : MemberService,
               private _ngToastService: NgToastService,
@@ -66,83 +62,8 @@ export class TaskOverviewComponent implements OnInit{
 
   ngOnInit()
   {
-    this.show = 'overview';
-    this.taskActivityDesc = "";
-    this.selectedType = "-1"
+    this.show = 'overview'
 
-
-    this.tService.getTaskById(this.taskId).pipe(
-      switchMap(task =>{
-        this.task = task;
-        this.description = this.task.taskDescription;
-        this.descriptionForP = this.sanitizer.bypassSecurityTrustHtml(this.task.taskDescription) as string
-
-        return this.pService.getProjectById(this.task.projectId).pipe(
-          switchMap(project => {
-            this.project = project;
-
-            return this.pService.getMembersByProjectId(this.task.projectId).pipe(
-              switchMap(members =>{
-                this.membersOnThisProject = members
-
-                return this.tService.getTaskActivityType().pipe(
-                  switchMap(data => {
-                    this.allTypes = data;
-
-                    return this.tService.getTaskActivities().pipe(
-                      switchMap(taskActivities =>{
-                        this.activities = taskActivities
-                        console.log(taskActivities)
-                        this.activitiesForThisTask = [];
-
-                        const observables = [];
-
-                        for (let i = 0; i < taskActivities.length; i++) {
-                          const memberObservable = this.mService.getMemberById(this.activities[i].workerId);
-                          const taskObservable = this.tService.getTaskActivityName(this.activities[i].taskActivityTypeId);
-
-                          observables.push(memberObservable);
-                          observables.push(taskObservable);
-                        }
-
-                        return forkJoin(observables).pipe(
-                          switchMap((results : any) => {
-
-                            // Use results to update tasks
-                            for (let i = 0; i < taskActivities.length; i++) {
-
-                              if(this.activities[i].taskId == this.task.taskId)
-                              {
-                                this.activities[i].differenceH = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 3600));
-                                this.activities[i].differenceM = Math.trunc((new Date().getTime() - new Date(this.activities[i].dateModify).getTime()) / (1000 * 60));
-
-                                const memberIndex = i * 2;
-                                this.activities[i].memberName = results[memberIndex].firstName + " " + results[memberIndex].lastName;
-
-                                const taskActivityIndex = memberIndex + 1;
-                                this.activities[i].taskActivityName = results[taskActivityIndex].taskActivityTypeName;
-
-                                this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
-
-                                this.activitiesForThisTask.push(this.activities[i])
-                              }
-
-
-                            }
-                            console.log(this.activities)
-                            return this.activities;
-                          })
-                        );
-                      })
-                    )
-                  })
-                )
-              })
-            )
-          })
-        )
-      })
-    ).subscribe()
   }
 
   fetchTaskActivities() : void
@@ -307,7 +228,7 @@ export class TaskOverviewComponent implements OnInit{
 
     if(event.target.checked) // assign
     {
-      this.tService.assignMembersToTask(this.taskId, membersList).subscribe({
+      this.tService.assignMembersToTask(this.task.taskId, membersList).subscribe({
         next : data =>{
           console.log("Assigned to task!");
         },
@@ -318,7 +239,7 @@ export class TaskOverviewComponent implements OnInit{
     }
     else //remove
     {
-      this.tService.removeMemberFromTask(this.taskId, memberId ).subscribe({
+      this.tService.removeMemberFromTask(this.task.taskId, memberId ).subscribe({
         next : data =>{
           console.log("Removed from task!");
         },
