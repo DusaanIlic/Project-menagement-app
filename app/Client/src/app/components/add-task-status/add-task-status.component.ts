@@ -1,29 +1,55 @@
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardHeader, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel, MatError, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatToolbar } from '@angular/material/toolbar';
+import { FormGroup } from 'smart-webcomponents-angular';
 
 @Component({
   selector: 'app-add-task-status',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgToastModule],
+  imports: [FormsModule, CommonModule, NgToastModule, MatButton, MatDialogModule,
+    MatIcon,
+    MatToolbar,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatCardActions,
+    ReactiveFormsModule,
+    MatError, MatFormFieldModule, MatSelectModule],
   templateUrl: './add-task-status.component.html',
   styleUrl: './add-task-status.component.scss'
 })
 export class AddTaskStatusComponent implements OnInit{
   taskStatusName: string = '';
   projectId!: number;
+  taskStatusForm!: FormGroup;
+  tasks= new FormControl('');
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute){}
+  constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, 
+              private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute, private fb: FormBuilder){}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
+
   }
 
   getProjectIdFromRoute(){
@@ -41,10 +67,7 @@ export class AddTaskStatusComponent implements OnInit{
   }
 
   saveTaskStatus(): void {
-    if (!this.taskStatusName.trim()) {
-      this._ngToastService.error({ detail: 'Status name cannot be empty.', duration: 3000 });
-      return;
-    }
+  
 
     this.taskService.addTaskStatus(this.projectId, this.taskStatusName).subscribe(
       (response) => {

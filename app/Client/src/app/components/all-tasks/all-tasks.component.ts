@@ -1,16 +1,16 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {CommonModule, NgIf, NgOptimizedImage} from "@angular/common";
-import { AddTaskComponent } from '../add-task/add-task.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { TaskService } from '../../services/task.service';
-import { catchError, map } from 'rxjs/operators';
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { ActivatedRoute } from '@angular/router';
-import { Task } from '../../models/task';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { FormsModule } from '@angular/forms';
-import { TaskOverviewComponent } from '../task-overview/task-overview.component';
+import {AddTaskComponent} from '../add-task/add-task.component';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {TaskService} from '../../services/task.service';
+import {catchError, map} from 'rxjs/operators';
+import {NgToastModule, NgToastService} from 'ng-angular-popup';
+import {ActivatedRoute} from '@angular/router';
+import {Task} from '../../models/task';
+import {MatButtonModule} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
+import {FormsModule} from '@angular/forms';
+import {TaskOverviewComponent} from '../task-overview/task-overview.component';
 import {ProjectServiceGet} from "../../services/project.service";
 import {taskCategory} from "../../models/taskCategory";
 import {environment} from "../../../environments/environment";
@@ -20,6 +20,13 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule, Sort} from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
+import {MatDivider} from "@angular/material/divider";
+import {taskPriority} from "../../models/taskPriority";
+import {TaskStatus} from "../../models/task-status";
 
 
 @Component({
@@ -41,20 +48,29 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     MatOption,
     MatSelect,
     MatRadioGroup,
-    MatRadioButton
+    MatRadioButton,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDivider
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
 })
-export class AllTasksComponent {
-  todo: Task[] = [];
-  progress: Task[] = [];
-  done: Task[] = [];
+export class AllTasksComponent implements OnInit {
+  taskPriorities!: taskPriority[];
+  taskStatuses!: TaskStatus[];
   projectId: number = 0;
-  allTasks: Task[] = []
+  allTasks: Task[] = [];
   taskCategories : taskCategory[] = [];
-  visible : boolean[] = []
-  tableSel: string = 't1';
+  defaultStatus: number = 0;
+  selectedStatus: number = 0;
+  defaultPriority: number = 0;
+  selectedPriority: number = 0;
+  displayedColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskStatus', 'taskPriorityName','action'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
@@ -62,13 +78,11 @@ export class AllTasksComponent {
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
               private tService : TaskService,
-              private pService : ProjectServiceGet){}
+              private pService : ProjectServiceGet, private _liveAnnouncer: LiveAnnouncer){}
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
     this.loadTasksByProject(this.projectId);
-    for(let i=0;i<this.taskCategories.length;i++)
-      this.visible.push(false)
   }
 
   openDialog(): void{
@@ -78,19 +92,26 @@ export class AllTasksComponent {
     });
 
     dialogRef.componentInstance.taskAdded.subscribe(() => {
-      this.loadTasksByProject(this.projectId); // Ponovo učitava zadatke nakon dodavanja novog zadatka
+      this.loadTasksByProject(this.projectId);
     });
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   loadTasksByProject(projectId: number): void {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          console.log(data)
           this.allTasks = data
-          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
+          this.dataSource = new MatTableDataSource(data)
+          this.dataSource.paginator = this.paginator
+          this.dataSource.sort = this.sort;
           this.getAllTaskCategoriesOnProject()
         return data;
         }),
@@ -102,6 +123,24 @@ export class AllTasksComponent {
       .subscribe(() => {
         this.cdr.detectChanges();
       });
+
+    this.taskService.getTaskPriorities().subscribe({
+      next: (data: taskPriority[]) => {
+        this.taskPriorities = data;
+      },
+      error: error => {
+        console.log('failed fetching task priorities');
+      }
+    });
+
+    this.taskService.getTaskStatusesByProject(this.projectId).subscribe({
+      next: (data: TaskStatus[]) => {
+        this.taskStatuses = data;
+      },
+      error: err => {
+        console.log('failed fetching task statuses');
+      }
+    })
   }
 
   getProjectIdFromRoute(){
@@ -110,8 +149,8 @@ export class AllTasksComponent {
     });
   }
 
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+  search(event: Event): void {
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
   openDialogOverview(taskId : number)
@@ -156,12 +195,22 @@ export class AllTasksComponent {
     })
   }
 
-
-  showNHide(i: number)
-  {
-    this.visible[i] = !this.visible[i];
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
   }
 
+  onPriorityFilterChange(event: any) {
+    this.selectedPriority = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.allTasks.filter(task =>
+      (this.selectedStatus == this.defaultStatus || this.selectedStatus == task.taskStatusId) &&
+        (this.selectedPriority == this.defaultPriority || this.selectedPriority == task.taskPriorityId)
+    );
+  }
 
   protected readonly environment = environment;
 }

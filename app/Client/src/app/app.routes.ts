@@ -15,6 +15,7 @@ import {ProjectOverviewComponent} from "./components/project-overview/project-ov
 import {ProjectGanttComponent} from "./components/project-gantt/project-gantt.component";
 import {MainComponent} from "./components/main/main.component";
 import {NotFoundComponent} from "./components/not-found/not-found.component";
+import {ProjectAnalyticsComponent} from "./components/project-analytics/project-analytics.component";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -43,6 +44,7 @@ export const routes: Routes = [
           { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
           { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
           { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
+          { path: 'analytics', component: ProjectAnalyticsComponent, canActivate: [AuthGuard] },
         ]
       }
     ]

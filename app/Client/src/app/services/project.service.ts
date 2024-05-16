@@ -10,6 +10,9 @@ import {Permission} from "../models/permission";
 import {UpdateRoleForm} from "../forms/update-role.form";
 import {AddRoleForm} from "../forms/add-role.form";
 import {RoleMember} from "../models/role-member";
+import {ProjectStatus} from "../models/project-status";
+import {taskActivity} from "../models/taskActivity";
+import {ProjectPriority} from "../models/project-priority";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -22,6 +25,10 @@ export class ProjectServiceGet{
 
   getAllProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${PROJECT_API}`);
+  }
+
+  getRecentActivity(projectId: number): Observable<any[]>{
+    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/Latest`);
   }
 
   deleteProjectById(id? : number): Observable<any[]>
@@ -90,8 +97,8 @@ export class ProjectServiceGet{
     return this.http.get<RoleMember[]>(`${PROJECT_API}/${projectId}/Roles/${roleId}/Members`);
   }
 
-  getProjectPriorities() {
-    return this.http.get(PROJECT_PRIORITY);
+  getProjectPriorities(): Observable<ProjectPriority[]> {
+    return this.http.get<ProjectPriority[]>(PROJECT_PRIORITY);
   }
 
   addProject(projectData: any) {
@@ -100,6 +107,15 @@ export class ProjectServiceGet{
 
   getAllProjectsWhereMemberIsAssigned(memberId: number) {
     return this.http.get<Project[]>(`${PROJECT_API}/Member/${memberId}`);
+  }
+
+  getAllProjectStatuses() {
+    return this.http.get<ProjectStatus[]>(`${PROJECT_API}/Status`);
+  }
+
+  getAllActivitiesInLastTwoWeeks(projectId: number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${PROJECT_API}/${projectId}/taskActivities/activitiesCountByDateLastTwoWeeks`);
   }
 }
 

@@ -38,6 +38,7 @@ namespace Server.Data
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
         public DbSet<ProjectFile> ProjectFile { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -249,6 +250,10 @@ namespace Server.Data
                 .WithMany()
                 .HasForeignKey(pf => pf.FileId);
 
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Member)
+                .WithMany(m => m.Notifications)
+                .HasForeignKey(n => n.MemberId);
 
 
             modelBuilder.Entity<Permission>().HasData(
@@ -256,7 +261,8 @@ namespace Server.Data
                 new Permission { PermissionId = 2, PermissionName = "Add member" },
                 new Permission { PermissionId = 3, PermissionName = "Edit member" },
                 new Permission { PermissionId = 4, PermissionName = "Deactivate member" },
-                new Permission { PermissionId = 5, PermissionName = "Create project" }
+                new Permission { PermissionId = 5, PermissionName = "Create project" },
+                new Permission { PermissionId = 6, PermissionName = "Change project deadline" }
             );
 
             modelBuilder.Entity<Member>().HasData(
@@ -276,13 +282,14 @@ namespace Server.Data
                 new RolePermission { RoleId = 1, PermissionId = 2 },
                 new RolePermission { RoleId = 1, PermissionId = 3 },
                 new RolePermission { RoleId = 1, PermissionId = 4 },
-                new RolePermission { RoleId = 2, PermissionId = 5 }
+                new RolePermission { RoleId = 2, PermissionId = 5 },
+                new RolePermission { RoleId = 2, PermissionId = 6 }
             );
 
             modelBuilder.Entity<ProjectStatus>().HasData(
                 new ProjectStatus { Id = 1, Status = "In Preparation" },
-                new ProjectStatus { Id = 2, Status = "Closed" },
-                new ProjectStatus { Id = 3, Status = "In Progress" }
+                new ProjectStatus { Id = 2, Status = "In Progress" },
+                new ProjectStatus { Id = 3, Status = "Closed" }
             );
 
             modelBuilder.Entity<TaskStatus>().HasData(
@@ -292,15 +299,15 @@ namespace Server.Data
             );
 
             modelBuilder.Entity<TaskPriority>().HasData(
-                new TaskPriority { TaskPriorityId = 1, Name = "Low" },
-                new TaskPriority { TaskPriorityId = 2, Name = "Medium" },
-                new TaskPriority { TaskPriorityId = 3, Name = "High" }
+                new TaskPriority { TaskPriorityId = 1, Name = "Low", PriorityColorHex = "#00FF00" },
+                new TaskPriority { TaskPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
+                new TaskPriority { TaskPriorityId = 3, Name = "High", PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<ProjectPriority>().HasData(
-                new ProjectPriority { ProjectPriorityId = 1, Name = "Low" },
-                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium" },
-                new ProjectPriority { ProjectPriorityId = 3, Name = "High" }
+                new ProjectPriority { ProjectPriorityId = 1, Name = "Low", PriorityColorHex = "#00FF00" },
+                new ProjectPriority { ProjectPriorityId = 2, Name = "Medium", PriorityColorHex = "#FFFF00" },
+                new ProjectPriority { ProjectPriorityId = 3, Name = "High", PriorityColorHex = "#FF0000" }
             );
 
             modelBuilder.Entity<TaskCategory>().HasData(
@@ -342,7 +349,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 20, Name = "Change project priority" },
                 new ProjectPermission { Id = 21, Name = "Change task category" },
                 new ProjectPermission { Id = 22, Name = "Add task status" },
-                new ProjectPermission { Id = 23, Name = "Remove task status" }
+                new ProjectPermission { Id = 23, Name = "Remove task status" },
+                new ProjectPermission { Id = 24, Name = "Change deadline" }
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
@@ -361,22 +369,18 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 12 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 13 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 14 },
-                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 15 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 16 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 18 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 19 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 20 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 21 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 22 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 23 },
-                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 }
-            );
-
-
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 });
         }
     }
 }

@@ -5,6 +5,13 @@ import {ImageCropperModule} from "ngx-image-cropper";
 import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { DomSanitizer } from '@angular/platform-browser';
 import {NgIf, NgOptimizedImage} from "@angular/common";
+import {MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
+import {MemberService} from "../../services/member.service";
+import {NgToastService} from "ng-angular-popup";
+import {AuthService} from "../../services/auth.service";
 
 
 @Component({
@@ -13,28 +20,35 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
   imports: [
     ImageCropperModule,
     NgOptimizedImage,
-    NgIf
+    NgIf,
+    MatButton,
+    MatIcon,
+    MatToolbar,
+    MatCardContent,
+    MatCard,
+    MatCardActions
   ],
   templateUrl: './add-avatar.component.html',
   styleUrl: './add-avatar.component.scss'
 })
 export class AddAvatarComponent {
-  imageChangedEvent: any = '';
+  selectedFile: any = '';
   croppedImage: any = '';
+  memberId: any;
 
-  constructor(public dialogRef: MatDialogRef<EditMemberComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-                private sanitizer: DomSanitizer) {
+  constructor(public dialogRef: MatDialogRef<EditMemberComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any, private sanitizer: DomSanitizer,
+              private memberService: MemberService, private ngToastService: NgToastService,
+              private authService: AuthService) {
+    this.selectedFile = data.file;
+    this.memberId = data.memberId;
   }
 
-  fileChangeEvent(event: any): void {
-    this.imageChangedEvent = event;
-  }
   imageCropped(event: ImageCroppedEvent) {
-    if (event.objectUrl != null) {
-      this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
-    }
-    // event.blob can be used to upload the cropped image
+    this.croppedImage = event.blob;
+    console.log(this.croppedImage);
   }
+
   imageLoaded(image: LoadedImage) {
     // show cropper
   }
@@ -43,5 +57,30 @@ export class AddAvatarComponent {
   }
   loadImageFailed() {
     // show message
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
+
+  uploadAvatar() {
+    this.memberService.setAvatar(this.memberId, this.croppedImage).subscribe({
+      next: data => {
+        this.ngToastService.success({
+          detail: 'Success',
+          summary: 'Successfully changed avatar.'
+        });
+
+        this.authService.updateAuthenticatedMembersAvatar();
+
+        this.closeDialog();
+      },
+      error: err => {
+        this.ngToastService.error({
+          detail: 'Error',
+          summary: err.statusText
+        });
+      }
+    });
   }
 }

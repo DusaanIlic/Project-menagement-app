@@ -4,7 +4,7 @@ import { CommonModule, NgFor } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Observable} from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { FormControl, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,9 +19,14 @@ import { ProjectServiceGet } from '../../services/project.service';
 import { DatePipe } from '@angular/common';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Member } from '../../models/member';
+import { MemberInfoComponent } from '../member-info/member-info.component';
+import { MatCardModule } from '@angular/material/card';
+import {environment} from "../../../environments/environment";
+import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 
 @Component({
   selector: 'app-project-kanban',
@@ -30,14 +35,15 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
   imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent]
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule]
 })
 
 export class ProjectKanbanComponent implements OnInit {
   todo: any[] = [];
   progress: any[] = [];
   done: any[] = [];
-  dropList: any[] = ['todo', 'progress', 'done'];
+  dropList: any[] = ['to do', 'progress', 'done'];
+  redosled: any[] = [];
   newStatuses: any[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
@@ -55,7 +61,9 @@ export class ProjectKanbanComponent implements OnInit {
     this.getProjectIdFromRoute();
     this.dropList.forEach(column => {
       this.columnVisibility[column] = true;
-  });
+      this.redosled.push(column);
+    });
+    console.log("Redosled kolona: " + this.redosled);
   }
 
 
@@ -72,11 +80,12 @@ export class ProjectKanbanComponent implements OnInit {
     }, error => {
       console.error('Greška prilikom dobijanja podataka o projektu:', error);
     });
-}
+  }
 
   getProjectByIdFromRoute(): void {
     this.route.params.subscribe(params => {
       const projectId = params['id'];
+      console.log(params);
       if (projectId) {
         this.projectService.getProjectById(projectId)
           .subscribe((data: any) => {
@@ -111,6 +120,16 @@ export class ProjectKanbanComponent implements OnInit {
       });
   }
 
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
+  }
+
   getProjectIdFromRoute(): any{
     this.route.params.subscribe(params => {
       this.projectId = params['id'];
@@ -121,35 +140,7 @@ export class ProjectKanbanComponent implements OnInit {
     });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-        const taskId = event.item.data.taskId;
-        const newColumn = event.container.id;
-        const newStatusId = this.getStatusIdFromColumnName(newColumn);
 
-        if (event.container.data.length === 0) {
-            event.container.data.push(event.previousContainer.data[event.previousIndex]);
-        } else {
-            transferArrayItem(
-                event.previousContainer.data,
-                event.container.data,
-                event.previousIndex,
-                event.currentIndex,
-            );
-        }
-
-        this.updateTaskStatus(taskId, newStatusId)
-            .subscribe(
-                () => {
-                  this.loadTasksByProject(this.projectId);
-                  //console.log('Task status updated successfully.')
-                },
-                error => console.error('Error updating task status:', error)
-            );
-    }
-}
 
   updateTaskStatus(taskId: number, newStatusId: number): Observable<any> {
     return this.taskService.updateTaskStatus(taskId, newStatusId);
@@ -157,7 +148,7 @@ export class ProjectKanbanComponent implements OnInit {
 
   getStatusIdFromColumnName(columnName: string): number {
     const columnMap: { [key: string]: number } = {
-      'todo': 1,
+      'to do': 1,
       'progress': 2,
       'done': 3,
     };
@@ -173,23 +164,23 @@ export class ProjectKanbanComponent implements OnInit {
 
 
   getTasksByStatus(statusId: number): any[] {
-  switch (statusId) {
-    case 1:
-      return this.todo;
-    case 2:
-      return this.progress
-    case 3:
-      return this.done;
-    default:
-      return [];
-  }
+    switch (statusId) {
+      case 1:
+        return this.todo;
+      case 2:
+        return this.progress
+      case 3:
+        return this.done;
+      default:
+        return [];
+    }
   }
 
   findTaskIndex(taskId: number, column: string): number {
       let taskList: any[];
 
       switch (column) {
-        case 'todo':
+        case 'to do':
           taskList = this.todo;
           break;
         case 'progress':
@@ -207,7 +198,7 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   deleteTask(column: string, index: number) {
-    if (column === 'todo') {
+    if (column === 'to do') {
       this.todo.splice(this.findTaskIndex(index, column), 1);
       this.showMessage();
       this.taskService.deleteTask(index).subscribe(
@@ -270,7 +261,54 @@ export class ProjectKanbanComponent implements OnInit {
             console.log(this.dropList);
         }
     });
-}
+  }
 
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+        const taskId = event.item.data.taskId;
+        const newColumn = event.container.id;
+        const newStatusId = this.getStatusIdFromColumnName(newColumn);
 
+        if (event.container.data.length === 0) {
+            event.container.data.push(event.previousContainer.data[event.previousIndex]);
+        } else {
+            transferArrayItem(
+                event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex,
+            );
+        }
+
+        this.updateTaskStatus(taskId, newStatusId)
+            .subscribe(
+                () => {
+                  this.loadTasksByProject(this.projectId);
+                  //console.log('Task status updated successfully.')
+                },
+                error => console.error('Error updating task status:', error)
+            );
+    }
+  }
+
+  openTaskOverview(taskId: number): void {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
+  }
+
+  dropColumn(event: CdkDragDrop<string[]>) {
+    if (event.previousIndex !== event.currentIndex) {
+        moveItemInArray(this.dropList, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  protected readonly environment = environment;
 }

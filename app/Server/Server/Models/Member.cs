@@ -66,6 +66,8 @@ namespace Server.Models
 
         public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
 
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
         public string? PasswordToken { get; set; }
 
         public DateTime? PasswordTokenExpiresAt { get; set; }

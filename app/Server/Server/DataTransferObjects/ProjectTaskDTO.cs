@@ -8,6 +8,8 @@
         public DateTime StartDate { get; set; }
         public DateTime Deadline { get; set; }
         public DateTime DateFinished { get; set; }
+        public DateTime DeadlineModified { get; set; }
+
 
         public int ProjectId { get; set; }
         public string TaskStatus { get; set; }
@@ -17,5 +19,7 @@
         public int TaskCategoryId {  get; set; }
         public List<MemberDTO> AssignedMembers { get; set; }
         public string TaskPriorityName { get; set; }
+
+        public string TaskCategoryName { get; set; }
     }
 }

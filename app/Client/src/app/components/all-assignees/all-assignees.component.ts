@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, Event, RouterLink} from "@angular/router";
 import {Member} from "../../models/member";
 import {ProjectServiceGet} from "../../services/project.service";
 import {TaskService} from "../../services/task.service";
@@ -20,7 +20,17 @@ import {MatInput} from "@angular/material/input";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import {AddMembersToProjectComponent} from "../add-members-to-project/add-members-to-project.component";
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { environment } from '../../../environments/environment';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MemberInfoComponent } from '../member-info/member-info.component';
+import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
+import { AddMembersToProjectComponent } from '../add-members-to-project/add-members-to-project.component';
+import {MatDivider} from "@angular/material/divider";
+import {AvatarComponent} from "../avatar/avatar.component";
+import {SignalRService} from "../../services/signal-r.service";
 
 @Component({
   selector: 'app-all-assignees',
@@ -43,24 +53,29 @@ import {AddMembersToProjectComponent} from "../add-members-to-project/add-member
     MatOption,
     MatSelect,
     MatRadioButton,
-    MatRadioGroup
+    MatTableModule,
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
 })
 export class AllAssigneesComponent implements OnInit{
   private routeSub: any;
+  selectedStatus: string = '';
   assignees : Member[] = [];
-  activeAssignees : Member[] = [];
-  inactiveAssignees : Member[] = [];
-  selectedTable: string = 't1';
+  filteredAssignees : Member[] = [];
+  onlineAssignees: Set<number> = new Set<number>();
   projectId : number = 0;
+  searchTerm: string = '';
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
+  dataSource: any;
+  @ViewChild(MatSort)sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private route: ActivatedRoute,
-              private pService : ProjectServiceGet,
-              private tService : TaskService,
-              private mService : MemberService,
-              public dialog: MatDialog) { }
+  constructor(private route: ActivatedRoute, private pService : ProjectServiceGet,
+                private tService : TaskService, private mService : MemberService,
+                  public dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer,
+                    private signalRService: SignalRService) { }
 
 
 
@@ -69,22 +84,35 @@ export class AllAssigneesComponent implements OnInit{
     this.routeSub = this.route.params.subscribe((params : any) => {
       this.projectId = params['id'];
       this.fetchMembersOnProject();
+      this.selectedStatus = 'allAssignees';
     })
+
+    this.signalRService.getConnectedMemberIds().subscribe({
+      next: data => {
+        this.onlineAssignees = data;
+      },
+      error: err => {
+        console.log('failed fetching online members')
+      }
+    })
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   fetchMembersOnProject()
   {
     this.pService.getProjectMembers(this.projectId).subscribe((data : Member[])=>{
       this.assignees = data;
-      console.log(data);
-
-      for(let i=0;i<this.assignees.length;i++)
-      {
-        if(this.assignees[i].status === 'Active')
-          this.activeAssignees.push(this.assignees[i]);
-        else
-          this.inactiveAssignees.push(this.assignees[i])
-      }
+      this.filteredAssignees = data;
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
     })
   }
 
@@ -105,23 +133,31 @@ export class AllAssigneesComponent implements OnInit{
     });
   }
 
+  openConfirmationDialog(assignee: Member): void{
+    const dialogRef = this.dialog.open(ConfirmationAssigneeComponent, {
+      width: '500px',
+      data: { assignee }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.removeAssignee(assignee);
+      }
+    });
+  }
+
   removeAssignee(assignee: Member)
   {
-    console.log("DELETING...")
-
-      if(confirm("Are you sure you want to remove member?"))
-      {
-        this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
-          next : data =>{
-            console.log("Removed successfully.");
-          },
-          error : error =>{
-            console.log("Error removing");
-            this.fetchMembersOnProject()
-          }
-        })
+    this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
+      next : data =>{
+        console.log("Removed successfully.");
+      },
+      error : error =>{
+        console.log("Error removing");
+        this.fetchMembersOnProject()
       }
-    }
+    })
+  }
 
   openRoleDialog() {
     const dialogRef = this.dialog.open(ProjectRoleOverviewComponent, {
@@ -132,4 +168,20 @@ export class AllAssigneesComponent implements OnInit{
       }
     });
   }
+
+  search(event: any): void {
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  }
+
+  openMemberInfoDialog(member: Member): void {
+    const dialogRef = this.dialog.open(MemberInfoComponent, {
+      data: { member }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
+  }
+
+  protected readonly environment = environment;
 }
