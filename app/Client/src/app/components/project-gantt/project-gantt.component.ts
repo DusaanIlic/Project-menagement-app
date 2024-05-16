@@ -280,9 +280,12 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       const utcStartDate = new Date(startTimestamp);
       const utcEndDate = new Date(endTimestamp);
 
-      // Set the timezone offset to 0 to get the UTC time
-      utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
-      utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
+      console.log(utcStartDate);
+      console.log(utcEndDate);
+
+      // // Set the timezone offset to 0 to get the UTC time
+      // utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
+      // utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
 
       console.log(`UTC Start Date: ${utcStartDate.toISOString()}, UTC End Date: ${utcEndDate.toISOString()}`);
 

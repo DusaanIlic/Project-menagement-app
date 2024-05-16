@@ -27,6 +27,7 @@
     "date-fns": "^3.6.0",
     "flowbite": "^2.3.0",
     "html2canvas": "^1.4.1",
+    "material-design-icons-iconfont": "^6.7.0",
     "ng-angular-popup": "^0.5.2",
     "ngx-editor": "^17.0.1",
     "ngx-image-cropper": "^7.2.1",
