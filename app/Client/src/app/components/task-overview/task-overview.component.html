@@ -1,11 +1,11 @@
 <div class="h-full flex flex-col select-none">
   <mat-toolbar>
     <div class="flex w-full gap-2 items-center justify-between min-h-16">
-      <div class="flex flex-col items-start justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+      <div class="flex flex-col items-start justify-between">
         <h1 class="text-2xl text-gray-900">
           {{task.taskName}}
         </h1>
-        <h2 class="text-l flex text-gray-900">
+        <h2 class="text-lg flex text-gray-900">
           in <p (click)="closeDialog()" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
         </h2>
       </div>
@@ -17,44 +17,13 @@
     </div>
   </mat-toolbar>
 
-  <mat-sidenav-container class="grow" autosize>
-    <mat-sidenav mode="side" opened="true">
-      <mat-nav-list>
-        <mat-list-item (click)="switchView('overview')" [disabled]="show == 'overview'">
-          <div class="flex items-center justify-between gap-2">
-            <p>Overview</p>
-          </div>
-        </mat-list-item>
-        <mat-list-item (click)="switchView('assignees')" [disabled]="show == 'assignees'">
-          <div class="flex items-center justify-between gap-2">
-            <p>Assignees</p>
-          </div>
-        </mat-list-item>
-        <mat-list-item (click)="switchView('dependencies')" [disabled]="show == 'dependencies'">
-          <div class="flex items-center justify-between gap-2">
-            <p>Dependencies</p>
-          </div>
-        </mat-list-item>
-        <mat-list-item (click)="switchView('comments')" [disabled]="show == 'comments'">
-          <div class="flex items-center justify-between gap-2">
-            <p>Comments</p>
-          </div>
-        </mat-list-item>
-        <mat-list-item (click)="switchView('activities')" [disabled]="show == 'activities'">
-          <div class="flex items-center justify-between gap-2">
-            <p>Activities</p>
-          </div>
-        </mat-list-item>
-      </mat-nav-list>
-    </mat-sidenav>
-
-    <mat-sidenav-content>
-      <div *ngIf="show == 'overview'">
-        <div class="flex flex-col gap-2 p-2">
+  <mat-tab-group>
+    <mat-tab label="Overview">
+        <div class="flex flex-row gap-2 p-2 columns-2 rows-2 justify-between">
           <div class="w-[200px]">
             <mat-card>
               <mat-card-title>Task name</mat-card-title>
-              <p>{{task.taskName | date}}</p>
+              <p>{{task.taskName}}</p>
             </mat-card>
           </div>
 
@@ -93,27 +62,14 @@
             </mat-card>
           </div>
         </div>
-        </div>
+    </mat-tab>
 
+    <mat-tab label="Assignees">
 
-      <div *ngIf="show == 'assignees'">
-2
-      </div>
+    </mat-tab>
 
+    <mat-tab label="Dependencies">
 
-      <div *ngIf="show == 'dependencies'">
-3
-      </div>
-
-
-      <div *ngIf="show == 'comments'">
-4
-      </div>
-
-
-      <div *ngIf="show == 'activities'">
-5
-      </div>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+    </mat-tab>
+  </mat-tab-group>
 </div>
