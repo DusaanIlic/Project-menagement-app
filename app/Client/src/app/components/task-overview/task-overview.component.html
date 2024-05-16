@@ -50,8 +50,50 @@
 
     <mat-sidenav-content>
       <div *ngIf="show == 'overview'">
-      1
-      </div>
+        <div class="flex flex-col gap-2 p-2">
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>Task name</mat-card-title>
+              <p>{{task.taskName | date}}</p>
+            </mat-card>
+          </div>
+
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>Task description</mat-card-title>
+              <p>{{task.taskDescription}}</p>
+            </mat-card>
+          </div>
+
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>Start date</mat-card-title>
+              <p>{{task.startDate | date}}</p>
+            </mat-card>
+          </div>
+
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>End date</mat-card-title>
+              <p>{{task.deadline | date}}</p>
+            </mat-card>
+          </div>
+
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>Task status</mat-card-title>
+              <p>{{task.taskStatus}}</p>
+            </mat-card>
+          </div>
+
+          <div class="w-[200px]">
+            <mat-card>
+              <mat-card-title>Task priority</mat-card-title>
+              <p>{{task.taskPriorityName}}</p>
+            </mat-card>
+          </div>
+        </div>
+        </div>
 
 
       <div *ngIf="show == 'assignees'">

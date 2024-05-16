@@ -27,6 +27,7 @@ import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
 import {taskPriority} from "../../models/taskPriority";
 import {TaskStatus} from "../../models/task-status";
+import {Project} from "../../models/project";
 
 
 @Component({
@@ -153,11 +154,16 @@ export class AllTasksComponent implements OnInit {
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  openDialogOverview(taskId : number)
+  openDialogOverview(task : Task)
   {
+    this.pService.getProjectById(task.projectId).subscribe((project : Project) =>{
+      task.projectName = project.projectName
+    })
+
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: taskId
+      width: '800px',
+      height: '700px',
+      data: task
     });
   }
 

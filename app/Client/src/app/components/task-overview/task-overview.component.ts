@@ -10,16 +10,11 @@ import { NgxEditorModule, Editor } from 'ngx-editor';
 import { TaskService } from '../../services/task.service';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MemberService } from '../../services/member.service';
-import { Member } from '../../models/member';
-import { Project } from '../../models/project';
-import { taskActivityType } from '../../models/taskActivityType';
 import { DomSanitizer } from '@angular/platform-browser';
 import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem} from "@angular/material/menu";
-import {EditMemberComponent} from "../edit-member/edit-member.component";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
-import { MemberInfoComponent } from '../member-info/member-info.component';
 import {concatMap, forkJoin, Subscription, switchMap} from "rxjs";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
@@ -35,7 +30,17 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
 @Component({
   selector: 'app-task-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxEditorModule, NgToastModule, NgToastModule, MatButton, MatMenu, MatMenuItem, MatAnchor, MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle],
+  imports: [CommonModule,
+            RouterModule,
+            FormsModule,
+            NgxEditorModule,
+            NgToastModule,
+            NgToastModule,
+            MatButton,
+            MatMenu,
+            MatMenuItem,
+            MatAnchor,
+            MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
