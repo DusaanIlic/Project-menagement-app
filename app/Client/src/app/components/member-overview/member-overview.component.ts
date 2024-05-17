@@ -17,6 +17,7 @@ import { switchMap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-member-overview',
@@ -30,6 +31,7 @@ import { MatCardModule } from '@angular/material/card';
     MatButtonModule,
     MatMenuModule,
     MatCardModule,
+    MatIconModule,
   ],
 })
 export class MemberOverviewComponent implements OnInit {
