@@ -645,8 +645,6 @@ namespace Server.Controllers
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
 
 
-            Console.WriteLine("stigne dovde");
-
             if (!hasPermission)
             {
                 return Forbid("Insufficient permissions");
@@ -781,7 +779,11 @@ namespace Server.Controllers
                 RoleId = member.RoleId,
                 RoleName = member.Role.RoleName,
                 Email = member.Email,
-                Status = member.Status
+                Status = member.Status,
+                ProjectRoleName = dbContext.MemberProjects
+                                 .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                                 .Select(mp => mp.ProjectRole.Name)
+                                 .FirstOrDefault()
             });
 
             return Ok(membersDTO);
