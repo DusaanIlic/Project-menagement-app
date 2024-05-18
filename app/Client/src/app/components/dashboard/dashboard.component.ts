@@ -134,19 +134,13 @@ export class DashboardComponent implements OnInit {
   }
   
   searchProj(event: Event): void {
-    const inputValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.projectSource.filterPredicate = (data: any, filter: string) => {
-      return data.projectName.toLowerCase().includes(filter);
-    };
-    this.projectSource.filter = inputValue === '' ? null : inputValue;
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.projectSource.filter = filterValue.trim().toLowerCase();
   }
 
   searchTask(event: Event): void {
-    const inputValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.taskSource.filterPredicate = (data: any, filter: string) => {
-    return data.taskName.toLowerCase().includes(filter);
-    };
-    this.taskSource.filter = inputValue === '' ? null : inputValue;
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.taskSource.filter = filterValue.trim().toLowerCase();
   }
 
   protected readonly data = data;
