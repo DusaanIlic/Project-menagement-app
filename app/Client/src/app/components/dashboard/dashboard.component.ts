@@ -29,6 +29,7 @@ import {Task} from "../../models/task";
 import {TaskService} from "../../services/task.service";
 import { FormsModule } from '@angular/forms';
 import { ProjectStatus } from '../../models/project-status';
+import { ProjectPriority } from '../../models/project-priority';
 
 @Component({
   selector: 'app-dashboard',
@@ -72,6 +73,9 @@ export class DashboardComponent implements OnInit {
 
   selectedStatus: number = 0;
   defaultStatus: number = 0;
+  defaultPriority: number = 0;
+  selectedPriority: number = 0;
+  projectPriorities: ProjectPriority[] = [];
 
   searchProjects: string = '';
   searchTasks: string = '';
@@ -92,8 +96,20 @@ export class DashboardComponent implements OnInit {
                 private projectService: ProjectServiceGet, private taskService: TaskService) { }
    
   onStatusChange(event: any) {
-      this.selectedStatus = event;
-      this.projectSource.data = this.projects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
+              
+  onPriorityFilterChange(event: any) {
+    this.selectedPriority = event;
+    this.applyFilters();
+  }
+              
+  applyFilters() {
+    this.projectSource.data = this.projects.filter(project =>
+    (this.selectedStatus == this.defaultStatus || this.selectedStatus == project.projectStatusId) &&
+    (this.selectedPriority == this.defaultPriority || this.selectedPriority == project.projectPriorityId)
+    );
   }
 
   ngOnInit(): void {
@@ -131,6 +147,15 @@ export class DashboardComponent implements OnInit {
         console.log('failed fetching project statuses');
       }
     })
+
+    this.projectService.getProjectPriorities().subscribe({
+      next: (data: ProjectPriority[]) => {
+        this.projectPriorities = data;
+      },
+      error: err => {
+        console.log('failed fetching project priorities');
+      }
+    });
   }
   
   searchProj(event: Event): void {

@@ -23,6 +23,17 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
+
+      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onPriorityFilterChange($event)">
+        <mat-option [value]="defaultPriority">All Priorities</mat-option>
+        @for (projectPriority of projectPriorities; track projectPriority.priorityId) {
+          <mat-option [value]="projectPriority.priorityId">{{projectPriority.priorityName}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
     <span class="grow"></span>
 
     <p class="text-4xl select-none">Assigned Projects</p>
