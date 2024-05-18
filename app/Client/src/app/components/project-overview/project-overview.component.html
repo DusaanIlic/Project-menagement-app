@@ -83,11 +83,11 @@
           <mat-card-title-group>
             <mat-card-title><p>{{activity.taskName}}</p></mat-card-title>
             <mat-card-subtitle>{{activity.name}} {{activity.lastname}}</mat-card-subtitle>
-            <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + activity?.id + '/Avatar'" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+            <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + activity?.workerId + '/Avatar'" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
           </mat-card-title-group>
         </mat-card-header>
         <mat-card-content>
-          <p>{{ activity.comment }}</p>
+          {{ activity.comment }}
         </mat-card-content>
       </mat-card>
 
