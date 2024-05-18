@@ -30,6 +30,7 @@ import {TaskService} from "../../services/task.service";
 import { FormsModule } from '@angular/forms';
 import { ProjectStatus } from '../../models/project-status';
 import { ProjectPriority } from '../../models/project-priority';
+import { taskPriority } from '../../models/taskPriority';
 
 @Component({
   selector: 'app-dashboard',
@@ -77,6 +78,10 @@ export class DashboardComponent implements OnInit {
   selectedPriority: number = 0;
   projectPriorities: ProjectPriority[] = [];
 
+  defaultTaskPriority: number = 0;
+  selectedTaskPriority: number = 0;
+  taskPriorities !: taskPriority[];
+  
   searchProjects: string = '';
   searchTasks: string = '';
   projectStatuses !: ProjectStatus[];
@@ -104,7 +109,18 @@ export class DashboardComponent implements OnInit {
     this.selectedPriority = event;
     this.applyFilters();
   }
-              
+
+  onTaskPriorityFilterChange(event: any) {
+    this.selectedTaskPriority = event;
+    this.applyTaskFilters();
+  }
+           
+  applyTaskFilters() {
+    this.taskSource.data = this.tasks.filter(task =>
+    (this.selectedTaskPriority == this.defaultTaskPriority || this.selectedTaskPriority == task.taskPriorityId)
+    );
+  }
+
   applyFilters() {
     this.projectSource.data = this.projects.filter(project =>
     (this.selectedStatus == this.defaultStatus || this.selectedStatus == project.projectStatusId) &&
@@ -156,6 +172,16 @@ export class DashboardComponent implements OnInit {
         console.log('failed fetching project priorities');
       }
     });
+
+    this.taskService.getTaskPriorities().subscribe({
+      next: (data: taskPriority[]) => {
+        this.taskPriorities = data;
+      },
+      error: error => {
+        console.log('failed fetching task priorities');
+      }
+    });
+
   }
   
   searchProj(event: Event): void {

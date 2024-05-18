@@ -44,7 +44,9 @@
 
       <ng-container matColumnDef="projectName">
         <th mat-header-cell *matHeaderCellDef  mat-sort-header sortActionDescription="Sort by projectName">PROJECT</th>
-        <td mat-cell *matCellDef="let project"> {{project.projectName}}</td>
+        <td mat-cell *matCellDef="let project"> <a class="hover:underline" [routerLink]="['/projects', project.projectId]">
+          {{project.projectName}}
+        </a></td>
       </ng-container>
 
       <ng-container matColumnDef="startDate">
@@ -105,6 +107,18 @@
         <mat-option value="finishedProjects">Complete</mat-option>
       </mat-select>
     </mat-form-field>
+    
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
+
+      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onTaskPriorityFilterChange($event)">
+        <mat-option [value]="defaultPriority">All Priorities</mat-option>
+        @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
+          <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
 
     <span class="grow"></span>
 
