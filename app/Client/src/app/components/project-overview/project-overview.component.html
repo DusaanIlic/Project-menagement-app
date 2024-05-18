@@ -41,10 +41,10 @@
     <div class="basis-1/5">
       <mat-card class="example-card" *ngIf="projectDetails">
         <mat-card-header>
-          <mat-card-title-group class="pb-3">
+          <mat-card-title-group class="pb-2">
             <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
             <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
-            <img mat-card-sm-image src="../../../assets/icons/calendar_icon.png" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+            <mat-icon class="large-icon">calendar_month</mat-icon>
           </mat-card-title-group>
         </mat-card-header>
       </mat-card>
