@@ -11,8 +11,8 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240511225547_Initial")]
-    partial class Initial
+    [Migration("20240516124538_CreateProjectFileEntity")]
+    partial class CreateProjectFileEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 45, 975, DateTimeKind.Local).AddTicks(3234),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 36, 975, DateTimeKind.Local).AddTicks(8279),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$UdFr0TzP9tCSa0F9.DfA..yDChSzBW02Py2JXn8q1y1fMAAHDXy8O",
+                            Password = "$2a$10$k0NTtMfSrlqQWQvE6yLeK.sc4QO82xCGnzOrKpdAP3j9B7ihvDS5G",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 39, DateTimeKind.Local).AddTicks(8123),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 37, 84, DateTimeKind.Local).AddTicks(4098),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$fxJ4VPKnSlvTPDi1u6032upyc63zFvUk3Iid2BFTO6I7l7y0162QG",
+                            Password = "$2a$10$C/I1lZyygFZFTMrCNPj.eOMEy2b4G.3TbPGOZKJ3YnM2couhmdHSa",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 12, 0, 55, 46, 107, DateTimeKind.Local).AddTicks(3300),
+                            DateAdded = new DateTime(2024, 5, 16, 14, 45, 37, 181, DateTimeKind.Local).AddTicks(5154),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$mCXXfzk0RqD4L5NJyozLw.tJzM.8/dwW3bBPdQmyMTJ4wg1RVr67.",
+                            Password = "$2a$10$GO39f1jzz1PsF8BTd.JRduOed/raQ5UJwdgFwKjLzcMCp4zGrcRQi",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -255,11 +255,6 @@ namespace Server.Migrations
                         {
                             PermissionId = 5,
                             PermissionName = "Create project"
-                        },
-                        new
-                        {
-                            PermissionId = 6,
-                            PermissionName = "Change project deadline"
                         });
                 });
 
@@ -273,9 +268,6 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
@@ -307,6 +299,21 @@ namespace Server.Migrations
                     b.HasIndex("TeamLeaderId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectFile", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FileId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProjectId", "FileId");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("ProjectFile");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectPermission", b =>
@@ -441,11 +448,6 @@ namespace Server.Migrations
                         {
                             Id = 23,
                             Name = "Remove task status"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Name = "Change deadline"
                         });
                 });
 
@@ -459,10 +461,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PriorityColorHex")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("ProjectPriorityId");
 
                     b.ToTable("ProjectPriorities");
@@ -471,20 +469,17 @@ namespace Server.Migrations
                         new
                         {
                             ProjectPriorityId = 1,
-                            Name = "Low",
-                            PriorityColorHex = "#00FF00"
+                            Name = "Low"
                         },
                         new
                         {
                             ProjectPriorityId = 2,
-                            Name = "Medium",
-                            PriorityColorHex = "#FFFF00"
+                            Name = "Medium"
                         },
                         new
                         {
                             ProjectPriorityId = 3,
-                            Name = "High",
-                            PriorityColorHex = "#FF0000"
+                            Name = "High"
                         });
                 });
 
@@ -640,6 +635,16 @@ namespace Server.Migrations
                         new
                         {
                             ProjectRoleId = 1,
+                            ProjectPermissionId = 15
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 10
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
                             ProjectPermissionId = 16
                         },
                         new
@@ -654,7 +659,17 @@ namespace Server.Migrations
                         },
                         new
                         {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 17
+                        },
+                        new
+                        {
                             ProjectRoleId = 1,
+                            ProjectPermissionId = 19
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
                             ProjectPermissionId = 19
                         },
                         new
@@ -681,21 +696,6 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 24
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 10
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 17
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
-                            ProjectPermissionId = 19
                         });
                 });
 
@@ -722,12 +722,12 @@ namespace Server.Migrations
                         new
                         {
                             Id = 2,
-                            Status = "In Progress"
+                            Status = "Closed"
                         },
                         new
                         {
                             Id = 3,
-                            Status = "Closed"
+                            Status = "In Progress"
                         });
                 });
 
@@ -741,9 +741,6 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Deadline")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProjectId")
@@ -898,11 +895,6 @@ namespace Server.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 6
                         });
                 });
 
@@ -1051,10 +1043,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PriorityColorHex")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("TaskPriorityId");
 
                     b.ToTable("TaskPriority");
@@ -1063,20 +1051,17 @@ namespace Server.Migrations
                         new
                         {
                             TaskPriorityId = 1,
-                            Name = "Low",
-                            PriorityColorHex = "#00FF00"
+                            Name = "Low"
                         },
                         new
                         {
                             TaskPriorityId = 2,
-                            Name = "Medium",
-                            PriorityColorHex = "#FFFF00"
+                            Name = "Medium"
                         },
                         new
                         {
                             TaskPriorityId = 3,
-                            Name = "High",
-                            PriorityColorHex = "#FF0000"
+                            Name = "High"
                         });
                 });
 
@@ -1215,6 +1200,25 @@ namespace Server.Migrations
                     b.Navigation("ProjectStatus");
 
                     b.Navigation("TeamLeader");
+                });
+
+            modelBuilder.Entity("Server.Models.ProjectFile", b =>
+                {
+                    b.HasOne("Server.Models.File", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Project", "Project")
+                        .WithMany("ProjectFiles")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Server.Models.ProjectProjectRole", b =>
@@ -1425,6 +1429,8 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.Project", b =>
                 {
                     b.Navigation("MemberProjects");
+
+                    b.Navigation("ProjectFiles");
 
                     b.Navigation("ProjectProjectRoles");
 

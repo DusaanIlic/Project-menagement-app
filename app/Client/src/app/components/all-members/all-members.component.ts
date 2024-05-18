@@ -25,6 +25,8 @@ import {MatInput} from "@angular/material/input";
 import {MatLabel, MatOption, MatSelect} from "@angular/material/select";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {AvatarComponent} from "../avatar/avatar.component";
+import {SignalRService} from "../../services/signal-r.service";
 
 
 @Component({
@@ -32,29 +34,42 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger, AvatarComponent],
   providers: [DatePipe]
 })
 export class AllMembersComponent implements OnInit, AfterViewInit{
   selectedRole: number = 0;
   defaultRole: number = 0;
+  selectedStatus: number = 0;
+  defaultStatus: number = 0;
   roles: Role[] = [];
   members : Member[] = [];
   filteredMembers: Member[] = [];
-  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'tasks', 'date', 'actions'];
+  onlineMembers: Set<number> = new Set<number>();
+  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'onlineStatus', 'date', 'actions'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private memberService: MemberService,  public dialog: MatDialog, private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer) {
+  constructor(private memberService: MemberService,  public dialog: MatDialog,
+                private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer,
+                  private signalRService: SignalRService) {
     this.filteredMembers = this.members;
   }
 
   ngOnInit(){
     this.getMembersFromServer();
     this.getRolesFromServer();
-    this.filterMembersByRole(this.selectedRole);
     this.selectedRole = 0;
+
+    this.signalRService.getConnectedMemberIds().subscribe({
+      next: data => {
+        this.onlineMembers = data;
+      },
+      error: err => {
+        console.log('failed fetching online members');
+      }
+    })
   }
 
   ngAfterViewInit(): void {
@@ -70,13 +85,23 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
     }
   }
 
-  filterMembersByRole(role: number): void {
-    this.dataSource.data = this.members.filter(member => role == 0 || member.roleId == role);
+  onRoleFilterChange(event: any) {
+    this.selectedRole = event;
+    this.applyFilters();
   }
 
-  onRoleChange(event: any): void {
-    this.selectedRole = event;
-    this.filterMembersByRole(this.selectedRole);
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.members.filter(member =>
+      (this.selectedRole == this.defaultRole || this.selectedRole == member.roleId) &&
+      (this.selectedStatus == this.defaultStatus ||
+          (this.selectedStatus == 1 && !this.onlineMembers.has(member.id)) ||
+          (this.selectedStatus == 2 && this.onlineMembers.has(member.id)))
+    );
   }
 
   getMembersFromServer(): void {
@@ -105,18 +130,6 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
     );
   }
 
-  getRoleName(roleId: number): any {
-    if (!this.roles || this.roles.length === 0) {
-      return 'Unknown';
-    }
-
-    const role = this.roles.find(r => r.id === roleId);
-
-    return role ? role.name : 'Unknown';
-  }
-
-
-
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -139,17 +152,6 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
       height: '600px'
     });
   }
-
-  openMemberInfoDialog(member: Member): void {
-    const dialogRef = this.dialog.open(MemberInfoComponent, {
-      data: { member }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog zatvoren');
-    });
-  }
-
 
     protected readonly environment = environment;
 }

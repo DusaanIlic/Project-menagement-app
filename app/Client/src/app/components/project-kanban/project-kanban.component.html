@@ -1,4 +1,4 @@
-<div class="mt-5 ml-10 mr-10 p-5 items-center">
+<div class="flex flex-col gap-4 justify-center h-[100%]">
 
     <div class="flex flex-row gap-5 items-center mb-3">
 
@@ -6,7 +6,7 @@
                 <mat-expansion-panel hideToggle>
                   <mat-expansion-panel-header>
                     <mat-panel-title class="flex flex-row justify-between ">
-                        <p class="text-2xl mr-3">{{projectName}}</p> 
+                        <p class="text-2xl mr-3">{{projectName}}</p>
                         <mat-icon>add</mat-icon>
                     </mat-panel-title>
                   </mat-expansion-panel-header>
@@ -19,7 +19,7 @@
                             <p><b>{{teamLeaderInfo?.roleName}}</b></p>
                             <p> {{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</p>
                         </div>
-                        <img src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden rounded-full border-solid border-black border-2 xl:w-12 xl:h-12 xl:table-cell" (click)="openMemberInfoDialog(teamLeaderInfo)">
+                        <img [src]="environment.apiUrl + '/Member/' + teamLeaderInfo?.id + '/Avatar'" class="hidden rounded-full xl:w-12 xl:h-12 xl:table-cell" (click)="openMemberInfoDialog(teamLeaderInfo)">
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
@@ -45,46 +45,69 @@
     <mat-divider></mat-divider>
 
 
-<div class="w-full flex flex-row gap-5 p-10 overflow-auto" cdkDropListGroup>
-        <div *ngFor="let column of dropList" class="flex flex-col bg-background border-2 border-solid border-black rounded-lg w-1/3 p-5" [style.display]="columnVisibility[column] ? 'block' : 'none'">
-            <div class="flex flex-row justify-between items-center h-10">
-                <p class="mb-3 text-lg"><b>{{ column | titlecase }}</b></p>
-            </div>
+    <div class="w-full flex flex-row gap-5 p-10 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
+        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg h-1/4" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
+             <div  >
 
+             <mat-card-header>
+                <mat-card-title>
+                    <div class="pb-2 pt-0">
+                        {{ column | titlecase }}
+                    </div>
+                </mat-card-title>
+            </mat-card-header>
+         <mat-card-content>
             <div
                 cdkDropList
                 [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
-                class="border-2 border-solid border-black rounded-md overflow-hidden block bg-white" [id]="column.toLowerCase()"
+                class=" rounded-md overflow-hidden block" [id]="column.toLowerCase()"
                 (cdkDropListDropped)="drop($event)" >
                 <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
                     <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
+                        <div class="border border-solid border-black mb-1 rounded-md">
+                            <mat-card class="cursor-move task-item" cdkDrag [cdkDragData]="item" [ngClass]="{
+                                'low-priority': item.taskPriorityId === 1,
+                                'medium-priority': item.taskPriorityId === 2,
+                                'high-priority': item.taskPriorityId === 3
+                            }">
+                            <div class="flex flex-row items-center justify-between ml-3 py-2">
+                                <div class=" flex flex-col">
+                                    <p class="text-lg font-medium">{{item.taskName}}</p>
+                                    <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
+                                </div>
+                                <div class="flex">
+                                  <button mat-icon-button (click)="openTaskOverview(item.taskId)">
+                                    <i class="material-icons">article</i>
+                                  </button>
 
-                        <div class="px-2.5 py-2.5 flex flex-row items-center justify-between border-b-2 cursor-move task-item"  cdkDrag [cdkDragData]="item" [ngClass]="{
-                            'low-priority': item.taskPriorityId === 1,
-                            'medium-priority': item.taskPriorityId === 2,
-                            'high-priority': item.taskPriorityId === 3
-                          }">
-                          <div class=" flex flex-col">
-                            <p class="text-lg font-medium">{{item.taskName}}</p>
-                            <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
-                          </div>
-                            <button class="hidden w-5 h-5 sm:inline-flex md:inline-flex lg:inline-flex xl:inline-flex"
-                                (click)="openConfirmationDialog(column, item.taskId)"><mat-icon>delete</mat-icon></button>
+                                  <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)">
+                                    <i class="material-icons">delete</i>
+                                  </button>
+                                </div>
+                            </div>
+
+                            </mat-card>
                         </div>
+
                     </ng-container>
                 </ng-container>
-
                 <ng-template #emptyList>
-                    <div class="px-2.5 py-5 flex flex-row items-center justify-between border-b-2 cursor-move">
-                        No tasks.
+                    <div>
+                        <mat-card class="px-2.5 py-5 flex flex-row items-center justify-between">
+                            <p>No tasks. Add a new task</p>
+                        </mat-card>
                     </div>
+
                 </ng-template>
             </div>
-        </div>
+            </mat-card-content>
+
+
+             </div>
+
+
+        </mat-card>
     </div>
-
-
-
     <ng-toast></ng-toast>
 
 </div>

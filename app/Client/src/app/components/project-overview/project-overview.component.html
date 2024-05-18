@@ -5,13 +5,13 @@
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
             <mat-panel-title class="flex flex-row justify-between">
-                <p class="text-3xl">{{projectDetails.projectName}}</p>
-                <mat-icon>add</mat-icon>
+              <p class="text-3xl">{{projectDetails.projectName}}</p>
+              <mat-icon>add</mat-icon>
             </mat-panel-title>
           </mat-expansion-panel-header>
-            <div>
-              <p class="text-xl">{{projectDetails.projectDescription}}</p>
-            </div>
+          <div>
+            <p class="text-xl">{{projectDetails.projectDescription}}</p>
+          </div>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
@@ -19,6 +19,7 @@
     <span class="grow"></span>
 
     <div class="flex flex-row gap-5 items-center justify-end">
+      <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="openProjectDeleteDialog(projectId)" color="warn">Close project</button>
       <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addMembersToProject()" color="primary">Add members to project</button>
       <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addTasksToProject()" color="primary">Add tasks to project</button>
     </div>
@@ -29,9 +30,9 @@
       <mat-card class="example-card" *ngIf="teamLeaderInfo">
         <mat-card-header>
           <mat-card-title-group class="pb-3">
-              <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
-              <mat-card-subtitle>Project Manager</mat-card-subtitle>
-            <img mat-card-sm-image src="http://localhost:8000/api/Member/{{teamLeaderInfo?.id}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
+            <mat-card-title>{{ teamLeaderInfo.firstName }} {{ teamLeaderInfo.lastName }}</mat-card-title>
+            <mat-card-subtitle>Project Manager</mat-card-subtitle>
+            <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + teamLeaderInfo?.id + '/Avatar'" class="hidden xl:w-10 xl:h-10 xl:inline ml-2" (click)="openMemberInfoDialog(teamLeaderInfo)">
           </mat-card-title-group>
         </mat-card-header>
       </mat-card>
@@ -82,7 +83,7 @@
           <mat-card-title-group>
             <mat-card-title><p>{{activity.taskName}}</p></mat-card-title>
             <mat-card-subtitle>{{activity.name}} {{activity.lastname}}</mat-card-subtitle>
-            <img mat-card-sm-image src="http://localhost:8000/api/Member/{{activity.memberId}}/Avatar" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+            <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + activity?.id + '/Avatar'" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
           </mat-card-title-group>
         </mat-card-header>
         <mat-card-content>
@@ -103,6 +104,3 @@
     </div>
   </div>
 </div>
-
-
-

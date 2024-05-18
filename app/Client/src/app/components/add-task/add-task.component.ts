@@ -19,7 +19,7 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
 @Component({
   selector: 'app-add-task',
   standalone: true,
-    imports: [NgxEditorModule, MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, CommonModule, NgToastModule, MatButton,
+    imports: [NgxEditorModule, MatFormFieldModule, MatSelectModule, FormsModule,  CommonModule, NgToastModule, MatButton,
         MatIcon,
         MatToolbar,
         MatCard,
