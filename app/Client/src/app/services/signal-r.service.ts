@@ -14,6 +14,7 @@ export class SignalRService {
 
   constructor() {
     this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
+
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/SignalR`, {
         withCredentials: localStorage.getItem('jwt-token') != null,
