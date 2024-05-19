@@ -31,6 +31,7 @@ import { AddMembersToProjectComponent } from '../add-members-to-project/add-memb
 import {MatDivider} from "@angular/material/divider";
 import {AvatarComponent} from "../avatar/avatar.component";
 import {SignalRService} from "../../services/signal-r.service";
+import {Role} from "../../models/role";
 
 @Component({
   selector: 'app-all-assignees',
@@ -67,8 +68,11 @@ export class AllAssigneesComponent implements OnInit{
   onlineAssignees: Set<number> = new Set<number>();
   projectId : number = 0;
   searchTerm: string = '';
+  roles: Role[] = [];
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
   dataSource: any;
+  selectedRole: number = 0;
+  defaultRole: number = 0;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
@@ -94,7 +98,16 @@ export class AllAssigneesComponent implements OnInit{
       error: err => {
         console.log('failed fetching online members')
       }
-    })
+    });
+
+    this.mService.getRoles().subscribe(
+      (data: Role[]) => {
+        this.roles = data;
+      },
+      (error) => {
+        console.log('Error fetching roles:', error);
+      }
+    );
   }
 
   announceSortChange(sortState: Sort) {
@@ -144,6 +157,17 @@ export class AllAssigneesComponent implements OnInit{
         this.removeAssignee(assignee);
       }
     });
+  }
+
+  onRoleFilterChange(event: any) {
+    this.selectedRole = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.assignees.filter(member =>
+      (this.selectedRole == this.defaultRole || this.selectedRole == member.roleId)
+    );
   }
 
   removeAssignee(assignee: Member)

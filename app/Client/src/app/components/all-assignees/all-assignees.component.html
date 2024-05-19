@@ -13,6 +13,17 @@
           <input matInput (keyup)="search($event)">
         </mat-form-field>
 
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label class="select-none">Filter by role</mat-label>
+
+          <mat-select [(ngModel)]="selectedRole" (ngModelChange)="onRoleFilterChange($event)">
+            <mat-option [value]="defaultRole">All Roles</mat-option>
+            @for (role of roles; track role.id) {
+              <mat-option [value]="role.id">{{role.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
 
         <span class="grow"></span>
 
