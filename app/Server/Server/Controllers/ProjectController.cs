@@ -554,6 +554,27 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
+
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Status Updated!",
+                    Description = $"The status for project '{project.ProjectName}' has been updated to '{status.Status}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+
             return Ok(new { message = "Project status updated successfully." });
 
         }
