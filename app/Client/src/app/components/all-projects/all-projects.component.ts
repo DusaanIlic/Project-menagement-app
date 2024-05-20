@@ -22,6 +22,7 @@ import {NgToastModule} from "ng-angular-popup";
 import {ProjectStatus} from "../../models/project-status";
 import {MatDivider} from "@angular/material/divider";
 import {ProjectPriority} from "../../models/project-priority";
+import {PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'app-all-projects',
@@ -42,10 +43,12 @@ export class AllProjectsComponent implements OnInit{
   projectStatuses : ProjectStatus[] = [];
   projectPriorities: ProjectPriority[] = [];
   dataSource: any;
+  assignedProjectIds: Set<number> = new Set<number>();
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private projectService : ProjectServiceGet, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
+  constructor(private projectService : ProjectServiceGet, private dialog: MatDialog,
+                private _liveAnnouncer: LiveAnnouncer, private permissionService: PermissionService) {}
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectComponent, {
@@ -125,6 +128,15 @@ export class AllProjectsComponent implements OnInit{
         console.log('failed fetching project priorities');
       }
     });
+
+    this.permissionService.getProjectIds().subscribe({
+      next: data => {
+        this.assignedProjectIds = data;
+      },
+      error: err => {
+        console.log('failed fetching assigned project ids from permission service');
+      }
+    });
   }
 
 
@@ -146,5 +158,9 @@ export class AllProjectsComponent implements OnInit{
       }
 
     }
+  }
+
+  hasAccessToProject(id: number): boolean {
+    return this.assignedProjectIds.has(id);
   }
 }

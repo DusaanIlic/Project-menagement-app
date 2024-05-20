@@ -117,6 +117,10 @@ export class ProjectServiceGet{
   {
     return this.http.get<any[]>(`${PROJECT_API}/${projectId}/taskActivities/activitiesCountByDateLastTwoWeeks`);
   }
+
+  getAssignedProjectIds(memberId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${PROJECT_API}/Member/${memberId}/AssignedProjectIds`);
+  }
 }
 
 

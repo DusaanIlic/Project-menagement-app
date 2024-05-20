@@ -1171,7 +1171,7 @@ namespace Server.Controllers
         }
 
         [Authorize]
-        [HttpGet("Member/{memberId}/AssignedProjects")]
+        [HttpGet("Member/{memberId}/AssignedProjectIds")]
         public async Task<IActionResult> GetAssignedProjectsIds(int memberId)
         {
             var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
