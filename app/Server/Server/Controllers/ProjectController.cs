@@ -1169,5 +1169,27 @@ namespace Server.Controllers
 
             return Ok(activityCountsByDate);
         }
+
+        [Authorize]
+        [HttpGet("Member/{memberId}/AssignedProjects")]
+        public async Task<IActionResult> GetAssignedProjectsIds(int memberId)
+        {
+            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "No member detected" });
+            }
+
+            var projectIds = await dbContext.MemberProjects
+                .Where(mp => mp.MemberId == member.Id)
+                .ToListAsync();
+
+            var assignedIds = projectIds
+                .Select(mp => mp.ProjectId)
+                .ToList();
+
+            return Ok(assignedIds);
+        }
     }
 }
