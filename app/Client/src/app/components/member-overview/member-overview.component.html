@@ -14,15 +14,37 @@
             <mat-card-header>
               <!--<div mat-card-avatar class="example-header-image"></div>-->
               <mat-card-title
-                >Ime {{ member.firstName }}
-                {{ member.lastName }}</mat-card-title
+                >{{ member.firstName }}
+                {{ member.lastName }}
+                <p
+                  *ngIf="member.firstName == ''"
+                  class="w-full px-2 py-1 rounded-md rounded-b-none"
+                >
+                  First name not set.
+                </p>
+                <p
+                  *ngIf="member.lastName == ''"
+                  class="w-full px-2 py-1 rounded-md rounded-b-none"
+                >
+                  Last name not set.
+                </p></mat-card-title
               >
-              <mat-card-subtitle>Titula</mat-card-subtitle>
+              <mat-card-subtitle>
+                <p
+                  class="w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none"
+                >
+                  {{ member.roleName }}
+                </p>
+                <p
+                  *ngIf="member.roleName == ''"
+                  class="w-full px-2 py-1 rounded-md rounded-b-none"
+                >
+                  Role not set.
+                </p></mat-card-subtitle
+              >
             </mat-card-header>
 
-            <mat-card-content>
-              <p class="text-xl">{{ member.email }}</p>
-            </mat-card-content>
+            <mat-card-content> </mat-card-content>
 
             <hr />
             <mat-card-actions class="flex justify-center">
@@ -34,50 +56,8 @@
 
       <div class="w-full flex justify-center gap-5 mt-5">
         <div class="flex flex-col justify-between h-60 w-64">
-          <!-- app.component.html -->
-          <div><mat-icon>location_on</mat-icon> Adresa</div>
-          <div><mat-icon>email</mat-icon> Email</div>
-          <div><mat-icon>phone</mat-icon> Broj telefona</div>
-
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              Role
-            </h1>
-            <p
-              class="w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none"
-            >
-              {{ member.roleName }}
-            </p>
-          </div>
-
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              Phone number
-            </h1>
-            <p
-              *ngIf="member.phoneNumber != ''"
-              class="w-full px-2 py-1 rounded-md rounded-b-none"
-            >
-              {{ member.phoneNumber }}
-            </p>
-            <p
-              *ngIf="member.phoneNumber == ''"
-              class="w-full px-2 py-1 rounded-md rounded-b-none"
-            >
-              Not set.
-            </p>
-          </div>
-
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              City
-            </h1>
+          <div>
+            <mat-icon>location_on</mat-icon>
             <p
               *ngIf="member.city != ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
@@ -88,16 +68,8 @@
               *ngIf="member.city == ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              Not set.
+              City not set.
             </p>
-          </div>
-
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              Country
-            </h1>
             <p
               *ngIf="member.country != ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
@@ -108,38 +80,37 @@
               *ngIf="member.country == ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              Not set.
+              Country not set.
             </p>
           </div>
-        </div>
+          <div>
+            <mat-icon>email</mat-icon>
+            <p class="text-xl" *ngIf="member.email != ''">{{ member.email }}</p>
 
-        <div class="flex flex-col justify-between h-60 w-64">
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              Status
-            </h1>
             <p
-              *ngIf="member.status != ''"
+              *ngIf="member.email == ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              {{ member.status }}
-            </p>
-            <p
-              *ngIf="member.status == ''"
-              class="w-full px-2 py-1 rounded-md rounded-b-none"
-            >
-              Not set.
+              Email not set.
             </p>
           </div>
-
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
+          <div>
+            <mat-icon>phone</mat-icon>
+            <p
+              *ngIf="member.phoneNumber != ''"
+              class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              GitHub
-            </h1>
+              {{ member.phoneNumber }}
+            </p>
+            <p
+              *ngIf="member.phoneNumber == ''"
+              class="w-full px-2 py-1 rounded-md rounded-b-none"
+            >
+              Phone number not set.
+            </p>
+          </div>
+          <div>
+            <mat-icon>link</mat-icon>
             <p
               *ngIf="member.github != ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
@@ -150,16 +121,12 @@
               *ngIf="member.github == ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              Not set.
+              GitHub not set.
             </p>
           </div>
 
-          <div class="rounded-md shadow-2xl">
-            <h1
-              class="bg-[#0E2954] w-full px-2 py-1 text-white rounded-md rounded-b-none"
-            >
-              Linkedin
-            </h1>
+          <div>
+            <mat-icon>link</mat-icon>
             <p
               *ngIf="member.linkedin != ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
@@ -170,7 +137,7 @@
               *ngIf="member.linkedin == ''"
               class="w-full px-2 py-1 rounded-md rounded-b-none"
             >
-              Not set.
+              Linkedin not set.
             </p>
           </div>
         </div>
