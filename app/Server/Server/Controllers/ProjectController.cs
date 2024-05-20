@@ -857,6 +857,25 @@ namespace Server.Controllers
             project.Priority = priority;
             await dbContext.SaveChangesAsync();
 
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach(var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Priority Updated!",
+                    Description = $"The priority for project '{project.ProjectName}' has been updated to '{priority.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
             return Ok(new { message = "Project priority changed successfully." });
         }
 
