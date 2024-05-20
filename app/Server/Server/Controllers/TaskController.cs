@@ -693,7 +693,17 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
-            
+
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = memberId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
             await dbContext.SaveChangesAsync();
