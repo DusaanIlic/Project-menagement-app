@@ -27,10 +27,11 @@ export class SignalRService {
         transport: HttpTransportType.WebSockets
       })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Debug)  // Use Debug level for more detailed logging
+      // .configureLogging(LogLevel.Debug)  // Use Debug level for more detailed logging
       .build();
 
     this.registerServerEvents();
+    this.startConnection();
   }
 
   private registerServerEvents() {
@@ -54,11 +55,11 @@ export class SignalRService {
       this.notificationSubject.next(notification);
     });
 
-    this.hubConnection.on('AddAssignedProject', (id: number) => {
+    this.hubConnection.on('AssignedToProject', (id: number) => {
       this.permissionService.addProjectId(id);
     });
 
-    this.hubConnection.on('RemoveAssignedProject', (id: number) => {
+    this.hubConnection.on('RemovedFromProject', (id: number) => {
       this.permissionService.removeProjectId(id);
     });
   }

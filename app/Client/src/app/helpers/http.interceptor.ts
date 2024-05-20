@@ -11,7 +11,6 @@ import {SignalRService} from "../services/signal-r.service";
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const signalRService = inject(SignalRService);
   const jwtToken = authService.getJwtToken();
 
   const cloned = req.clone({
@@ -34,8 +33,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         console.log('Stopping signalr')
         console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
 
-        signalRService.stopConnection();
-
         return authService.refreshJwtToken().pipe(
           switchMap((data) => {
             const newJwtToken = data.jwtToken;
@@ -55,8 +52,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
             console.log('Successfully refreshed token');
             console.log('Starting signalr again');
-
-            signalRService.startConnection();
 
             const clonedReq = req.clone({
               setHeaders: {

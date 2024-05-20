@@ -1,8 +1,5 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, Observable} from "rxjs";
-import {MemberService} from "./member.service";
 import {ProjectServiceGet} from "./project.service";
-import {AuthService} from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +15,7 @@ export class PermissionService {
         this.projectIds = new Set<number>(data);
       },
       error: err => {
-        console.log(err.message);
+        console.log(err);
       }
     })
   }
@@ -28,10 +25,12 @@ export class PermissionService {
   }
 
   removeProjectId(id: number): void {
+    console.log('removed from project');
     this.projectIds.delete(id);
   }
 
   addProjectId(id: number): void {
+    console.log('added to project');
     this.projectIds.add(id);
   }
 }

@@ -22,8 +22,7 @@ export class AuthService {
   private authenticatedMemberSubject: BehaviorSubject<any>;
   private authenticatedMemberAvatarSubject: BehaviorSubject<any>;
 
-  constructor(private http: HttpClient, private router: Router,
-                private signalRService: SignalRService) {
+  constructor(private http: HttpClient, private router: Router) {
     const authenticatedMember = localStorage.getItem('authenticated-member');
     const avatarUrl = localStorage.getItem('authenticated-member-avatar');
     this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
@@ -46,8 +45,6 @@ export class AuthService {
           localStorage.setItem('authenticated-member', JSON.stringify(member));
           localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
 
-          this.signalRService.startConnection();
-
           this.authenticatedMemberSubject.next(member);
           this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
 
@@ -69,8 +66,6 @@ export class AuthService {
     localStorage.removeItem('authenticated-member-id');
     localStorage.removeItem('authenticated-member');
     localStorage.removeItem('authenticated-member-avatar');
-
-    this.signalRService.stopConnection();
 
     this.router.navigate(['/login']);
   }

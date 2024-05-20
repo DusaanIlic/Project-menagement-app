@@ -44,7 +44,6 @@ export class AllProjectsComponent implements OnInit{
   projectStatuses : ProjectStatus[] = [];
   projectPriorities: ProjectPriority[] = [];
   dataSource: any;
-  assignedProjectIds: Set<number> = new Set<number>();
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
