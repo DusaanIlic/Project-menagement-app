@@ -23,13 +23,14 @@ import {ProjectStatus} from "../../models/project-status";
 import {MatDivider} from "@angular/material/divider";
 import {ProjectPriority} from "../../models/project-priority";
 import {PermissionService} from "../../services/permission.service";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider, MatTooltip]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: number = 0;
@@ -48,7 +49,7 @@ export class AllProjectsComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: any;
 
   constructor(private projectService : ProjectServiceGet, private dialog: MatDialog,
-                private _liveAnnouncer: LiveAnnouncer, private permissionService: PermissionService) {}
+                private _liveAnnouncer: LiveAnnouncer, public permissionService: PermissionService) {}
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectComponent, {
@@ -128,15 +129,6 @@ export class AllProjectsComponent implements OnInit{
         console.log('failed fetching project priorities');
       }
     });
-
-    this.permissionService.getProjectIds().subscribe({
-      next: data => {
-        this.assignedProjectIds = data;
-      },
-      error: err => {
-        console.log('failed fetching assigned project ids from permission service');
-      }
-    });
   }
 
 
@@ -158,9 +150,5 @@ export class AllProjectsComponent implements OnInit{
       }
 
     }
-  }
-
-  hasAccessToProject(id: number): boolean {
-    return this.assignedProjectIds.has(id);
   }
 }

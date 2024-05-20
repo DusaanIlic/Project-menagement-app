@@ -48,12 +48,12 @@
             <ng-container matColumnDef="project">
               <th mat-header-cell *matHeaderCellDef  mat-sort-header sortActionDescription="Sort by project"> PROJECT </th>
               <td mat-cell *matCellDef="let project">
-                <a *ngIf="hasAccessToProject(project.projectId); else noAccess" class="hover:underline" [routerLink]="['/projects', project.projectId]">
+                <a *ngIf="permissionService.isAssignedToProject(project.projectId); else noAccess" class="hover:underline" [routerLink]="['/projects', project.projectId]">
                   {{project.projectName}}
                 </a>
 
                 <ng-template #noAccess>
-                  <a class="text-gray-500 cursor-not-allowed" title="No permission to access this project">
+                  <a class="text-gray-500 cursor-not-allowed" matTooltip="You aren't assigned to this project!">
                     {{project.projectName}}
                   </a>
                 </ng-template>
@@ -92,7 +92,8 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </th>
               <td mat-cell *matCellDef="let project">
-                <button [disabled]="!hasAccessToProject(project.projectId)" class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                <button [disabled]="!permissionService.isAssignedToProject(project.projectId)" class="font-extrabold text-3xl"
+                        mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
                   <div class="flex items-center justify-center">
                     <mat-icon>view_headline</mat-icon>
                   </div>

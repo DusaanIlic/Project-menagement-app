@@ -3,6 +3,7 @@ import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSta
 import {BehaviorSubject, Observable, skipWhile} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
+import {PermissionService} from "./permission.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class SignalRService {
   private connectedMembersSubject: BehaviorSubject<Set<number>>;
   private notificationSubject: BehaviorSubject<Notification | null> = new BehaviorSubject<Notification | null>(null);
 
-  constructor() {
+  constructor(private permissionService: PermissionService) {
     this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
 
     this.hubConnection = new HubConnectionBuilder()
@@ -50,8 +51,15 @@ export class SignalRService {
     });
 
     this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
-      console.log('received notification');
       this.notificationSubject.next(notification);
+    });
+
+    this.hubConnection.on('AddAssignedProject', (id: number) => {
+      this.permissionService.addProjectId(id);
+    });
+
+    this.hubConnection.on('RemoveAssignedProject', (id: number) => {
+      this.permissionService.removeProjectId(id);
     });
   }
 

@@ -8,37 +8,30 @@ import {AuthService} from "./auth.service";
   providedIn: 'root'
 })
 export class PermissionService {
-  private projectIds: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set<number>());
+  private projectIds: Set<number> = new Set<number>();
 
-  constructor(private projectService: ProjectServiceGet, private authService: AuthService) {
-    const memberId = this.authService.getAuthenticatedMembersId();
+  constructor(private projectService: ProjectServiceGet) {
+    const memberId = Number(localStorage.getItem('authenticated-member-id'));
 
-    if (memberId !== null) {
-      this.projectService.getAssignedProjectIds(memberId).subscribe({
-        next: data=> {
-          this.projectIds.next(new Set<number>(data));
-          console.log(data);
-        },
-        error: err => {
-          console.log(err.message);
-        }
-      })
-    }
+    this.projectService.getAssignedProjectIds(memberId).subscribe({
+      next: data=> {
+        this.projectIds = new Set<number>(data);
+      },
+      error: err => {
+        console.log(err.message);
+      }
+    })
   }
 
-  getProjectIds(): Observable<Set<number>> {
-    return this.projectIds.asObservable();
+  isAssignedToProject(id: number): boolean {
+    return this.projectIds.has(id);
   }
 
   removeProjectId(id: number): void {
-    const newProjectIds = this.projectIds.value;
-    newProjectIds.delete(id);
-    this.projectIds.next(newProjectIds);
+    this.projectIds.delete(id);
   }
 
   addProjectId(id: number): void {
-    const newProjectIds = this.projectIds.value;
-    newProjectIds.add(id);
-    this.projectIds.next(newProjectIds);
+    this.projectIds.add(id);
   }
 }

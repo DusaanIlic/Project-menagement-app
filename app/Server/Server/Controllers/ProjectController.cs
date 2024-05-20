@@ -18,6 +18,7 @@ using Server.Services.Permission;
 using Microsoft.AspNetCore.Http;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
+using Server.Services.PermissionNotifier;
 using TaskStatus = Server.Models.TaskStatus;
 
 namespace Server.Controllers
@@ -30,14 +31,17 @@ namespace Server.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
-
-        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService)
+        private readonly IPermissionNotifier _permissionNotifier;
+        
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, 
+                                    IEmailService emailService, IFileService fileService,
+                                        IPermissionNotifier permissionNotifier)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _fileService = fileService;
-
+            _permissionNotifier = permissionNotifier;
         }
 
         [Authorize]
@@ -186,6 +190,8 @@ namespace Server.Controllers
             dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId, ProjectRoleId = 1 });
 
             await dbContext.SaveChangesAsync();
+
+            await _permissionNotifier.AssignedToProject(userId, project.ProjectId);
 
             var teamLeaderDTO = new MemberDTO
             {
@@ -693,11 +699,13 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+                await _permissionNotifier.AssignedToProject(memberId, projectId);
             }
 
             await dbContext.SaveChangesAsync();
 
-            return Ok(new { Message = "Members added to project successfully" });
+            return Ok(new { message = "Members added to project successfully" });
         }
 
         [Authorize]
@@ -740,6 +748,8 @@ namespace Server.Controllers
 
             dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();
+            
+            await _permissionNotifier.RemovedFromProject(memberId, projectId);
 
             return Ok(new { message = "Member removed from project successfully." });
 
