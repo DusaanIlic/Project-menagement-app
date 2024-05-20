@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
+using Server.DataTransferObjects.Request.Notification;
 using Server.DataTransferObjects.Request.ProjectTask;
 using Server.Models;
+using Server.Services.Notification;
 using Server.Services.Permission;
 using System.Threading.Tasks;
 
@@ -21,12 +23,14 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext dbContext;
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService)
+        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -222,6 +226,17 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + addProjectTaskRequest.TaskName,
+                    MemberId = assignedMember.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
 
