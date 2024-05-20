@@ -627,7 +627,6 @@ namespace Server.Controllers
             }
 
 
-
             return Ok(new { message = "Task priority changed successfully." });
 
         }
@@ -1055,6 +1054,16 @@ namespace Server.Controllers
 
             projectTask.Members.Remove(memberTask);
             await dbContext.SaveChangesAsync();
+         
+            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+            {
+                    Title = "Task Priority Updated!",
+                    Description = $"The priority for task '{projectTask.TaskName}' has been updated to '{taskPriority.Name}'.",
+                    MemberId = memberId
+            };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            
 
             return Ok(new { message = "Member is removed from task successfully." });
 
