@@ -25,12 +25,10 @@ export class PermissionService {
   }
 
   removeProjectId(id: number): void {
-    console.log('removed from project');
     this.projectIds.delete(id);
   }
 
   addProjectId(id: number): void {
-    console.log('added to project');
     this.projectIds.add(id);
   }
 }

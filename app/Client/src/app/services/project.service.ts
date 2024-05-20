@@ -121,6 +121,10 @@ export class ProjectServiceGet{
   getAssignedProjectIds(memberId: number): Observable<number[]> {
     return this.http.get<number[]>(`${PROJECT_API}/Member/${memberId}/AssignedProjectIds`);
   }
+
+  hasAccessToProject(memberId: number, projectId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${PROJECT_API}/${projectId}/Member/${memberId}/HasAccess`);
+  }
 }
 
 

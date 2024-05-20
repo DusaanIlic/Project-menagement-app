@@ -1201,5 +1201,15 @@ namespace Server.Controllers
 
             return Ok(assignedIds);
         }
+        
+        [Authorize]
+        [HttpGet("{projectId}/Member/{memberId}/HasAccess")]
+        public async Task<ActionResult<bool>> IsValidProjectIdAsync(int memberId, int projectId)
+        {
+            bool isValid = await dbContext.MemberProjects
+                .AnyAsync(mp => mp.MemberId == memberId && mp.ProjectId == projectId);
+         
+            return Ok(isValid);
+        }
     }
 }
