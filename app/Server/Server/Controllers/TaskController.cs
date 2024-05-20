@@ -472,6 +472,24 @@ namespace Server.Controllers
             projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
+            var members = await dbContext.Members
+                             .Where(m => dbContext.MemberTasks
+                                                .Any(mt => mt.TaskId == taskId && mt.MemberId == m.Id) && !m.IsDisabled)
+                             .Include(m => m.Role)
+                             .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Task Status Updated!",
+                    Description = $"The status for task '{projectTask.TaskName}' has been updated to '{projectTaskStatus.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
             return Ok(new { message = "Task status updated successfully." });
 
         }
@@ -1054,17 +1072,16 @@ namespace Server.Controllers
 
             projectTask.Members.Remove(memberTask);
             await dbContext.SaveChangesAsync();
-         
+
             SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
             {
-                    Title = "Task Priority Updated!",
-                    Description = $"The priority for task '{projectTask.TaskName}' has been updated to '{taskPriority.Name}'.",
-                    MemberId = memberId
+                Title = "Removed from Task",
+                Description = $"You have been removed from the task '{projectTask.TaskName}'.",
+                MemberId = memberId
             };
 
-                await _notificationService.SendNotification(sendNotificationRequest);
+            await _notificationService.SendNotification(sendNotificationRequest);
             
-
             return Ok(new { message = "Member is removed from task successfully." });
 
         }
