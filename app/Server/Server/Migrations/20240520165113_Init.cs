@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -348,6 +348,30 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProjectFile",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FileId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectFile", x => new { x.ProjectId, x.FileId });
+                    table.ForeignKey(
+                        name: "FK_ProjectFile_Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "Files",
+                        principalColumn: "FileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectFile_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectProjectRoles",
                 columns: table => new
                 {
@@ -580,8 +604,7 @@ namespace Server.Migrations
                     { 2, "Add member" },
                     { 3, "Edit member" },
                     { 4, "Deactivate member" },
-                    { 5, "Create project" },
-                    { 6, "Change project deadline" }
+                    { 5, "Create project" }
                 });
 
             migrationBuilder.InsertData(
@@ -695,9 +718,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 16, 12, 3, 24, 910, DateTimeKind.Local).AddTicks(3109), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$.o8rrb2DB0h9a5yZ7ZZ9a.uy6.eskjkbqdaJCChI6etWJeafZA9hC", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 16, 12, 3, 24, 972, DateTimeKind.Local).AddTicks(3225), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$AzBHNfIGV2MrSJTU/ge4q.FVkIErTRTYIN./D1C3GTDSnRlEh.EBi", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 16, 12, 3, 25, 34, DateTimeKind.Local).AddTicks(2300), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$sywdToX0Be4HxLIVcweQ4OGtukl9v6.FGDbo7.RaLnqcnkhBtspdu", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 20, 18, 51, 11, 952, DateTimeKind.Local).AddTicks(1022), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$yDJWn66lHo.4X0Epk6tWVO4rbT6vYULVsnjSDAjmgt3vmsfZGuDe.", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 20, 18, 51, 12, 173, DateTimeKind.Local).AddTicks(3218), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$/45E2f.0KOUV0wKy4AhMFeOlb9Gzbb1xnkXYfnsxiE94bgEwBpbEi", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 20, 18, 51, 12, 371, DateTimeKind.Local).AddTicks(7180), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$00sR.OQPr.uDAYIxyAycY.ZICOdQDPlHTC/7FK9iqnq6b0qyqJZDG", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -743,8 +766,7 @@ namespace Server.Migrations
                     { 2, 1 },
                     { 3, 1 },
                     { 4, 1 },
-                    { 5, 2 },
-                    { 6, 2 }
+                    { 5, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -787,6 +809,11 @@ namespace Server.Migrations
                 name: "IX_Notifications_MemberId",
                 table: "Notifications",
                 column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectFile_FileId",
+                table: "ProjectFile",
+                column: "FileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectPermissions_Name",
@@ -909,6 +936,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "ProjectFile");
 
             migrationBuilder.DropTable(
                 name: "ProjectProjectRoles");
