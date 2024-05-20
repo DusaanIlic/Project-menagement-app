@@ -1058,6 +1058,25 @@ namespace Server.Controllers
         public async Task<IActionResult> DeleteAvatar(int id, int fileId)
         {
 
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Remove file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
             var project = await dbContext.Projects.FindAsync(id);
 
             if (project == null)
