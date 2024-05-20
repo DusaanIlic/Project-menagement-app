@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Http;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
 using TaskStatus = Server.Models.TaskStatus;
+using Server.Services.Notification;
+using Server.DataTransferObjects.Request.Notification;
 
 namespace Server.Controllers
 {
@@ -30,13 +32,14 @@ namespace Server.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
-
-        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService)
+        private readonly INotificationService _notificationService;
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _fileService = fileService;
+            _notificationService = notificationService;
 
         }
 
@@ -693,9 +696,21 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new project!",
+                    Description = "Your new project is " + project.ProjectName,
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
             await dbContext.SaveChangesAsync();
+
+
 
             return Ok(new { Message = "Members added to project successfully" });
         }
