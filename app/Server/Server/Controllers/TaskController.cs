@@ -608,6 +608,26 @@ namespace Server.Controllers
             projectTask.TaskPriority = taskPriority;
             await dbContext.SaveChangesAsync();
 
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberTasks
+                                                 .Any(mt => mt.TaskId == taskId && mt.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Task Priority Updated!",
+                    Description = $"The priority for task '{projectTask.TaskName}' has been updated to '{taskPriority.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+
+
             return Ok(new { message = "Task priority changed successfully." });
 
         }
