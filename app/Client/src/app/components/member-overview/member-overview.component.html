@@ -48,7 +48,9 @@
 
             <hr />
             <mat-card-actions class="flex justify-center">
-              <button mat-button>EDIT PROFILE</button>
+              <button mat-button [routerLink]="['/members', member.id, 'edit']">
+                EDIT PROFILE
+              </button>
             </mat-card-actions>
           </mat-card>
         </div>

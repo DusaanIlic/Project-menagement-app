@@ -4,7 +4,12 @@ import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
 import { TaskOverviewComponent } from '../task-overview/task-overview.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { MemberService } from '../../services/member.service';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
@@ -32,6 +37,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatMenuModule,
     MatCardModule,
     MatIconModule,
+    RouterLink,
+    RouterLinkActive,
   ],
 })
 export class MemberOverviewComponent implements OnInit {
