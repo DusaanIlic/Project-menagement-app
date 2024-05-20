@@ -1015,7 +1015,6 @@ namespace Server.Controllers
                 return NotFound(new { message = "Project not found." });
             }
 
-            // Add permissions
 
             var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
 
@@ -1095,6 +1094,13 @@ namespace Server.Controllers
             if (!int.TryParse(userIdClaim.Value, out var userId))
             {
                 return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change deadline");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
             }
 
             var project = await dbContext.Projects.FindAsync(projectId);
