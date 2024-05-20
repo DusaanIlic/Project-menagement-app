@@ -658,8 +658,6 @@ namespace Server.Controllers
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
 
 
-            Console.WriteLine("stigne dovde");
-
             if (!hasPermission)
             {
                 return Forbid("Insufficient permissions");
@@ -1008,6 +1006,27 @@ namespace Server.Controllers
         [HttpPost("{id}/files")]
         public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
         {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Add file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
             var project = await dbContext.Projects.FindAsync(id);
 
             if (project == null)
