@@ -1097,13 +1097,6 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Chaneg project deadline");
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
-
             var project = await dbContext.Projects.FindAsync(projectId);
 
             if (project == null)
