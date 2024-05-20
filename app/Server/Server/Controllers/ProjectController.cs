@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Http;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
 using TaskStatus = Server.Models.TaskStatus;
+using Server.Services.Notification;
+using Server.DataTransferObjects.Request.Notification;
 
 namespace Server.Controllers
 {
@@ -30,13 +32,14 @@ namespace Server.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
-
-        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService)
+        private readonly INotificationService _notificationService;
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _fileService = fileService;
+            _notificationService = notificationService;
 
         }
 
@@ -559,6 +562,27 @@ namespace Server.Controllers
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
 
+
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Status Updated!",
+                    Description = $"The status for project '{project.ProjectName}' has been updated to '{status.Status}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+
             return Ok(new { message = "Project status updated successfully." });
 
         }
@@ -702,9 +726,21 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new project!",
+                    Description = "Your new project is " + project.ProjectName,
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
             await dbContext.SaveChangesAsync();
+
+
 
             return Ok(new { Message = "Members added to project successfully" });
         }
@@ -855,6 +891,25 @@ namespace Server.Controllers
             project.Priority = priority;
             await dbContext.SaveChangesAsync();
 
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach(var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Priority Updated!",
+                    Description = $"The priority for project '{project.ProjectName}' has been updated to '{priority.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
             return Ok(new { message = "Project priority changed successfully." });
         }
 
@@ -966,6 +1021,27 @@ namespace Server.Controllers
         [HttpPost("{id}/files")]
         public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
         {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Add file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
             var project = await dbContext.Projects.FindAsync(id);
 
             if (project == null)
@@ -973,7 +1049,6 @@ namespace Server.Controllers
                 return NotFound(new { message = "Project not found." });
             }
 
-            // Add permissions
 
             var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
 
@@ -997,6 +1072,25 @@ namespace Server.Controllers
         [HttpDelete("{id}/files/{fileId}")]
         public async Task<IActionResult> DeleteAvatar(int id, int fileId)
         {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Remove file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             var project = await dbContext.Projects.FindAsync(id);
 
@@ -1055,7 +1149,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Chaneg project deadline");
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change deadline");
 
             if (!hasPermission)
             {
