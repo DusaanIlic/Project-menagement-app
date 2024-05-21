@@ -1215,5 +1215,56 @@ namespace Server.Controllers
             return Ok(taskFiles);
         }
 
+        [Authorize]
+        [HttpPost("{id}/files")]
+        public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Add file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+
+            var task = await dbContext.Task.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+
+            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                var tasktFile = new TasktFile
+                {
+                    TaskId = id,
+                    FileId = uploadedFile.FileId
+                };
+                project.TaskFiles.Add(tasktFile);
+
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Files posted successfully." });
+        }
+
     }
 }
