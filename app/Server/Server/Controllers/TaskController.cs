@@ -1266,5 +1266,56 @@ namespace Server.Controllers
             return Ok(new { message = "Files posted successfully." });
         }
 
+        [Authorize]
+        [HttpDelete("{id}/files/{fileId}")]
+        public async Task<IActionResult> DeleteFile(int id, int fileId)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            var task = await dbContext.Task.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var taskFile = await dbContext.TaskFile
+                .FirstOrDefaultAsync(pf => pf.TaskId == id && pf.FileId == fileId);
+
+            if (taskFile == null)
+            {
+                return NotFound(new { message = "File not found in task." });
+            }
+
+            dbContext.TaskFile.Remove(taskFile);
+
+            task.TaskFiles.Remove(taskFile);
+
+            await _fileService.DeleteFile(fileId);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "File deleted successfully." });
+
+        }
+
     }
 }
