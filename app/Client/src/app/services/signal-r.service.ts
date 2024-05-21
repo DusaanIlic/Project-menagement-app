@@ -62,6 +62,10 @@ export class SignalRService {
     this.hubConnection.on('RemovedFromProject', (id: number) => {
       this.permissionService.removeProjectId(id);
     });
+
+    this.hubConnection.on('UpdatedGlobalPermissions', (permissions: number[]) => {
+      this.permissionService.updateGlobalPermissions(permissions);
+    })
   }
 
   public startConnection() {

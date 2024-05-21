@@ -49,4 +49,9 @@ export class PermissionService {
   getGlobalPermissions(): Set<number> {
     return this.globalPermissions;
   }
+
+  updateGlobalPermissions(globalPermissions: number[]): void {
+    console.log(`updated global permissions to ${globalPermissions}`);
+    this.globalPermissions = new Set<number>(globalPermissions);
+  }
 }

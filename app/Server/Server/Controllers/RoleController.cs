@@ -7,6 +7,7 @@ using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request.Role;
 using Server.Models;
 using Server.Services.Permission;
+using Server.Services.PermissionNotifier;
 
 namespace Server.Controllers
 {
@@ -16,11 +17,17 @@ namespace Server.Controllers
     {
         private readonly LogicTenacityDbContext dbContext;
         private readonly IPermissionService _permissionService;
-
-        public RoleController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
+        private readonly IPermissionNotifier _permissionNotifier;
+        
+        public RoleController(
+            LogicTenacityDbContext dbContext, 
+            IPermissionService permissionService,
+            IPermissionNotifier permissionNotifier
+        )
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
+            _permissionNotifier = permissionNotifier;
         }
 
         [Authorize]
@@ -135,6 +142,11 @@ namespace Server.Controllers
 
             dbContext.Roles.Remove(role);
             await dbContext.SaveChangesAsync();
+            
+            foreach (var member in members)
+            {
+                await _permissionNotifier.UpdatedGlobalPermissions(member.Id);
+            }
 
             return Ok(new { message = "Success." });
         }
@@ -235,6 +247,15 @@ namespace Server.Controllers
             dbContext.RolePermissions.Remove(rolePermission);
             await dbContext.SaveChangesAsync();
 
+            var members = await dbContext.Members
+                .Where(m => m.RoleId == roleId)
+                .ToListAsync();
+            
+            foreach (var member in members)
+            {
+                await _permissionNotifier.UpdatedGlobalPermissions(member.Id);
+            }
+
             return Ok(new { message = "Success." });
 
         }
@@ -273,6 +294,15 @@ namespace Server.Controllers
 
             dbContext.RolePermissions.Add(newRolePermission);
             await dbContext.SaveChangesAsync();
+            
+            var members = await dbContext.Members
+                .Where(m => m.RoleId == roleId)
+                .ToListAsync();
+            
+            foreach (var member in members)
+            {
+                await _permissionNotifier.UpdatedGlobalPermissions(member.Id);
+            }
 
             return Ok(new { message = "Success." });
         }

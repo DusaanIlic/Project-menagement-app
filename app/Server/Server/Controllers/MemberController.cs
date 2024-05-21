@@ -19,6 +19,7 @@ using Server.DataTransferObjects.Request.Member;
 using Server.DataTransferObjects.Request.Notification;
 using Server.Services.Notification;
 using Server.Services.Permission;
+using Server.Services.PermissionNotifier;
 
 namespace Server.Controllers
 {
@@ -31,16 +32,22 @@ namespace Server.Controllers
         private readonly IFileService _fileService;
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
+        private readonly IPermissionNotifier _permissionNotifier;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService,
-            IFileService fileService, IPermissionService permissionService,
-            INotificationService notificationService)
+        public MemberController(
+            LogicTenacityDbContext dbContext, 
+            IEmailService emailService,
+            IFileService fileService, 
+            IPermissionService permissionService,
+            INotificationService notificationService,
+            IPermissionNotifier permissionNotifier)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
             _permissionService = permissionService;
             _notificationService = notificationService;
+            _permissionNotifier = permissionNotifier;
         }
 
         [Authorize]
@@ -536,6 +543,7 @@ namespace Server.Controllers
             };
 
             await _notificationService.SendNotification(sendNotificationRequest);
+            await _permissionNotifier.UpdatedGlobalPermissions(id);
 
             return Ok(roleDTO);
         }

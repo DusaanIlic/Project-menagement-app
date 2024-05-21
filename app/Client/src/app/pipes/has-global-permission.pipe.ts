@@ -4,7 +4,8 @@ import {GlobalPermission} from "../enums/global-permissions.enum";
 
 @Pipe({
   standalone: true,
-  name: 'hasGlobalPermission'
+  name: 'hasGlobalPermission',
+  pure: false
 })
 export class HasGlobalPermissionPipe implements PipeTransform {
   constructor(private permissionService: PermissionService) {
