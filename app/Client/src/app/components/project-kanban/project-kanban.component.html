@@ -46,7 +46,7 @@
 
 
     <div class="w-full flex flex-row gap-5 p-10 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
-        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg h-1/4" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
+        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
              <div  >
 
              <mat-card-header>
