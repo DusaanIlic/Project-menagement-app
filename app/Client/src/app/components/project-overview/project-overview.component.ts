@@ -19,16 +19,18 @@ import {environment} from "../../../environments/environment";
 import { ConfirmationProjectComponent } from '../confirmation-project/confirmation-project.component';
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 import { ProjectPriority } from '../../models/project-priority';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepicker, 
-    MatDatepickerInput, MatDatepickerToggle, MatLabel, MatFormField, FormsModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule, 
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
