@@ -511,6 +511,11 @@ namespace Server.Controllers
                 return NotFound(new { message = "Member with given id doesn't exist" });
             }
 
+            if (member.Email == "admin@logictenacity.com")
+            {
+                return BadRequest(new { message = "Cannot change the role of the main administrator" });
+            }
+
             var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == request.RoleId);
 
             if (role == null)

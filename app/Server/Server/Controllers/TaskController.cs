@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
+using Server.DataTransferObjects.Request.Notification;
 using Server.DataTransferObjects.Request.ProjectTask;
 using Server.Models;
+using Server.Services.Notification;
 using Server.Services.Permission;
 using System.Threading.Tasks;
 
@@ -21,12 +23,14 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext dbContext;
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService)
+        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -222,6 +226,17 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + addProjectTaskRequest.TaskName,
+                    MemberId = assignedMember.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
 
@@ -457,6 +472,24 @@ namespace Server.Controllers
             projectTask.TaskStatus = projectTaskStatus;
             await dbContext.SaveChangesAsync();
 
+            var members = await dbContext.Members
+                             .Where(m => dbContext.MemberTasks
+                                                .Any(mt => mt.TaskId == taskId && mt.MemberId == m.Id) && !m.IsDisabled)
+                             .Include(m => m.Role)
+                             .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Task Status Updated!",
+                    Description = $"The status for task '{projectTask.TaskName}' has been updated to '{projectTaskStatus.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
             return Ok(new { message = "Task status updated successfully." });
 
         }
@@ -593,6 +626,25 @@ namespace Server.Controllers
             projectTask.TaskPriority = taskPriority;
             await dbContext.SaveChangesAsync();
 
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberTasks
+                                                 .Any(mt => mt.TaskId == taskId && mt.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Task Priority Updated!",
+                    Description = $"The priority for task '{projectTask.TaskName}' has been updated to '{taskPriority.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+
             return Ok(new { message = "Task priority changed successfully." });
 
         }
@@ -678,7 +730,17 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
-            
+
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = memberId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+
             }
 
             await dbContext.SaveChangesAsync();
@@ -1011,6 +1073,15 @@ namespace Server.Controllers
             projectTask.Members.Remove(memberTask);
             await dbContext.SaveChangesAsync();
 
+            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+            {
+                Title = "Removed from Task",
+                Description = $"You have been removed from the task '{projectTask.TaskName}'.",
+                MemberId = memberId
+            };
+
+            await _notificationService.SendNotification(sendNotificationRequest);
+            
             return Ok(new { message = "Member is removed from task successfully." });
 
         }
