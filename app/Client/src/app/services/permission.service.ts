@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {ProjectServiceGet} from "./project.service";
 import {HttpClient} from "@angular/common/http";
 import {MemberService} from "./member.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,12 @@ export class PermissionService {
   private projectIds: Set<number> = new Set<number>();
   private globalPermissions: Set<number> = new Set<number>();
 
-  constructor(private projectService: ProjectServiceGet, private memberService: MemberService) {
+  constructor(
+    private projectService: ProjectServiceGet,
+    private memberService: MemberService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     const memberId = Number(localStorage.getItem('authenticated-member-id'));
 
     this.projectService.getAssignedProjectIds(memberId).subscribe({

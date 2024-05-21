@@ -25,6 +25,8 @@ import {MatOption, MatSelect} from "@angular/material/select";
 import {environment} from "../../../environments/environment";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
 
 @Component({
   selector: 'app-edit-member',
@@ -57,7 +59,8 @@ import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component
     MatOption,
     NgForOf,
     AsyncPipe,
-    JsonPipe
+    JsonPipe,
+    HasGlobalPermissionPipe
   ],
   templateUrl: './edit-member.component.html',
   styleUrl: './edit-member.component.scss'
@@ -458,4 +461,6 @@ export class EditMemberComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+    protected readonly GlobalPermission = GlobalPermission;
 }
