@@ -687,5 +687,16 @@ namespace Server.Controllers
 
             return Ok();
         }
+
+        [Authorize]
+        [HttpGet("{memberId}/HasEditAccess")]
+        public async Task<ActionResult<bool>> CheckIfCanEdit(int memberId)
+        {
+            return Ok(
+                await _dbContext.Members.AnyAsync(m => m.Id == memberId) ||
+                await _permissionService.IsCurrentUserIdMatchAsync(memberId) ||
+                await _permissionService.HasGlobalPermissionAsync("Edit member")
+                );
+        }
     }
 }
