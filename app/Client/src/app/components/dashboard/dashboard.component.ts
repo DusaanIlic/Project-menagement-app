@@ -31,6 +31,7 @@ import { FormsModule } from '@angular/forms';
 import { ProjectStatus } from '../../models/project-status';
 import { ProjectPriority } from '../../models/project-priority';
 import { taskPriority } from '../../models/taskPriority';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-dashboard',
@@ -62,7 +63,8 @@ import { taskPriority } from '../../models/taskPriority';
     MatOption,
     MatSelect,
     ReactiveFormsModule,
-    MatPaginator
+    MatPaginator,
+    MatCardModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -94,6 +96,12 @@ export class DashboardComponent implements OnInit {
   taskSource: any;
   taskColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskPriorityName', 'taskStatus', 'actions'];
 
+  totalTasks: number = 0;
+  startedTasks: number = 0;
+  newTasks: number = 0;
+  completedTasks: number = 0;
+
+
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();
 
@@ -119,6 +127,14 @@ export class DashboardComponent implements OnInit {
     this.taskSource.data = this.tasks.filter(task =>
     (this.selectedTaskPriority == this.defaultTaskPriority || this.selectedTaskPriority == task.taskPriorityId)
     );
+  }
+
+  calculateTasksByStatus() {
+    this.totalTasks = this.tasks.length;
+  
+    this.newTasks = this.tasks.filter(task => task.taskStatus === "New").length;
+    this.startedTasks = this.tasks.filter(task => task.taskStatus === "In Progress").length;
+    this.completedTasks = this.tasks.filter(task => task.taskStatus === "Completed").length;
   }
 
   applyFilters() {
@@ -158,6 +174,7 @@ export class DashboardComponent implements OnInit {
     this.projectService.getAllProjectStatuses().subscribe({
       next: (data: ProjectStatus[]) => {
         this.projectStatuses = data;
+        this.calculateTasksByStatus();
       },
       error: error => {
         console.log('failed fetching project statuses');
