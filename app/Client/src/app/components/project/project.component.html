@@ -1,6 +1,9 @@
 <mat-sidenav-container class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]" autosize>
   <mat-sidenav mode="side" opened="true" class="select-none">
     <mat-nav-list>
+      <mat-list-item>
+        <div class="flex items-center gap-2 " >{{project.projectName}}</div>
+      </mat-list-item>
       <mat-list-item *ngFor="let button of buttons" [routerLink]="button.link" routerLinkActive="disabled">
         <div class="flex items-center gap-2 text-2xl">
           <mat-icon class="scale-125">{{ button.icon }}</mat-icon>
