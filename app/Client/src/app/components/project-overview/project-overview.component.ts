@@ -20,12 +20,15 @@ import { ConfirmationProjectComponent } from '../confirmation-project/confirmati
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { ProjectPriority } from '../../models/project-priority';
+import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
   imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepicker, 
-    MatDatepickerInput, MatDatepickerToggle, MatLabel, MatFormField],
+    MatDatepickerInput, MatDatepickerToggle, MatLabel, MatFormField, FormsModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -41,7 +44,9 @@ export class ProjectOverviewComponent implements OnInit {
   numberOfTasks: number = 0;
   taskStatusData: any[] = [];
   recentActivities: any[] = [];
+  projectPriorities: ProjectPriority[] = [];
   today = new Date();
+  selectedPriority: number | null = null;
 
   constructor(
     public dialog: MatDialog,
@@ -54,6 +59,7 @@ export class ProjectOverviewComponent implements OnInit {
   ngOnInit() {
     this.routeSub = this.route.params.subscribe(params => {
       this.projectId = params['id'];
+      this.loadProjectPriorities();
       this.getProjectDetails();
     });
 
@@ -83,6 +89,25 @@ export class ProjectOverviewComponent implements OnInit {
         activityToUpdate.taskName = task.taskName;
       }
     });
+  }
+
+  loadProjectPriorities(): void {
+    this.pService.getProjectPriorities().subscribe(
+      (priorities: ProjectPriority[]) => {
+        this.projectPriorities = priorities;
+        console.log('Project Priorities:', this.projectPriorities);
+        //this.setDefaultPriority();
+      },
+      (error) => {
+        console.error('Error fetching project priorities:', error);
+      }
+    );
+  }
+
+  setDefaultPriority() {
+    if (this.projectDetails && this.projectPriorities.length > 0) {
+      this.selectedPriority = this.projectDetails.priorityId;
+    }
   }
 
   calculateDaysRemaining(projectEndDate: Date): number {
@@ -158,15 +183,19 @@ export class ProjectOverviewComponent implements OnInit {
   }
 
   getProjectDetails() {
-    this.pService.getProjectById(this.projectId).subscribe(
-      (data) => {
-        this.projectDetails = data;
-        console.log('Project Details:', this.projectDetails);
-      },
-      (error) => {
-        console.error('Error fetching project details:', error);
-      }
-    );
+    forkJoin({
+      projectDetails: this.pService.getProjectById(this.projectId),
+      projectPriorities: this.pService.getProjectPriorities()
+    }).subscribe(({ projectDetails, projectPriorities }) => {
+      this.projectDetails = projectDetails;
+      this.projectPriorities = projectPriorities;
+      this.selectedPriority = this.projectDetails.projectPriorityId; 
+      //console.log('Project Details:', this.projectDetails);
+      //console.log('Project Priorities:', this.projectPriorities);
+      console.log('Selected Priority:', this.selectedPriority);
+    }, error => {
+      console.error('Error loading project data:', error);
+    });
   }
 
   fetchTaskStatusData() {
