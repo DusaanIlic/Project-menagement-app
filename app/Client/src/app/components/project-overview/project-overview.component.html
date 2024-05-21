@@ -77,7 +77,11 @@
 
   <div class="flex flex-row justify-center h-2/3 my-4">
     <div class="flex flex-col basis-1/2 pr-5 gap-2" *ngIf="projectDetails">
-      <p class="text-xl pb-2">Project details</p>
+      <div class="flex flex-row justify-between">
+        <p class="text-xl pb-2">Project details</p>
+        <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" color="primary">Save</button>
+      </div>
+      
       <mat-card>
         <mat-card-content>
           <p class="pb-1"><b>Project Name</b></p>
