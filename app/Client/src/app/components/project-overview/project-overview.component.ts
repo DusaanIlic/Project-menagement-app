@@ -17,11 +17,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import {environment} from "../../../environments/environment";
 import { ConfirmationProjectComponent } from '../confirmation-project/confirmation-project.component';
+import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepicker, 
+    MatDatepickerInput, MatDatepickerToggle, MatLabel, MatFormField],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -37,6 +41,7 @@ export class ProjectOverviewComponent implements OnInit {
   numberOfTasks: number = 0;
   taskStatusData: any[] = [];
   recentActivities: any[] = [];
+  today = new Date();
 
   constructor(
     public dialog: MatDialog,
