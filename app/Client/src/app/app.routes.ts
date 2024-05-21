@@ -17,6 +17,8 @@ import {MainComponent} from "./components/main/main.component";
 import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {ProjectAnalyticsComponent} from "./components/project-analytics/project-analytics.component";
 import {ProjectGuard} from "./guards/project.guard";
+import {MemberEditGuard} from "./guards/member-edit.guard";
+import {MemberGuard} from "./guards/member.guard";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -31,9 +33,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
-      { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]},
+      { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard, MemberEditGuard] },
+      { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard, MemberGuard] },
       { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
-      { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
       {
         path: 'projects/:id',
         component: ProjectComponent,

@@ -104,4 +104,12 @@ export class MemberService {
   deleteNotifications(memberId: number, notificationIds: number[]) {
     return this.http.post(`${API}/${memberId}/Notifications`, { notificationIds });
   }
+
+  hasEditAccess(memberId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${API}/${memberId}/HasEditAccess`);
+  }
+
+  checkIfExists(memberId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${API}/${memberId}/CheckIfExists`);
+  }
 }

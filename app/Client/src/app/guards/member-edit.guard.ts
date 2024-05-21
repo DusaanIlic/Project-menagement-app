@@ -1,12 +1,12 @@
-import {Injectable} from "@angular/core";
-import {ActivatedRouteSnapshot, CanActivate, Router} from "@angular/router";
-import {MemberService} from "../services/member.service";
+import {ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router} from "@angular/router";
 import {catchError, map, Observable, of} from "rxjs";
+import {MemberService} from "../services/member.service";
+import {Injectable} from "@angular/core";
 
 @Injectable({
   providedIn: 'root'
 })
-export class MemberGuard implements CanActivate {
+export class MemberEditGuard implements CanActivate {
   constructor(
     private memberService: MemberService,
     private router: Router
@@ -15,7 +15,7 @@ export class MemberGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const memberId = Number(route.paramMap.get('id'));
 
-    return this.memberService.checkIfExists(memberId).pipe(
+    return this.memberService.hasEditAccess(memberId).pipe(
       map(isValid => {
         if (isValid) {
           return true;
