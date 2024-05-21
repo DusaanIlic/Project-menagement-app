@@ -93,14 +93,21 @@
 
     </div>
 
-    <div class="flex flex-col basis-1/2 pr-5">
-      <p class="text-xl pb-2">Tasks on project</p>
-      <ngx-charts-pie-chart
-        [results]="taskStatusData"
-        [legend]="true"
-        [labels]="true"
-        [explodeSlices]="true">
-      </ngx-charts-pie-chart>
+    <div class="flex flex-col basis-1/2 pr-5 gap-2">
+      <p class="text-xl pb-2">Recent activity</p>
+      <mat-card class="example-card" *ngFor="let activity of recentActivities">
+        <mat-card-header>
+          <mat-card-title-group>
+            <mat-card-title><p>{{activity.taskName}}</p></mat-card-title>
+            <mat-card-subtitle>{{activity.name}} {{activity.lastname}}</mat-card-subtitle>
+            <img mat-card-sm-image [src]="environment.apiUrl + '/Member/' + activity?.workerId + '/Avatar'" class="hidden xl:w-10 xl:h-10 xl:inline ml-2">
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content>
+          {{ activity.comment }}
+        </mat-card-content>
+      </mat-card>
+
     </div>
   </div>
 </div>
