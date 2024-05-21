@@ -24,13 +24,15 @@ import {MatDivider} from "@angular/material/divider";
 import {ProjectPriority} from "../../models/project-priority";
 import {PermissionService} from "../../services/permission.service";
 import {MatTooltip} from "@angular/material/tooltip";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider, MatTooltip]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider, MatTooltip, HasGlobalPermissionPipe]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: number = 0;
@@ -150,4 +152,6 @@ export class AllProjectsComponent implements OnInit{
 
     }
   }
+
+  protected readonly GlobalPermission = GlobalPermission;
 }

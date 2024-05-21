@@ -133,7 +133,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.getJwtToken() !== null;
+    return this.getJwtToken() !== null && this.getAuthenticatedMembersId() !== null;
   }
 
   refreshJwtToken() {

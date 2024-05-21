@@ -37,7 +37,8 @@
 
           <span class="grow"></span>
 
-          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center">Add Project</button>
+          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center"
+            *ngIf="GlobalPermission.CREATE_PROJECT | hasGlobalPermission">Add Project</button>
         </div>
 
         <mat-divider class="w-[80%]"></mat-divider>

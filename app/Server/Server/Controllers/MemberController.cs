@@ -709,5 +709,29 @@ namespace Server.Controllers
                 )
             );
         }
+        
+        
+        [Authorize]
+        [HttpGet("{memberId}/GetGlobalPermissions")]
+        public async Task<IActionResult> SendPermissions(int memberId)
+        {
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found with given id" });
+            }
+
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            var permissions = await _dbContext.RolePermissions
+                .Where(rp => rp.RoleId == member.RoleId)
+                .ToListAsync();
+            
+            return Ok(permissions.Select(p => p.PermissionId));
+        } 
     }
 }

@@ -9,6 +9,8 @@ import {environment} from "../../environments/environment";
 import {ProgressBarService} from "../services/progress-bar.service";
 import {SignalRService} from "../services/signal-r.service";
 
+let isRefreshing: boolean = false;
+
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const jwtToken = authService.getJwtToken();
@@ -24,56 +26,61 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   progressBarService.show(); // Show progress bar when request starts
 
-  console.log('Http Interceptor running');
-
   return next(cloned).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
         console.log('Caught unauthorized error, attempting to refresh token...');
-        console.log('Stopping signalr')
         console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
 
-        return authService.refreshJwtToken().pipe(
-          switchMap((data) => {
-            const newJwtToken = data.jwtToken;
-            const newJwtTokenExpirationDate = data.jwtTokenExpirationDate;
-            const newRefreshToken = data.refreshToken;
-            const member = data.member;
+        if (!isRefreshing) {
+          isRefreshing = true;
 
-            localStorage.setItem('jwt-token', newJwtToken);
-            localStorage.setItem('jwt-token-expiration-date', newJwtTokenExpirationDate);
-            localStorage.setItem('refresh-token', newRefreshToken);
-            localStorage.setItem('authenticated-member-id', member.id.toString());
-            localStorage.setItem('authenticated-member', JSON.stringify(member));
-            localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
+          return authService.refreshJwtToken().pipe(
+            switchMap((data) => {
+              const newJwtToken = data.jwtToken;
+              const newJwtTokenExpirationDate = data.jwtTokenExpirationDate;
+              const newRefreshToken = data.refreshToken;
+              const member = data.member;
 
-            authService.updateAuthenticatedMember(member);
-            authService.updateAuthenticatedMembersAvatar();
+              localStorage.setItem('jwt-token', newJwtToken);
+              localStorage.setItem('jwt-token-expiration-date', newJwtTokenExpirationDate);
+              localStorage.setItem('refresh-token', newRefreshToken);
+              localStorage.setItem('authenticated-member-id', member.id.toString());
+              localStorage.setItem('authenticated-member', JSON.stringify(member));
+              localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
 
-            console.log('Successfully refreshed token');
-            console.log('Starting signalr again');
+              authService.updateAuthenticatedMember(member);
+              authService.updateAuthenticatedMembersAvatar();
 
-            const clonedReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${newJwtToken}`
-              }
-            });
+              console.log('Successfully refreshed token');
+              console.log('Starting signalr again');
 
-            progressBarService.hide();
+              const clonedReq = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newJwtToken}`
+                }
+              });
 
-            return next(clonedReq);
-          }),
-          catchError((error) => {
-            console.log(`Failed refreshing token.`);
-            progressBarService.hide();
-            authService.logout();
-            return throwError(() => error);
-          }),
-          finalize(() => {
-            progressBarService.hide(); // Hide progress bar whether there's an error or not
-          })
-        );
+              progressBarService.hide();
+
+              isRefreshing = false;
+
+              return next(clonedReq);
+            }),
+            catchError((error) => {
+              console.log(`Failed refreshing token.`);
+              progressBarService.hide();
+              authService.logout();
+              isRefreshing = false;
+              return throwError(() => error);
+            }),
+            finalize(() => {
+              progressBarService.hide(); // Hide progress bar whether there's an error or not
+            })
+          );
+        }
       }
+
 
       progressBarService.hide(); // Hide progress bar on error
       return throwError(() => err);

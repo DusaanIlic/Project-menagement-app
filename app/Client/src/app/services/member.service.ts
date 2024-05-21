@@ -112,4 +112,8 @@ export class MemberService {
   checkIfExists(memberId: number): Observable<boolean> {
     return this.http.get<boolean>(`${API}/${memberId}/CheckIfExists`);
   }
+
+  getGlobalPermissions(memberId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${API}/${memberId}/GetGlobalPermissions`);
+  }
 }
