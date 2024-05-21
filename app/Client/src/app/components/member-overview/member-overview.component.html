@@ -2,20 +2,18 @@
   <div class="flex justify-between w-[90%] gap-10">
     <div class="w-1/5 flex-col justify-between">
       <div class="w-full flex items-center border-b-8 border-gray-600">
-        <div class="flex justify-between">
-          <mat-card class="example-card">
+        <div class="w-full flex justify-between items-center">
+          <mat-card class="example-card w-full flex items-center">
             <img
               mat-card-image
-              class="rounded-full size-30"
+              class="rounded-full size-1/2"
               src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar"
               alt="Avatar"
             />
 
             <mat-card-header>
-              <!--<div mat-card-avatar class="example-header-image"></div>-->
-              <mat-card-title
-                >{{ member.firstName }}
-                {{ member.lastName }}
+              <mat-card-title class="flex justify-center text-center"
+                >{{ member.firstName }} {{ member.lastName }}
                 <p
                   *ngIf="member.firstName == ''"
                   class="w-full px-2 py-1 rounded-md rounded-b-none"
@@ -29,7 +27,7 @@
                   Last name not set.
                 </p></mat-card-title
               >
-              <mat-card-subtitle>
+              <mat-card-subtitle class="flex justify-center text-center">
                 <p
                   class="w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none"
                 >
@@ -56,23 +54,23 @@
         </div>
       </div>
 
-      <div class="w-full flex justify-center gap-5 mt-5">
-        <div class="flex flex-col justify-between h-60 w-64">
+      <div class="w-full flex justify-start gap-5 mt-5">
+        <div class="flex flex-col justify-start items-start h-60 w-64">
           <div class="flex items-center">
             <mat-icon>location_on</mat-icon>
-            <p *ngIf="member.city != ''" class="text-xl ml-3">
+            <p *ngIf="member.city != ''" class="text-lg ml-3">
               {{ member.city }}
             </p>
             <p *ngIf="member.city == ''" class="ml-3">City not set.</p>
 
-            <p *ngIf="member.country != ''" class="text-xl m-1">
+            <p *ngIf="member.country != ''" class="text-lg m-1">
               {{ member.country }},
             </p>
             <p *ngIf="member.country == ''" class="m-1">Country not set.</p>
           </div>
           <div class="flex items-center">
             <mat-icon>email</mat-icon>
-            <p class="text-xl m-3" *ngIf="member.email != ''">
+            <p class="m-3 text-lg" *ngIf="member.email != ''">
               {{ member.email }}
             </p>
 
@@ -80,7 +78,7 @@
           </div>
           <div class="flex items-center">
             <mat-icon>phone</mat-icon>
-            <p *ngIf="member.phoneNumber != ''" class="text-xl m-3">
+            <p class="m-3 text-lg" *ngIf="member.phoneNumber != ''">
               {{ member.phoneNumber }}
             </p>
             <p *ngIf="member.phoneNumber == ''" class="m-3">
@@ -89,7 +87,7 @@
           </div>
           <div class="flex items-center">
             <mat-icon>link</mat-icon>
-            <p *ngIf="member.github != ''" class="text-xl m-3">
+            <p class="m-3 text-lg" *ngIf="member.github != ''">
               {{ member.github }}
             </p>
             <p *ngIf="member.github == ''" class="m-3">GitHub not set.</p>
@@ -97,7 +95,7 @@
 
           <div class="flex items-center">
             <mat-icon>link</mat-icon>
-            <p *ngIf="member.linkedin != ''" class="text-xl m-3">
+            <p class="m-3 text-lg" *ngIf="member.linkedin != ''">
               {{ member.linkedin }}
             </p>
             <p *ngIf="member.linkedin == ''" class="m-3">Linkedin not set.</p>
