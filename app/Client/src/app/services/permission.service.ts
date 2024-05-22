@@ -17,6 +17,10 @@ export class PermissionService {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    this.refreshData();
+  }
+
+  refreshData() {
     const memberId = Number(localStorage.getItem('authenticated-member-id'));
 
     this.projectService.getAssignedProjectIds(memberId).subscribe({

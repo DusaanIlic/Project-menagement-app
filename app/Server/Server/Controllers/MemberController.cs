@@ -745,6 +745,40 @@ namespace Server.Controllers
                 .ToListAsync();
             
             return Ok(permissions.Select(p => p.PermissionId));
-        } 
+        }
+
+        [Authorize]
+        [HttpGet("{memberId}/GetProjectPermissions")]
+        public async Task<IActionResult> SendProjectPermissions(int memberId)
+        {
+            var memberProjects = await _dbContext.MemberProjects
+                .Include(mp => mp.ProjectRole)
+                .Where(mp => mp.MemberId == memberId)
+                .ToListAsync();
+
+            if (!memberProjects.Any())
+            {
+                return BadRequest(new { message = "Member not found with given id or no projects associated with member" });
+            }
+
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            var projectRoleIds = memberProjects.Select(mp => mp.ProjectRoleId).ToList();
+
+            var projectPermissions = await _dbContext.ProjectRolePermissions
+                .Where(prp => projectRoleIds.Contains(prp.ProjectRoleId))
+                .Select(prp => new { prp.ProjectRoleId, prp.ProjectPermissionId })
+                .ToListAsync();
+
+            var response = projectPermissions
+                .GroupBy(prp => prp.ProjectRoleId)
+                .ToDictionary(g => g.Key, g => g.Select(prp => prp.ProjectPermissionId).ToList());
+
+            return Ok(response);
+        }
+
     }
 }
