@@ -23,7 +23,8 @@ import { forkJoin, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import {MatDivider} from "@angular/material/divider";
+import { MatDivider } from '@angular/material/divider';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-member-overview',
@@ -40,6 +41,7 @@ import {MatDivider} from "@angular/material/divider";
     MatIconModule,
     RouterLink,
     RouterLinkActive,
+    MatPaginator,
     MatDivider,
   ],
 })
