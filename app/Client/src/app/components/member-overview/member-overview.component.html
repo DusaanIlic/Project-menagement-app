@@ -3,103 +3,105 @@
     <div class="w-1/5 flex-col items-center justify-center">
       <div class="w-full flex items-center">
         <div class="w-full flex justify-between items-center">
-          <mat-card class="example-card w-full flex items-center p-4">
-            <img
-              mat-card-image
-              class="rounded-full size-1/2"
-              src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar"
-              alt="Avatar"
-            />
+          <div class="flex justify-center items-center">
+            <mat-card class="example-card w-full flex items-center p-4">
+              <img
+                class="rounded-full size-1/2 select-none"
+                src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar"
+                alt="Avatar"
+              />
 
-            <mat-card-header>
-              <mat-card-title class="flex justify-center text-center"
-                >{{ member.firstName }} {{ member.lastName }}
-                <p
-                  *ngIf="member.firstName == ''"
-                  class="w-full px-2 py-1 rounded-md rounded-b-none"
+              <mat-card-header>
+                <mat-card-title class="flex justify-center text-center"
+                  >{{ member.firstName }} {{ member.lastName }}
+                  <p
+                    *ngIf="member.firstName == ''"
+                    class="w-full px-2 py-1 rounded-md rounded-b-none"
+                  >
+                    First name not set.
+                  </p>
+                  <p
+                    *ngIf="member.lastName == ''"
+                    class="w-full px-2 py-1 rounded-md rounded-b-none"
+                  >
+                    Last name not set.
+                  </p></mat-card-title
                 >
-                  First name not set.
-                </p>
-                <p
-                  *ngIf="member.lastName == ''"
-                  class="w-full px-2 py-1 rounded-md rounded-b-none"
+                <mat-card-subtitle class="flex justify-center text-center">
+                  <p
+                    class="w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none"
+                  >
+                    {{ member.roleName }}
+                  </p>
+                  <p
+                    *ngIf="member.roleName == ''"
+                    class="w-full px-2 py-1 rounded-md rounded-b-none"
+                  >
+                    Role not set.
+                  </p></mat-card-subtitle
                 >
-                  Last name not set.
-                </p></mat-card-title
-              >
-              <mat-card-subtitle class="flex justify-center text-center">
-                <p
-                  class="w-full px-2 py-1 text-red-600 font-bold rounded-md rounded-b-none"
-                >
-                  {{ member.roleName }}
-                </p>
-                <p
-                  *ngIf="member.roleName == ''"
-                  class="w-full px-2 py-1 rounded-md rounded-b-none"
-                >
-                  Role not set.
-                </p></mat-card-subtitle
-              >
 
-            </mat-card-header>
+              </mat-card-header>
 
-            <mat-card-content class="mt-4">
-              <div class="w-full flex justify-start gap-5">
-                <div class="flex flex-col justify-start items-start h-60 w-64">
-                  <div class="flex items-center">
-                    <mat-icon>location_on</mat-icon>
-                    <p *ngIf="member.city != ''" class="text-lg ml-3">
-                      {{ member.city }}
-                    </p>
-                    <p *ngIf="member.city == ''" class="ml-3">City not set.</p>
+              <mat-card-content class="mt-4">
+                <div class="w-full flex justify-start gap-5">
+                  <div class="flex flex-col justify-start items-start">
+                    <div class="flex items-center">
+                      <mat-icon>location_on</mat-icon>
+                      <p *ngIf="member.city != ''" class="text-lg ml-3">
+                        {{ member.city }}
+                      </p>
+                      <p *ngIf="member.city == ''" class="ml-3">City not set.</p>
 
-                    <p *ngIf="member.country != ''" class="text-lg m-1">
-                      {{ member.country }},
-                    </p>
-                    <p *ngIf="member.country == ''" class="m-1">Country not set.</p>
-                  </div>
-                  <div class="flex items-center">
-                    <mat-icon>email</mat-icon>
-                    <p class="m-3 text-lg" *ngIf="member.email != ''">
-                      {{ member.email }}
-                    </p>
+                      <p *ngIf="member.country != ''" class="text-lg m-1">
+                        {{ member.country }},
+                      </p>
+                      <p *ngIf="member.country == ''" class="m-1">Country not set.</p>
+                    </div>
+                    <div class="flex items-center">
+                      <mat-icon>email</mat-icon>
+                      <p class="m-3 text-lg" *ngIf="member.email != ''">
+                        {{ member.email }}
+                      </p>
 
-                    <p *ngIf="member.email == ''" class="m-3 text-lg">Email not set.</p>
-                  </div>
-                  <div class="flex items-center">
-                    <mat-icon>phone</mat-icon>
-                    <p class="m-3 text-lg" *ngIf="member.phoneNumber != ''">
-                      {{ member.phoneNumber }}
-                    </p>
-                    <p *ngIf="member.phoneNumber == ''" class="m-3">
-                      Phone number not set.
-                    </p>
-                  </div>
-                  <div class="flex items-center">
-                    <mat-icon>link</mat-icon>
-                    <p class="m-3 text-lg" *ngIf="member.github != ''">
-                      {{ member.github }}
-                    </p>
-                    <p *ngIf="member.github == ''" class="m-3">GitHub not set.</p>
-                  </div>
+                      <p *ngIf="member.email == ''" class="m-3 text-lg">Email not set.</p>
+                    </div>
+                    <div class="flex items-center">
+                      <mat-icon>phone</mat-icon>
+                      <p class="m-3 text-lg" *ngIf="member.phoneNumber != ''">
+                        {{ member.phoneNumber }}
+                      </p>
+                      <p *ngIf="member.phoneNumber == ''" class="m-3">
+                        Phone number not set.
+                      </p>
+                    </div>
+                    <div class="flex items-center">
+                      <mat-icon>link</mat-icon>
+                      <p class="m-3 text-lg" *ngIf="member.github != ''">
+                        {{ member.github }}
+                      </p>
+                      <p *ngIf="member.github == ''" class="m-3">GitHub not set.</p>
+                    </div>
 
-                  <div class="flex items-center">
-                    <mat-icon>link</mat-icon>
-                    <p class="m-3 text-lg" *ngIf="member.linkedin != ''">
-                      {{ member.linkedin }}
-                    </p>
-                    <p *ngIf="member.linkedin == ''" class="m-3">Linkedin not set.</p>
+                    <div class="flex items-center">
+                      <mat-icon>link</mat-icon>
+                      <p class="m-3 text-lg" *ngIf="member.linkedin != ''">
+                        {{ member.linkedin }}
+                      </p>
+                      <p *ngIf="member.linkedin == ''" class="m-3">Linkedin not set.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </mat-card-content>
+              </mat-card-content>
 
-            <mat-card-actions>
-              <button mat-button [routerLink]="['/members', member.id, 'edit']">
-                EDIT PROFILE
-              </button>
-            </mat-card-actions>
-          </mat-card>
+              <mat-card-actions>
+                <button mat-button [routerLink]="['/members', member.id, 'edit']"
+                    [disabled]="member.id !== authMemberId && !(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
+                  EDIT PROFILE
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
         </div>
       </div>
     </div>

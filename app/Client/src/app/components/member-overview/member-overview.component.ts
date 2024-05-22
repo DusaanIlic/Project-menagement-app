@@ -24,6 +24,9 @@ import { environment } from '../../../environments/environment';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import {MatDivider} from "@angular/material/divider";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-member-overview',
@@ -41,6 +44,7 @@ import {MatDivider} from "@angular/material/divider";
     RouterLink,
     RouterLinkActive,
     MatDivider,
+    HasGlobalPermissionPipe,
   ],
 })
 export class MemberOverviewComponent implements OnInit {
@@ -51,7 +55,8 @@ export class MemberOverviewComponent implements OnInit {
     private route: ActivatedRoute,
     private mService: MemberService,
     private tService: TaskService,
-    private pService: ProjectServiceGet
+    private pService: ProjectServiceGet,
+    private authService: AuthService
   ) {}
 
   member: Member = {
@@ -77,6 +82,7 @@ export class MemberOverviewComponent implements OnInit {
   p?: Project;
   projects: Project[] = [];
   tasks: Task[] = [];
+  authMemberId: number | null = this.authService.getAuthenticatedMembersId();
 
   ngOnInit() {
     this.routeSub = this.route.params
@@ -148,4 +154,5 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   protected readonly environment = environment;
+  protected readonly GlobalPermission = GlobalPermission;
 }

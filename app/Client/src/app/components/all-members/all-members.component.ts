@@ -29,6 +29,7 @@ import {AvatarComponent} from "../avatar/avatar.component";
 import {SignalRService} from "../../services/signal-r.service";
 import {GlobalPermission} from "../../enums/global-permissions.enum";
 import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
+import {AuthService} from "../../services/auth.service";
 
 
 @Component({
@@ -50,12 +51,13 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   onlineMembers: Set<number> = new Set<number>();
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'onlineStatus', 'date', 'actions'];
   dataSource: any;
+  authMemberId: number | null = this.authService.getAuthenticatedMembersId();
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
   constructor(private memberService: MemberService,  public dialog: MatDialog,
                 private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer,
-                  private signalRService: SignalRService) {
+                  private signalRService: SignalRService, private authService: AuthService) {
     this.filteredMembers = this.members;
   }
 
