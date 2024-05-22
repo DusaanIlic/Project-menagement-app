@@ -1,4 +1,6 @@
-<div class="flex justify-center h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] pt-8">
+<div
+  class="flex justify-center h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] pt-8"
+>
   <div class="flex justify-between w-[90%] gap-10">
     <div class="w-1/5 flex-col items-center justify-center">
       <div class="w-full flex items-center">
@@ -40,7 +42,6 @@
                   Role not set.
                 </p></mat-card-subtitle
               >
-
             </mat-card-header>
 
             <mat-card-content class="mt-4">
@@ -56,7 +57,9 @@
                     <p *ngIf="member.country != ''" class="text-lg m-1">
                       {{ member.country }},
                     </p>
-                    <p *ngIf="member.country == ''" class="m-1">Country not set.</p>
+                    <p *ngIf="member.country == ''" class="m-1">
+                      Country not set.
+                    </p>
                   </div>
                   <div class="flex items-center">
                     <mat-icon>email</mat-icon>
@@ -64,7 +67,9 @@
                       {{ member.email }}
                     </p>
 
-                    <p *ngIf="member.email == ''" class="m-3 text-lg">Email not set.</p>
+                    <p *ngIf="member.email == ''" class="m-3 text-lg">
+                      Email not set.
+                    </p>
                   </div>
                   <div class="flex items-center">
                     <mat-icon>phone</mat-icon>
@@ -80,7 +85,9 @@
                     <p class="m-3 text-lg" *ngIf="member.github != ''">
                       {{ member.github }}
                     </p>
-                    <p *ngIf="member.github == ''" class="m-3">GitHub not set.</p>
+                    <p *ngIf="member.github == ''" class="m-3">
+                      GitHub not set.
+                    </p>
                   </div>
 
                   <div class="flex items-center">
@@ -88,7 +95,9 @@
                     <p class="m-3 text-lg" *ngIf="member.linkedin != ''">
                       {{ member.linkedin }}
                     </p>
-                    <p *ngIf="member.linkedin == ''" class="m-3">Linkedin not set.</p>
+                    <p *ngIf="member.linkedin == ''" class="m-3">
+                      Linkedin not set.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -186,11 +195,14 @@
                   </button>
                 </td>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="openDialog(task)">View</button>
+                  <button mat-menu-item (click)="openDialog(task)">
+                    <mat-icon>visibility</mat-icon>View
+                  </button>
                   <button
                     mat-menu-item
                     class="p-2 bg-red-500 rounded-md font-semibold text-black"
                   >
+                    <mat-icon>delete</mat-icon>
                     Delete
                   </button>
                 </mat-menu>
