@@ -129,14 +129,6 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  calculateTasksByStatus() {
-    this.totalTasks = this.tasks.length;
-  
-    this.newTasks = this.tasks.filter(task => task.taskStatus === "New").length;
-    this.startedTasks = this.tasks.filter(task => task.taskStatus === "In Progress").length;
-    this.completedTasks = this.tasks.filter(task => task.taskStatus === "Completed").length;
-  }
-
   applyFilters() {
     this.projectSource.data = this.projects.filter(project =>
     (this.selectedStatus == this.defaultStatus || this.selectedStatus == project.projectStatusId) &&
@@ -174,7 +166,11 @@ export class DashboardComponent implements OnInit {
     this.projectService.getAllProjectStatuses().subscribe({
       next: (data: ProjectStatus[]) => {
         this.projectStatuses = data;
-        this.calculateTasksByStatus();
+        this.totalTasks = this.tasks.length;
+  
+        this.newTasks = this.tasks.filter(task => task.taskStatus === "New").length;
+        this.startedTasks = this.tasks.filter(task => task.taskStatus === "In Progress").length;
+        this.completedTasks = this.tasks.filter(task => task.taskStatus === "Completed").length;
       },
       error: error => {
         console.log('failed fetching project statuses');
