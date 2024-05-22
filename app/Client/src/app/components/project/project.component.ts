@@ -35,7 +35,7 @@ export class ProjectComponent implements OnInit {
 
   buttons = [
     { link: 'overview', text: 'Overview', icon: 'my_library_books' },
-    { link: 'assignees', text: 'Assigness', icon: 'assignment_ind' },
+    { link: 'assignees', text: 'Assignees', icon: 'assignment_ind' },
     { link: 'tasks', text: 'Tasks', icon: 'task_alt' },
     { link: 'gantt', text: 'Gantt', icon: 'waterfall_chart' },
     { link: 'kanban', text: 'Kanban', icon: 'view_kanban' },

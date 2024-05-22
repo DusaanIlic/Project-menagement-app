@@ -116,7 +116,7 @@ export class AllAssigneesComponent implements OnInit{
       error: err => {
         console.log('failed fetching project roles');
       }
-    })
+    });
   }
 
   announceSortChange(sortState: Sort) {
@@ -144,8 +144,6 @@ export class AllAssigneesComponent implements OnInit{
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
-      width : '800px',
-      height : '400px',
       data: this.projectId
     });
 
