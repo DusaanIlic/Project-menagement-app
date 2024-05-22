@@ -23,14 +23,15 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerTo
 import { ProjectPriority } from '../../models/project-priority';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MatOption, MatOptionModule } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
   imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule, 
-    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule],
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule,MatSelectModule, MatOptionModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })

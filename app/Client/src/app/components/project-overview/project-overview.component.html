@@ -1,27 +1,12 @@
 <div class="flex flex-col gap-4">
   <div class="flex gap-4">
-    <div class="basis-1/2">
-      <mat-accordion *ngIf="projectDetails">
-        <mat-expansion-panel hideToggle>
-          <mat-expansion-panel-header>
-            <mat-panel-title class="flex flex-row justify-between">
-              <p class="text-3xl">{{projectDetails.projectName}}</p>
-              <mat-icon>add</mat-icon>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div>
-            <p class="text-xl">{{projectDetails.projectDescription}}</p>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-
+  
     <span class="grow"></span>
 
     <div class="flex flex-row gap-5 items-center justify-end">
-      <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="openProjectDeleteDialog(projectId)" color="warn">Close project</button>
-      <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addMembersToProject()" color="primary">Add members to project</button>
-      <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" (click)="addTasksToProject()" color="primary">Add tasks to project</button>
+      <button mat-raised-button type="button" class="flex items-center justify-center text-white" (click)="openProjectDeleteDialog(projectId)" color="warn">Close project</button>
+      <button mat-raised-button type="button" class="flex items-center justify-center text-white" (click)="addMembersToProject()" color="primary">Add members to project</button>
+      <button mat-raised-button type="button" class="flex items-center justify-center text-white" (click)="addTasksToProject()" color="primary">Add tasks to project</button>
     </div>
   </div>
 
@@ -79,7 +64,7 @@
     <div class="flex flex-col basis-1/2 pr-5 gap-2" *ngIf="projectDetails">
       <div class="flex flex-row justify-between">
         <p class="text-xl pb-2">Project details</p>
-        <button mat-raised-button type="button" class="flex items-center justify-center w-50 text-white" color="primary">Save</button>
+        <button mat-raised-button type="button" class="flex items-center justify-center text-white" color="primary">Save</button>
       </div>
       
       <mat-card>
@@ -99,9 +84,9 @@
     
           <p class="pb-1"><b>Project Priority</b></p>
           <mat-form-field appearance="fill" class="w-full pb-2"> 
-            <select matNativeControl [(ngModel)]="selectedPriority">
-              <option *ngFor="let priority of projectPriorities" [value]="priority.priorityId">{{ priority.priorityName }}</option>
-            </select>
+            <mat-select [(ngModel)]="selectedPriority">
+              <mat-option *ngFor="let priority of projectPriorities" [value]="priority.priorityId">{{ priority.priorityName }}</mat-option>
+            </mat-select>
           </mat-form-field>
 
           <p class="pb-1"><b>Project Description</b></p>
