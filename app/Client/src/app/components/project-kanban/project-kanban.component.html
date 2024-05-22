@@ -45,7 +45,7 @@
     <mat-divider></mat-divider>
 
 
-    <div class="w-full flex flex-row gap-5 p-10 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
+    <div class="w-full flex flex-row gap-5 py-5 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
         <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
              <div  >
 
