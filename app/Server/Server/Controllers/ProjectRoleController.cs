@@ -380,4 +380,41 @@ public partial class ProjectController
 
         return Ok(roleMemberDtos);
     }
+
+    [Authorize]
+    [HttpPut("{projectId}/Members/{memberId}/Roles/{roleId}")]
+    public async Task<IActionResult> ChangeMemberRole(int projectId, int memberId, int roleId)
+    {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .Include(ppr => ppr.ProjectRole)
+            .FirstOrDefaultAsync();
+
+        if (projectRole == null)
+        {
+            return BadRequest(new { message = "Either project with given id or role with given id does not exist "} );
+        }
+
+        var memberProject = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.MemberId == memberId)
+            .FirstOrDefaultAsync();
+
+        if (memberProject == null)
+        {
+            return BadRequest(new { message = "Either member not assigned to project or not found" });
+        }
+
+        memberProject.ProjectRoleId = roleId;
+        await dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+    
 }

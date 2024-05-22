@@ -129,6 +129,10 @@ export class ProjectServiceGet{
   getAllProjectRoles(projectId: number): Observable<Role[]> {
     return this.http.get<Role[]>(`${PROJECT_API}/${projectId}/Roles`);
   }
+
+  changeAssigneeRole(projectId: number, memberId: number, roleId: number) {
+    return this.http.put(`${PROJECT_API}/${projectId}/Members/${memberId}/Roles/${roleId}`, {});
+  }
 }
 
 

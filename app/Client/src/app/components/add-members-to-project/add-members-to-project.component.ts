@@ -35,6 +35,7 @@ import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {Role} from "../../models/role";
 import {MatDivider} from "@angular/material/divider";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-members-to-project',
@@ -102,7 +103,8 @@ export class AddMembersToProjectComponent implements OnInit{
               private _ngToastService: NgToastService,
               private pService: ProjectServiceGet,
               private signalRService: SignalRService,
-              private _liveAnnouncer: LiveAnnouncer) { }
+              private _liveAnnouncer: LiveAnnouncer,
+              private snackBar: MatSnackBar) { }
 
 
   ngOnInit(): void
@@ -228,9 +230,17 @@ export class AddMembersToProjectComponent implements OnInit{
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  protected readonly environment = environment;
+  onRoleChange(memberId: number, $event: any) {
+    this.pService.changeAssigneeRole(this.projectId, memberId, $event).subscribe({
+      next: data => {
+        this.snackBar.open('Successfully updating role!', 'Close', { duration: 3000 });
+      },
+      error: err => {
+        this.snackBar.open('Error updating role!', 'Close', { duration: 3000 });
 
-  onRoleChange(id: number, $event: any) {
-
+      }
+    })
   }
+
+  protected readonly environment = environment;
 }
