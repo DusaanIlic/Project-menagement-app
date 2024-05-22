@@ -185,12 +185,12 @@ export class AddMembersToProjectComponent implements OnInit{
       this.waiting = true;
       this.pService.assignMemberToProject(membersList, this.projectId).subscribe({
         next : data =>{
-          this.showMessage()
+          this.snackBar.open('Successfully assigned member to project!', 'Close', { duration: 3000 });
           this.fetchMembersOnProject()
           this.waiting = false;
         },
         error : error =>{
-          this.showMessageError()
+          this.snackBar.open('Failed assigning member to project!', 'Close', { duration: 3000 });
           this.waiting = false;
         }
       })
@@ -200,12 +200,12 @@ export class AddMembersToProjectComponent implements OnInit{
       this.waiting = true;
       this.pService.removeMemberFromProject(memberId, this.projectId).subscribe({
         next : data =>{
-          this.showMessage()
+          this.snackBar.open('Successfully unassigned member from project!', 'Close', { duration: 3000 });
           this.fetchMembersOnProject()
           this.waiting = false;
         },
         error : error =>{
-          this.showMessageError()
+          this.snackBar.open('Failed unassigning member from project!', 'Close', { duration: 3000 });
           this.waiting = false;
         }
       })
