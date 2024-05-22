@@ -26,6 +26,7 @@ import { forkJoin } from 'rxjs';
 import { MatNativeDateModule, MatOption, MatOptionModule } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { ProjectStatus } from '../../models/project-status';
 
 @Component({
   selector: 'app-project-overview',
@@ -47,9 +48,11 @@ export class ProjectOverviewComponent implements OnInit {
   numberOfTasks: number = 0;
   taskStatusData: any[] = [];
   recentActivities: any[] = [];
-  projectPriorities: ProjectPriority[] = [];
   today = new Date();
+  projectPriorities: ProjectPriority[] = [];
   selectedPriority: number | null = null;
+  projectStatuses: ProjectStatus[] = [];
+  selectedStatus: number | null = null;
 
   constructor(
     public dialog: MatDialog,
@@ -63,6 +66,7 @@ export class ProjectOverviewComponent implements OnInit {
     this.routeSub = this.route.params.subscribe(params => {
       this.projectId = params['id'];
       this.loadProjectPriorities();
+      this.loadProjectStatuses();
       this.getProjectDetails();
     });
 
@@ -99,10 +103,21 @@ export class ProjectOverviewComponent implements OnInit {
       (priorities: ProjectPriority[]) => {
         this.projectPriorities = priorities;
         console.log('Project Priorities:', this.projectPriorities);
-        //this.setDefaultPriority();
       },
       (error) => {
         console.error('Error fetching project priorities:', error);
+      }
+    );
+  }
+
+  loadProjectStatuses(): void {
+    this.pService.getAllProjectStatuses().subscribe(
+      (statuses: ProjectStatus[]) => {
+        this.projectStatuses = statuses;
+        console.log('Project Statuses:', this.projectStatuses);
+      },
+      (error) => {
+        console.error('Error fetching project statuses:', error);
       }
     );
   }
@@ -193,6 +208,7 @@ export class ProjectOverviewComponent implements OnInit {
       this.projectDetails = projectDetails;
       this.projectPriorities = projectPriorities;
       this.selectedPriority = this.projectDetails.projectPriorityId; 
+      this.selectedStatus = this.projectDetails.projectStatusId;
       //console.log('Project Details:', this.projectDetails);
       //console.log('Project Priorities:', this.projectPriorities);
       console.log('Selected Priority:', this.selectedPriority);

@@ -89,6 +89,13 @@
             </mat-select>
           </mat-form-field>
 
+          <p class="pb-1"><b>Project Status</b></p>
+          <mat-form-field appearance="fill" class="w-full pb-2"> 
+            <mat-select [(ngModel)]="selectedStatus">
+              <mat-option *ngFor="let status of projectStatuses" [value]="status.projectStatusId">{{ status.projectStatus }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
           <p class="pb-1"><b>Project Description</b></p>
           <mat-form-field class="w-full scroll-pb-2">
             <textarea matInput [(ngModel)]="projectDetails.projectDescription"></textarea>
