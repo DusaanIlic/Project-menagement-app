@@ -32,7 +32,7 @@
       </div>
     </button>
 
-    <button mat-stroked-button [routerLink]="['/members', member.id, 'edit']" (click)="closeDialog()">
+    <button [disabled]="member.id !== authMemberId && !(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)" mat-stroked-button [routerLink]="['/members', member.id, 'edit']" (click)="closeDialog()">
       <div class="flex items-center justify-center">
         <mat-icon class="scale-125">edit</mat-icon>
       </div>
