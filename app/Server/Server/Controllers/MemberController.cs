@@ -611,6 +611,7 @@ namespace Server.Controllers
             return Ok(new { message = "Successfully reset password" });
         }
 
+        [Authorize]
         [HttpGet("{memberId}/Notifications")]
         public async Task<IActionResult> GetNotifications(int memberId)
         {
@@ -642,7 +643,8 @@ namespace Server.Controllers
 
             return Ok(notificationDtos);
         }
-
+    
+        [Authorize]
         [HttpPut("{memberId}/Notifications")]
         public async Task<IActionResult> ReadNotifications(int memberId, ReadNotificationsRequest request)
         {
@@ -674,6 +676,7 @@ namespace Server.Controllers
             return Ok();
         }
         
+        [Authorize]
         [HttpPost("{memberId}/Notifications")]
         public async Task<IActionResult> DeleteNotifications(int memberId, DeleteNotificationsRequest request)
         {

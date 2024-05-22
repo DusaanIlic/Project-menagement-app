@@ -74,7 +74,6 @@ export class NavbarComponent implements OnInit {
                   private memberService: MemberService) { }
 
   ngOnInit() {
-    this.signalRService.startConnection();
 
     this.authService.getAuthenticatedMember().pipe(
       switchMap(member => {
@@ -82,7 +81,7 @@ export class NavbarComponent implements OnInit {
         this.memberId = member.id;
         return this.memberService.getNotifications(member.id); // Assuming your service has a method to fetch notifications
       })
-      ).pipe(first()).subscribe(notifications => {
+      ).subscribe(notifications => {
         console.log('received notifications through login');
 
         this.notifications = notifications.map(n => {

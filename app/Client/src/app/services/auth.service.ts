@@ -1,6 +1,6 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {BehaviorSubject, Observable, of, skipWhile, throwError} from "rxjs";
-import {Injectable} from "@angular/core";
+import {EventEmitter, Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {Member} from "../models/member";
 import {tap} from "rxjs/internal/operators/tap";
@@ -14,6 +14,8 @@ const AUTH_API = `${environment.apiUrl}/Auth`;
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
+
+export const logoutSuccess = new EventEmitter<void>();
 
 @Injectable({
   providedIn: 'root',
@@ -66,6 +68,8 @@ export class AuthService {
     localStorage.removeItem('authenticated-member-id');
     localStorage.removeItem('authenticated-member');
     localStorage.removeItem('authenticated-member-avatar');
+
+    logoutSuccess.emit();
 
     this.router.navigate(['/login']);
   }
