@@ -8,6 +8,7 @@ import {MatDivider} from "@angular/material/divider";
 import {switchMap} from "rxjs/operators";
 import {ProjectServiceGet} from "../../services/project.service";
 import {Project} from "../../models/project";
+import { ProjectOverviewComponent } from '../project-overview/project-overview.component';
 
 @Component({
   selector: 'app-project',
@@ -31,7 +32,7 @@ import {Project} from "../../models/project";
 })
 export class ProjectComponent implements OnInit {
   projectId: any;
-  project!: Project;
+  projectDetails!: Project;
 
   buttons = [
     { link: 'overview', text: 'Overview', icon: 'my_library_books' },
@@ -54,11 +55,23 @@ export class ProjectComponent implements OnInit {
       })
     ).subscribe({
       next: (data: Project) => {
-        this.project = data;
+        this.projectDetails = data;
       },
       error: err => {
         console.log('failed fetching project data');
       }
     });
+  }
+
+  onProjectUpdated(updatedProject: Project) {
+    this.projectDetails = updatedProject;
+  }
+
+  onActivate(component: any) {
+    if (component instanceof ProjectOverviewComponent) {
+      component.projectUpdated.subscribe((updatedProject: Project) => {
+        this.onProjectUpdated(updatedProject);
+      });
+    }
   }
 }

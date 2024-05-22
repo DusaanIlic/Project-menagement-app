@@ -1,6 +1,7 @@
 <div class="flex flex-col gap-4">
   <div class="flex gap-4">
-  
+    <p class="text-3xl font-semibold">Project Overview</p>
+
     <span class="grow"></span>
 
     <div class="flex flex-row gap-5 items-center justify-end">
@@ -64,7 +65,7 @@
     <div class="flex flex-col basis-1/2 pr-5 gap-2" *ngIf="projectDetails">
       <div class="flex flex-row justify-between">
         <p class="text-xl pb-2">Project details</p>
-        <button mat-raised-button type="button" class="flex items-center justify-center text-white" color="primary">Save</button>
+        <button mat-raised-button type="button" class="flex items-center justify-center text-white" color="primary" (click)="saveProjectDetails()">Save</button>
       </div>
       
       <mat-card>
@@ -134,4 +135,6 @@
 
     </div>
   </div>
+
+  <ng-toast></ng-toast>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { MemberService } from "../../services/member.service";
@@ -24,19 +24,22 @@ import { ProjectPriority } from '../../models/project-priority';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { MatNativeDateModule, MatOption, MatOptionModule } from '@angular/material/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ProjectStatus } from '../../models/project-status';
+import { Project } from '../../models/project';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
   imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule, 
-    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule,MatSelectModule, MatOptionModule],
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule,MatSelectModule, MatOptionModule, NgToastModule],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
 export class ProjectOverviewComponent implements OnInit {
+  @Input() project!: Project;
+  @Output() projectUpdated = new EventEmitter<Project>()
 
   routeSub: any;
   projectId: number = 0;
@@ -59,7 +62,8 @@ export class ProjectOverviewComponent implements OnInit {
     private route: ActivatedRoute,
     private mService: MemberService,
     private tService: TaskService,
-    private pService: ProjectServiceGet
+    private pService: ProjectServiceGet,
+    private _ngToastService: NgToastService
   ) { }
 
   ngOnInit() {
@@ -238,6 +242,31 @@ export class ProjectOverviewComponent implements OnInit {
     });
     return statusCounts;
   }
+
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Project info updated successfully", duration: 3000});
+  }
+
+  saveProjectDetails() {
+    const updatedProject: Project = {
+      ...this.projectDetails,
+      projectPriorityId: this.selectedPriority,
+      projectStatusId: this.selectedStatus
+    };
+
+    this.pService.updateProject(this.projectDetails.projectId, updatedProject).subscribe(
+      response => {
+        this.projectDetails = response;
+        this.project = response;
+        this.projectUpdated.emit(response);
+        this.showMessage();
+      },
+      error => {
+        console.error('Error updating project:', error);
+      }
+    );
+  }
+
 
   openMemberInfoDialog(member: Member): void {
     const dialogRef = this.dialog.open(MemberInfoComponent, {

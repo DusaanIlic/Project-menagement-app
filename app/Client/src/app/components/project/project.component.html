@@ -2,7 +2,7 @@
   <mat-sidenav mode="side" opened="true" class="select-none max-w-[250px]">
     <mat-nav-list>
       <mat-list-item>
-        <div class="flex items-center gap-2 font-semibold break-word" >{{project?.projectName}}</div>
+        <div class="flex items-center gap-2 font-semibold break-word">{{projectDetails?.projectName}}</div>
       </mat-list-item>
       <mat-divider class="w-full"></mat-divider>
       <mat-list-item *ngFor="let button of buttons" [routerLink]="button.link" routerLinkActive="disabled">
@@ -15,7 +15,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="p-8">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
