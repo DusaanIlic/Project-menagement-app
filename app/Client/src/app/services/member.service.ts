@@ -7,6 +7,7 @@ import { Member } from "../models/member";
 import { Role } from "../models/role";
 import { environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
+import {Dictionary} from "@worktile/gantt/utils/helpers";
 
 const API = `${environment.apiUrl}/Member`;
 const API_ROLES = `${environment.apiUrl}/Role`;
@@ -115,5 +116,9 @@ export class MemberService {
 
   getGlobalPermissions(memberId: number): Observable<number[]> {
     return this.http.get<number[]>(`${API}/${memberId}/GetGlobalPermissions`);
+  }
+
+  getProjectPermissions(memberId: number): Observable<Map<number, number[]>> {
+    return this.http.get<Map<number, number[]>>(`${API}/${memberId}/GetProjectPermissions`);
   }
 }

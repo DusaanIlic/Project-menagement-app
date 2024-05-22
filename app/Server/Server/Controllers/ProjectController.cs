@@ -801,10 +801,10 @@ namespace Server.Controllers
             }
 
             var members = await dbContext.Members
-                              .Where(m => dbContext.MemberProjects
-                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
-                              .Include(m => m.Role)
-                              .ToListAsync();
+                .Where(m => dbContext.MemberProjects
+                    .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                .Include(m => m.Role)
+                .ToListAsync();
 
             var membersDTO = members.Select(member => new MemberDTO
             {
@@ -814,7 +814,15 @@ namespace Server.Controllers
                 RoleId = member.RoleId,
                 RoleName = member.Role.RoleName,
                 Email = member.Email,
-                Status = member.Status
+                Status = member.Status,
+                ProjectRoleName = dbContext.MemberProjects
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Name)
+                    .FirstOrDefault(),
+                ProjectRoleId = dbContext.MemberProjects
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Id)
+                    .FirstOrDefault(),
             });
 
             return Ok(membersDTO);

@@ -62,17 +62,18 @@ import {Role} from "../../models/role";
 })
 export class AllAssigneesComponent implements OnInit{
   private routeSub: any;
-  selectedStatus: string = '';
   assignees : Member[] = [];
   filteredAssignees : Member[] = [];
   onlineAssignees: Set<number> = new Set<number>();
   projectId : number = 0;
-  searchTerm: string = '';
+  selectedProjectRole: number = 0;
+  defaultProjectRole: number = 0;
+  selectedStatus: number = 0;
+  defaultStatus: number = 0;
   roles: Role[] = [];
-  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
+  displayedColumns: string[] = ['avatar',  'firstName', 'projectRoleName', 'email', 'onlineStatus', 'date', 'action'];
   dataSource: any;
-  selectedRole: number = 0;
-  defaultRole: number = 0;
+  projectRoles: Role[] = [];
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
@@ -88,7 +89,6 @@ export class AllAssigneesComponent implements OnInit{
     this.routeSub = this.route.params.subscribe((params : any) => {
       this.projectId = params['id'];
       this.fetchMembersOnProject();
-      this.selectedStatus = 'allAssignees';
     })
 
     this.signalRService.getConnectedMemberIds().subscribe({
@@ -108,6 +108,15 @@ export class AllAssigneesComponent implements OnInit{
         console.log('Error fetching roles:', error);
       }
     );
+
+    this.pService.getAllProjectRoles(this.projectId).subscribe({
+      next: data => {
+        this.projectRoles = data;
+      },
+      error: err => {
+        console.log('failed fetching project roles');
+      }
+    })
   }
 
   announceSortChange(sortState: Sort) {
@@ -159,17 +168,6 @@ export class AllAssigneesComponent implements OnInit{
     });
   }
 
-  onRoleFilterChange(event: any) {
-    this.selectedRole = event;
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    this.dataSource.data = this.assignees.filter(member =>
-      (this.selectedRole == this.defaultRole || this.selectedRole == member.roleId)
-    );
-  }
-
   removeAssignee(assignee: Member)
   {
     this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
@@ -197,14 +195,23 @@ export class AllAssigneesComponent implements OnInit{
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  openMemberInfoDialog(member: Member): void {
-    const dialogRef = this.dialog.open(MemberInfoComponent, {
-      data: { member }
-    });
+  onProjectRoleFilterChange(event: any) {
+    this.selectedProjectRole = event;
+    this.applyFilters();
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog zatvoren');
-    });
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.assignees.filter(member =>
+      (this.selectedProjectRole == this.defaultProjectRole || this.selectedProjectRole == member.projectRoleId) &&
+      (this.selectedStatus == this.defaultStatus ||
+        (this.selectedStatus == 1 && !this.onlineAssignees.has(member.id)) ||
+        (this.selectedStatus == 2 && this.onlineAssignees.has(member.id)))
+    );
   }
 
   protected readonly environment = environment;

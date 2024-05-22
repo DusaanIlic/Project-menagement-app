@@ -125,6 +125,10 @@ export class ProjectServiceGet{
   hasAccessToProject(memberId: number, projectId: number): Observable<boolean> {
     return this.http.get<boolean>(`${PROJECT_API}/${projectId}/Member/${memberId}/HasAccess`);
   }
+
+  getAllProjectRoles(projectId: number): Observable<Role[]> {
+    return this.http.get<Role[]>(`${PROJECT_API}/${projectId}/Roles`);
+  }
 }
 
 

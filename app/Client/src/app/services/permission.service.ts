@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 export class PermissionService {
   private projectIds: Set<number> = new Set<number>();
   private globalPermissions: Set<number> = new Set<number>();
+  private projectPermissions: Map<number, Set<number>> = new Map<number, Set<number>>();
 
   constructor(
     private projectService: ProjectServiceGet,
@@ -17,7 +18,7 @@ export class PermissionService {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.refreshData();
+
   }
 
   refreshData() {
@@ -42,6 +43,15 @@ export class PermissionService {
         console.log('PERMISSION SERVICE: failed fetching global permissions');
       }
     });
+
+    this.memberService.getProjectPermissions(memberId).subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: err => {
+        console.log('PERMISSION SERVICE: failed fetching project permissions');
+      }
+    })
   }
 
   isAssignedToProject(id: number): boolean {
@@ -58,6 +68,14 @@ export class PermissionService {
 
   getGlobalPermissions(): Set<number> {
     return this.globalPermissions;
+  }
+
+  getProjectPermissions(projectId: number): Set<number> {
+    if (!this.projectPermissions.has(projectId)) {
+      this.projectPermissions.set(projectId, new Set<number>());
+    }
+
+    return this.projectPermissions.get(projectId) || new Set<number>();
   }
 
   updateGlobalPermissions(globalPermissions: number[]): void {
