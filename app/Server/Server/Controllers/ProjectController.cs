@@ -236,6 +236,8 @@ namespace Server.Controllers
                 ProjectPriority = priority.Name
             };
 
+            await _permissionNotifier.UpdatedProjectPermissions(projectDTO.ProjectId, projectDTO.TeamLider.Id);
+            
             return Ok(projectDTO);
         }
 
@@ -725,6 +727,7 @@ namespace Server.Controllers
                 var result = _emailService.SendEmail(request);
 
                 await _permissionNotifier.AssignedToProject(memberId, projectId);
+                await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
 
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
                 {
@@ -784,6 +787,7 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
             
             await _permissionNotifier.RemovedFromProject(memberId, projectId);
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
 
             return Ok(new { message = "Member removed from project successfully." });
 

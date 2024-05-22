@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.Design.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -191,6 +192,11 @@ public partial class ProjectController
         dbContext.ProjectRoles.Remove(role);
 
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member.Id);
+        }
 
         return Ok(new { message = "Successfully removed role" });
     }
@@ -306,9 +312,19 @@ public partial class ProjectController
             ProjectRoleId = roleId,
             ProjectPermissionId = permissionId
         };
+        
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Select(mp => mp.MemberId)
+            .ToListAsync();
 
         dbContext.ProjectRolePermissions.Add(newRolePermission);
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member);
+        }
 
         return Ok(new { message = "Success." });
     }
@@ -355,9 +371,19 @@ public partial class ProjectController
         {
             return Conflict(new { message = "Role doesn't have this permission." });
         }
+
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Select(mp => mp.MemberId)
+            .ToListAsync();
         
         dbContext.ProjectRolePermissions.Remove(rolePermission);
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member);
+        }
 
         return Ok(new { message = "Success." });
     }
@@ -413,6 +439,7 @@ public partial class ProjectController
 
         memberProject.ProjectRoleId = roleId;
         await dbContext.SaveChangesAsync();
+        await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
 
         return Ok();
     }

@@ -67,4 +67,22 @@ public class PermissionNotifier : IPermissionNotifier
             }
         }
     }
+
+    public async Task UpdatedProjectPermissions(int projectId, int memberId)
+    {
+        if (SignalRHub.Connections.ContainsKey(memberId))
+        {
+            var permissionIds = await _dbContext.MemberProjects
+                .Where(mp => mp.MemberId == memberId && mp.ProjectId == projectId)
+                .SelectMany(mp => mp.ProjectRole.ProjectRolePermissions.Where(prp => prp.ProjectRoleId == mp.ProjectRoleId).Select(prp => prp.ProjectPermissionId))
+                .ToListAsync();
+            
+            var connectionIds = SignalRHub.Connections[memberId];
+        
+            foreach (var connectionId in connectionIds)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("UpdatedProjectPermissions", projectId, permissionIds);
+            }
+        }
+    }
 }

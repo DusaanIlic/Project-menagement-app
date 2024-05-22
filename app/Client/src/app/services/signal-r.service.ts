@@ -67,6 +67,10 @@ export class SignalRService {
     this.hubConnection.on('UpdatedGlobalPermissions', (permissions: number[]) => {
       this.permissionService.updateGlobalPermissions(permissions);
     })
+
+    this.hubConnection.on('UpdatedProjectPermissions', (projectId: number, permissions: number[]) => {
+      this.permissionService.updateProjectPermissions(projectId, permissions);
+    })
   }
 
   private createHub() {

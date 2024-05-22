@@ -82,4 +82,9 @@ export class PermissionService {
     console.log(`updated global permissions to ${globalPermissions}`);
     this.globalPermissions = new Set<number>(globalPermissions);
   }
+
+  updateProjectPermissions(projectId: number, permissions: number[]): void {
+    console.log(`updated project ${projectId} permissions to ${permissions}`);
+    this.projectPermissions.set(projectId, new Set<number>(permissions));
+  }
 }

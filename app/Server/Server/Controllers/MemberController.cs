@@ -754,31 +754,34 @@ namespace Server.Controllers
         [HttpGet("{memberId}/GetProjectPermissions")]
         public async Task<IActionResult> SendProjectPermissions(int memberId)
         {
-            var memberProjects = await _dbContext.MemberProjects
-                .Include(mp => mp.ProjectRole)
-                .Where(mp => mp.MemberId == memberId)
-                .ToListAsync();
-
-            if (!memberProjects.Any())
-            {
-                return BadRequest(new { message = "Member not found with given id or no projects associated with member" });
-            }
-
+            // Check if the current user has permission to view the projects
             if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
             {
                 return BadRequest(new { message = "No permission to do this" });
             }
 
-            var projectRoleIds = memberProjects.Select(mp => mp.ProjectRoleId).ToList();
-
-            var projectPermissions = await _dbContext.ProjectRolePermissions
-                .Where(prp => projectRoleIds.Contains(prp.ProjectRoleId))
-                .Select(prp => new { prp.ProjectRoleId, prp.ProjectPermissionId })
+            // Fetch project roles and their associated permissions in a single query
+            var memberProjectRoles = await _dbContext.MemberProjects
+                .Where(mp => mp.MemberId == memberId)
+                .Select(mp => new
+                {
+                    mp.ProjectId,
+                    Permissions = mp.ProjectRole.ProjectRolePermissions.Where(prp => prp.ProjectRoleId == mp.ProjectRoleId).Select(prp => prp.ProjectPermissionId).ToList()
+                })
                 .ToListAsync();
 
-            var response = projectPermissions
-                .GroupBy(prp => prp.ProjectRoleId)
-                .ToDictionary(g => g.Key, g => g.Select(prp => prp.ProjectPermissionId).ToList());
+            if (!memberProjectRoles.Any())
+            {
+                return BadRequest(new { message = "Member not found with given id or no projects associated with member" });
+            }
+
+            // Group the permissions by project role ID and build the response
+            var response = memberProjectRoles
+                .GroupBy(mpr => mpr.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.SelectMany(mpr => mpr.Permissions).Distinct().ToList()
+                );
 
             return Ok(response);
         }
