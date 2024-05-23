@@ -27,6 +27,11 @@ export class ProjectServiceGet{
     return this.http.get<Project[]>(`${PROJECT_API}`);
   }
 
+  updateProject(projectId: number, projectInfo: Project): Observable<Project> {
+
+    return this.http.put<Project>(`${PROJECT_API}/${projectId}`, projectInfo);
+  }
+
   getRecentActivity(projectId: number): Observable<any[]>{
     return this.http.get<any[]>(`${PROJECT_API}/${projectId}/Latest`);
   }

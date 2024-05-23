@@ -413,6 +413,10 @@ namespace Server.Controllers
             project.ProjectName = updateProjectRequest.ProjectName;
             project.ProjectDescription = updateProjectRequest.ProjectDescription;
             project.Deadline = updateProjectRequest.Deadline;
+            var projectPriority = dbContext.ProjectPriorities.First(pp => pp.ProjectPriorityId == updateProjectRequest.ProjectPriorityId);
+            project.Priority = projectPriority;
+            var projectStatus = dbContext.ProjectStatuses.First(pp => pp.Id == updateProjectRequest.ProjectStatusId);
+            project.ProjectStatus = projectStatus;
 
             await dbContext.SaveChangesAsync();
 

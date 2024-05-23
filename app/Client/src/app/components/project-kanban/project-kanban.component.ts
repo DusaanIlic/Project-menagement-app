@@ -43,10 +43,11 @@ export class ProjectKanbanComponent implements OnInit {
   progress: any[] = [];
   done: any[] = [];
   dropList: any[] = ['to do', 'progress', 'done'];
-  redosled: any[] = [];
+  
   newStatuses: any[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
+  selectedColumns: string[] = [];
 
   projectId: number = 0;
   projectName: string = "";
@@ -61,9 +62,17 @@ export class ProjectKanbanComponent implements OnInit {
     this.getProjectIdFromRoute();
     this.dropList.forEach(column => {
       this.columnVisibility[column] = true;
-      this.redosled.push(column);
+      if (this.columnVisibility[column]) {
+        this.selectedColumns.push(column);
+      }
     });
-    console.log("Redosled kolona: " + this.redosled);
+  }
+
+  toggleColumnVisibility(selectedColumns: string[]) {
+    this.selectedColumns = selectedColumns;
+    this.dropList.forEach(column => {
+      this.columnVisibility[column] = this.selectedColumns.includes(column);
+    });
   }
 
 

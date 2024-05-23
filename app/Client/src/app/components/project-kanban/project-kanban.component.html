@@ -1,52 +1,32 @@
-<div class="flex flex-col gap-4 justify-center h-[100%]">
+<div class="flex flex-col justify-center h-[100%]">
 
-    <div class="flex flex-row gap-5 items-center mb-3">
+    <div class="flex flex-row gap-4 items-center">
+        <p class="text-3xl font-semibold">Kanban View</p>
 
-            <mat-accordion>
-                <mat-expansion-panel hideToggle>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title class="flex flex-row justify-between ">
-                        <p class="text-2xl mr-3">{{projectName}}</p>
-                        <mat-icon>add</mat-icon>
-                    </mat-panel-title>
-                  </mat-expansion-panel-header>
-                    <div class="flex flex-row">
-                        <div class="flex-col mr-5">
-                            <p><b>Deadline: </b></p>
-                            <p> {{projectDate | date:'dd-MM-yyyy'}}</p>
-                        </div>
-                        <div class="flex-col mr-5">
-                            <p><b>{{teamLeaderInfo?.roleName}}</b></p>
-                            <p> {{ teamLeaderInfo?.firstName }} {{ teamLeaderInfo?.lastName }}</p>
-                        </div>
-                        <img [src]="environment.apiUrl + '/Member/' + teamLeaderInfo?.id + '/Avatar'" class="hidden rounded-full xl:w-12 xl:h-12 xl:table-cell" (click)="openMemberInfoDialog(teamLeaderInfo)">
+            <div class="flex gap-3 justify-end ml-auto items-center">
+                <section class="example-section mt-3">
+                    <div>
+                      <mat-form-field appearance="fill">
+                        <mat-label>Visible Columns</mat-label>
+                        <mat-select [(ngModel)]="selectedColumns" multiple (selectionChange)="toggleColumnVisibility($event.value)">
+                          <mat-option *ngFor="let column of dropList" [value]="column">
+                            {{ column | titlecase }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </div>
-                </mat-expansion-panel>
-            </mat-accordion>
+                </section>
+                <button mat-raised-button color="primary" type="button"  (click)="openDialog()">Add task</button>
+                <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()">Add Column</button>
+            </div>
 
-            <section class="example-section">
-                <div>
-                    <ul class="flex flex-row justify-evenly">
-                        @for (column of dropList; track column) {
-                            <li>
-                                <mat-slide-toggle [(ngModel)]="columnVisibility[column]" color="primary" class="pr-0 mr-3">{{column | titlecase}}</mat-slide-toggle>
-                          </li>
-                        }
-                      </ul>
-                </div>
-              </section>
-
-        <div class="flex gap-2 justify-end ml-auto mt-4 gap ">
-            <button mat-raised-button color="primary" type="button"  (click)="openDialog()">Add task</button>
-            <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()">Add Column</button>
-        </div>
     </div>
 
     <mat-divider></mat-divider>
 
 
-    <div class="w-full flex flex-row gap-5 p-10 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
-        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg h-1/4" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
+    <div class="w-full flex flex-row gap-5 py-5 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
+        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
              <div  >
 
              <mat-card-header>
