@@ -920,7 +920,7 @@ namespace Server.Controllers
                               .Include(m => m.Role)
                               .ToListAsync();
 
-            foreach(var member in members)
+            foreach (var member in members)
             {
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
                 {
@@ -1092,7 +1092,7 @@ namespace Server.Controllers
 
         [Authorize]
         [HttpDelete("{id}/files/{fileId}")]
-        public async Task<IActionResult> DeleteAvatar(int id, int fileId)
+        public async Task<IActionResult> DeleteFile(int id, int fileId)
         {
 
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");

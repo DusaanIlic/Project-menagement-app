@@ -37,6 +37,7 @@ namespace Server.Data
         public DbSet<ProjectPriority> ProjectPriorities { get; set; }
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
         public DbSet<ProjectFile> ProjectFile { get; set; }
+        public DbSet<TaskFile> TaskFile { get; set; }
 
         public DbSet<Notification> Notifications { get; set; }
 
@@ -255,6 +256,18 @@ namespace Server.Data
                 .WithMany(m => m.Notifications)
                 .HasForeignKey(n => n.MemberId);
 
+            modelBuilder.Entity<TaskFile>()
+                 .HasKey(pf => new { pf.TaskId, pf.FileId });
+
+            modelBuilder.Entity<TaskFile>()
+                .HasOne(pf => pf.ProjectTask)
+                .WithMany(p => p.TaskFiles)
+                .HasForeignKey(pf => pf.TaskId);
+
+            modelBuilder.Entity<TaskFile>()
+                .HasOne(pf => pf.File)
+                .WithMany()
+                .HasForeignKey(pf => pf.FileId);
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global role" },

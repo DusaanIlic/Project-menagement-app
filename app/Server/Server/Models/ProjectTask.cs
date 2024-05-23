@@ -14,10 +14,10 @@ namespace Server.Models
 
         [Required]
         public string TaskDescription { get; set; } = string.Empty;
-        
+
         [Required]
         public DateTime StartDate { get; set; }
-        
+
         [Required]
         public DateTime Deadline { get; set; }
 
@@ -45,5 +45,6 @@ namespace Server.Models
         public ICollection<TaskActivity> TaskActivities { get; set; } = new List<TaskActivity>();
 
         public ICollection<TaskComment> TaskComment { get; set; } = new List<TaskComment>();
+        public ICollection<TaskFile> TaskFiles { get; set; } = new List<TaskFile>();
     }
 }

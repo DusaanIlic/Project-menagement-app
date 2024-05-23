@@ -13,6 +13,8 @@ using Server.Models;
 using Server.Services.Notification;
 using Server.Services.Permission;
 using System.Threading.Tasks;
+using Server.Services.File;
+using Server.DataTransferObjects.Request.File;
 
 namespace Server.Controllers
 {
@@ -24,13 +26,15 @@ namespace Server.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
         private readonly INotificationService _notificationService;
+        private readonly IFileService _fileService;
 
-        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, INotificationService notificationService)
+        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, INotificationService notificationService, IFileService fileService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _notificationService = notificationService;
+            _fileService = fileService;
         }
 
         [Authorize]
@@ -51,7 +55,7 @@ namespace Server.Controllers
 
             foreach (var t in tasks)
             {
-                
+
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
                 var taskPriority = await dbContext.TaskPriority.FirstOrDefaultAsync(tp => tp.TaskPriorityId == t.TaskPriorityId);
                 var assignedMembers = t.Members.Select(ta => new MemberDTO
@@ -183,7 +187,7 @@ namespace Server.Controllers
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
 
             var tasksDTO = new ProjectTaskDTO
-            {                 
+            {
                 Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
@@ -259,7 +263,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound(new {message = "Task not found"});
+                return NotFound(new { message = "Task not found" });
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
@@ -273,7 +277,7 @@ namespace Server.Controllers
             projectTask.TaskDescription = updateProjectTaskRequest.TaskDescription;
             projectTask.TaskName = updateProjectTaskRequest.TaskName;
 
-          
+
             dbContext.ProjectTasks.Update(projectTask);
             await dbContext.SaveChangesAsync();
 
@@ -302,7 +306,7 @@ namespace Server.Controllers
 
             return Ok(tasksDTO);
         }
-        
+
         [Authorize]
         [HttpPut("{id}/ChangeDates")]
         public async Task<IActionResult> ChangeTaskDates(int id, ChangeTaskDatesRequest changeTaskDatesRequest)
@@ -316,7 +320,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound(new {message = "Task not found"});
+                return NotFound(new { message = "Task not found" });
             }
 
             if (changeTaskDatesRequest.startDate > changeTaskDatesRequest.deadline)
@@ -326,7 +330,7 @@ namespace Server.Controllers
 
             projectTask.StartDate = changeTaskDatesRequest.startDate;
             projectTask.Deadline = changeTaskDatesRequest.deadline;
-            
+
             dbContext.ProjectTasks.Update(projectTask);
             await dbContext.SaveChangesAsync();
 
@@ -397,7 +401,7 @@ namespace Server.Controllers
 
             if (projectTask == null)
             {
-                return NotFound(new { message = "Specified project does not exist" }); 
+                return NotFound(new { message = "Specified project does not exist" });
             }
 
             var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
@@ -437,7 +441,7 @@ namespace Server.Controllers
                 TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
-            return Ok(taskDTO); 
+            return Ok(taskDTO);
         }
 
         [HttpPut("{taskId}/status/{statusId}")]
@@ -470,12 +474,12 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Task Status does not belong to this project." });
             }
 
-            if(statusId == 2)
+            if (statusId == 2)
             {
                 projectTask.StartDate = DateTime.Now;
             }
 
-            if(statusId == 3)
+            if (statusId == 3)
             {
                 projectTask.DateFinished = DateTime.Now;
             }
@@ -527,7 +531,7 @@ namespace Server.Controllers
                 var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == t.TaskId);
 
                 var assignedMembers = t.Members.Select(ta => new MemberDTO
-                {  
+                {
                     Id = ta.Member.Id,
                     FirstName = ta.Member.FirstName,
                     LastName = ta.Member.LastName,
@@ -670,7 +674,7 @@ namespace Server.Controllers
         [Authorize]
         [HttpPut("{taskId}/assign")]
         public async Task<IActionResult> AssignMemberToTask(int taskId, List<int> memberIds)
-        {         
+        {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
             if (userIdClaim == null)
@@ -764,7 +768,7 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Member assigned to task successfully." });
-            
+
         }
 
         [Authorize]
@@ -803,15 +807,15 @@ namespace Server.Controllers
 
                 var assignedMembers = await dbContext.MemberTasks.Include(t => t.Member).Where(t => t.TaskId == mt.TaskId)
                 .Select(t => new MemberDTO
-                 {
-                   Id = t.Member.Id,
-                   FirstName = t.Member.FirstName,
-                   LastName = t.Member.LastName,
-                   Email = t.Member.Email,
-                   DateOfBirth = t.Member.DateOfBirth,
-                   RoleName = t.Member.Role.RoleName,
-                   Status = t.Member.Status,
-                   RoleId = t.Member.RoleId
+                {
+                    Id = t.Member.Id,
+                    FirstName = t.Member.FirstName,
+                    LastName = t.Member.LastName,
+                    Email = t.Member.Email,
+                    DateOfBirth = t.Member.DateOfBirth,
+                    RoleName = t.Member.Role.RoleName,
+                    Status = t.Member.Status,
+                    RoleId = t.Member.RoleId
                 }).ToListAsync();
 
                 taskDTOs.Add(new ProjectTaskDTO
@@ -971,7 +975,7 @@ namespace Server.Controllers
                 return NotFound(new { message = "Dependency does not exist between the specified tasks." });
             }
 
-            
+
             dbContext.TaskDependencies.Remove(existingDependency);
             await dbContext.SaveChangesAsync();
 
@@ -1011,7 +1015,7 @@ namespace Server.Controllers
                 return Forbid("Insufficient permissions");
             }
 
-            task.TaskCategoryId = categoryId;        
+            task.TaskCategoryId = categoryId;
             await dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Category added successfully." });
@@ -1106,7 +1110,7 @@ namespace Server.Controllers
             };
 
             await _notificationService.SendNotification(sendNotificationRequest);
-            
+
             return Ok(new { message = "Member is removed from task successfully." });
 
         }
@@ -1114,7 +1118,7 @@ namespace Server.Controllers
         [Authorize]
         [HttpGet("membertasks")]
         public async Task<IActionResult> GetAllMemberTasks()
-        { 
+        {
             var memberTasks = await dbContext.MemberTasks
                 .Include(mt => mt.Member)
                     .ThenInclude(t => t.Role)
@@ -1212,6 +1216,131 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Task deadline changed successfully." });
+        }
+
+        [Authorize]
+        [HttpGet("{id}/Files")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTaskFiles(int id)
+        {
+            var task = await dbContext.ProjectTasks.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var taskFiles = await dbContext.TaskFile
+                .Where(pf => pf.TaskId == id)
+                .Select(pf => new
+                {
+                    FileId = pf.FileId,
+                })
+                .ToListAsync();
+
+
+
+            return Ok(taskFiles);
+        }
+
+        [Authorize]
+        [HttpPost("{id}/files")]
+        public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var task = await dbContext.ProjectTasks.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                var taskFile = new TaskFile
+                {
+                    TaskId = id,
+                    FileId = uploadedFile.FileId
+                };
+                task.TaskFiles.Add(taskFile);
+
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Files posted successfully." });
+        }
+
+        [Authorize]
+        [HttpDelete("{id}/files/{fileId}")]
+        public async Task<IActionResult> DeleteFile(int id, int fileId)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var task = await dbContext.ProjectTasks.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            var taskFile = await dbContext.TaskFile
+                .FirstOrDefaultAsync(pf => pf.TaskId == id && pf.FileId == fileId);
+
+            if (taskFile == null)
+            {
+                return NotFound(new { message = "File not found in task." });
+            }
+
+            dbContext.TaskFile.Remove(taskFile);
+
+            task.TaskFiles.Remove(taskFile);
+
+            await _fileService.DeleteFile(fileId);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "File deleted successfully." });
+
         }
 
     }

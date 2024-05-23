@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -10,9 +11,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    partial class LogicTenacityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240523120659_CreateTaskFileEntity")]
+    partial class CreateTaskFileEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -127,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 8, 940, DateTimeKind.Local).AddTicks(3184),
+                            DateAdded = new DateTime(2024, 5, 23, 14, 6, 58, 104, DateTimeKind.Local).AddTicks(6131),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$LwKutIWPdDdaCzz9iJ5mQOEVgiiUCqAM.9rSPz.iQE6NU9HXtkyrm",
+                            Password = "$2a$10$ibgLE9Ezwreuta8NTh2Q.OetU4ZVxi/ounefHvx/xcRgA8nIjTe7.",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 9, 2, DateTimeKind.Local).AddTicks(9424),
+                            DateAdded = new DateTime(2024, 5, 23, 14, 6, 58, 204, DateTimeKind.Local).AddTicks(9098),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$jYiVB2c4xv7m5fHUfM1/kOo.vxVcFjbNwR5iE9IUM2kCjRe2ncvvq",
+                            Password = "$2a$10$Gq/8XRoifnmSRDv2fNHyi.nIv.DAzGrhL2r1WjCb/2FXdTN5yhFbe",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 9, 65, DateTimeKind.Local).AddTicks(3364),
+                            DateAdded = new DateTime(2024, 5, 23, 14, 6, 58, 303, DateTimeKind.Local).AddTicks(9754),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$SxH9sNYAuYluQ2NZExXBOu2dbM9b8G4JYKJx8BKrZMJsEzDY6w/VW",
+                            Password = "$2a$10$Sl84Cb9NmKDrLAtYeO50t./QBz82L327sXtMDVXY6LC/K2FLrBeZq",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
