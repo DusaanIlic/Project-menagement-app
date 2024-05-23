@@ -1,4 +1,6 @@
-<div class="flex justify-center h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] pt-8">
+<div
+  class="flex justify-center h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] pt-8"
+>
   <div class="flex justify-between w-[90%] gap-10">
     <div class="w-1/5 flex-col items-center justify-center">
       <div class="w-full flex items-center">
@@ -40,7 +42,6 @@
                   Role not set.
                 </p></mat-card-subtitle
               >
-
             </mat-card-header>
 
             <mat-card-content class="mt-4">
@@ -56,7 +57,9 @@
                     <p *ngIf="member.country != ''" class="text-lg m-1">
                       {{ member.country }},
                     </p>
-                    <p *ngIf="member.country == ''" class="m-1">Country not set.</p>
+                    <p *ngIf="member.country == ''" class="m-1">
+                      Country not set.
+                    </p>
                   </div>
                   <div class="flex items-center">
                     <mat-icon>email</mat-icon>
@@ -64,7 +67,9 @@
                       {{ member.email }}
                     </p>
 
-                    <p *ngIf="member.email == ''" class="m-3 text-lg">Email not set.</p>
+                    <p *ngIf="member.email == ''" class="m-3 text-lg">
+                      Email not set.
+                    </p>
                   </div>
                   <div class="flex items-center">
                     <mat-icon>phone</mat-icon>
@@ -80,7 +85,9 @@
                     <p class="m-3 text-lg" *ngIf="member.github != ''">
                       {{ member.github }}
                     </p>
-                    <p *ngIf="member.github == ''" class="m-3">GitHub not set.</p>
+                    <p *ngIf="member.github == ''" class="m-3">
+                      GitHub not set.
+                    </p>
                   </div>
 
                   <div class="flex items-center">
@@ -88,7 +95,9 @@
                     <p class="m-3 text-lg" *ngIf="member.linkedin != ''">
                       {{ member.linkedin }}
                     </p>
-                    <p *ngIf="member.linkedin == ''" class="m-3">Linkedin not set.</p>
+                    <p *ngIf="member.linkedin == ''" class="m-3">
+                      Linkedin not set.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -112,91 +121,134 @@
       <mat-divider class="w-full"></mat-divider>
 
       <div class="flex justify-center">
-        <div class="w-[90%]">
-          <div class="table border-[1px] border-gray-300 rounded-md">
-            <tr class="">
-              <th class="text-left p-3 w-60">PROJECT</th>
-              <th class="text-left w-60">TASK</th>
-              <th class="text-left w-60">DUE DATE</th>
-              <th class="text-left w-60">STATUS</th>
-              <th class="text-left w-60">PRIORITY</th>
-              <th class="text-left w-20"></th>
-            </tr>
-
-            <tr *ngIf="tasks.length == undefined">
-              <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">
-                No tasks for this member.
-              </td>
-            </tr>
-
-            <tbody *ngIf="tasks.length != undefined">
-              <tr
-                *ngFor="let task of tasks; index as i"
-                class="border-[1px] border-gray-500 hover:bg-gray-300"
+        <div class="min-w-full">
+          <mat-table
+            class="min-w-full mat-elevation-z8 demo-table"
+            [dataSource]="dataSource"
+          >
+            <!-- Header -->
+            <ng-container matColumnDef="project">
+              <mat-header-cell *matHeaderCellDef class="text-left p-3 w-60">
+                PROJECT
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300 p-2"
               >
-                <td class="w-60 border-t-[1px] border-t-gray-300 p-2">
-                  {{ task.projectName }}
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.taskName }}
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.deadline | date }}
-                </td>
-                <td
+                {{ task.projectName }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="task">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                TASK
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                <a
+                  class="hover:underline cursor-pointer"
+                  (click)="openDialogOverview(task.taskId)"
+                  >{{ task.taskName }}</a
+                >
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="dueDate">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                DUE DATE
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                {{ task.deadline | date }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                STATUS
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                <div
                   *ngIf="task.taskStatusId == 1"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-yellow-600 font-bold flex items-center justify-center gap-2"
                 >
-                  <div
-                    class="bg-[#EE9322] w-fit p-1 rounded-md text-[#FFF455] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]"
-                  >
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td
+                  <mat-icon>panorama_fisheye</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+                <div
                   *ngIf="task.taskStatusId == 3"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-green-600 font-bold flex items-center justify-center gap-2"
                 >
-                  <div
-                    class="bg-[#002d00] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#6cb224]"
-                  >
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td
+                  <mat-icon>checkbox</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+                <div
                   *ngIf="task.taskStatusId == 2"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-orange-600 font-bold flex items-center justify-center gap-2"
                 >
-                  <div
-                    class="bg-[#0029a3] w-fit p-1 rounded-md drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)] text-[#7ebbfc]"
-                  >
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.taskPriorityName }}
-                </td>
-                <td class="w-10 border-t-[1px] border-t-gray-300">
-                  <button
-                    class="font-extrabold text-3xl"
-                    mat-button
-                    [matMenuTriggerFor]="menu"
-                  >
-                    ...
-                  </button>
-                </td>
+                  <mat-icon>timelapse</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                PRIORITY
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                {{ task.taskPriorityName }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef class="text-left w-20">
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-10 border-t-[1px] border-t-gray-300"
+              >
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="openDialog(task)">View</button>
+                  <button mat-menu-item (click)="openDialog(task)">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
+                  </button>
                   <button
                     mat-menu-item
-                    class="p-2 bg-red-500 rounded-md font-semibold text-black"
+                    class="p-2 bg rounded-md font-semibold text-black"
                   >
-                    Delete
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
                   </button>
                 </mat-menu>
-              </tr>
-            </tbody>
-          </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
+
+          <mat-paginator
+            [pageSizeOptions]="[5, 10, 20]"
+            [pageSize]="5"
+            showFirstLastButtons
+            (page)="onPageChange($event)"
+          ></mat-paginator>
         </div>
       </div>
     </div>
