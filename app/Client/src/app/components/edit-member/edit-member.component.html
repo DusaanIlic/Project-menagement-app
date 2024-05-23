@@ -156,7 +156,8 @@
                   </div>
                   <p class="font-bold">Change Your Email</p>
                   <span class="grow"></span>
-                  <button color="primary" mat-raised-button (click)="submitEmail()">
+                  <button color="primary" mat-raised-button (click)="submitEmail()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
                     <div class="flex items-center justify-center gap-2">
                       <mat-icon>admin_panel_settings</mat-icon>
                       <p>CHANGE EMAIL</p>
@@ -192,7 +193,8 @@
                   </div>
                   <p class="font-bold">Change Your Role</p>
                   <span class="grow"></span>
-                  <button color="primary" mat-raised-button (click)="submitRole()">
+                  <button color="primary" mat-raised-button (click)="submitRole()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
                     <div class="flex items-center justify-center gap-2">
                       <mat-icon>admin_panel_settings</mat-icon>
                       <p>CHANGE ROLE</p>
@@ -205,7 +207,7 @@
                 <div class="w-full flex flex-col gap-2" [formGroup]="roleForm">
                   <mat-form-field>
                     <mat-label>Current Role</mat-label>
-                    <mat-select required formControlName="oldRoleId">
+                    <mat-select required formControlName="oldRoleId" [disabled]="true">
                       <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
                     </mat-select>
                     <mat-hint>Only your administrator can change your role.</mat-hint>
@@ -231,7 +233,8 @@
                 <div class="flex w-full justify-center items-center gap-2">
                   <p class="font-bold">Change Your Password</p>
                   <span class="grow"></span>
-                  <button color="warn" mat-stroked-button (click)="submitPasswordReset()">
+                  <button color="warn" mat-stroked-button (click)="submitPasswordReset()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
                     <div class="flex items-center justify-center gap-2">
                       <mat-icon>admin_panel_settings</mat-icon>
                       <p>RESET PASSWORD</p>

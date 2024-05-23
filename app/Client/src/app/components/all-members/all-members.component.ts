@@ -27,6 +27,9 @@ import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {AvatarComponent} from "../avatar/avatar.component";
 import {SignalRService} from "../../services/signal-r.service";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
+import {AuthService} from "../../services/auth.service";
 
 
 @Component({
@@ -34,7 +37,7 @@ import {SignalRService} from "../../services/signal-r.service";
   standalone: true,
   templateUrl: './all-members.component.html',
   styleUrl: './all-members.component.scss',
-  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger, AvatarComponent],
+  imports: [CommonModule, RouterLink, FormsModule, NgToastModule, NgOptimizedImage, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatButton, MatDivider, MatFormField, MatInput, MatLabel, MatIcon, MatSelect, MatOption, MatMenu, MatMenuItem, MatMenuTrigger, AvatarComponent, HasGlobalPermissionPipe],
   providers: [DatePipe]
 })
 export class AllMembersComponent implements OnInit, AfterViewInit{
@@ -48,12 +51,13 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   onlineMembers: Set<number> = new Set<number>();
   displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'email', 'onlineStatus', 'date', 'actions'];
   dataSource: any;
+  authMemberId: number | null = this.authService.getAuthenticatedMembersId();
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
   constructor(private memberService: MemberService,  public dialog: MatDialog,
                 private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer,
-                  private signalRService: SignalRService) {
+                  private signalRService: SignalRService, private authService: AuthService) {
     this.filteredMembers = this.members;
   }
 
@@ -154,4 +158,5 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   }
 
     protected readonly environment = environment;
+  protected readonly GlobalPermission = GlobalPermission;
 }

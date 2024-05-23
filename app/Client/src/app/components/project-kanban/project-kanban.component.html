@@ -16,8 +16,10 @@
                       </mat-form-field>
                     </div>
                 </section>
-                <button mat-raised-button color="primary" type="button"  (click)="openDialog()">Add task</button>
-                <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()">Add Column</button>
+                <button mat-raised-button color="primary" type="button"  (click)="openDialog()"
+                  [disabled]="!(projectId | hasProjectPermission:ProjectPermission.CREATE_TASK)">Add task</button>
+                <button mat-raised-button color="primary" type="button"  (click)="openTaskStatusDialog()"
+                  [disabled]="!(projectId | hasProjectPermission:ProjectPermission.ADD_TASK_STATUS)">Add Column</button>
             </div>
 
     </div>
@@ -41,11 +43,11 @@
                 cdkDropList
                 [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
                 class=" rounded-md overflow-hidden block" [id]="column.toLowerCase()"
-                (cdkDropListDropped)="drop($event)" >
+                (cdkDropListDropped)="drop($event)">
                 <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
                     <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
                         <div class="border border-solid border-black mb-1 rounded-md">
-                            <mat-card class="cursor-move task-item" cdkDrag [cdkDragData]="item" [ngClass]="{
+                            <mat-card class="cursor-move task-item" cdkDrag [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)" [cdkDragData]="item" [ngClass]="{
                                 'low-priority': item.taskPriorityId === 1,
                                 'medium-priority': item.taskPriorityId === 2,
                                 'high-priority': item.taskPriorityId === 3
@@ -60,7 +62,8 @@
                                     <i class="material-icons">article</i>
                                   </button>
 
-                                  <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)">
+                                  <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)"
+                                    [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">
                                     <i class="material-icons">delete</i>
                                   </button>
                                 </div>

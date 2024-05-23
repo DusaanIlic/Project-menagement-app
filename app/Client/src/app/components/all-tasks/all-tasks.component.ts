@@ -27,6 +27,8 @@ import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
 import {taskPriority} from "../../models/taskPriority";
 import {TaskStatus} from "../../models/task-status";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 
 @Component({
@@ -52,7 +54,8 @@ import {TaskStatus} from "../../models/task-status";
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDivider
+    MatDivider,
+    HasProjectPermissionPipe
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -213,4 +216,5 @@ export class AllTasksComponent implements OnInit {
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }

@@ -18,6 +18,7 @@ using Server.Services.Permission;
 using Microsoft.AspNetCore.Http;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
+using Server.Services.PermissionNotifier;
 using TaskStatus = Server.Models.TaskStatus;
 using Server.Services.Notification;
 using Server.DataTransferObjects.Request.Notification;
@@ -32,15 +33,20 @@ namespace Server.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
         private readonly IFileService _fileService;
+        private readonly IPermissionNotifier _permissionNotifier;
         private readonly INotificationService _notificationService;
-        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, IFileService fileService, INotificationService notificationService)
+
+        
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, 
+                                    IEmailService emailService, IFileService fileService,
+                                        IPermissionNotifier permissionNotifier, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _fileService = fileService;
+            _permissionNotifier = permissionNotifier;
             _notificationService = notificationService;
-
         }
 
         [Authorize]
@@ -193,6 +199,8 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
+            await _permissionNotifier.AssignedToProject(userId, project.ProjectId);
+
             var teamLeaderDTO = new MemberDTO
             {
                 Id = teamLeader.Id,
@@ -231,6 +239,8 @@ namespace Server.Controllers
                 ProjectPriority = priority.Name
             };
 
+            await _permissionNotifier.UpdatedProjectPermissions(projectDTO.ProjectId, projectDTO.TeamLider.Id);
+            
             return Ok(projectDTO);
         }
 
@@ -731,6 +741,9 @@ namespace Server.Controllers
 
                 var result = _emailService.SendEmail(request);
 
+                await _permissionNotifier.AssignedToProject(memberId, projectId);
+                await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
+
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
                 {
                     Title = "You are added to new project!",
@@ -739,11 +752,9 @@ namespace Server.Controllers
                 };
 
                 await _notificationService.SendNotification(sendNotificationRequest);
-
             }
 
             await dbContext.SaveChangesAsync();
-
 
 
             return Ok(new { Message = "Members added to project successfully" });
@@ -789,6 +800,9 @@ namespace Server.Controllers
 
             dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();
+            
+            await _permissionNotifier.RemovedFromProject(memberId, projectId);
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
 
             return Ok(new { message = "Member removed from project successfully." });
 
@@ -806,10 +820,10 @@ namespace Server.Controllers
             }
 
             var members = await dbContext.Members
-                              .Where(m => dbContext.MemberProjects
-                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
-                              .Include(m => m.Role)
-                              .ToListAsync();
+                .Where(m => dbContext.MemberProjects
+                    .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                .Include(m => m.Role)
+                .ToListAsync();
 
             var membersDTO = members.Select(member => new MemberDTO
             {
@@ -821,9 +835,13 @@ namespace Server.Controllers
                 Email = member.Email,
                 Status = member.Status,
                 ProjectRoleName = dbContext.MemberProjects
-                                 .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
-                                 .Select(mp => mp.ProjectRole.Name)
-                                 .FirstOrDefault()
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Name)
+                    .FirstOrDefault(),
+                ProjectRoleId = dbContext.MemberProjects
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Id)
+                    .FirstOrDefault(),
             });
 
             return Ok(membersDTO);
@@ -1279,6 +1297,38 @@ namespace Server.Controllers
                 .ToList();
 
             return Ok(activityCountsByDate);
+        }
+
+        [Authorize]
+        [HttpGet("Member/{memberId}/AssignedProjectIds")]
+        public async Task<IActionResult> GetAssignedProjectsIds(int memberId)
+        {
+            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "No member detected" });
+            }
+
+            var projectIds = await dbContext.MemberProjects
+                .Where(mp => mp.MemberId == member.Id)
+                .ToListAsync();
+
+            var assignedIds = projectIds
+                .Select(mp => mp.ProjectId)
+                .ToList();
+
+            return Ok(assignedIds);
+        }
+        
+        [Authorize]
+        [HttpGet("{projectId}/Member/{memberId}/HasAccess")]
+        public async Task<ActionResult<bool>> IsValidProjectIdAsync(int memberId, int projectId)
+        {
+            bool isValid = await dbContext.MemberProjects
+                .AnyAsync(mp => mp.MemberId == memberId && mp.ProjectId == projectId);
+         
+            return Ok(isValid);
         }
     }
 }

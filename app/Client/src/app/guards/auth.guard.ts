@@ -11,15 +11,6 @@ export class AuthGuard implements CanActivate{
 
   canActivate(route: ActivatedRouteSnapshot): boolean{
     if(this.authService.isAuthenticated()){
-      const isEditProfileRoute = route.routeConfig?.path === 'members/edit/:id';
-
-      if (isEditProfileRoute) {
-        const userIdFromRoute = route.paramMap.get('id');
-        const userIdFromStorage = this.authService.getAuthenticatedMembersId();
-
-        return !!(userIdFromRoute && parseInt(userIdFromRoute) == userIdFromStorage);
-      }
-
       return true;
     } else{
       this.router.navigate(['/login']);

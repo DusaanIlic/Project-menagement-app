@@ -122,6 +122,22 @@ export class ProjectServiceGet{
   {
     return this.http.get<any[]>(`${PROJECT_API}/${projectId}/taskActivities/activitiesCountByDateLastTwoWeeks`);
   }
+
+  getAssignedProjectIds(memberId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${PROJECT_API}/Member/${memberId}/AssignedProjectIds`);
+  }
+
+  hasAccessToProject(memberId: number, projectId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${PROJECT_API}/${projectId}/Member/${memberId}/HasAccess`);
+  }
+
+  getAllProjectRoles(projectId: number): Observable<Role[]> {
+    return this.http.get<Role[]>(`${PROJECT_API}/${projectId}/Roles`);
+  }
+
+  changeAssigneeRole(projectId: number, memberId: number, roleId: number) {
+    return this.http.put(`${PROJECT_API}/${projectId}/Members/${memberId}/Roles/${roleId}`, {});
+  }
 }
 
 

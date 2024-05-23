@@ -35,8 +35,10 @@
 
         <span class="grow"></span>
 
-        <button mat-raised-button color="primary" type="button" class="flex items-center justify-center text-white" (click)="openRoleDialog()">Manage Roles</button>
-        <button mat-raised-button color="primary" type="button" class="flex items-center justify-center text-white" (click)="openMemberDialog()">Add Member</button>
+        <button mat-raised-button color="primary" type="button" class="flex items-center justify-center text-white" (click)="openRoleDialog()"
+          [disabled]="!(GlobalPermission.CHANGE_GLOBAL_ROLE | hasGlobalPermission)">Manage Roles</button>
+        <button mat-raised-button color="primary" type="button" class="flex items-center justify-center text-white" (click)="openMemberDialog()"
+          [disabled]="!(GlobalPermission.ADD_MEMBER | hasGlobalPermission)">Add Member</button>
       </div>
 
       <mat-divider class="w-[80%]"></mat-divider>
@@ -97,8 +99,10 @@
               </button>
               <mat-menu #menu="matMenu">
                 <button mat-menu-item [routerLink]="['/members', member.id]">View</button>
-                <button mat-menu-item [routerLink]="['/members', member.id, 'edit']">Edit</button>
-                <button mat-menu-item>Deactivate</button>
+                <button mat-menu-item [routerLink]="['/members', member.id, 'edit']"
+                  [disabled]="member.id !== authMemberId &&  !(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">Edit</button>
+                <button mat-menu-item
+                  [disabled]="!(GlobalPermission.DEACTIVATE_MEMBER | hasGlobalPermission)">Deactivate</button>
               </mat-menu>
             </td>
           </ng-container>

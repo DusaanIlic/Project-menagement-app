@@ -39,7 +39,8 @@
         <span class="grow"></span>
 
         <div class="flex gap-1 justify-center items-center">
-          <button mat-raised-button color="primary" (click)="openDialog()">Add new task</button>
+          <button mat-raised-button color="primary" (click)="openDialog()"
+            [disabled]="!(projectId | hasProjectPermission:ProjectPermission.CREATE_TASK)">Add new task</button>
         </div>
       </div>
 
@@ -86,7 +87,8 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
-              <button mat-menu-item (click)="deleteTask(task.taskId)">Delete</button>
+              <button mat-menu-item (click)="deleteTask(task.taskId)"
+                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">Delete</button>
             </mat-menu>
           </td>
         </ng-container>

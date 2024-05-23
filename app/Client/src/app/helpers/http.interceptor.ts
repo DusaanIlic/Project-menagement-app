@@ -1,90 +1,101 @@
-import {HttpErrorResponse, HttpInterceptor, HttpInterceptorFn} from "@angular/common/http";
-import {tap} from "rxjs/internal/operators/tap";
-import {catchError, finalize, throwError} from "rxjs";
-import {inject} from "@angular/core";
-import {AuthService} from "../services/auth.service";
-import {Member} from "../models/member";
-import {switchMap} from "rxjs/operators";
-import {environment} from "../../environments/environment";
-import {ProgressBarService} from "../services/progress-bar.service";
-import {SignalRService} from "../services/signal-r.service";
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { tap } from 'rxjs/internal/operators/tap';
+import { catchError, finalize, throwError, Observable, Subject } from 'rxjs';
+import { EventEmitter, inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { switchMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { ProgressBarService } from '../services/progress-bar.service';
+
+let isRefreshing = false;
+const refreshTokenSubject = new Subject<string | null>();
+export const jwtRefreshSuccess = new EventEmitter<void>();
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const signalRService = inject(SignalRService);
-  const jwtToken = authService.getJwtToken();
+  const progressBarService = inject(ProgressBarService);
 
-  const cloned = req.clone({
-    headers: req.headers.set(
-      'Authorization',
-      `Bearer ${jwtToken}`
-    )
+  const jwtToken = authService.getJwtToken();
+  const clonedRequest = req.clone({
+    headers: req.headers.set('Authorization', `Bearer ${jwtToken}`)
   });
 
-  const progressBarService = inject(ProgressBarService); // Inject ProgressBarService
+  progressBarService.show();
 
-  progressBarService.show(); // Show progress bar when request starts
-
-  console.log('Http Interceptor running');
-
-  return next(cloned).pipe(
+  return next(clonedRequest).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401) {
-        console.log('Caught unauthorized error, attempting to refresh token...');
-        console.log('Stopping signalr')
-        console.log(`Sending refresh token ${localStorage.getItem('refresh-token')}`)
+      if (err.status === 401 && !req.url.includes('refresh-token')) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshTokenSubject.next(null);
 
-        signalRService.stopConnection();
+          return authService.refreshJwtToken().pipe(
+            switchMap(data => {
+              const newJwtToken = data.jwtToken;
+              const newJwtTokenExpirationDate = data.jwtTokenExpirationDate;
+              const newRefreshToken = data.refreshToken;
+              const member = data.member;
 
-        return authService.refreshJwtToken().pipe(
-          switchMap((data) => {
-            const newJwtToken = data.jwtToken;
-            const newJwtTokenExpirationDate = data.jwtTokenExpirationDate;
-            const newRefreshToken = data.refreshToken;
-            const member = data.member;
+              localStorage.setItem('jwt-token', newJwtToken);
+              localStorage.setItem('jwt-token-expiration-date', newJwtTokenExpirationDate);
+              localStorage.setItem('refresh-token', newRefreshToken);
+              localStorage.setItem('authenticated-member-id', member.id.toString());
+              localStorage.setItem('authenticated-member', JSON.stringify(member));
+              localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
 
-            localStorage.setItem('jwt-token', newJwtToken);
-            localStorage.setItem('jwt-token-expiration-date', newJwtTokenExpirationDate);
-            localStorage.setItem('refresh-token', newRefreshToken);
-            localStorage.setItem('authenticated-member-id', member.id.toString());
-            localStorage.setItem('authenticated-member', JSON.stringify(member));
-            localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
+              authService.updateAuthenticatedMember(member);
+              authService.updateAuthenticatedMembersAvatar();
 
-            authService.updateAuthenticatedMember(member);
-            authService.updateAuthenticatedMembersAvatar();
+              isRefreshing = false;
+              refreshTokenSubject.next(newJwtToken);
+              jwtRefreshSuccess.emit();
 
-            console.log('Successfully refreshed token');
-            console.log('Starting signalr again');
+              const newRequest = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newJwtToken}`
+                }
+              });
 
-            signalRService.startConnection();
-
-            const clonedReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${newJwtToken}`
+              return next(newRequest);
+            }),
+            catchError((refreshError) => {
+              authService.logout();
+              isRefreshing = false;
+              return throwError(() => refreshError);
+            }),
+            finalize(() => {
+              isRefreshing = false;
+              progressBarService.hide();
+            })
+          );
+        } else {
+          return refreshTokenSubject.pipe(
+            switchMap(newJwtToken => {
+              if (newJwtToken) {
+                const newRequest = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${newJwtToken}`
+                  }
+                });
+                return next(newRequest);
+              } else {
+                return throwError(() => err);
               }
-            });
-
-            progressBarService.hide();
-
-            return next(clonedReq);
-          }),
-          catchError((error) => {
-            console.log(`Failed refreshing token.`);
-            progressBarService.hide();
-            authService.logout();
-            return throwError(() => error);
-          }),
-          finalize(() => {
-            progressBarService.hide(); // Hide progress bar whether there's an error or not
-          })
-        );
+            }),
+            catchError((retryError) => {
+              return throwError(() => retryError);
+            }),
+            finalize(() => {
+              progressBarService.hide();
+            })
+          );
+        }
+      } else {
+        return throwError(() => err);
       }
-
-      progressBarService.hide(); // Hide progress bar on error
-      return throwError(() => err);
     }),
     finalize(() => {
-      progressBarService.hide(); // Hide progress bar whether there's an error or not
+      progressBarService.hide();
     })
   );
-}
+};

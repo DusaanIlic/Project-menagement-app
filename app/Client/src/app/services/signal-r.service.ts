@@ -3,32 +3,36 @@ import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSta
 import {BehaviorSubject, Observable, skipWhile} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
+import {PermissionService} from "./permission.service";
+import {jwtRefreshSuccess} from "../helpers/http.interceptor";
+import {logoutSuccess} from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
-  private hubConnection: HubConnection;
+  private hubConnection!: HubConnection;
   private connectedMembersSubject: BehaviorSubject<Set<number>>;
   private notificationSubject: BehaviorSubject<Notification | null> = new BehaviorSubject<Notification | null>(null);
 
-  constructor() {
+  constructor(private permissionService: PermissionService) {
     this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl}/SignalR`, {
-        withCredentials: localStorage.getItem('jwt-token') != null,
-        accessTokenFactory: () => {
-          const token = localStorage.getItem('jwt-token');
-          return token ? token : "";
-        },
-        skipNegotiation: true,
-        transport: HttpTransportType.WebSockets
-      })
-      .withAutomaticReconnect()
-      .configureLogging(LogLevel.Debug)  // Use Debug level for more detailed logging
-      .build();
 
-    this.registerServerEvents();
+    jwtRefreshSuccess.subscribe(() => {
+      console.log('SIGNAL R: Detected jwt refresh, restarting connection!');
+
+      this.stopConnection();
+      this.createHub();
+      this.startConnection();
+    })
+
+    logoutSuccess.subscribe(() => {
+      console.log('SIGNAL R: Logged out, stopping connection!');
+      this.stopConnection();
+    })
+
+    this.createHub();
+    this.startConnection();
   }
 
   private registerServerEvents() {
@@ -49,15 +53,48 @@ export class SignalRService {
     });
 
     this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
-      console.log('received notification');
       this.notificationSubject.next(notification);
     });
+
+    this.hubConnection.on('AssignedToProject', (id: number) => {
+      this.permissionService.addProjectId(id);
+    });
+
+    this.hubConnection.on('RemovedFromProject', (id: number) => {
+      this.permissionService.removeProjectId(id);
+    });
+
+    this.hubConnection.on('UpdatedGlobalPermissions', (permissions: number[]) => {
+      this.permissionService.updateGlobalPermissions(permissions);
+    })
+
+    this.hubConnection.on('UpdatedProjectPermissions', (projectId: number, permissions: number[]) => {
+      this.permissionService.updateProjectPermissions(projectId, permissions);
+    })
+  }
+
+  private createHub() {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(`${environment.apiUrl}/SignalR`, {
+        withCredentials: localStorage.getItem('jwt-token') != null,
+        accessTokenFactory: () => {
+          const token = localStorage.getItem('jwt-token');
+          return token ? token : "";
+        },
+        skipNegotiation: false,
+        transport: HttpTransportType.WebSockets
+      })
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Debug)  // Use Debug level for more detailed logging
+      .build();
+
+    this.registerServerEvents();
   }
 
   public startConnection() {
-    if (this.hubConnection.state == HubConnectionState.Connected) {
-      return;
-    }
+    // if (this.hubConnection.state !== HubConnectionState.Disconnected) {
+    //   return;
+    // }
 
     this.hubConnection
       .start()

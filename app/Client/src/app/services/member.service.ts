@@ -1,12 +1,13 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {AddMemberForm} from "../forms/add-member.form";
-import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, of, throwError} from "rxjs";
 import {EditProfileForm} from "../forms/edit-profile.form";
 import { Member } from "../models/member";
 import { Role } from "../models/role";
 import { environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
+import {Dictionary} from "@worktile/gantt/utils/helpers";
 
 const API = `${environment.apiUrl}/Member`;
 const API_ROLES = `${environment.apiUrl}/Role`;
@@ -103,5 +104,21 @@ export class MemberService {
 
   deleteNotifications(memberId: number, notificationIds: number[]) {
     return this.http.post(`${API}/${memberId}/Notifications`, { notificationIds });
+  }
+
+  hasEditAccess(memberId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${API}/${memberId}/HasEditAccess`);
+  }
+
+  checkIfExists(memberId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${API}/${memberId}/CheckIfExists`);
+  }
+
+  getGlobalPermissions(memberId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${API}/${memberId}/GetGlobalPermissions`);
+  }
+
+  getProjectPermissions(memberId: number): Observable<Map<number, number[]>> {
+    return this.http.get<Map<number, number[]>>(`${API}/${memberId}/GetProjectPermissions`);
   }
 }

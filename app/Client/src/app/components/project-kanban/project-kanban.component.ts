@@ -27,6 +27,8 @@ import { MemberInfoComponent } from '../member-info/member-info.component';
 import { MatCardModule } from '@angular/material/card';
 import {environment} from "../../../environments/environment";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-project-kanban',
@@ -34,8 +36,8 @@ import {TaskOverviewComponent} from "../task-overview/task-overview.component";
   templateUrl: './project-kanban.component.html',
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
-  imports: [CdkDropList,MatSelectModule,MatSlideToggleModule ,MatFormFieldModule,  ReactiveFormsModule , MatExpansionModule,MatCheckboxModule, FormsModule,MatDividerModule,MatIconModule, MatButtonModule ,CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule]
+  imports: [CdkDropList, MatSelectModule, MatSlideToggleModule, MatFormFieldModule, ReactiveFormsModule, MatExpansionModule, MatCheckboxModule, FormsModule, MatDividerModule, MatIconModule, MatButtonModule, CdkDrag,
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -43,7 +45,7 @@ export class ProjectKanbanComponent implements OnInit {
   progress: any[] = [];
   done: any[] = [];
   dropList: any[] = ['to do', 'progress', 'done'];
-  
+
   newStatuses: any[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
@@ -320,4 +322,5 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }
