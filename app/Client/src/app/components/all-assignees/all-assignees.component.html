@@ -39,8 +39,10 @@
         <span class="grow"></span>
 
         <div class="flex gap-2 justify-center items-center">
-          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openRoleDialog()">Manage Project Roles</button>
-          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openDialog()">Manage Assignees</button>
+          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openRoleDialog()"
+            [disabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_PROJECT_ROLE)">Manage Project Roles</button>
+          <button mat-raised-button color="primary" class="rounded-xl bg-accent-blue text-l text-white" (click)="openDialog()"
+            [disabled]="!(projectId | hasProjectPermission:ProjectPermission.ADD_MEMBER_TO_PROJECT) && !(projectId | hasProjectPermission:ProjectPermission.REMOVE_MEMBER_FROM_PROJECT)">Manage Assignees</button>
         </div>
       </div>
       <mat-divider class="w-full"></mat-divider>
@@ -101,7 +103,8 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item [routerLink]="['/members', member.id]">View</button>
-              <button mat-menu-item (click)="openConfirmationDialog(member)">Remove</button>
+              <button mat-menu-item (click)="openConfirmationDialog(member)"
+                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_MEMBER_FROM_PROJECT)">Remove</button>
             </mat-menu>
           </td>
         </ng-container>

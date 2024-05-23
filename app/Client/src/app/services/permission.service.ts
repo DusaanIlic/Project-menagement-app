@@ -45,8 +45,19 @@ export class PermissionService {
     });
 
     this.memberService.getProjectPermissions(memberId).subscribe({
-      next: data => {
-        console.log(data);
+      next: (data: Map<number, number[]>) => {
+        const permissionsMap = new Map<number, Set<number>>();
+        for (const [key, value] of Object.entries(data)) {
+          const projectId = Number(key);
+          if (!isNaN(projectId) && Array.isArray(value)) {
+            permissionsMap.set(projectId, new Set<number>(value));
+          } else {
+            console.error(`Invalid entry for projectId ${key}:`, value);
+          }
+        }
+        this.projectPermissions = permissionsMap;
+
+        console.log(`PEMRISSION SERVICE: successfully fetched project permissions ${this.projectPermissions}`);
       },
       error: err => {
         console.log('PERMISSION SERVICE: failed fetching project permissions');
@@ -71,12 +82,15 @@ export class PermissionService {
   }
 
   getProjectPermissions(projectId: number): Set<number> {
+    projectId = Number(projectId);
+
     if (!this.projectPermissions.has(projectId)) {
-      this.projectPermissions.set(projectId, new Set<number>());
+      return new Set<number>();
     }
 
-    return this.projectPermissions.get(projectId) || new Set<number>();
+    return this.projectPermissions.get(projectId)!; // Using non-null assertion operator (!)
   }
+
 
   updateGlobalPermissions(globalPermissions: number[]): void {
     console.log(`updated global permissions to ${globalPermissions}`);

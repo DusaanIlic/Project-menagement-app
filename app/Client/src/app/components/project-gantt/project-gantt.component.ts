@@ -34,6 +34,8 @@ import {MatDivider} from "@angular/material/divider";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {TaskStatus} from "../../models/task-status";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-project-gantt',
@@ -57,6 +59,7 @@ import {TaskStatus} from "../../models/task-status";
     MatOption,
     MatSelect,
     NgStyle,
+    HasProjectPermissionPipe,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -376,4 +379,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       });
     }
   }
+
+  protected readonly ProjectPermission = ProjectPermission;
 }

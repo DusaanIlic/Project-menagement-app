@@ -29,12 +29,15 @@ import { ProjectStatus } from '../../models/project-status';
 import { Project } from '../../models/project';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule, 
-    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule,MatSelectModule, MatOptionModule, NgToastModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule,
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule, MatSelectModule, MatOptionModule, NgToastModule, HasProjectPermissionPipe],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
@@ -222,7 +225,7 @@ export class ProjectOverviewComponent implements OnInit {
     }).subscribe(({ projectDetails, projectPriorities }) => {
       this.projectDetails = projectDetails;
       this.projectPriorities = projectPriorities;
-      this.selectedPriority = this.projectDetails.projectPriorityId; 
+      this.selectedPriority = this.projectDetails.projectPriorityId;
       this.selectedStatus = this.projectDetails.projectStatusId;
       //console.log('Project Details:', this.projectDetails);
       //console.log('Project Priorities:', this.projectPriorities);
@@ -300,4 +303,6 @@ export class ProjectOverviewComponent implements OnInit {
     });
   }
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
+  protected readonly GlobalPermission = GlobalPermission;
 }

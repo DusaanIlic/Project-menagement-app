@@ -36,6 +36,8 @@ import {MatSelect} from "@angular/material/select";
 import {Role} from "../../models/role";
 import {MatDivider} from "@angular/material/divider";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-add-members-to-project',
@@ -74,7 +76,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     MatOption,
     MatSelect,
     FormsModule,
-    MatDivider
+    MatDivider,
+    HasProjectPermissionPipe
   ],
   templateUrl: './add-members-to-project.component.html',
   styleUrl: './add-members-to-project.component.scss'
@@ -243,4 +246,5 @@ export class AddMembersToProjectComponent implements OnInit{
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }

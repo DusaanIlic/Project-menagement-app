@@ -30,6 +30,9 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from '@angular/material/table';
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-member-overview',
@@ -49,11 +52,13 @@ import {
     MatPaginator,
     MatDivider,
     MatTableModule,
+    HasGlobalPermissionPipe,
   ],
 })
 export class MemberOverviewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  authMemberId: number = 0;
   routeSub: any;
   tasks: Task[] = []; // Vaši zadaci
   startIndex = 0;
@@ -73,7 +78,8 @@ export class MemberOverviewComponent implements OnInit {
     private route: ActivatedRoute,
     private mService: MemberService,
     private tService: TaskService,
-    private pService: ProjectServiceGet
+    private pService: ProjectServiceGet,
+    private authService: AuthService
   ) {}
 
   member: Member = {
@@ -132,6 +138,8 @@ export class MemberOverviewComponent implements OnInit {
         this.dataSource.data = this.tasks;
         this.dataSource.paginator = this.paginator;
       });
+
+    this.authMemberId = Number(this.authService.getAuthenticatedMembersId());
   }
 
   //////////////////////////////////////////////////////
@@ -161,4 +169,5 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   protected readonly environment = environment;
+  protected readonly GlobalPermission = GlobalPermission;
 }

@@ -104,7 +104,8 @@
             </mat-card-content>
 
             <mat-card-actions>
-              <button mat-button [routerLink]="['/members', member.id, 'edit']">
+              <button mat-button [routerLink]="['/members', member.id, 'edit']"
+                *ngIf="member.id == authMemberId || (GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
                 EDIT PROFILE
               </button>
             </mat-card-actions>

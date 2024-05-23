@@ -32,6 +32,8 @@ import {MatDivider} from "@angular/material/divider";
 import {AvatarComponent} from "../avatar/avatar.component";
 import {SignalRService} from "../../services/signal-r.service";
 import {Role} from "../../models/role";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-all-assignees',
@@ -55,7 +57,7 @@ import {Role} from "../../models/role";
     MatSelect,
     MatRadioButton,
     MatTableModule,
-    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent, HasProjectPermissionPipe
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
@@ -213,4 +215,5 @@ export class AllAssigneesComponent implements OnInit{
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }

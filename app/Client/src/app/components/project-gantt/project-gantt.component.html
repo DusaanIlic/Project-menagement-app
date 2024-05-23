@@ -47,7 +47,8 @@
 
     <span class="grow"></span>
 
-    <button mat-raised-button color="primary" (click)="openAddTask()">Add Task</button>
+    <button mat-raised-button color="primary" (click)="openAddTask()"
+      [disabled]="!(projectId | hasProjectPermission:ProjectPermission.CREATE_TASK)">Add Task</button>
   </div>
 
   <mat-divider class="w-full"></mat-divider>
@@ -56,10 +57,10 @@
              [items]="ganttItems"
              [groups]="ganttGroups"
              [viewType]="viewType"
-             [draggable]="true"
+             [draggable]="(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)"
              [selectable]="true"
              [multiple]="true"
-             [linkable]="true"
+             [linkable]="(projectId | hasProjectPermission:ProjectPermission.ADD_TASK_DEPENDENCY)"
              [showTodayLine]="true"
              (barClick)="barClick($event)"
              (selectedChange)="selectedChange($event)"

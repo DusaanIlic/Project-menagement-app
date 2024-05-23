@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {AddMemberForm} from "../forms/add-member.form";
-import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, of, throwError} from "rxjs";
 import {EditProfileForm} from "../forms/edit-profile.form";
 import { Member } from "../models/member";
 import { Role } from "../models/role";
