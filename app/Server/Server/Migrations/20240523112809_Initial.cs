@@ -720,9 +720,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 23, 12, 59, 9, 520, DateTimeKind.Local).AddTicks(5929), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$ga8zhzvubtv3K1vJoJZbaO4MFm/wHbqwoZEIoPJIJmn.Y2C51ua0.", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 23, 12, 59, 9, 582, DateTimeKind.Local).AddTicks(9793), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$TYffOpmafMRxYNfqog6TQ.WeGRTC/Eo/KDkmQpaNJGcS0PA1t2GbS", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 23, 12, 59, 9, 646, DateTimeKind.Local).AddTicks(3427), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$yBr.vRnGqjqfrr5gonC45uqmrn1rllMiKYzNjNNQc.zdHoVqDon5K", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 23, 13, 28, 8, 940, DateTimeKind.Local).AddTicks(3184), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$LwKutIWPdDdaCzz9iJ5mQOEVgiiUCqAM.9rSPz.iQE6NU9HXtkyrm", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 2, DateTimeKind.Local).AddTicks(9424), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$jYiVB2c4xv7m5fHUfM1/kOo.vxVcFjbNwR5iE9IUM2kCjRe2ncvvq", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 65, DateTimeKind.Local).AddTicks(3364), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$SxH9sNYAuYluQ2NZExXBOu2dbM9b8G4JYKJx8BKrZMJsEzDY6w/VW", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(

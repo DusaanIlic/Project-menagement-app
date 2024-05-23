@@ -769,12 +769,7 @@ namespace Server.Controllers
                     Permissions = mp.ProjectRole.ProjectRolePermissions.Where(prp => prp.ProjectRoleId == mp.ProjectRoleId).Select(prp => prp.ProjectPermissionId).ToList()
                 })
                 .ToListAsync();
-
-            if (!memberProjectRoles.Any())
-            {
-                return BadRequest(new { message = "Member not found with given id or no projects associated with member" });
-            }
-
+            
             // Group the permissions by project role ID and build the response
             var response = memberProjectRoles
                 .GroupBy(mpr => mpr.ProjectId)
