@@ -28,11 +28,18 @@
       <mat-card class="example-card" *ngIf="projectDetails">
         <mat-card-header>
           <mat-card-title-group class="pb-2">
-            <mat-card-title><p>{{ calculateDaysRemaining(projectDetails.deadline) }} days</p></mat-card-title>
+            <mat-card-title>
+              <p [ngClass]="getDaysRemainingClass(calculateDaysRemaining(projectDetails.deadline))">
+                {{ calculateDaysRemaining(projectDetails.deadline) }} days
+              </p>
+              <div *ngIf="calculateDaysRemaining(projectDetails.deadline) <= 0" class="overdue-message">
+                Project is overdue
+              </div>
+            </mat-card-title>
             <mat-card-subtitle>Days remaining until deadline</mat-card-subtitle>
             <mat-icon class="large-icon">calendar_month</mat-icon>
           </mat-card-title-group>
-        </mat-card-header>
+        </mat-card-header>     
       </mat-card>
     </div>
 

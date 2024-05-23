@@ -7,3 +7,17 @@
     justify-content: center;
     padding: 4px;
   }
+
+  .critical {
+    color: red;
+  }
+  
+  .overdue {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .overdue-message {
+    color: red;
+    font-weight: bold;
+  }

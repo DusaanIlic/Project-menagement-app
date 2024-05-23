@@ -28,6 +28,7 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ProjectStatus } from '../../models/project-status';
 import { Project } from '../../models/project';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-project-overview',
@@ -63,7 +64,8 @@ export class ProjectOverviewComponent implements OnInit {
     private mService: MemberService,
     private tService: TaskService,
     private pService: ProjectServiceGet,
-    private _ngToastService: NgToastService
+    private _ngToastService: NgToastService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -138,6 +140,15 @@ export class ProjectOverviewComponent implements OnInit {
     const timeDifference = endDate.getTime() - currentDate.getTime();
     const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
     return daysDifference;
+  }
+
+  getDaysRemainingClass(daysRemaining: number): string {
+    if (daysRemaining <= 0) {
+      return 'overdue';
+    } else if (daysRemaining <= 3) {
+      return 'critical';
+    }
+    return '';
   }
 
   fetchMembersOnProject()
@@ -259,7 +270,7 @@ export class ProjectOverviewComponent implements OnInit {
         this.projectDetails = response;
         this.project = response;
         this.projectUpdated.emit(response);
-        this.showMessage();
+        this.snackBar.open('Successfully changed project info!', 'Close', { duration: 3000 });
       },
       error => {
         console.error('Error updating project:', error);
