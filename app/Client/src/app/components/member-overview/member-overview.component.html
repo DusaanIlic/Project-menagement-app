@@ -121,91 +121,120 @@
       <mat-divider class="w-full"></mat-divider>
 
       <div class="flex justify-center">
-        <div class="w-[90%]">
-          <div class="table border-[1px] bg-white border-gray-300 rounded-md">
-            <tr class="">
-              <th class="text-left p-3 w-60">PROJECT</th>
-              <th class="text-left w-60">TASK</th>
-              <th class="text-left w-60">DUE DATE</th>
-              <th class="text-left w-60">STATUS</th>
-              <th class="text-left w-60">PRIORITY</th>
-              <th class="text-left w-20"></th>
-            </tr>
-
-            <tr *ngIf="tasks.length == undefined">
-              <td class="p-2 border-t-[1px] border-t-gray-300" colspan="8">
-                No tasks for this member.
-              </td>
-            </tr>
-
-            <tbody *ngIf="tasks.length != undefined">
-              <tr
-                *ngFor="let task of tasks; index as i"
-                class="border-[1px] border-gray-500 hover:bg-gray-300"
+        <div class="">
+          <mat-table class="w-auto" [dataSource]="dataSource">
+            <!-- Header -->
+            <ng-container matColumnDef="project">
+              <mat-header-cell *matHeaderCellDef class="text-left p-3 w-60">
+                PROJECT
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300 p-2"
               >
-                <td class="w-60 border-t-[1px] border-t-gray-300 p-2">
-                  {{ task.projectName }}
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.taskName }}
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.deadline | date }}
-                </td>
-                <td
+                {{ task.projectName }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="task">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                TASK
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                {{ task.taskName }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="dueDate">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                DUE DATE
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                {{ task.deadline | date }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                STATUS
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                <div
                   *ngIf="task.taskStatusId == 1"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-yellow-600 font-bold"
                 >
-                  <div class="text-yellow-600 font-bold">
-                    <mat-icon>panorama_fisheye</mat-icon>
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td
+                  <mat-icon>panorama_fisheye</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+                <div
                   *ngIf="task.taskStatusId == 3"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-green-600 font-bold"
                 >
-                  <div class="text-green-600 font-bold">
-                    <mat-icon>checkbox</mat-icon>
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td
+                  <mat-icon>checkbox</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+                <div
                   *ngIf="task.taskStatusId == 2"
-                  class="w-60 border-t-[1px] border-t-gray-300"
+                  class="text-orange-600 font-bold"
                 >
-                  <div class="text-orange-600 font-bold">
-                    <mat-icon>timelapse</mat-icon>
-                    {{ task.taskStatus }}
-                  </div>
-                </td>
-                <td class="w-60 border-t-[1px] border-t-gray-300">
-                  {{ task.taskPriorityName }}
-                </td>
-                <td class="w-10 border-t-[1px] border-t-gray-300">
-                  <button
-                    class="font-extrabold text-3xl"
-                    mat-button
-                    [matMenuTriggerFor]="menu"
-                  >
-                    ...
-                  </button>
-                </td>
+                  <mat-icon>timelapse</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+                PRIORITY
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-60 border-t-[1px] border-t-gray-300"
+              >
+                {{ task.taskPriorityName }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef class="text-left w-20">
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let task"
+                class="w-10 border-t-[1px] border-t-gray-300"
+              >
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="openDialog(task)">
-                    <mat-icon>visibility</mat-icon>View
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
                   </button>
                   <button
                     mat-menu-item
                     class="p-2 bg rounded-md font-semibold text-black"
                   >
                     <mat-icon>delete</mat-icon>
-                    Delete
+                    <span>Delete</span>
                   </button>
                 </mat-menu>
-              </tr>
-            </tbody>
-          </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
         </div>
       </div>
     </div>

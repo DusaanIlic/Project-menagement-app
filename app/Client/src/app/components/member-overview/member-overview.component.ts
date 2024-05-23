@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
@@ -25,6 +25,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {
+  MatTable,
+  MatTableDataSource,
+  MatTableModule,
+} from '@angular/material/table';
 
 @Component({
   selector: 'app-member-overview',
@@ -43,10 +48,24 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
     RouterLinkActive,
     MatPaginator,
     MatDivider,
+    MatTableModule,
   ],
 })
 export class MemberOverviewComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   routeSub: any;
+  tasks: Task[] = []; // Vaši zadaci
+
+  dataSource = new MatTableDataSource<Task>([]);
+  displayedColumns: string[] = [
+    'project',
+    'task',
+    'dueDate',
+    'status',
+    'priority',
+    'actions',
+  ];
 
   constructor(
     public dialog: MatDialog,
@@ -78,65 +97,51 @@ export class MemberOverviewComponent implements OnInit {
 
   p?: Project;
   projects: Project[] = [];
-  tasks: Task[] = [];
 
   ngOnInit() {
-    this.routeSub = this.route.params
+    this.route.params
       .pipe(
         switchMap((params) => {
           this.member.id = params['id'];
-
-          this.mService.getMemberById(this.member.id).subscribe((member) => {
-            this.member = member;
+          return this.mService.getMemberById(this.member.id);
+        }),
+        switchMap((member) => {
+          this.member = member;
+          return this.tService.getTasksByMember(this.member.id);
+        }),
+        switchMap((tasks) => {
+          this.tasks = tasks;
+          const observables = this.tasks.map((task) => {
+            const projectObservable = this.pService.getProjectById(
+              task.projectId
+            );
+            const taskPriorityObservable = this.tService.getTaskPriority(
+              task.taskPriorityId
+            );
+            return forkJoin([projectObservable, taskPriorityObservable]);
           });
-
-          return this.tService.getTasksByMember(this.member.id).pipe(
-            switchMap((tasks) => {
-              this.tasks = tasks;
-
-              const observables = [];
-
-              for (let i = 0; i < tasks.length; i++) {
-                const projectObservable = this.pService.getProjectById(
-                  tasks[i].projectId
-                );
-                const taskPriorityObservable = this.tService.getTaskPriority(
-                  tasks[i].taskPriorityId
-                );
-
-                observables.push(projectObservable);
-                observables.push(taskPriorityObservable);
-              }
-
-              return forkJoin(observables).pipe(
-                switchMap((results: any) => {
-                  // Use results to update tasks
-                  for (let i = 0; i < tasks.length; i++) {
-                    const projectIndex = i * 2;
-                    tasks[i].projectName = results[projectIndex].projectName;
-
-                    const taskPriorityIndex = projectIndex + 1;
-                    tasks[i].taskPriorityName = results[taskPriorityIndex].name;
-                  }
-
-                  return tasks;
-                })
-              );
-            })
-          );
+          return forkJoin(observables);
         })
       )
-      .subscribe({
-        next: (tasks) => {
-          console.log(tasks);
-        },
-        error: (error) => {
-          console.error(error);
-        },
+      .subscribe((results) => {
+        results.forEach((result, index) => {
+          this.tasks[index].projectName = result[0].projectName;
+          this.tasks[index].taskPriorityName = result[1].name;
+        });
+        this.dataSource.data = this.tasks;
+        this.dataSource.paginator = this.paginator;
       });
   }
 
   //////////////////////////////////////////////////////
+  onPageChange(event: PageEvent) {
+    const startIndex = event.pageIndex * event.pageSize;
+    const endIndex = startIndex + event.pageSize;
+    this.dataSource = new MatTableDataSource<Task>(
+      this.tasks.slice(startIndex, endIndex)
+    );
+    this.dataSource.paginator = this.paginator;
+  }
 
   openDialog(task: Task): void {
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
