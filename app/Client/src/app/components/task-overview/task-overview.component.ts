@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
 import { RouterModule } from '@angular/router';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Task } from '../../models/task';
 import { NgxEditorModule, Editor } from 'ngx-editor';
 import { TaskService } from '../../services/task.service';
@@ -46,7 +46,7 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
 })
 export class TaskOverviewComponent implements OnInit{
 
-
+    editing : boolean = false;
     project : any;
     activitiesForThisTask : taskActivity[] = [];
     activities : taskActivity[] = [];
@@ -266,5 +266,20 @@ export class TaskOverviewComponent implements OnInit{
   }
 
     protected readonly environment = environment;
+    taskName: string = "";
+    taskDescription : string = "";
+    taskDeadline : Date = new Date();
+
+
+  editMode(forEdit: string)
+  {
+    if(forEdit == 'taskname')
+      this.editing = true;
+  }
+
+  changeTaskname() {
+    this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, this.taskName ,this.task.taskDescription, this.task.deadline).subscribe();
+    this.editing = false;
+  }
 }
 
