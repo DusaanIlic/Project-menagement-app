@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Member } from '../../models/member';
 import { taskActivity } from '../../models/taskActivity';
 import { CommonModule } from '@angular/common';
-import { TaskOverviewComponent } from "../task-overview/task-overview.component";
+import { TaskOverviewComponent } from '../task-overview/task-overview.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { MemberService } from '../../services/member.service';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
@@ -14,26 +19,66 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { taskPriority } from '../../models/taskPriority';
 import { switchMap } from 'rxjs/operators';
-import {forkJoin, Observable} from 'rxjs';
-import {environment} from "../../../environments/environment";
-
+import { forkJoin, Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/divider';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {
+  MatTable,
+  MatTableDataSource,
+  MatTableModule,
+} from '@angular/material/table';
 
 @Component({
-    selector: 'app-member-overview',
-    standalone: true,
-    templateUrl: './member-overview.component.html',
-    styleUrl: './member-overview.component.scss',
-    imports: [CommonModule, TaskOverviewComponent, MatDialogModule, MatButtonModule, MatMenuModule]
+  selector: 'app-member-overview',
+  standalone: true,
+  templateUrl: './member-overview.component.html',
+  styleUrl: './member-overview.component.scss',
+  imports: [
+    CommonModule,
+    TaskOverviewComponent,
+    MatDialogModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatCardModule,
+    MatIconModule,
+    RouterLink,
+    RouterLinkActive,
+    MatPaginator,
+    MatDivider,
+    MatTableModule,
+  ],
 })
-export class MemberOverviewComponent implements OnInit{
+export class MemberOverviewComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   routeSub: any;
+  tasks: Task[] = []; // Vaši zadaci
+  startIndex = 0;
 
-  constructor(public dialog: MatDialog, private route: ActivatedRoute,
-                private mService : MemberService, private tService : TaskService,
-                  private pService : ProjectServiceGet) {}
+  dataSource = new MatTableDataSource<Task>([]);
+  displayedColumns: string[] = [
+    'project',
+    'task',
+    'dueDate',
+    'status',
+    'priority',
+    'actions',
+  ];
 
-  member : Member = {
-    checked: undefined, isDisabled: false,
+  constructor(
+    public dialog: MatDialog,
+    private route: ActivatedRoute,
+    private mService: MemberService,
+    private tService: TaskService,
+    private pService: ProjectServiceGet
+  ) {}
+
+  member: Member = {
+    checked: undefined,
+    isDisabled: false,
     id: -1,
     firstName: '',
     lastName: '',
@@ -48,82 +93,72 @@ export class MemberOverviewComponent implements OnInit{
     linkedin: '',
     status: '',
     phoneNumber: '',
-    numberOfTasks: 0
+    numberOfTasks: 0,
   };
 
-  p? : Project;
-  projects : Project[] = [];
-  tasks : Task[] = [];
+  p?: Project;
+  projects: Project[] = [];
 
-  ngOnInit()
-  {
-    this.routeSub = this.route.params.pipe(
-      switchMap(params => {
-        this.member.id = params['id'];
-
-        this.mService.getMemberById(this.member.id).subscribe(
-          (member =>{
-            this.member = member;
-          })
-        )
-
-        return this.tService.getTasksByMember(this.member.id).pipe(
-          switchMap(tasks => {
-            this.tasks = tasks;
-
-            const observables = [];
-
-            for (let i = 0; i < tasks.length; i++) {
-              const projectObservable = this.pService.getProjectById(tasks[i].projectId);
-              const taskPriorityObservable = this.tService.getTaskPriority(tasks[i].taskPriorityId);
-
-              observables.push(projectObservable);
-              observables.push(taskPriorityObservable);
-            }
-
-            return forkJoin(observables).pipe(
-              switchMap((results : any) => {
-                // Use results to update tasks
-                for (let i = 0; i < tasks.length; i++) {
-                  const projectIndex = i * 2;
-                  tasks[i].projectName = results[projectIndex].projectName;
-
-                  const taskPriorityIndex = projectIndex + 1;
-                  tasks[i].taskPriorityName = results[taskPriorityIndex].name;
-                }
-
-                return tasks;
-              })
+  ngOnInit() {
+    this.route.params
+      .pipe(
+        switchMap((params) => {
+          this.member.id = params['id'];
+          return this.mService.getMemberById(this.member.id);
+        }),
+        switchMap((member) => {
+          this.member = member;
+          return this.tService.getTasksByMember(this.member.id);
+        }),
+        switchMap((tasks) => {
+          this.tasks = tasks;
+          const observables = this.tasks.map((task) => {
+            const projectObservable = this.pService.getProjectById(
+              task.projectId
             );
-          })
-        );
-      })
-    ).subscribe({
-      next: tasks => {
-        console.log(tasks);
-      },
-      error: error => {
-        console.error(error)
-      }
+            const taskPriorityObservable = this.tService.getTaskPriority(
+              task.taskPriorityId
+            );
+            return forkJoin([projectObservable, taskPriorityObservable]);
+          });
+          return forkJoin(observables);
+        })
+      )
+      .subscribe((results) => {
+        results.forEach((result, index) => {
+          this.tasks[index].projectName = result[0].projectName;
+          this.tasks[index].taskPriorityName = result[1].name;
+        });
+        this.dataSource.data = this.tasks;
+        this.dataSource.paginator = this.paginator;
+      });
+  }
+
+  //////////////////////////////////////////////////////
+  openDialogOverview(taskId: number) {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId,
     });
   }
 
-
-
-  //////////////////////////////////////////////////////
-
-
+  onPageChange(event: PageEvent) {
+    const startIndex = event.pageIndex * event.pageSize;
+    const endIndex = startIndex + event.pageSize;
+    //this.dataSource.data = this.tasks.slice(startIndex, endIndex);
+    this.dataSource.paginator = this.paginator;
+  }
 
   openDialog(task: Task): void {
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
-      data: task.taskId
+      data: task.taskId,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log('The dialog was closed');
     });
   }
 
-    protected readonly environment = environment;
+  protected readonly environment = environment;
 }

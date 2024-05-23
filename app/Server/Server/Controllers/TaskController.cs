@@ -74,6 +74,7 @@ namespace Server.Controllers
 
                 tasksDTOs.Add(new ProjectTaskDTO
                 {
+                    ProjectName = t.Project.ProjectName,
                     Deadline = t.Deadline,
                     ProjectId = t.ProjectId,
                     TaskDescription = t.TaskDescription,
@@ -88,8 +89,8 @@ namespace Server.Controllers
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = taskPriority.Name,
                     DateFinished = t.DateFinished,
-                    DeadlineModified = t.DeadlineModified
-
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 });
 
             }
@@ -127,7 +128,7 @@ namespace Server.Controllers
                 return NotFound(new { message = "Project with this id not found." });
             }
 
-            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == addProjectTaskRequest.TaskPriorityId);
+            var projectTaskStatus = dbContext.TaskStatuses.FirstOrDefault(ps => ps.Id == 1);
             var taskPriority = dbContext.TaskPriority.First(tp => tp.TaskPriorityId == addProjectTaskRequest.TaskPriorityId);
             var taskCategory = dbContext.TaskCategories.First(tc => tc.TaskCategoryID == 1);
 
@@ -199,7 +200,8 @@ namespace Server.Controllers
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs,
-                TaskPriorityName = taskPriority.Name
+                TaskPriorityName = taskPriority.Name,
+                TaskCategoryName = taskCategory.CategoryName
             };
 
             var projectTaskCategory = new ProjectTaskCategories
@@ -253,6 +255,7 @@ namespace Server.Controllers
         {
 
             var projectTask = await dbContext.ProjectTasks
+                .Include(ts => ts.Project)
                 .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
@@ -283,6 +286,7 @@ namespace Server.Controllers
 
             var tasksDTO = new ProjectTaskDTO
             {
+                ProjectName = projectTask.Project.ProjectName,
                 Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
@@ -296,7 +300,8 @@ namespace Server.Controllers
                 TaskCategoryId = projectTask.TaskCategoryId,
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
-                DeadlineModified = projectTask.DeadlineModified
+                DeadlineModified = projectTask.DeadlineModified,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(tasksDTO);
@@ -310,6 +315,7 @@ namespace Server.Controllers
                 .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
+                .Include(ts => ts.Project)
                 .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (projectTask == null)
@@ -333,6 +339,7 @@ namespace Server.Controllers
 
             var tasksDTO = new ProjectTaskDTO
             {
+                ProjectName = projectTask.Project.ProjectName,
                 Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
@@ -344,6 +351,7 @@ namespace Server.Controllers
                 TaskPriorityId = projectTask.TaskPriorityId,
                 IsTaskDependentOn = isTaskDependentOn,
                 TaskCategoryId = projectTask.TaskCategoryId,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(tasksDTO);
@@ -382,6 +390,7 @@ namespace Server.Controllers
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
             var projectTask = await dbContext.ProjectTasks
+                .Include(ts => ts.Project)
                .Include(ts => ts.TaskStatus)
                .Include(tp => tp.TaskPriority)
                .Include(tc => tc.TaskCategory)
@@ -413,6 +422,7 @@ namespace Server.Controllers
 
             var taskDTO = new ProjectTaskDTO
             {
+                ProjectName = projectTask.Project.ProjectName,
                 Deadline = projectTask.Deadline,
                 ProjectId = projectTask.ProjectId,
                 TaskDescription = projectTask.TaskDescription,
@@ -427,7 +437,8 @@ namespace Server.Controllers
                 AssignedMembers = assignedMembers,
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
-                DeadlineModified = projectTask.DeadlineModified
+                DeadlineModified = projectTask.DeadlineModified,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName
             };
 
             return Ok(taskDTO);
@@ -504,6 +515,7 @@ namespace Server.Controllers
         {
             var tasks = await dbContext.ProjectTasks
                 .Where(t => t.ProjectId == projectId)
+                .Include(ts => ts.Project)
                 .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
                 .Include(tc => tc.TaskCategory)
@@ -534,6 +546,7 @@ namespace Server.Controllers
 
                 taskDTOs.Add(new ProjectTaskDTO
                 {
+                    ProjectName = t.Project.ProjectName,
                     Deadline = t.Deadline,
                     ProjectId = t.ProjectId,
                     TaskDescription = t.TaskDescription,
@@ -548,7 +561,8 @@ namespace Server.Controllers
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = t.TaskPriority.Name,
                     DeadlineModified = t.DeadlineModified,
-                    DateFinished = t.DateFinished
+                    DateFinished = t.DateFinished,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 });
             }
 
@@ -563,6 +577,7 @@ namespace Server.Controllers
                 .Where(t => t.ProjectId == projectId && t.TaskPriorityId == priorityId)
                 .Include(ts => ts.TaskStatus)
                 .Include(tp => tp.TaskPriority)
+                .Include(ts => ts.Project)
                 .Include(tc => tc.TaskCategory)
                 .ToListAsync();
 
@@ -574,6 +589,7 @@ namespace Server.Controllers
 
                 taskDTOs.Add(new ProjectTaskDTO
                 {
+                    ProjectName = t.Project.ProjectName,
                     Deadline = t.Deadline,
                     ProjectId = t.ProjectId,
                     TaskDescription = t.TaskDescription,
@@ -585,7 +601,9 @@ namespace Server.Controllers
                     TaskPriorityId = t.TaskPriorityId,
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
-                    TaskPriorityName = t.TaskPriority.Name
+                    TaskPriorityName = t.TaskPriority.Name,
+                    TaskCategoryName = t.TaskCategory.CategoryName
+
                 });
             }
 
@@ -778,6 +796,7 @@ namespace Server.Controllers
                 .ThenInclude(t => t.TaskPriority)
                 .Include(mt => mt.Task)
                 .ThenInclude(tc => tc.TaskCategory)
+                .Include(mt => mt.Task).ThenInclude(tc => tc.Project)
                 .ToListAsync();
 
             var taskDTOs = new List<ProjectTaskDTO>();
@@ -801,6 +820,7 @@ namespace Server.Controllers
 
                 taskDTOs.Add(new ProjectTaskDTO
                 {
+                    ProjectName = mt.Task.Project.ProjectName,
                     Deadline = mt.Task.Deadline,
                     ProjectId = mt.Task.ProjectId,
                     TaskDescription = mt.Task.TaskDescription,
@@ -813,7 +833,8 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = mt.Task.TaskCategoryId,
                     AssignedMembers = assignedMembers,
-                    TaskPriorityName = mt.Task.TaskPriority.Name
+                    TaskPriorityName = mt.Task.TaskPriority.Name,
+                    TaskCategoryName = mt.Task.TaskCategory.CategoryName
                 });
             }
 
@@ -889,10 +910,12 @@ namespace Server.Controllers
                 .Include(pt => pt.TaskStatus)
                 .Include(pt => pt.TaskCategory)
                 .Include(pt => pt.TaskPriority)
+                .Include(pt => pt.Project)
                 .ToListAsync();
 
             var dependentTaskDTOs = dependentTasks.Select(dt => new ProjectTaskDTO
             {
+                ProjectName = dt.Project.ProjectName,
                 TaskId = dt.TaskId,
                 TaskName = dt.TaskName,
                 TaskDescription = dt.TaskDescription,
@@ -904,7 +927,9 @@ namespace Server.Controllers
                 TaskPriorityId = dt.TaskPriorityId,
                 IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
                 TaskCategoryId = dt.TaskCategoryId,
-                TaskPriorityName = dt.TaskPriority.Name
+                TaskPriorityName = dt.TaskPriority.Name,
+                TaskCategoryName = dt.TaskCategory.CategoryName
+
             }).ToList();
 
             return Ok(dependentTaskDTOs);
@@ -1103,6 +1128,7 @@ namespace Server.Controllers
                     .ThenInclude(t => t.TaskPriority)
                 .Include(mt => mt.Task)
                     .ThenInclude(tc => tc.TaskCategory)
+                .Include(mt => mt.Task).ThenInclude(tc => tc.Project)
                 .ToListAsync();
 
             if (!memberTasks.Any())
@@ -1133,6 +1159,7 @@ namespace Server.Controllers
                     },
                     Task = new ProjectTaskDTO
                     {
+                        ProjectName = mt.Task.Project.ProjectName,
                         Deadline = mt.Task.Deadline,
                         ProjectId = mt.Task.ProjectId,
                         TaskDescription = mt.Task.TaskDescription,
@@ -1144,7 +1171,8 @@ namespace Server.Controllers
                         TaskPriorityId = mt.Task.TaskPriorityId,
                         TaskCategoryId = mt.Task.TaskCategoryId,
                         IsTaskDependentOn = isTaskDependent,
-                        TaskPriorityName = mt.Task.TaskPriority.Name
+                        TaskPriorityName = mt.Task.TaskPriority.Name,
+                        TaskCategoryName = mt.Task.TaskCategory.CategoryName
                     }
                 });
             }

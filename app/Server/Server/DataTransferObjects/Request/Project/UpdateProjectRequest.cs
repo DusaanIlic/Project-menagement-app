@@ -8,5 +8,8 @@
 
         public DateTime Deadline { get; set; }
 
+        public int ProjectPriorityId { get; set; }
+
+        public int ProjectStatusId { get; set; }
     }
 }
