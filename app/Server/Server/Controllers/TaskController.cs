@@ -1195,7 +1195,7 @@ namespace Server.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetTaskFiles(int id)
         {
-            var task = await dbContext.Task.FindAsync(id);
+            var task = await dbContext.ProjectTasks.FindAsync(id);
 
             if (task == null)
             {
@@ -1232,32 +1232,30 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Add file");
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
-
-
-            var task = await dbContext.Task.FindAsync(id);
+            var task = await dbContext.ProjectTasks.FindAsync(id);
 
             if (task == null)
             {
                 return NotFound(new { message = "Task not found." });
             }
 
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
 
             var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
 
             foreach (var uploadedFile in uploadedFiles)
             {
-                var tasktFile = new TasktFile
+                var taskFile = new TaskFile
                 {
                     TaskId = id,
                     FileId = uploadedFile.FileId
                 };
-                project.TaskFiles.Add(tasktFile);
+                task.TaskFiles.Add(taskFile);
 
             }
 
@@ -1283,18 +1281,18 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove file");
-
-            if (!hasPermission)
-            {
-                return Forbid("Insufficient permissions");
-            }
-
-            var task = await dbContext.Task.FindAsync(id);
+            var task = await dbContext.ProjectTasks.FindAsync(id);
 
             if (task == null)
             {
                 return NotFound(new { message = "Task not found." });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove file");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
             }
 
             var taskFile = await dbContext.TaskFile

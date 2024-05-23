@@ -260,7 +260,7 @@ namespace Server.Data
                  .HasKey(pf => new { pf.TaskId, pf.FileId });
 
             modelBuilder.Entity<TaskFile>()
-                .HasOne(pf => pf.Task)
+                .HasOne(pf => pf.ProjectTask)
                 .WithMany(p => p.TaskFiles)
                 .HasForeignKey(pf => pf.TaskId);
 
