@@ -122,7 +122,10 @@
 
       <div class="flex justify-center">
         <div class="min-w-full">
-          <mat-table class="min-w-full" [dataSource]="dataSource">
+          <mat-table
+            class="min-w-full mat-elevation-z8 demo-table"
+            [dataSource]="dataSource"
+          >
             <!-- Header -->
             <ng-container matColumnDef="project">
               <mat-header-cell *matHeaderCellDef class="text-left p-3 w-60">
