@@ -56,6 +56,7 @@ export class MemberOverviewComponent implements OnInit {
 
   routeSub: any;
   tasks: Task[] = []; // Vaši zadaci
+  startIndex = 0;
 
   dataSource = new MatTableDataSource<Task>([]);
   displayedColumns: string[] = [
@@ -137,9 +138,7 @@ export class MemberOverviewComponent implements OnInit {
   onPageChange(event: PageEvent) {
     const startIndex = event.pageIndex * event.pageSize;
     const endIndex = startIndex + event.pageSize;
-    this.dataSource = new MatTableDataSource<Task>(
-      this.tasks.slice(startIndex, endIndex)
-    );
+    //this.dataSource.data = this.tasks.slice(startIndex, endIndex);
     this.dataSource.paginator = this.paginator;
   }
 
