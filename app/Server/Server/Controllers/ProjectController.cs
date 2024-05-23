@@ -59,6 +59,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskPriority)
+                .Include(p => p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -79,7 +80,9 @@ namespace Server.Controllers
                     TaskStatusId = t.TaskStatusId,
                     TaskPriorityId = t.TaskPriorityId,
                     TaskPriorityName = t.TaskPriority.Name,
-                    DeadlineModified = t.DeadlineModified
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryId = t.TaskCategoryId,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -249,6 +252,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p=>p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -269,8 +273,9 @@ namespace Server.Controllers
                     TaskStatus = t.TaskStatus.Name,
                     TaskStatusId = t.TaskStatusId,
                     DateFinished = t.DateFinished,
-                    DeadlineModified = t.DeadlineModified
-
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    TaskCategoryId = t.TaskCategoryId
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -322,6 +327,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p => p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -343,7 +349,9 @@ namespace Server.Controllers
                 TaskStatus = t.TaskStatus.Name,
                 TaskStatusId = t.TaskStatusId,
                 DeadlineModified = t.DeadlineModified,
-                DateFinished = t.DateFinished
+                DateFinished = t.DateFinished,
+                TaskCategoryId = t.TaskCategoryId,
+                TaskCategoryName = t.TaskCategory.CategoryName
             }).ToList();
 
             int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
@@ -603,6 +611,7 @@ namespace Server.Controllers
             var tasks = await dbContext.ProjectTasks
                                         .Where(t => t.ProjectId == projectId)
                                         .Include(pt => pt.TaskStatus)
+                                        .Include(pt => pt.TaskCategory)
                                         .ToListAsync();
 
             var tasksDTOs = tasks.Select(t => new ProjectTaskDTO
@@ -613,7 +622,9 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.TaskStatusId
+                TaskStatusId = t.TaskStatusId,
+                TaskCategoryId = t.TaskCategoryId,
+                TaskCategoryName = t.TaskCategory.CategoryName
             }).ToList();
 
             return Ok(tasksDTOs);

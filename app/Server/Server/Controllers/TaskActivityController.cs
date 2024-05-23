@@ -40,6 +40,7 @@ namespace Server.Controllers
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
+                ProjectName = ta.ProjectTask.Project.ProjectName,
                 TaskActivityId = ta.TaskActivityId,
                 WorkerId = ta.MemberId,
                 Name = ta.Member.FirstName,
@@ -155,6 +156,7 @@ namespace Server.Controllers
 
             var taskActivityDTO = new TaskActivityDTO
             {
+                ProjectName = taskActivity.ProjectTask.Project.ProjectName,
                 TaskActivityId = taskActivity.TaskActivityId,
                 WorkerId = taskActivity.MemberId,
                 TaskId = taskActivity.ProjectTaskId,
@@ -192,7 +194,8 @@ namespace Server.Controllers
             }
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
-            {
+            {   
+                ProjectName = ta.ProjectTask.Project.ProjectName,
                 TaskActivityId = ta.TaskActivityId,
                 WorkerId = ta.MemberId,
                 TaskId = ta.ProjectTaskId,
