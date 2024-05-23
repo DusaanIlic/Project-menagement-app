@@ -147,7 +147,11 @@
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300"
               >
-                {{ task.taskName }}
+                <a
+                  class="hover:underline cursor-pointer"
+                  (click)="openDialogOverview(task.taskId)"
+                  >{{ task.taskName }}</a
+                >
               </mat-cell>
             </ng-container>
 

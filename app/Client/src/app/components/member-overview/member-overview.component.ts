@@ -135,6 +135,13 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   //////////////////////////////////////////////////////
+  openDialogOverview(taskId: number) {
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '250px',
+      data: taskId,
+    });
+  }
+
   onPageChange(event: PageEvent) {
     const startIndex = event.pageIndex * event.pageSize;
     const endIndex = startIndex + event.pageSize;
