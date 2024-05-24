@@ -21,7 +21,7 @@ Server se deplojuje putem `build-and-deploy.sh`, potom se pokreće preko `start-
 
 ## build-and-deploy.sh
 
-Ova skripta updejtuje i builda angular na lokalnom računaru, potom ga ubacuje u dotnet server.
+Ova skripta updejtuje angular frontend na lokalnom računaru, builda, a potom ga ubacuje u dotnet server.
 Nakon toga se updejtuje dotnet, builda u produkcionu verziju, i uploaduje na server.
 
 ## start-server.sh
