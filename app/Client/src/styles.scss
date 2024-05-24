@@ -29,7 +29,7 @@
   $gantt-bar-layer-bg: var(--mdc-elevated-card-container-color, transparent),
   $gantt-bar-handle-color: #cacaca,
   $gantt-bar-handle-height: 12px,
-  $gantt-bar-background-color: var(--mat-toolbar-container-background-color, inherit),
+  $gantt-bar-background-color: var(--mdc-elevated-card-container-color, inherit),
 
   // drag
   $gantt-item-drag-mask-color: #6698ff,

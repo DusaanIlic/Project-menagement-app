@@ -85,7 +85,7 @@
           <ng-container *ngIf="item.taskStatusId != 3">
             <div class="flex gap-2 items-center justify-around">
               <p>{{item.taskPriorityName}}</p>
-              <div class="h-4 w-4" [ngStyle]="{'background-color': item.taskPriorityColor}"></div>
+              <div class="h-4 w-4" [ngStyle]="{'background-color': item.taskPriorityColor, 'border': '1px solid black'}"></div>
             </div>
           </ng-container>
           <ng-container *ngIf="item.taskStatusId === 3">
