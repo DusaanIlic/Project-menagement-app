@@ -67,7 +67,7 @@
              (dragEnded)="dragEnded($event)"
              (lineClick)="linkClick($event)"
              (linkDragEnded)="linkEnded($event)"
-             class="mat-elevation-z8 select-none mat-pr overflow-y-auto">
+             class="mat-elevation-z8 select-none mat-pr overflow-y-auto overflow-x-auto">
 
     <ngx-gantt-table>
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
@@ -85,7 +85,7 @@
           <ng-container *ngIf="item.taskStatusId != 3">
             <div class="flex gap-2 items-center justify-around">
               <p>{{item.taskPriorityName}}</p>
-              <div class="h-4 w-4" [ngStyle]="{'background-color': item.taskPriorityColor}"></div>
+              <div class="h-4 w-4" [ngStyle]="{'background-color': item.taskPriorityColor, 'border': '1px solid black'}"></div>
             </div>
           </ng-container>
           <ng-container *ngIf="item.taskStatusId === 3">
