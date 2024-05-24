@@ -34,13 +34,14 @@ Zaustavlja dotnet server na beku.
 
 # Nalozi
 
-`admin@logictenacity.com` `admin`
-`pera@gmail.com` `pera`
-`toma@gmail.com` `toma`
-`aleksabozinovic25e@gmail.com` `AleksaBozinovic`
-`bozinovic.aleksa02@gmail.com` `AleksaBozinovic`
-`ilicdusan2002@gmai.com` `DusanIlic`
-`dusanilic2002@oshrs.edu.rs` `DusanIlic`
+- `admin@logictenacity.com` `admin`
+- `pera@gmail.com` `pera`
+- `toma@gmail.com` `toma`
+- `aleksabozinovic25e@gmail.com` `AleksaBozinovic`
+- `bozinovic.aleksa02@gmail.com` `AleksaBozinovic`
+- `ilicdusan2002@gmai.com` `DusanIlic`
+- `dusanilic2002@oshrs.edu.rs` `DusanIlic`
+
 
 # Lokalno pokretanje aplikacije
 
