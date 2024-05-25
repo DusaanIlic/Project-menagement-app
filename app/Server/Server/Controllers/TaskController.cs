@@ -1353,5 +1353,59 @@ namespace Server.Controllers
 
         }
 
+
+        [Authorize]
+        [HttpGet("leader/{memberId}")]
+        public async Task<IActionResult> GetTasksByTaskLeader(int memberId)
+        {
+            var member = await dbContext.Members.FindAsync(memberId);
+            if (member == null)
+            {
+                return NotFound(new { message = $"Member with ID {memberId} not found" });
+            }
+
+            var tasks = await dbContext.ProjectTasks
+                .Include(t => t.TaskStatus)
+                .Include(t => t.TaskPriority)
+                .Include(t => t.TaskCategory)
+                .Where(t => t.TaskLeaderId == memberId)
+                .ToListAsync();
+
+            var tasksDTO = tasks.Select(task => new ProjectTaskDTO
+            {
+                Deadline = task.Deadline,
+                ProjectId = task.ProjectId,
+                TaskDescription = task.TaskDescription,
+                TaskId = task.TaskId,
+                TaskName = task.TaskName,
+                TaskStatus = task.TaskStatus.Name,
+                TaskStatusId = task.TaskStatusId,
+                StartDate = task.StartDate,
+                TaskPriorityId = task.TaskPriorityId,
+                IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.DependentTaskId == task.TaskId),
+                TaskCategoryId = task.TaskCategoryId,
+                AssignedMembers = dbContext.MemberTasks
+                    .Where(mt => mt.TaskId == task.TaskId)
+                    .Include(mt => mt.Member)
+                    .Select(mt => new MemberDTO
+                    {
+                        Id = mt.Member.Id,
+                        FirstName = mt.Member.FirstName,
+                        LastName = mt.Member.LastName,
+                        Email = mt.Member.Email,
+                        RoleId = mt.Member.RoleId,
+                        RoleName = mt.Member.Role.RoleName,
+                        DateAdded = mt.Member.DateAdded,
+                        PhoneNumber = mt.Member.PhoneNumber,
+                        DateOfBirth = mt.Member.DateOfBirth,
+                        IsDisabled = mt.Member.IsDisabled
+                    }).ToList(),
+                TaskPriorityName = task.TaskPriority.Name,
+                TaskCategoryName = task.TaskCategory.CategoryName
+            }).ToList();
+
+            return Ok(tasksDTO);
+        }
+
     }
 }
