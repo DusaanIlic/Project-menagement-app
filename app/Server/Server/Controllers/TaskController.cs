@@ -160,11 +160,16 @@ namespace Server.Controllers
             }
 
 
-            projectTask.TaskLeaderId = addProjectTaskRequest.TeamLeaderId;
+            var member1 = await dbContext.Members.FindAsync(addProjectTaskRequest.TaskLeaderId);
+            if(member1 == null)
+            {
+                return NotFound(new { message = $"Member with ID {addProjectTaskRequest.TaskLeaderId} not found" });
+            }
 
+            projectTask.TaskLeaderId = addProjectTaskRequest.TaskLeaderId;
+            member1.TasksLead.Add(projectTask);
+            
             await dbContext.SaveChangesAsync();
-
-
 
             var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
 

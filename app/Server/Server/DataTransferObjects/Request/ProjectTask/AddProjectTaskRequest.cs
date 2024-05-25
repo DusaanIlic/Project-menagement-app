@@ -9,6 +9,6 @@
         public List<int> AssignedMemberIds { get; set; }
         public int TaskPriorityId { get; set; }
 
-        public int TeamLeaderId { get; set; }
+        public int TaskLeaderId { get; set; }
     }
 }
