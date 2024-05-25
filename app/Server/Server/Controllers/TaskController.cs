@@ -255,7 +255,6 @@ namespace Server.Controllers
 
             }
 
-
             return Ok(tasksDTO);
         }
 
@@ -1092,7 +1091,8 @@ namespace Server.Controllers
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove member from task");
 
-            if (!hasPermission)
+           
+            if (!hasPermission || projectTask.TaskLeaderId == memberId)
             {
                 return Forbid("Insufficient permissions");
             }
