@@ -75,6 +75,11 @@ namespace Server.Data
                 .HasForeignKey(p => p.TeamLeaderId);
 
             modelBuilder.Entity<ProjectTask>()
+                .HasOne(pt => pt.TaskLeader)
+                .WithMany(tl => tl.TasksLead)
+                .HasForeignKey(pt => pt.TaskLeaderId);
+
+            modelBuilder.Entity<ProjectTask>()
                .HasOne(pt => pt.TaskPriority)
                .WithMany(ts => ts.ProjectTasks)
                .HasForeignKey(pt => pt.TaskPriorityId);
