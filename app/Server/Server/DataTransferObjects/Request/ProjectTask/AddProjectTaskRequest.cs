@@ -8,5 +8,7 @@
         public int ProjectId { get; set; }
         public List<int> AssignedMemberIds { get; set; }
         public int TaskPriorityId { get; set; }
+
+        public int TeamLeaderId { get; set; }
     }
 }

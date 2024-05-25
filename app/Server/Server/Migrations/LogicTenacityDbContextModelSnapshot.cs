@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 8, 940, DateTimeKind.Local).AddTicks(3184),
+                            DateAdded = new DateTime(2024, 5, 25, 18, 30, 10, 543, DateTimeKind.Local).AddTicks(3642),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$LwKutIWPdDdaCzz9iJ5mQOEVgiiUCqAM.9rSPz.iQE6NU9HXtkyrm",
+                            Password = "$2a$10$atFGXSM3U..hWzw6nlfclexvP/PExqTrnN2cNHRebo/2JQ0tLCn5i",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 9, 2, DateTimeKind.Local).AddTicks(9424),
+                            DateAdded = new DateTime(2024, 5, 25, 18, 30, 10, 645, DateTimeKind.Local).AddTicks(3850),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$jYiVB2c4xv7m5fHUfM1/kOo.vxVcFjbNwR5iE9IUM2kCjRe2ncvvq",
+                            Password = "$2a$10$MHEzMVI8zcugY09HnirG8ecZEPRybwkhNuDfQG8t8WDUwtFWlMMeS",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 23, 13, 28, 9, 65, DateTimeKind.Local).AddTicks(3364),
+                            DateAdded = new DateTime(2024, 5, 25, 18, 30, 10, 747, DateTimeKind.Local).AddTicks(8297),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$SxH9sNYAuYluQ2NZExXBOu2dbM9b8G4JYKJx8BKrZMJsEzDY6w/VW",
+                            Password = "$2a$10$VC3x2etOX1oG9V1fdSLoHOalz0Syx01s81.A.23/cDTlE9KBPiQW.",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -816,6 +816,9 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("TaskLeaderId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("TaskName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -831,6 +834,8 @@ namespace Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("TaskCategoryId");
+
+                    b.HasIndex("TaskLeaderId");
 
                     b.HasIndex("TaskPriorityId");
 
@@ -1366,6 +1371,10 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Models.Member", "TaskLeader")
+                        .WithMany("TasksLead")
+                        .HasForeignKey("TaskLeaderId");
+
                     b.HasOne("Server.Models.TaskPriority", "TaskPriority")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskPriorityId")
@@ -1381,6 +1390,8 @@ namespace Server.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("TaskCategory");
+
+                    b.Navigation("TaskLeader");
 
                     b.Navigation("TaskPriority");
 
@@ -1531,6 +1542,8 @@ namespace Server.Migrations
                     b.Navigation("TaskActivities");
 
                     b.Navigation("Tasks");
+
+                    b.Navigation("TasksLead");
 
                     b.Navigation("UploadedFiles");
                 });

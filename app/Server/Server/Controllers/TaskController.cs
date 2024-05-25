@@ -159,7 +159,12 @@ namespace Server.Controllers
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
             }
 
+
+            projectTask.TaskLeaderId = addProjectTaskRequest.TeamLeaderId;
+
             await dbContext.SaveChangesAsync();
+
+
 
             var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
 

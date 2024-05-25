@@ -369,7 +369,6 @@ namespace Server.Data
                 new ProjectPermission { Id = 24, Name = "Change deadline" },
                 new ProjectPermission { Id = 25, Name = "Add file" },
                 new ProjectPermission { Id = 26, Name = "Remove file" }
-
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(

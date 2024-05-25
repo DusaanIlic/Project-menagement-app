@@ -434,11 +434,17 @@ namespace Server.Migrations
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TaskCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    TaskCategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskLeaderId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectTasks", x => x.TaskId);
+                    table.ForeignKey(
+                        name: "FK_ProjectTasks_Members_TaskLeaderId",
+                        column: x => x.TaskLeaderId,
+                        principalTable: "Members",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProjectTasks_Projects_ProjectId",
                         column: x => x.ProjectId,
@@ -595,6 +601,30 @@ namespace Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TaskFile",
+                columns: table => new
+                {
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FileId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskFile", x => new { x.TaskId, x.FileId });
+                    table.ForeignKey(
+                        name: "FK_TaskFile_Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "Files",
+                        principalColumn: "FileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskFile_ProjectTasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "ProjectTasks",
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Permissions",
                 columns: new[] { "PermissionId", "PermissionName" },
@@ -720,9 +750,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 23, 13, 28, 8, 940, DateTimeKind.Local).AddTicks(3184), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$LwKutIWPdDdaCzz9iJ5mQOEVgiiUCqAM.9rSPz.iQE6NU9HXtkyrm", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 2, DateTimeKind.Local).AddTicks(9424), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$jYiVB2c4xv7m5fHUfM1/kOo.vxVcFjbNwR5iE9IUM2kCjRe2ncvvq", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 65, DateTimeKind.Local).AddTicks(3364), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$SxH9sNYAuYluQ2NZExXBOu2dbM9b8G4JYKJx8BKrZMJsEzDY6w/VW", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 25, 18, 30, 10, 543, DateTimeKind.Local).AddTicks(3642), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$atFGXSM3U..hWzw6nlfclexvP/PExqTrnN2cNHRebo/2JQ0tLCn5i", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 25, 18, 30, 10, 645, DateTimeKind.Local).AddTicks(3850), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$MHEzMVI8zcugY09HnirG8ecZEPRybwkhNuDfQG8t8WDUwtFWlMMeS", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 25, 18, 30, 10, 747, DateTimeKind.Local).AddTicks(8297), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$VC3x2etOX1oG9V1fdSLoHOalz0Syx01s81.A.23/cDTlE9KBPiQW.", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -866,6 +896,11 @@ namespace Server.Migrations
                 column: "TaskCategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectTasks_TaskLeaderId",
+                table: "ProjectTasks",
+                column: "TaskLeaderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProjectTasks_TaskPriorityId",
                 table: "ProjectTasks",
                 column: "TaskPriorityId");
@@ -915,6 +950,11 @@ namespace Server.Migrations
                 name: "IX_TaskDependencies_DependentTaskId",
                 table: "TaskDependencies",
                 column: "DependentTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskFile_FileId",
+                table: "TaskFile",
+                column: "FileId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Files_Members_UploaderId",
@@ -967,6 +1007,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskDependencies");
+
+            migrationBuilder.DropTable(
+                name: "TaskFile");
 
             migrationBuilder.DropTable(
                 name: "ProjectPermissions");
