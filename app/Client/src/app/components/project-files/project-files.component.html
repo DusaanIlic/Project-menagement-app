@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col gap-2">
   <div class="flex items-center justify-center">
     <p class="text-xl">Project Files</p>
     <span class="grow"></span>
@@ -7,6 +7,37 @@
 
   <mat-card>
     <mat-card-content>
+      <div class="flex flex-col">
+        <div *ngIf="files.length > 0; else noFiles" class="flex flex-col gap-4">
+          @for (file of files; track file.fileId) {
+            <div class="flex gap-2 items-center">
+              <div class="flex items-center justify-center">
+                <mat-icon class="scale-150">insert_drive_file</mat-icon>
+              </div>
+
+              <a class="text-xl hover:underline">{{file.originalName}}</a>
+
+<!--              <mat-form-field subscriptSizing="dynamic">-->
+<!--                <mat-label>File Name</mat-label>-->
+<!--                <input matInput type="text" required [value]="file.originalName">-->
+<!--              </mat-form-field>-->
+
+              <span class="grow"></span>
+
+              <button mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button>
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <ng-template #noFiles>
+          <p class="flex items-center justify-center">There are no uploaded project files</p>
+        </ng-template>
+      </div>
 
     </mat-card-content>
   </mat-card>

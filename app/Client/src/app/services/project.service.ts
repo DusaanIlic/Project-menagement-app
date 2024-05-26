@@ -13,6 +13,7 @@ import {RoleMember} from "../models/role-member";
 import {ProjectStatus} from "../models/project-status";
 import {taskActivity} from "../models/taskActivity";
 import {ProjectPriority} from "../models/project-priority";
+import {ProjectFile} from "../models/project-file";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -137,6 +138,10 @@ export class ProjectServiceGet{
 
   changeAssigneeRole(projectId: number, memberId: number, roleId: number) {
     return this.http.put(`${PROJECT_API}/${projectId}/Members/${memberId}/Roles/${roleId}`, {});
+  }
+
+  getProjectFiles(projectId: number): Observable<ProjectFile[]> {
+    return this.http.get<ProjectFile[]>(`${PROJECT_API}/${projectId}/Files`);
   }
 }
 
