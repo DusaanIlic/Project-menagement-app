@@ -8,6 +8,17 @@ import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatHint, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
+import {MatDivider} from "@angular/material/divider";
+import {MatDialog} from "@angular/material/dialog";
+import {Member} from "../../models/member";
+import {MemberInfoComponent} from "../member-info/member-info.component";
+import {RouterLink} from "@angular/router";
+import {environment} from "../../../environments/environment";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {AuthService} from "../../services/auth.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {Project} from "../../models/project";
 
 @Component({
   selector: 'app-project-files',
@@ -23,7 +34,10 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatInput,
     MatLabel,
     ReactiveFormsModule,
-    MatIconButton
+    MatIconButton,
+    MatDivider,
+    RouterLink,
+    HasProjectPermissionPipe
   ],
   templateUrl: './project-files.component.html',
   styleUrl: './project-files.component.scss'
@@ -34,9 +48,12 @@ export class ProjectFilesComponent implements OnInit {
   }) projectId: number = 0;
 
   files: ProjectFile[] = [];
+  authId: number = Number(this.authService.getAuthenticatedMembersId());
 
   constructor(
-    private projectService: ProjectServiceGet
+    private projectService: ProjectServiceGet,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) {
 
   }
@@ -48,6 +65,24 @@ export class ProjectFilesComponent implements OnInit {
       },
       error: err => {
         console.log('failed fetching project files');
+      }
+    });
+  }
+
+  protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
+
+  deleteFile(fileId: number) {
+    this.projectService.deleteProjectFile(this.projectId, fileId).subscribe({
+      next: data => {
+        const indexToRemove = this.files.findIndex((file: ProjectFile) => file.fileId == fileId);
+        if (indexToRemove !== -1)
+          this.files.splice(indexToRemove, 1);
+
+        this.snackBar.open('Successfully deleted file!', "Close", { duration: 3000 });
+      },
+      error: err => {
+        this.snackBar.open("Failed deleting file!", "Close", { duration: 3000 });
       }
     })
   }

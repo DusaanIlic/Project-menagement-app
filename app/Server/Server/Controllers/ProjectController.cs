@@ -1116,11 +1116,17 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Remove file");
+            var file = dbContext.Files.FirstOrDefault(f => f.FileId == fileId);
 
-            if (!hasPermission)
+            if (file == null)
             {
-                return Forbid("Insufficient permissions");
+                return BadRequest(new { message = "File doesn't exist" });
+            }
+            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Remove file");
+            if (!hasPermission && file.UploaderId != userId)
+            {
+                return BadRequest(new { message = "Insufficient permissions" });
             }
 
             var project = await dbContext.Projects.FindAsync(id);
@@ -1129,7 +1135,7 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Project not found." });
             }
-
+            
             var projectFile = await dbContext.ProjectFile
                 .FirstOrDefaultAsync(pf => pf.ProjectId == id && pf.FileId == fileId);
 
@@ -1338,6 +1344,24 @@ namespace Server.Controllers
                 .AnyAsync(mp => mp.MemberId == memberId && mp.ProjectId == projectId);
          
             return Ok(isValid);
+        }
+        
+        [Authorize]
+        [HttpGet("{projectId}/File/{fileId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFile(int projectId, int fileId)
+        {
+            var file = await dbContext.ProjectFile
+                .FirstOrDefaultAsync(pf => pf.ProjectId == projectId && pf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+
+            return File(bytes, mime);
         }
     }
 }

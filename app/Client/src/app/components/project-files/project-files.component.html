@@ -2,20 +2,31 @@
   <div class="flex items-center justify-center">
     <p class="text-xl">Project Files</p>
     <span class="grow"></span>
-    <button mat-raised-button color="primary">Upload Files</button>
+    <button mat-raised-button color="primary"
+      [disabled]="!(projectId | hasProjectPermission:ProjectPermission.ADD_FILE)">Upload Files</button>
   </div>
 
   <mat-card>
     <mat-card-content>
       <div class="flex flex-col">
-        <div *ngIf="files.length > 0; else noFiles" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4">
           @for (file of files; track file.fileId) {
             <div class="flex gap-2 items-center">
               <div class="flex items-center justify-center">
                 <mat-icon class="scale-150">insert_drive_file</mat-icon>
               </div>
 
-              <a class="text-xl hover:underline">{{file.originalName}}</a>
+              <div class="flex flex-col">
+                <a class="text-xl hover:underline" target="_blank" href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}">
+                  {{file.originalName}}
+                </a>
+                <div class="flex gap-2">
+                  <p class="text-sm">Uploaded by:</p>
+                  <a class="text-sm hover:underline" [routerLink]="['/members', file.uploader.id]">
+                    {{file.uploader.firstName + ' ' + file.uploader.lastName}}
+                  </a>
+                </div>
+              </div>
 
 <!--              <mat-form-field subscriptSizing="dynamic">-->
 <!--                <mat-label>File Name</mat-label>-->
@@ -25,18 +36,24 @@
               <span class="grow"></span>
 
               <button mat-icon-button>
+                <mat-icon>file_download</mat-icon>
+              </button>
+
+              <button mat-icon-button>
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button>
+              <button mat-icon-button color="warn"
+                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_FILE) && file.uploader.id !== authId"
+                (click)="deleteFile(file.fileId)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
+
+            <mat-divider class="w-full" *ngIf="!$last"></mat-divider>
+          } @empty {
+            <p class="flex items-center justify-center">There are no uploaded project files</p>
           }
         </div>
-
-        <ng-template #noFiles>
-          <p class="flex items-center justify-center">There are no uploaded project files</p>
-        </ng-template>
       </div>
 
     </mat-card-content>

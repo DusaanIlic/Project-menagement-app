@@ -143,6 +143,10 @@ export class ProjectServiceGet{
   getProjectFiles(projectId: number): Observable<ProjectFile[]> {
     return this.http.get<ProjectFile[]>(`${PROJECT_API}/${projectId}/Files`);
   }
+
+  deleteProjectFile(projectId: number, fileId: number) {
+    return this.http.delete(`${PROJECT_API}/${projectId}/files/${fileId}`);
+  }
 }
 
 
