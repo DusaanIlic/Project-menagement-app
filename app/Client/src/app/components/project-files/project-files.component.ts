@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import {MatButton, MatIconAnchor, MatIconButton} from "@angular/material/button";
+import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from "@angular/material/card";
 import {ProjectFile} from "../../models/project-file";
 import {ProjectServiceGet} from "../../services/project.service";
 import {NgIf} from "@angular/common";
@@ -19,6 +19,7 @@ import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe"
 import {AuthService} from "../../services/auth.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Project} from "../../models/project";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-project-files',
@@ -37,7 +38,11 @@ import {Project} from "../../models/project";
     MatIconButton,
     MatDivider,
     RouterLink,
-    HasProjectPermissionPipe
+    HasProjectPermissionPipe,
+    MatCardActions,
+    MatPaginator,
+    MatCardTitle,
+    MatIconAnchor
   ],
   templateUrl: './project-files.component.html',
   styleUrl: './project-files.component.scss'
@@ -106,7 +111,7 @@ export class ProjectFilesComponent implements OnInit {
         }
       });
     } else {
-      this.snackBar.open('No files detected for upload!')
+      this.snackBar.open('No files detected for upload!', 'Close', { duration: 3000 });
     }
   }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,7 @@ using Server.DataTransferObjects.Request;
 using Server.Models;
 using Server.Services.Permission;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.PermissionNotifier;
@@ -1345,13 +1347,14 @@ namespace Server.Controllers
          
             return Ok(isValid);
         }
-        
-        [Authorize]
-        [HttpGet("{projectId}/File/{fileId}")]
+
+        [Authorize] 
+        [HttpGet("{projectId}/File/{fileId}/Preview")] 
         [AllowAnonymous]
-        public async Task<IActionResult> GetFile(int projectId, int fileId)
+        public async Task<IActionResult> PreviewFile(int projectId, int fileId)
         {
             var file = await dbContext.ProjectFile
+                .Include(f => f.File)
                 .FirstOrDefaultAsync(pf => pf.ProjectId == projectId && pf.FileId == fileId);
 
             if (file == null)
@@ -1361,7 +1364,33 @@ namespace Server.Controllers
             
             var (bytes, mime) = await _fileService.GetFileData(file.FileId);
 
+            var contentDisposition = new ContentDispositionHeaderValue("inline")
+            {
+                FileName = file.File.OriginalName
+            };
+
+            Response.Headers.Append(HeaderNames.ContentDisposition, contentDisposition.ToString());
+            
             return File(bytes, mime);
+        }
+        
+        [Authorize]
+        [HttpGet("{projectId}/File/{fileId}/Download")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadFile(int projectId, int fileId)
+        {
+            var file = await dbContext.ProjectFile
+                .Include(f => f.File)
+                .FirstOrDefaultAsync(pf => pf.ProjectId == projectId && pf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+            
+            return File(bytes, mime, file.File.OriginalName);
         }
     }
 }
