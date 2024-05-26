@@ -3,7 +3,9 @@
     <p class="text-xl">Project Files</p>
     <span class="grow"></span>
     <button mat-raised-button color="primary"
-      [disabled]="!(projectId | hasProjectPermission:ProjectPermission.ADD_FILE)">Upload Files</button>
+      [disabled]="!(projectId | hasProjectPermission:ProjectPermission.ADD_FILE)"
+      (click)="fileInput.click()">Upload Files</button>
+    <input hidden (change)="uploadFiles($event)" #fileInput type="file" multiple>
   </div>
 
   <mat-card>
@@ -20,7 +22,7 @@
                 <a class="text-xl hover:underline" target="_blank" href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}">
                   {{file.originalName}}
                 </a>
-                <div class="flex gap-2">
+                <div class="flex gap-1">
                   <p class="text-sm">Uploaded by:</p>
                   <a class="text-sm hover:underline" [routerLink]="['/members', file.uploader.id]">
                     {{file.uploader.firstName + ' ' + file.uploader.lastName}}

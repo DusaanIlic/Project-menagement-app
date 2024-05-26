@@ -147,6 +147,10 @@ export class ProjectServiceGet{
   deleteProjectFile(projectId: number, fileId: number) {
     return this.http.delete(`${PROJECT_API}/${projectId}/files/${fileId}`);
   }
+
+  uploadFiles(projectId: number, files: FormData) {
+    return this.http.post(`${PROJECT_API}/${projectId}/files`, files)
+  }
 }
 
 

@@ -79,11 +79,34 @@ export class ProjectFilesComponent implements OnInit {
         if (indexToRemove !== -1)
           this.files.splice(indexToRemove, 1);
 
-        this.snackBar.open('Successfully deleted file!', "Close", { duration: 3000 });
+        this.snackBar.open('Successfully deleted file!', 'Close', { duration: 3000 });
       },
       error: err => {
-        this.snackBar.open("Failed deleting file!", "Close", { duration: 3000 });
+        this.snackBar.open('Failed deleting file!', 'Close', { duration: 3000 });
       }
     })
+  }
+
+  uploadFiles(event: any) {
+    const files: FileList = event.target.files;
+
+    if (files && files.length > 0) {
+      const formData: FormData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i], files[i].name);
+      }
+
+      this.projectService.uploadFiles(this.projectId, formData).subscribe({
+        next: data => {
+          this.ngOnInit();
+          this.snackBar.open('Successfully uploaded files!', 'Close', { duration: 3000 });
+        },
+        error: err => {
+          this.snackBar.open('There was an error with uploading your files!', 'Close', { duration: 3000 });
+        }
+      });
+    } else {
+      this.snackBar.open('No files detected for upload!')
+    }
   }
 }
