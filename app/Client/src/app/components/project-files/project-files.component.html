@@ -10,57 +10,74 @@
 
   <mat-card>
     <mat-card-content>
-      <div class="flex flex-col">
-        <div class="flex flex-col gap-4">
-          @for (file of files; track file.fileId) {
-            <div class="flex gap-4 items-center">
-              <div class="flex items-center justify-center">
-                <mat-icon class="scale-150">insert_drive_file</mat-icon>
-              </div>
+      <div class="flex flex-col" *ngIf="files.length > 0; else noFiles">
+        <mat-form-field class="w-full" subscriptSizing="dynamic">
+          <mat-label class="select-none">
+            <div class="flex items-center justify-between gap-2">
+              <p>Search Files</p>
+              <mat-icon class="scale-125">search</mat-icon>
+            </div>
+          </mat-label>
 
-              <div class="flex flex-col">
-                <a class="text-xl hover:underline" target="_blank" href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Preview">
+          <input matInput (keyup)="search($event)">
+        </mat-form-field>
+
+        <div class="flex flex-col gap-4">
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+            <ng-container matColumnDef="originalName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by originalName">FILE NAME</th>
+              <td mat-cell *matCellDef="let file">
+                <a class="hover:underline" target="_blank" href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Preview">
                   {{file.originalName}}
                 </a>
-                <div class="flex gap-1">
-                  <p class="text-sm">Uploaded by:</p>
-                  <a class="text-sm hover:underline" [routerLink]="['/members', file.uploader.id]">
-                    {{file.uploader.firstName + ' ' + file.uploader.lastName}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fullName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by fullName"> UPLOADER </th>
+              <td mat-cell *matCellDef="let file">
+                <a class="hover:underline" [routerLink]="['/members', file.uploader.id]">
+                  {{file.uploader.fullName}}
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> </th>
+              <td mat-cell *matCellDef="let file">
+                <div class="flex gap-2">
+                  <span class="grow"></span>
+                  <a mat-icon-button href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Download">
+                    <mat-icon>file_download</mat-icon>
                   </a>
+                  <button mat-icon-button color="warn"
+                    [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_FILE) && file.uploader.id !== authId"
+                    (click)="deleteFile(file.fileId)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </div>
-              </div>
+              </td>
+            </ng-container>
 
-<!--              <mat-form-field subscriptSizing="dynamic">-->
-<!--                <mat-label>File Name</mat-label>-->
-<!--                <input matInput type="text" required [value]="file.originalName">-->
-<!--              </mat-form-field>-->
+            <tr class="select-none" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
 
-              <span class="grow"></span>
-
-              <a mat-icon-button href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Download">
-                <mat-icon>file_download</mat-icon>
-              </a>
-              <button mat-icon-button color="warn"
-                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_FILE) && file.uploader.id !== authId"
-                (click)="deleteFile(file.fileId)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-
-            <mat-divider class="w-full" *ngIf="!$last"></mat-divider>
-          } @empty {
-            <p class="flex items-center justify-center">There are no uploaded project files</p>
-          }
+          <div class="flex w-full">
+            <span class="grow"></span>
+            <mat-paginator
+              class="select-none"
+              [pageSize]="5"
+              [pageSizeOptions]="[5, 10, 25]"
+              aria-label="Select page of project files">
+            </mat-paginator>
+          </div>
         </div>
       </div>
 
+      <ng-template #noFiles>
+        <p class="flex justify-center items-center">No files added to project.</p>
+      </ng-template>
     </mat-card-content>
-
-    <mat-card-actions>
-      <div class="flex w-full">
-        <span class="grow"></span>
-        <mat-paginator></mat-paginator>
-      </div>
-    </mat-card-actions>
   </mat-card>
 </div>

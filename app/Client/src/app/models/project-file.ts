@@ -3,7 +3,6 @@ export interface ProjectFile {
   originalName: string;
   uploader: {
     id: number;
-    firstName: string;
-    lastName: string;
+    fullName: string;
   }
 }

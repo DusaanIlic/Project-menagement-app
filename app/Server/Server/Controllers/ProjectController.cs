@@ -1040,8 +1040,7 @@ namespace Server.Controllers
                         Uploader = new 
                         {
                             f.Uploader.Id,
-                            f.Uploader.FirstName,
-                            f.Uploader.LastName,
+                            FullName = f.Uploader.FirstName + ' ' + f.Uploader.LastName
                         }
                     })
                 .ToListAsync();
@@ -1083,7 +1082,7 @@ namespace Server.Controllers
             }
 
 
-            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+            var uploadedFiles = await _fileService.PostMultiFileAsync(userId, files);
 
             foreach (var uploadedFile in uploadedFiles)
             {
