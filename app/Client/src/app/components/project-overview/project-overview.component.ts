@@ -32,12 +32,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {ProjectPermission} from "../../enums/project-permissions.enum";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {MatToolbar} from "@angular/material/toolbar";
+import {ProjectFilesComponent} from "../project-files/project-files.component";
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
   imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule,
-    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule, MatSelectModule, MatOptionModule, NgToastModule, HasProjectPermissionPipe],
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule, MatSelectModule, MatOptionModule, NgToastModule, HasProjectPermissionPipe, MatToolbar, ProjectFilesComponent],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })

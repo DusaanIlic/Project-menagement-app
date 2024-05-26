@@ -37,7 +37,8 @@ namespace Server.Services.File
             var uploadedFile = new Models.File
             {
                 FilePath = filePath,
-                UploaderId = uploaderId
+                UploaderId = uploaderId,
+                OriginalName = addFileRequest.FileDetails.FileName
             };
 
             _dbContext.Files.Add(uploadedFile);
@@ -93,9 +94,9 @@ namespace Server.Services.File
         }
 
 
-        public static string GetContentType(String fileExtension)
+        public static string GetContentType(string fileExtension)
         {
-            String contentType;
+            string contentType;
 
             switch (fileExtension.ToLowerInvariant())
             {
@@ -113,6 +114,23 @@ namespace Server.Services.File
                 case ".xlsx":
                     contentType = "application/vnd.ms-excel";
                     break;
+                case ".ppt":
+                case ".pptx":
+                    contentType = "application/vnd.ms-powerpoint";
+                    break;
+                case ".csv":
+                    contentType = "text/csv";
+                    break;
+                case ".xml":
+                    contentType = "application/xml";
+                    break;
+                case ".json":
+                    contentType = "application/json";
+                    break;
+                case ".html":
+                case ".htm":
+                    contentType = "text/html";
+                    break;
                 case ".png":
                     contentType = "image/png";
                     break;
@@ -122,6 +140,42 @@ namespace Server.Services.File
                     break;
                 case ".gif":
                     contentType = "image/gif";
+                    break;
+                case ".bmp":
+                    contentType = "image/bmp";
+                    break;
+                case ".ico":
+                    contentType = "image/x-icon";
+                    break;
+                case ".mp3":
+                    contentType = "audio/mpeg";
+                    break;
+                case ".wav":
+                    contentType = "audio/wav";
+                    break;
+                case ".mp4":
+                    contentType = "video/mp4";
+                    break;
+                case ".avi":
+                    contentType = "video/x-msvideo";
+                    break;
+                case ".zip":
+                    contentType = "application/zip";
+                    break;
+                case ".rar":
+                    contentType = "application/x-rar-compressed";
+                    break;
+                case ".7z":
+                    contentType = "application/x-7z-compressed";
+                    break;
+                case ".tar":
+                    contentType = "application/x-tar";
+                    break;
+                case ".gz":
+                    contentType = "application/gzip";
+                    break;
+                case ".exe":
+                    contentType = "application/octet-stream";
                     break;
                 default:
                     contentType = "application/octet-stream"; // Default content type
