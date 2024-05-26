@@ -37,7 +37,8 @@ namespace Server.Services.File
             var uploadedFile = new Models.File
             {
                 FilePath = filePath,
-                UploaderId = uploaderId
+                UploaderId = uploaderId,
+                OriginalName = addFileRequest.FileDetails.FileName
             };
 
             _dbContext.Files.Add(uploadedFile);

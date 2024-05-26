@@ -392,11 +392,11 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 22 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 23 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 24 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 25 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 26 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 10 },
                 new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 17 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 25 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 26 }
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 19 }
                 );
         }
     }

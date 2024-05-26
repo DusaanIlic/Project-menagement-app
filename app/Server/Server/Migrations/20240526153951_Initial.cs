@@ -206,6 +206,7 @@ namespace Server.Migrations
                     FileId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FilePath = table.Column<string>(type: "TEXT", nullable: false),
+                    OriginalName = table.Column<string>(type: "TEXT", nullable: false),
                     UploaderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -595,6 +596,30 @@ namespace Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TaskFile",
+                columns: table => new
+                {
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FileId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskFile", x => new { x.TaskId, x.FileId });
+                    table.ForeignKey(
+                        name: "FK_TaskFile_Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "Files",
+                        principalColumn: "FileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskFile_ProjectTasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "ProjectTasks",
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Permissions",
                 columns: new[] { "PermissionId", "PermissionName" },
@@ -720,9 +745,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 23, 13, 28, 8, 940, DateTimeKind.Local).AddTicks(3184), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$LwKutIWPdDdaCzz9iJ5mQOEVgiiUCqAM.9rSPz.iQE6NU9HXtkyrm", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 2, DateTimeKind.Local).AddTicks(9424), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$jYiVB2c4xv7m5fHUfM1/kOo.vxVcFjbNwR5iE9IUM2kCjRe2ncvvq", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 23, 13, 28, 9, 65, DateTimeKind.Local).AddTicks(3364), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$SxH9sNYAuYluQ2NZExXBOu2dbM9b8G4JYKJx8BKrZMJsEzDY6w/VW", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 26, 17, 39, 50, 355, DateTimeKind.Local).AddTicks(488), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$NXtD8UkbxABnJcg1vS5DdOkTOWOb3SlnKC.85PjlqARTONl7K4ere", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 26, 17, 39, 50, 418, DateTimeKind.Local).AddTicks(7472), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$u3GvU.51V1xDIugetlsOgOV3llUf041hcBFsi5Dq/MBTx.Y3yn0z2", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 26, 17, 39, 50, 483, DateTimeKind.Local).AddTicks(3868), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$eHHZ4owXx/wRWaz89atMWuNP2/Yl2LZkUJ3Lb3SWY.6mRXe97Sjgu", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -754,11 +779,11 @@ namespace Server.Migrations
                     { 22, 1 },
                     { 23, 1 },
                     { 24, 1 },
+                    { 25, 1 },
+                    { 26, 1 },
                     { 10, 2 },
                     { 17, 2 },
-                    { 19, 2 },
-                    { 25, 2 },
-                    { 26, 2 }
+                    { 19, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -916,6 +941,11 @@ namespace Server.Migrations
                 table: "TaskDependencies",
                 column: "DependentTaskId");
 
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskFile_FileId",
+                table: "TaskFile",
+                column: "FileId");
+
             migrationBuilder.AddForeignKey(
                 name: "FK_Files_Members_UploaderId",
                 table: "Files",
@@ -967,6 +997,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskDependencies");
+
+            migrationBuilder.DropTable(
+                name: "TaskFile");
 
             migrationBuilder.DropTable(
                 name: "ProjectPermissions");

@@ -1028,12 +1028,21 @@ namespace Server.Controllers
 
             var projectFiles = await dbContext.ProjectFile
                 .Where(pf => pf.ProjectId == id)
-                .Select(pf => new
-                {
-                    FileId = pf.FileId,
-                })
+                .Join(dbContext.Files.Include(f => f.Uploader), 
+                    pf => pf.FileId, 
+                    f => f.FileId, 
+                    (pf, f) => new 
+                    {
+                        f.FileId,
+                        f.OriginalName,
+                        Uploader = new 
+                        {
+                            f.Uploader.Id,
+                            f.Uploader.FirstName,
+                            f.Uploader.LastName,
+                        }
+                    })
                 .ToListAsync();
-
 
 
             return Ok(projectFiles);
@@ -1060,7 +1069,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return BadRequest(new { message = "Insufficient permissions" });
             }
 
 
