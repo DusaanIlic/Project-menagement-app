@@ -1,3 +1,5 @@
+http://softeng.pmf.kg.ac.rs:10141
+
 # O nama
 
 LogicTenacity je grupa programera sa različitim veštinama, koja zajednički radimo kako bismo prevazišli izazove koje projektni menadžeri susreću u efikasnom vođenju projekata i zadataka. Naša aplikacija je prvenstveno namenjena projektnim menadžerima, ali i svim ostalim učesnicima na timovima. Stoga, projektni menadžeri su naša glavna ciljna grupa korisnika.
