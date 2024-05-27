@@ -53,7 +53,8 @@ namespace Server.Controllers
                 ProjectId = ta.ProjectTask.ProjectId,
                 DateModify = ta.ActivityDate,
                 Comment = ta.Description,
-                TaskActivityTypeId = ta.TaskActivityTypeId
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                PercentageComplete = ta.PercentageComplete
             }).ToList();
 
             return Ok(taskActivityDTOs);
@@ -97,8 +98,14 @@ namespace Server.Controllers
                 ProjectTaskId = addTaskActivityRequest.TaskId,
                 ActivityDate = DateTime.Now,
                 Description = addTaskActivityRequest.Description,
-                TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId
+                TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId,
+                PercentageComplete = addTaskActivityRequest.PercentageComplete
             };
+
+            if(projectTask.PercentageComplete <= addTaskActivityRequest.PercentageComplete)
+            {
+                projectTask.PercentageComplete = addTaskActivityRequest.PercentageComplete;
+            }
 
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
@@ -208,7 +215,8 @@ namespace Server.Controllers
                 Email = ta.Member.Email,
                 Country = ta.Member.Country,
                 DateOfBirth = ta.Member.DateOfBirth,
-                RoleName = ta.Member.Role.RoleName
+                RoleName = ta.Member.Role.RoleName,
+                PercentageComplete = ta.PercentageComplete
             }).ToList();
 
             return Ok(taskActivityDTOs);
