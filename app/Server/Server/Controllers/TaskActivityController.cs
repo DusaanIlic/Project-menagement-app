@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Server.Services.Permission;
 using Server.DataTransferObjects.Request.ProjectTask;
+using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
@@ -86,8 +87,9 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskActivityRequest.TaskId);
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Add task activity");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -124,8 +126,9 @@ namespace Server.Controllers
                   .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(taskActivity.ProjectTask.ProjectId, "Remove task activity");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
