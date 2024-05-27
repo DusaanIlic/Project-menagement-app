@@ -5,12 +5,12 @@ import { ProjectServiceGet } from '../../services/project.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
-
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-confirmation-project',
   standalone: true,
-  imports: [NgToastModule, MatDialogModule, MatCardModule, MatIconModule],
+  imports: [NgToastModule, MatDialogModule, MatCardModule, MatIconModule, RouterLink],
   templateUrl: './confirmation-project.component.html',
   styleUrl: './confirmation-project.component.scss'
 })
