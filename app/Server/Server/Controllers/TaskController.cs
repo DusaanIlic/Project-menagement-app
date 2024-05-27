@@ -463,10 +463,11 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
-                return Forbid("Insufficient permissions");
+                return Forbid("Forbid action");
             }
 
             var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
