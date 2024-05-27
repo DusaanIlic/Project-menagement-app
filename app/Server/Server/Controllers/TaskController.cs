@@ -474,7 +474,7 @@ namespace Server.Controllers
 
             if (!hasPermission && !isAssignedToTask)
             {
-                return Forbid("Forbid action");
+                return Forbid("Insufficient permissions");
             }
 
             var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(statusId);
@@ -651,12 +651,12 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task priority");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
-
             var taskPriority = await dbContext.TaskPriority.FindAsync(priorityId);
             if (taskPriority == null)
             {
