@@ -1297,7 +1297,7 @@ namespace Server.Controllers
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add file");
             
-            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
             if (!hasPermission && !isAssignedToTask)
             {
@@ -1347,7 +1347,7 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove file");
-            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
             if (!hasPermission && !isAssignedToTask)
             {
