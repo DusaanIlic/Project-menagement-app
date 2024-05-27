@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240527124003_Initial")]
+    [Migration("20240527130042_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -130,7 +130,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 14, 39, 59, 999, DateTimeKind.Local).AddTicks(8891),
+                            DateAdded = new DateTime(2024, 5, 27, 15, 0, 41, 176, DateTimeKind.Local).AddTicks(5345),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -138,7 +138,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$i.sB82oIQQTzvFSR1xQKreHhy5beESOOGhFrLjtj09Etg18Vk5ZY6",
+                            Password = "$2a$10$cfmsBQ20wEMB3cYIV9HjG.y.fiEI26iIwdG9POk6Ba4qjikZ.OfNS",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -148,7 +148,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 14, 40, 0, 118, DateTimeKind.Local).AddTicks(3666),
+                            DateAdded = new DateTime(2024, 5, 27, 15, 0, 41, 261, DateTimeKind.Local).AddTicks(6788),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -156,7 +156,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$A8goYLhrjTTsyRFr.5PgdObjLykscsgaZbtllaRSlm5oT83T6dOX.",
+                            Password = "$2a$10$zf/ETAebTOggTxFG8hLEX.PYx4B6KGqCGCmr9QHNS3ONRNSQu2JHy",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -166,7 +166,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 14, 40, 0, 237, DateTimeKind.Local).AddTicks(75),
+                            DateAdded = new DateTime(2024, 5, 27, 15, 0, 41, 352, DateTimeKind.Local).AddTicks(6512),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -174,7 +174,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$3bRSmiFD12eWiOSKbGYDRubNxLF.s4uQfEOWcTZmdN7KL0hdn429m",
+                            Password = "$2a$10$tCJ9rTBQQmJ7ALEAN6d6jeMevzaRfKxHJQHJH0OE.Ohphb38Z674m",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -496,6 +496,16 @@ namespace Server.Migrations
                         {
                             Id = 26,
                             Name = "Remove file"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "Assign task leader"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "Remove task leader"
                         });
                 });
 
@@ -756,6 +766,16 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 2,
                             ProjectPermissionId = 26
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 27
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 28
                         });
                 });
 
