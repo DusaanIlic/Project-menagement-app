@@ -887,8 +887,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add task dependency");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -982,8 +983,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove task dependency");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1030,8 +1032,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add task category");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1067,8 +1070,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove task category");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1292,8 +1296,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add file");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
