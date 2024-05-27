@@ -174,16 +174,17 @@ namespace Server.Controllers
                 if (existingMemberTask == null)
                 {
                     projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
+                    
+                    SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                    {
+                        Title = "You are added to new task!",
+                        Description = "Your new task is " + addProjectTaskRequest.TaskName,
+                        MemberId = userId
+                    };
+
+                    await _notificationService.SendNotification(sendNotificationRequest);
+
                 }
-
-                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
-                {
-                    Title = "You are added to new task!",
-                    Description = "Your new task is " + addProjectTaskRequest.TaskName,
-                    MemberId = userId
-                };
-
-                await _notificationService.SendNotification(sendNotificationRequest);
             }
             else
             {
@@ -1501,6 +1502,15 @@ namespace Server.Controllers
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
                 }
+
+                var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == currentTaskLeader.Id);
+
+                if (memberTask == null)
+                {
+                    return NotFound(new { message = "Member is not assigned to this task" });
+                }
+
+                projectTask.Members.Remove(memberTask);
             }
 
             
@@ -1517,6 +1527,16 @@ namespace Server.Controllers
             newTaskLeader.TasksLead.Add(projectTask);
 
             await dbContext.SaveChangesAsync();
+
+            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+            {
+                Title = "You are added to task as task leader!",
+                Description = "Your task is " + projectTask.TaskLeader,
+                MemberId = newTaskLeaderId
+            };
+
+            await _notificationService.SendNotification(sendNotificationRequest);
+
 
             return Ok(new { message = "Task leader successfully assigned." });
         }
@@ -1568,6 +1588,15 @@ namespace Server.Controllers
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
                 }
+
+                var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == currentTaskLeader.Id);
+
+                if (memberTask == null)
+                {
+                    return NotFound(new { message = "Member is not assigned to this task" });
+                }
+
+                projectTask.Members.Remove(memberTask);
             }
 
             
