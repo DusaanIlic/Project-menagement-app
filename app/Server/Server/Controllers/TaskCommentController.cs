@@ -4,6 +4,8 @@ using Server.Models;
 using Server.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request.TaskComment;
 using Server.Services.Permission;
 
 namespace Server.Controllers
@@ -12,7 +14,7 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class TaskCommetController : ControllerBase
+    public class TaskCommentController : ControllerBase
     {
         private readonly LogicTenacityDbContext dbContext;
         private readonly IPermissionService _permissionService;
@@ -27,33 +29,85 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllTaskActivities()
         {
-            var taskActivities = await dbContext.TaskActivities
-                .Include(ta => ta.ProjectTask)
-                .ThenInclude(pt => pt.Project)
-                .Include(ta => ta.TaskActivityType)
-                .Include(ta => ta.Member)
-                .ThenInclude(ta => ta.Role)
-                .OrderByDescending(ta => ta.ActivityDate)
-                .ToListAsync();
-
-            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
+            var taskcomments = await dbContext.TaskComments.Include(tc => tc.Member).ToListAsync();
+            
+            var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
             {
-                TaskActivityId = ta.TaskActivityId,
-                WorkerId = ta.MemberId,
-                Name = ta.Member.FirstName,
-                Lastname = ta.Member.FirstName,
-                Country = ta.Member.Country,
-                DateOfBirth = ta.Member.DateOfBirth,
-                Email = ta.Member.Email,
-                RoleName = ta.Member.Role.RoleName,
-                TaskId = ta.ProjectTaskId,
-                ProjectId = ta.ProjectTask.ProjectId,
-                DateModify = ta.ActivityDate,
-                Comment = ta.Description,
-                TaskActivityTypeId = ta.TaskActivityTypeId
+                Text = tc.Text,
+                WriterId = tc.MemberId,
+                WriterFirstName = tc.Member.FirstName,
+                WriterLastName = tc.Member.LastName,
+                CreatedAt = tc.CreatedAt,
+                TaskId = tc.TaskId,
+                TaskCommentId = tc.Id
             }).ToList();
 
-            return Ok(taskActivityDTOs);
+
+            return Ok(taskcommentsdtos);
+        }
+        
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddTaskComment(AddTaskCommentRequest addTaskCommentRequest)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var member = await dbContext.Members.FindAsync(userId);
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found" });
+            }
+
+            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskCommentRequest.TaskId);
+
+            
+
+            var taskComment = new TaskComment
+            {
+                MemberId = member.Id,
+                TaskId = addTaskCommentRequest.TaskId,
+                CreatedAt = DateTime.Now,
+                Text = addTaskCommentRequest.Text
+            };
+
+            dbContext.TaskComments.Add(taskComment);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task comment added successfully." });
+
+        }
+        
+        
+        [Authorize]
+        [HttpDelete("{taskCommentId}")]
+        public async Task<IActionResult> DeleteTaskComment(int taskCommentId)
+        {
+            var taskcomment = await dbContext.TaskComments.FindAsync(taskCommentId);
+
+
+            if (taskcomment == null)
+            {
+                return NotFound(new { message = "Task comment not found" });
+            }
+
+
+            dbContext.TaskComments.Remove(taskcomment);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task comment deleted successfully." });
+
         }
     }
 }

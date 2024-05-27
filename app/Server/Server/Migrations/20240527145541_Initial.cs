@@ -540,6 +540,12 @@ namespace Server.Migrations
                 {
                     table.PrimaryKey("PK_TaskComments", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_TaskComments_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_TaskComments_ProjectTasks_TaskId",
                         column: x => x.TaskId,
                         principalTable: "ProjectTasks",
@@ -695,9 +701,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 15, 22, 30, 2, 886, DateTimeKind.Local).AddTicks(271), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$/wX9Pc5da5mkPGdRwOc1kuQh8k/tYbSzHQHlmArCitDu6RCsBARZm", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 15, 22, 30, 2, 952, DateTimeKind.Local).AddTicks(9986), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$9pPj93ZhXIw6PpogjgOPKeuZt7Q4WVyZxBBlv6RUXnDsX7fftLGGK", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 15, 22, 30, 3, 20, DateTimeKind.Local).AddTicks(6018), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$o4Fy6GcRZEbap6tVkFGTsu4z1Be7K3BB/JhkOB18KXCMTEmA0ilBi", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 27, 16, 55, 39, 231, DateTimeKind.Local).AddTicks(5963), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$VgqRR.ONB3fq8KBgGVaUd.ug1LhLmxFl5erlDZpGxG3FXeNUItj6e", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 27, 16, 55, 39, 300, DateTimeKind.Local).AddTicks(7972), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$VOpb7yrYWyi.rdrfrkkPK.muh6xE6/Ao1ZQYZLfgPM3UCv6g1Tc6i", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 27, 16, 55, 39, 368, DateTimeKind.Local).AddTicks(9932), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$H0kZODtv9r5mXUPhiz6Lw.EssYOxglZf530ZVe22Icbv.4Dzg2I.2", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -874,6 +880,11 @@ namespace Server.Migrations
                 name: "IX_TaskActivities_TaskActivityTypeId",
                 table: "TaskActivities",
                 column: "TaskActivityTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskComments_MemberId",
+                table: "TaskComments",
+                column: "MemberId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskComments_TaskId",

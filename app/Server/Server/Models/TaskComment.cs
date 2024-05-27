@@ -10,6 +10,7 @@ namespace Server.Models
 
         public int MemberTaskId { get; set; }
         public int MemberId { get; set; }
+        public Member Member { get; set; }
 
         public int TaskId { get; set; }
         public ProjectTask Task { get; set; }
