@@ -183,7 +183,6 @@ namespace Server.Controllers
                     };
 
                     await _notificationService.SendNotification(sendNotificationRequest);
-
                 }
             }
             else
@@ -1528,14 +1527,21 @@ namespace Server.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
-            {
-                Title = "You are added to task as task leader!",
-                Description = "Your task is " + projectTask.TaskLeader,
-                MemberId = newTaskLeaderId
-            };
+            var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == newTaskLeaderId && mt.TaskId == projectTask.TaskId);
 
-            await _notificationService.SendNotification(sendNotificationRequest);
+            if (existingMemberTask == null)
+            {
+                projectTask.Members.Add(new MemberTask { MemberId = newTaskLeaderId, TaskId = projectTask.TaskId });
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = userId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
 
 
             return Ok(new { message = "Task leader successfully assigned." });
@@ -1611,6 +1617,23 @@ namespace Server.Controllers
 
             projectTask.TaskLeaderId = userId;
             requestingUser.TasksLead.Add(projectTask);
+
+
+            var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == userId && mt.TaskId == projectTask.TaskId);
+
+            if (existingMemberTask == null)
+            {
+                projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = userId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
 
             await dbContext.SaveChangesAsync();
 
