@@ -168,6 +168,22 @@ namespace Server.Controllers
             { 
                 projectTask.TaskLeaderId = userId;
                 member2.TasksLead.Add(projectTask);
+
+                var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == userId && mt.TaskId == projectTask.TaskId);
+
+                if (existingMemberTask == null)
+                {
+                    projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
+                }
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + addProjectTaskRequest.TaskName,
+                    MemberId = userId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
             }
             else
             {
