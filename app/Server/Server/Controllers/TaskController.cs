@@ -1503,15 +1503,6 @@ namespace Server.Controllers
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
                 }
-
-                var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == currentTaskLeader.Id);
-
-                if (memberTask == null)
-                {
-                    return NotFound(new { message = "Member is not assigned to this task" });
-                }
-
-                projectTask.Members.Remove(memberTask);
             }
 
             
@@ -1599,7 +1590,6 @@ namespace Server.Controllers
 
             }
 
-            
             var requestingUser = await dbContext.Members
                 .Include(m => m.TasksLead)
                 .FirstOrDefaultAsync(m => m.Id == userId);
