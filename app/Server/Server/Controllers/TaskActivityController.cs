@@ -126,7 +126,7 @@ namespace Server.Controllers
                   .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(taskActivity.ProjectTask.ProjectId, "Remove task activity");
-            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskActivity.ProjectTask.TaskId);
 
             if (!hasPermission && !isAssignedToTask)
             {
