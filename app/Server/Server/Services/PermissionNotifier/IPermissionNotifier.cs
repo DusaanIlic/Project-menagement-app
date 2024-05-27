@@ -8,4 +8,6 @@ public interface IPermissionNotifier
     Task RemovedFromProject(int memberId, int projectId);
     Task UpdatedGlobalPermissions(int memberId);
     Task UpdatedProjectPermissions(int projectId, int memberId);
+
+    Task UpdatedProjectTasks(int projectId, int memberId);
 }

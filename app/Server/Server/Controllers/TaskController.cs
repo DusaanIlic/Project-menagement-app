@@ -90,7 +90,9 @@ namespace Server.Controllers
                     TaskPriorityName = taskPriority.Name,
                     DateFinished = t.DateFinished,
                     DeadlineModified = t.DeadlineModified,
-                    TaskCategoryName = t.TaskCategory.CategoryName
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete,
+                    TaskLeaderId = t.TaskLeaderId
                 });
 
             }
@@ -142,7 +144,8 @@ namespace Server.Controllers
                 TaskPriority = taskPriority,
                 StartDate = DateTime.Now,
                 TaskCategory = taskCategory,
-            };
+                TaskLeaderId = userId
+        };
 
             dbContext.ProjectTasks.Add(projectTask);
             await dbContext.SaveChangesAsync();
@@ -157,6 +160,37 @@ namespace Server.Controllers
                 }
 
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
+            }
+
+
+            var member1 = await dbContext.Members.FindAsync(addProjectTaskRequest.TaskLeaderId);
+            var member2 = await dbContext.Members.FindAsync(userId);
+
+            if (member1 == null)
+            { 
+                projectTask.TaskLeaderId = userId;
+                member2.TasksLead.Add(projectTask);
+
+                var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == userId && mt.TaskId == projectTask.TaskId);
+
+                if (existingMemberTask == null)
+                {
+                    projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
+                    
+                    SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                    {
+                        Title = "You are added to new task!",
+                        Description = "Your new task is " + addProjectTaskRequest.TaskName,
+                        MemberId = userId
+                    };
+
+                    await _notificationService.SendNotification(sendNotificationRequest);
+                }
+            }
+            else
+            {
+                projectTask.TaskLeaderId = addProjectTaskRequest.TaskLeaderId;
+                member1.TasksLead.Add(projectTask);
             }
 
             await dbContext.SaveChangesAsync();
@@ -201,7 +235,10 @@ namespace Server.Controllers
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs,
                 TaskPriorityName = taskPriority.Name,
-                TaskCategoryName = taskCategory.CategoryName
+                TaskCategoryName = taskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete,
+                TaskLeaderId = projectTask.TaskLeaderId
+
             };
 
             var projectTaskCategory = new ProjectTaskCategories
@@ -245,7 +282,6 @@ namespace Server.Controllers
 
             }
 
-
             return Ok(tasksDTO);
         }
 
@@ -267,10 +303,11 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
-                return Forbid("Insufficient permissions");
+                return Forbid("Forbid action");
             }
 
             projectTask.Deadline = updateProjectTaskRequest.Deadline;
@@ -301,7 +338,9 @@ namespace Server.Controllers
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
                 DeadlineModified = projectTask.DeadlineModified,
-                TaskCategoryName = projectTask.TaskCategory.CategoryName
+                TaskCategoryName = projectTask.TaskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete,
+                TaskLeaderId = projectTask.TaskLeaderId
             };
 
             return Ok(tasksDTO);
@@ -438,7 +477,10 @@ namespace Server.Controllers
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
                 DeadlineModified = projectTask.DeadlineModified,
-                TaskCategoryName = projectTask.TaskCategory.CategoryName
+                TaskCategoryName = projectTask.TaskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete,
+                TaskLeaderId = projectTask.TaskLeaderId
+
             };
 
             return Ok(taskDTO);
@@ -454,8 +496,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -562,7 +605,10 @@ namespace Server.Controllers
                     TaskPriorityName = t.TaskPriority.Name,
                     DeadlineModified = t.DeadlineModified,
                     DateFinished = t.DateFinished,
-                    TaskCategoryName = t.TaskCategory.CategoryName
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete,
+                    TaskLeaderId = t.TaskLeaderId
+
                 });
             }
 
@@ -602,7 +648,9 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     TaskPriorityName = t.TaskPriority.Name,
-                    TaskCategoryName = t.TaskCategory.CategoryName
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete,
+                    TaskLeaderId = t.TaskLeaderId
 
                 });
             }
@@ -633,12 +681,12 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task priority");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
-
             var taskPriority = await dbContext.TaskPriority.FindAsync(priorityId);
             if (taskPriority == null)
             {
@@ -834,7 +882,10 @@ namespace Server.Controllers
                     TaskCategoryId = mt.Task.TaskCategoryId,
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = mt.Task.TaskPriority.Name,
-                    TaskCategoryName = mt.Task.TaskCategory.CategoryName
+                    TaskCategoryName = mt.Task.TaskCategory.CategoryName,
+                    PercentageComplete = mt.Task.PercentageComplete,
+                    TaskLeaderId = mt.Task.TaskLeaderId
+
                 });
             }
 
@@ -867,8 +918,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add task dependency");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -928,7 +980,8 @@ namespace Server.Controllers
                 IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
                 TaskCategoryId = dt.TaskCategoryId,
                 TaskPriorityName = dt.TaskPriority.Name,
-                TaskCategoryName = dt.TaskCategory.CategoryName
+                TaskCategoryName = dt.TaskCategory.CategoryName,
+                PercentageComplete = dt.PercentageComplete
 
             }).ToList();
 
@@ -961,8 +1014,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove task dependency");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1009,8 +1063,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add task category");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1046,8 +1101,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove task category");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1082,7 +1138,8 @@ namespace Server.Controllers
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove member from task");
 
-            if (!hasPermission)
+           
+            if (!hasPermission || projectTask.TaskLeaderId == memberId)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1172,7 +1229,9 @@ namespace Server.Controllers
                         TaskCategoryId = mt.Task.TaskCategoryId,
                         IsTaskDependentOn = isTaskDependent,
                         TaskPriorityName = mt.Task.TaskPriority.Name,
-                        TaskCategoryName = mt.Task.TaskCategory.CategoryName
+                        TaskCategoryName = mt.Task.TaskCategory.CategoryName,
+                        PercentageComplete = mt.Task.PercentageComplete,
+                        TaskLeaderId = mt.Task.TaskLeaderId
                     }
                 });
             }
@@ -1268,8 +1327,10 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Add file");
+            
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1317,8 +1378,9 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove file");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -1343,5 +1405,233 @@ namespace Server.Controllers
 
         }
 
+
+        [Authorize]
+        [HttpGet("leader/{memberId}")]
+        public async Task<IActionResult> GetTasksByTaskLeader(int memberId)
+        {
+            var member = await dbContext.Members.FindAsync(memberId);
+            if (member == null)
+            {
+                return NotFound(new { message = $"Member with ID {memberId} not found" });
+            }
+
+            var tasks = await dbContext.ProjectTasks
+                .Include(t => t.TaskStatus)
+                .Include(t => t.TaskPriority)
+                .Include(t => t.TaskCategory)
+                .Where(t => t.TaskLeaderId == memberId)
+                .ToListAsync();
+
+            var tasksDTO = tasks.Select(task => new ProjectTaskDTO
+            {
+                Deadline = task.Deadline,
+                ProjectId = task.ProjectId,
+                TaskDescription = task.TaskDescription,
+                TaskId = task.TaskId,
+                TaskName = task.TaskName,
+                TaskStatus = task.TaskStatus.Name,
+                TaskStatusId = task.TaskStatusId,
+                StartDate = task.StartDate,
+                TaskPriorityId = task.TaskPriorityId,
+                IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.DependentTaskId == task.TaskId),
+                TaskCategoryId = task.TaskCategoryId,
+                AssignedMembers = dbContext.MemberTasks
+                    .Where(mt => mt.TaskId == task.TaskId)
+                    .Include(mt => mt.Member)
+                    .Select(mt => new MemberDTO
+                    {
+                        Id = mt.Member.Id,
+                        FirstName = mt.Member.FirstName,
+                        LastName = mt.Member.LastName,
+                        Email = mt.Member.Email,
+                        RoleId = mt.Member.RoleId,
+                        RoleName = mt.Member.Role.RoleName,
+                        DateAdded = mt.Member.DateAdded,
+                        PhoneNumber = mt.Member.PhoneNumber,
+                        DateOfBirth = mt.Member.DateOfBirth,
+                        IsDisabled = mt.Member.IsDisabled
+                    }).ToList(),
+                TaskPriorityName = task.TaskPriority.Name,
+                TaskCategoryName = task.TaskCategory.CategoryName,
+                PercentageComplete = task.PercentageComplete,
+                TaskLeaderId = task.TaskLeaderId
+
+            }).ToList();
+
+            return Ok(tasksDTO);
+        }
+
+        [Authorize]
+        [HttpPost("{taskId}/AssignTaskLeader/{newTaskLeaderId}")]
+        public async Task<IActionResult> AssignTaskLeader(int taskId, int newTaskLeaderId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                .Include(pt => pt.Members)
+                .Include(pt => pt.TaskLeader)
+                .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var isMemberAssigned = projectTask.Members.Any(mt => mt.MemberId == newTaskLeaderId);
+
+            if (!isMemberAssigned)
+            {
+                return BadRequest(new { message = "The specified member is not assigned to this task." });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Assign task leader");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            
+            if (projectTask.TaskLeader != null)
+            {
+                var currentTaskLeader = await dbContext.Members
+                    .Include(m => m.TasksLead)
+                    .FirstOrDefaultAsync(m => m.Id == projectTask.TaskLeaderId);
+
+                if (currentTaskLeader != null)
+                {
+                    currentTaskLeader.TasksLead.Remove(projectTask);
+                }
+            }
+
+            
+            var newTaskLeader = await dbContext.Members
+                .Include(m => m.TasksLead)
+                .FirstOrDefaultAsync(m => m.Id == newTaskLeaderId);
+
+            if (newTaskLeader == null)
+            {
+                return NotFound(new { message = "New task leader not found." });
+            }
+
+            projectTask.TaskLeaderId = newTaskLeaderId;
+            newTaskLeader.TasksLead.Add(projectTask);
+
+            await dbContext.SaveChangesAsync();
+
+            var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == newTaskLeaderId && mt.TaskId == projectTask.TaskId);
+
+            if (existingMemberTask == null)
+            {
+                projectTask.Members.Add(new MemberTask { MemberId = newTaskLeaderId, TaskId = projectTask.TaskId });
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = userId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+
+            return Ok(new { message = "Task leader successfully assigned." });
+        }
+
+
+        [Authorize]
+        [HttpPost("{taskId}/RemoveTaskLeader")]
+        public async Task<IActionResult> RemoveTaskLeader(int taskId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            
+            var projectTask = await dbContext.ProjectTasks
+                .Include(pt => pt.Members)
+                .Include(pt => pt.TaskLeader)
+                .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove task leader");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            
+            if (projectTask.TaskLeader != null)
+            {
+                var currentTaskLeader = await dbContext.Members
+                    .Include(m => m.TasksLead)
+                    .FirstOrDefaultAsync(m => m.Id == projectTask.TaskLeaderId);
+
+                if (currentTaskLeader != null)
+                {
+                    currentTaskLeader.TasksLead.Remove(projectTask);
+                }
+
+            }
+
+            var requestingUser = await dbContext.Members
+                .Include(m => m.TasksLead)
+                .FirstOrDefaultAsync(m => m.Id == userId);
+
+            if (requestingUser == null)
+            {
+                return NotFound(new { message = "Requesting user not found." });
+            }
+
+            projectTask.TaskLeaderId = userId;
+            requestingUser.TasksLead.Add(projectTask);
+
+
+            var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == userId && mt.TaskId == projectTask.TaskId);
+
+            if (existingMemberTask == null)
+            {
+                projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new task!",
+                    Description = "Your new task is " + projectTask.TaskName,
+                    MemberId = userId
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task leader successfully removed and new leader assigned." });
+        }
     }
 }

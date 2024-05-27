@@ -46,5 +46,10 @@ namespace Server.Models
 
         public ICollection<TaskComment> TaskComment { get; set; } = new List<TaskComment>();
         public ICollection<TaskFile> TaskFiles { get; set; } = new List<TaskFile>();
+
+        public int TaskLeaderId { get; set; }
+        public Member TaskLeader { get; set; }
+
+        public int PercentageComplete { get; set; } = 0;
     }
 }

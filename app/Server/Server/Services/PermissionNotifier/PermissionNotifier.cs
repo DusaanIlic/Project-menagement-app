@@ -52,15 +52,15 @@ public class PermissionNotifier : IPermissionNotifier
             {
                 return;
             }
-            
+
             var permissions = await _dbContext.RolePermissions
                 .Where(rp => rp.RoleId == member.RoleId)
                 .ToListAsync();
 
             var permissionList = permissions.Select(p => p.PermissionId);
-            
+
             var connectionIds = SignalRHub.Connections[memberId];
-            
+
             foreach (var connectionId in connectionIds)
             {
                 await _hubContext.Clients.Client(connectionId).SendAsync("UpdatedGlobalPermissions", permissionList);
@@ -76,13 +76,32 @@ public class PermissionNotifier : IPermissionNotifier
                 .Where(mp => mp.MemberId == memberId && mp.ProjectId == projectId)
                 .SelectMany(mp => mp.ProjectRole.ProjectRolePermissions.Where(prp => prp.ProjectRoleId == mp.ProjectRoleId).Select(prp => prp.ProjectPermissionId))
                 .ToListAsync();
-            
+
             var connectionIds = SignalRHub.Connections[memberId];
-        
+
             foreach (var connectionId in connectionIds)
             {
                 await _hubContext.Clients.Client(connectionId).SendAsync("UpdatedProjectPermissions", projectId, permissionIds);
             }
         }
     }
+
+    public async Task UpdatedProjectTasks(int projectId, int memberId)
+    {
+        if (SignalRHub.Connections.ContainsKey(memberId))
+        {
+            var taskIds = await _dbContext.MemberTasks
+                .Where(mt => mt.MemberId == memberId && mt.Task.ProjectId == projectId)
+                .Select(mt => mt.TaskId)
+                .ToListAsync();
+
+            var connectionIds = SignalRHub.Connections[memberId];
+
+            foreach (var connectionId in connectionIds)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("UpdatedProjectTasks", projectId, taskIds);
+            }
+        }
+    }
+
 }

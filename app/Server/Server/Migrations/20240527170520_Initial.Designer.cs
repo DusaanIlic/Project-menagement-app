@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240526153951_Initial")]
+    [Migration("20240527170520_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -134,7 +134,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 26, 17, 39, 50, 355, DateTimeKind.Local).AddTicks(488),
+                            DateAdded = new DateTime(2024, 5, 27, 19, 5, 19, 589, DateTimeKind.Local).AddTicks(5113),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -142,7 +142,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$NXtD8UkbxABnJcg1vS5DdOkTOWOb3SlnKC.85PjlqARTONl7K4ere",
+                            Password = "$2a$10$uSq7Wdz6ESHb/v9Obth/F.AApP9DXh6zRroLAM2XW/TmssmVtPDru",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -152,7 +152,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 26, 17, 39, 50, 418, DateTimeKind.Local).AddTicks(7472),
+                            DateAdded = new DateTime(2024, 5, 27, 19, 5, 19, 653, DateTimeKind.Local).AddTicks(1501),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -160,7 +160,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$u3GvU.51V1xDIugetlsOgOV3llUf041hcBFsi5Dq/MBTx.Y3yn0z2",
+                            Password = "$2a$10$Ldk4vJd.MBGIB82xxT8x..hGGancRkHRHKrl/h4jrdDQMZnr3UVQW",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -170,7 +170,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 26, 17, 39, 50, 483, DateTimeKind.Local).AddTicks(3868),
+                            DateAdded = new DateTime(2024, 5, 27, 19, 5, 19, 716, DateTimeKind.Local).AddTicks(3843),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -178,7 +178,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$eHHZ4owXx/wRWaz89atMWuNP2/Yl2LZkUJ3Lb3SWY.6mRXe97Sjgu",
+                            Password = "$2a$10$z6G.d2WF3O0JNQRWFGL/HuDJy0caob6Hr3C071fYDxOrnCCuQYmf.",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -459,7 +459,7 @@ namespace Server.Migrations
                         new
                         {
                             Id = 18,
-                            Name = "Remove task acitivity"
+                            Name = "Remove task activity"
                         },
                         new
                         {
@@ -500,6 +500,16 @@ namespace Server.Migrations
                         {
                             Id = 26,
                             Name = "Remove file"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "Assign task leader"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "Remove task leader"
                         });
                 });
 
@@ -760,6 +770,26 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 2,
                             ProjectPermissionId = 19
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 25
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 26
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 27
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 28
                         });
                 });
 
@@ -810,6 +840,9 @@ namespace Server.Migrations
                     b.Property<DateTime>("DeadlineModified")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PercentageComplete")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
@@ -822,6 +855,9 @@ namespace Server.Migrations
                     b.Property<string>("TaskDescription")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("TaskLeaderId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TaskName")
                         .IsRequired()
@@ -838,6 +874,8 @@ namespace Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("TaskCategoryId");
+
+                    b.HasIndex("TaskLeaderId");
 
                     b.HasIndex("TaskPriorityId");
 
@@ -979,6 +1017,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PercentageComplete")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ProjectTaskId")
@@ -1373,6 +1414,12 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Models.Member", "TaskLeader")
+                        .WithMany("TasksLead")
+                        .HasForeignKey("TaskLeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Server.Models.TaskPriority", "TaskPriority")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("TaskPriorityId")
@@ -1388,6 +1435,8 @@ namespace Server.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("TaskCategory");
+
+                    b.Navigation("TaskLeader");
 
                     b.Navigation("TaskPriority");
 
@@ -1538,6 +1587,8 @@ namespace Server.Migrations
                     b.Navigation("TaskActivities");
 
                     b.Navigation("Tasks");
+
+                    b.Navigation("TasksLead");
 
                     b.Navigation("UploadedFiles");
                 });
