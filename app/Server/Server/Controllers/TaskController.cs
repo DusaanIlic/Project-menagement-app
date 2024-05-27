@@ -1597,14 +1597,6 @@ namespace Server.Controllers
                     currentTaskLeader.TasksLead.Remove(projectTask);
                 }
 
-                var memberTask = projectTask.Members.FirstOrDefault(mt => mt.MemberId == currentTaskLeader.Id);
-
-                if (memberTask == null)
-                {
-                    return NotFound(new { message = "Member is not assigned to this task" });
-                }
-
-                projectTask.Members.Remove(memberTask);
             }
 
             
