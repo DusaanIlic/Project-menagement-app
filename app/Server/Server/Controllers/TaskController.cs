@@ -90,7 +90,8 @@ namespace Server.Controllers
                     TaskPriorityName = taskPriority.Name,
                     DateFinished = t.DateFinished,
                     DeadlineModified = t.DeadlineModified,
-                    TaskCategoryName = t.TaskCategory.CategoryName
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete
                 });
 
             }
@@ -211,7 +212,9 @@ namespace Server.Controllers
                 TaskCategoryId = taskCategory.TaskCategoryID,
                 AssignedMembers = assignedMemberDTOs,
                 TaskPriorityName = taskPriority.Name,
-                TaskCategoryName = taskCategory.CategoryName
+                TaskCategoryName = taskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete
+
             };
 
             var projectTaskCategory = new ProjectTaskCategories
@@ -310,7 +313,9 @@ namespace Server.Controllers
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
                 DeadlineModified = projectTask.DeadlineModified,
-                TaskCategoryName = projectTask.TaskCategory.CategoryName
+                TaskCategoryName = projectTask.TaskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete
+
             };
 
             return Ok(tasksDTO);
@@ -447,7 +452,8 @@ namespace Server.Controllers
                 TaskPriorityName = projectTask.TaskPriority.Name,
                 DateFinished = projectTask.DateFinished,
                 DeadlineModified = projectTask.DeadlineModified,
-                TaskCategoryName = projectTask.TaskCategory.CategoryName
+                TaskCategoryName = projectTask.TaskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete
             };
 
             return Ok(taskDTO);
@@ -572,7 +578,8 @@ namespace Server.Controllers
                     TaskPriorityName = t.TaskPriority.Name,
                     DeadlineModified = t.DeadlineModified,
                     DateFinished = t.DateFinished,
-                    TaskCategoryName = t.TaskCategory.CategoryName
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete
                 });
             }
 
@@ -612,8 +619,8 @@ namespace Server.Controllers
                     IsTaskDependentOn = isTaskDependentOn,
                     TaskCategoryId = t.TaskCategoryId,
                     TaskPriorityName = t.TaskPriority.Name,
-                    TaskCategoryName = t.TaskCategory.CategoryName
-
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    PercentageComplete = t.PercentageComplete
                 });
             }
 
@@ -844,7 +851,9 @@ namespace Server.Controllers
                     TaskCategoryId = mt.Task.TaskCategoryId,
                     AssignedMembers = assignedMembers,
                     TaskPriorityName = mt.Task.TaskPriority.Name,
-                    TaskCategoryName = mt.Task.TaskCategory.CategoryName
+                    TaskCategoryName = mt.Task.TaskCategory.CategoryName,
+                    PercentageComplete = mt.Task.PercentageComplete
+
                 });
             }
 
@@ -938,7 +947,8 @@ namespace Server.Controllers
                 IsTaskDependentOn = dbContext.TaskDependencies.Any(td => td.TaskId == dt.TaskId),
                 TaskCategoryId = dt.TaskCategoryId,
                 TaskPriorityName = dt.TaskPriority.Name,
-                TaskCategoryName = dt.TaskCategory.CategoryName
+                TaskCategoryName = dt.TaskCategory.CategoryName,
+                PercentageComplete = dt.PercentageComplete
 
             }).ToList();
 
@@ -1183,7 +1193,9 @@ namespace Server.Controllers
                         TaskCategoryId = mt.Task.TaskCategoryId,
                         IsTaskDependentOn = isTaskDependent,
                         TaskPriorityName = mt.Task.TaskPriority.Name,
-                        TaskCategoryName = mt.Task.TaskCategory.CategoryName
+                        TaskCategoryName = mt.Task.TaskCategory.CategoryName,
+                        PercentageComplete = mt.Task.PercentageComplete
+
                     }
                 });
             }
@@ -1402,7 +1414,8 @@ namespace Server.Controllers
                         IsDisabled = mt.Member.IsDisabled
                     }).ToList(),
                 TaskPriorityName = task.TaskPriority.Name,
-                TaskCategoryName = task.TaskCategory.CategoryName
+                TaskCategoryName = task.TaskCategory.CategoryName,
+                PercentageComplete = task.PercentageComplete
             }).ToList();
 
             return Ok(tasksDTO);
