@@ -1434,7 +1434,76 @@ namespace Server.Controllers
             return Ok(tasksDTO);
         }
 
+        [Authorize]
+        [HttpPost("{taskId}/AssignTaskLeader/{newTaskLeaderId}")]
+        public async Task<IActionResult> AssignTaskLeader(int taskId, int newTaskLeaderId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
 
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var projectTask = await dbContext.ProjectTasks
+                .Include(pt => pt.Members)
+                .Include(pt => pt.TaskLeader)
+                .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            var isMemberAssigned = projectTask.Members.Any(mt => mt.MemberId == newTaskLeaderId);
+
+            if (!isMemberAssigned)
+            {
+                return BadRequest(new { message = "The specified member is not assigned to this task." });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Assign task leader");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            
+            if (projectTask.TaskLeader != null)
+            {
+                var currentTaskLeader = await dbContext.Members
+                    .Include(m => m.TasksLead)
+                    .FirstOrDefaultAsync(m => m.Id == projectTask.TaskLeaderId);
+
+                if (currentTaskLeader != null)
+                {
+                    currentTaskLeader.TasksLead.Remove(projectTask);
+                }
+            }
+
+            
+            var newTaskLeader = await dbContext.Members
+                .Include(m => m.TasksLead)
+                .FirstOrDefaultAsync(m => m.Id == newTaskLeaderId);
+
+            if (newTaskLeader == null)
+            {
+                return NotFound(new { message = "New task leader not found." });
+            }
+
+            projectTask.TaskLeaderId = newTaskLeaderId;
+            newTaskLeader.TasksLead.Add(projectTask);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task leader successfully assigned." });
+        }
 
     }
 }
