@@ -1505,5 +1505,71 @@ namespace Server.Controllers
             return Ok(new { message = "Task leader successfully assigned." });
         }
 
+
+        [Authorize]
+        [HttpPost("{taskId}/RemoveTaskLeader")]
+        public async Task<IActionResult> RemoveTaskLeader(int taskId)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            
+            var projectTask = await dbContext.ProjectTasks
+                .Include(pt => pt.Members)
+                .Include(pt => pt.TaskLeader)
+                .FirstOrDefaultAsync(pt => pt.TaskId == taskId);
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Remove task leader");
+
+            if (!hasPermission)
+            {
+                return Forbid("Insufficient permissions");
+            }
+
+            
+            if (projectTask.TaskLeader != null)
+            {
+                var currentTaskLeader = await dbContext.Members
+                    .Include(m => m.TasksLead)
+                    .FirstOrDefaultAsync(m => m.Id == projectTask.TaskLeaderId);
+
+                if (currentTaskLeader != null)
+                {
+                    currentTaskLeader.TasksLead.Remove(projectTask);
+                }
+            }
+
+            
+            var requestingUser = await dbContext.Members
+                .Include(m => m.TasksLead)
+                .FirstOrDefaultAsync(m => m.Id == userId);
+
+            if (requestingUser == null)
+            {
+                return NotFound(new { message = "Requesting user not found." });
+            }
+
+            projectTask.TaskLeaderId = userId;
+            requestingUser.TasksLead.Add(projectTask);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Task leader successfully removed and new leader assigned." });
+        }
     }
 }
