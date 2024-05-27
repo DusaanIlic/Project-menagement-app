@@ -22,5 +22,7 @@
         public string TaskPriorityName { get; set; }
 
         public string TaskCategoryName { get; set; }
-    }
+
+        public int PercentageComplete { get; set; }
+}
 }

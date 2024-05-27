@@ -127,7 +127,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 11, 50, 7, 417, DateTimeKind.Local).AddTicks(7978),
+                            DateAdded = new DateTime(2024, 5, 27, 11, 54, 18, 465, DateTimeKind.Local).AddTicks(3021),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -135,7 +135,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$PIEIT1vF2Qmz6VyBkOeAD.V3vJ2Kszy.Tw0m0c0T4HFUQ8ojpZwee",
+                            Password = "$2a$10$o..C5my74fBSifytEE1y4uLYQzD2aWvNvKyXvaQeQJn2xgfHxEhrK",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -145,7 +145,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 11, 50, 7, 544, DateTimeKind.Local).AddTicks(6064),
+                            DateAdded = new DateTime(2024, 5, 27, 11, 54, 18, 555, DateTimeKind.Local).AddTicks(6951),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -153,7 +153,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$bEwi1Ym/P/nvWDiK6cDfEOPj41ZVweS6eLkOGJEzewQ0RRuF3VE3.",
+                            Password = "$2a$10$CSwgKvZ8xRNfUx.7ck9/uOyzwgX5AjEKa05SpGrIgkWsccEasKsE6",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -163,7 +163,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 27, 11, 50, 7, 754, DateTimeKind.Local).AddTicks(4818),
+                            DateAdded = new DateTime(2024, 5, 27, 11, 54, 18, 646, DateTimeKind.Local).AddTicks(243),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -171,7 +171,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$SiTqGpM5qpkvydz4Y87D4uyzruT6v.ykvtGgy6jIilT1omZUjS3SK",
+                            Password = "$2a$10$GzHmkWWtubKaQdcnfZgeaegaA/RdLyyFQr6QGfGcAUVQu/dnjEYIu",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -980,6 +980,9 @@ namespace Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PercentageComplete")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ProjectTaskId")

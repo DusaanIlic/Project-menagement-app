@@ -27,5 +27,7 @@
         public string Comment { get; set; }
 
         public int TaskActivityTypeId { get; set; }
+
+        public int PercentageComplete { get; set; }
     }
 }

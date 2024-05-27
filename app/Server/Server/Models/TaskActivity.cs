@@ -20,5 +20,7 @@ namespace Server.Models
 
         public int TaskActivityTypeId { get; set; }
         public TaskActivityType TaskActivityType { get; set; }
+
+        public int PercentageComplete { get; set; } = 0;
     }
 }
