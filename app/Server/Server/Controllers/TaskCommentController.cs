@@ -27,10 +27,39 @@ namespace Server.Controllers
         
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllTaskActivities()
+        public async Task<IActionResult> GetAllTaskComments()
         {
             var taskcomments = await dbContext.TaskComments.Include(tc => tc.Member).ToListAsync();
             
+            var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
+            {
+                Text = tc.Text,
+                WriterId = tc.MemberId,
+                WriterFirstName = tc.Member.FirstName,
+                WriterLastName = tc.Member.LastName,
+                CreatedAt = tc.CreatedAt,
+                TaskId = tc.TaskId,
+                TaskCommentId = tc.Id
+            }).ToList();
+
+
+            return Ok(taskcommentsdtos);
+        }
+        
+        [Authorize]
+        [HttpGet("{taskId}")]
+        public async Task<IActionResult> GetTaskCommentByTaskId(int taskId)
+        {
+            var taskcomments = await dbContext.TaskComments
+                .Include(tc => tc.Member)
+                .Where(tc => tc.TaskId == taskId)
+                .ToListAsync();
+
+            if (taskcomments == null || !taskcomments.Any())
+            {
+                return NotFound(new { message = "Task comment not found" });
+            }
+
             var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
             {
                 Text = tc.Text,
