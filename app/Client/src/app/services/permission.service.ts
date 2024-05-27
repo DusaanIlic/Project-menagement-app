@@ -11,6 +11,7 @@ export class PermissionService {
   private projectIds: Set<number> = new Set<number>();
   private globalPermissions: Set<number> = new Set<number>();
   private projectPermissions: Map<number, Set<number>> = new Map<number, Set<number>>();
+  private projectTaskIds: Map<number, Set<number>> = new Map<number, Set<number>>();
 
   constructor(
     private projectService: ProjectServiceGet,
@@ -57,12 +58,34 @@ export class PermissionService {
         }
         this.projectPermissions = permissionsMap;
 
-        console.log(`PEMRISSION SERVICE: successfully fetched project permissions ${this.projectPermissions}`);
+        console.log(`PEMRISSION SERVICE: successfully fetched project permissions`);
+        console.log(this.projectPermissions);
       },
       error: err => {
         console.log('PERMISSION SERVICE: failed fetching project permissions');
       }
-    })
+    });
+
+    this.memberService.getProjectTasks(memberId).subscribe({
+      next: (data: Map<number, number[]>) => {
+        const projectTaskIds = new Map<number, Set<number>>();
+        for (const [key, value] of Object.entries(data)) {
+          const projectId = Number(key);
+          if (!isNaN(projectId) && Array.isArray(value)) {
+            projectTaskIds.set(projectId, new Set<number>(value));
+          } else {
+            console.error(`Invalid entry for projectId ${key}:`, value);
+          }
+        }
+        this.projectTaskIds = projectTaskIds;
+
+        console.log(`PEMRISSION SERVICE: successfully fetched assigned tasks`);
+        console.log(this.projectTaskIds);
+      },
+      error: err => {
+        console.log('PERMISSION SERVICE: failed fetching assigned tasks');
+      }
+    });
   }
 
   isAssignedToProject(id: number): boolean {
