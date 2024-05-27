@@ -78,7 +78,7 @@
         </ng-container>
 
         <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </th>
+          <th mat-header-cell *matHeaderCellDef> ACTIONS </th>
           <td mat-cell *matCellDef="let task">
             <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
               <div class="flex items-center justify-center">
