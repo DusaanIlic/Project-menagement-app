@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2 font-semibold break-word">{{projectDetails?.projectName}}</div>
       </mat-list-item>
       <mat-divider class="w-full"></mat-divider>
-      <mat-list-item *ngFor="let button of buttons" [routerLink]="button.link" routerLinkActive="disabled">
+      <mat-list-item *ngFor="let button of buttons" [routerLink]="button.link" routerLinkActive="selected">
         <div class="flex items-center gap-2 text-2xl">
           <mat-icon class="scale-125">{{ button.icon }}</mat-icon>
           <p>{{button.text}}</p>
