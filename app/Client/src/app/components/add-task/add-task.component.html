@@ -61,6 +61,18 @@
             </mat-form-field>
 
             <mat-form-field>
+              <mat-label>Task Leader</mat-label>
+              <mat-select formControlName="taskLeaderId" required>
+                <mat-option *ngFor="let member of selectedMembers" [value]="member.id">
+                  {{ member.firstName }} {{ member.lastName }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="taskForm.controls['taskLeaderId']?.hasError('required')">
+                A task leader is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
                 <mat-label>Task Description</mat-label>
                 <textarea rows="4" matInput formControlName="taskDescription" placeholder="About this task..." required></textarea>
                 <mat-error *ngIf="taskForm.controls['taskDescription'].hasError('required')">

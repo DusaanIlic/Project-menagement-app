@@ -45,7 +45,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   projectId: number | null = null;
   taskPriorities: any;
   projectMembers: Member[] = [];
-  selectedMembers: number[] = [];
+  selectedMembers: Member[] = [];
   assignedMembersIds: number[] = [];
   members = new FormControl('');
   taskForm!: FormGroup;
@@ -76,8 +76,15 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       deadline: ['', Validators.required],
       taskPriorityId: ['', Validators.required],
       assignedMemberIds: [[], [Validators.required]],
+      taskLeaderId: ['', Validators.required()],
       taskDescription: ['', [Validators.required]],
       projectId: [this.projectId]
+    });
+
+    this.taskForm.get('assignedMemberIds')?.valueChanges.subscribe(selectedIds => {
+      this.selectedMembers = this.projectMembers.filter(member => selectedIds.includes(member.id));
+      if (!selectedIds.includes(this.taskForm.get('taskLeaderId')?.value))
+        this.taskForm.get('taskLeaderId')?.reset();
     });
   }
 
@@ -98,7 +105,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
   saveTask(){
     console.log(this.taskForm.value);
-    console.log("kurasd");
 
     if (this.taskForm.invalid) {
       this._ngToastService.error({
@@ -141,10 +147,4 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       });
     }
   }
-
-  toggleMember(event: MatSelectChange) {
-    this.selectedMembers = event.value;
-    this.assignedMembersIds = this.selectedMembers;
-  }
-
 }
