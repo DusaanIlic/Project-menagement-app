@@ -75,4 +75,18 @@ public class PermissionService : IPermissionService
         
         return await Task.FromResult(currentUserId == memberId);
     }
+
+    public async Task<bool> IsMemberAssignedToTaskAsync(int taskId)
+    {
+        int memberId = GetCurrentUserId();
+
+        try
+        {
+            return await _dbContext.MemberTasks.AnyAsync(mt => mt.MemberId == memberId && mt.TaskId == taskId);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Error checking task assignment.", ex);
+        }
+    }
 }
