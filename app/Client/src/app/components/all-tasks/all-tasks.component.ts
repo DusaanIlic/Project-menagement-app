@@ -161,8 +161,7 @@ export class AllTasksComponent implements OnInit {
     })
 
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '800px',
-      height: '700px',
+      width: '1200px',
       data: task
     });
   }

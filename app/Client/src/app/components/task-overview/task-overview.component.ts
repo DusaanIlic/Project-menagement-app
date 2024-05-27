@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
 import { RouterModule } from '@angular/router';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { Task } from '../../models/task';
 import { NgxEditorModule, Editor } from 'ngx-editor';
 import { TaskService } from '../../services/task.service';
@@ -26,21 +26,24 @@ import {MatSidenav, MatSidenavContainer, MatSidenavContent} from "@angular/mater
 import {MatTab, MatTabGroup} from "@angular/material/tabs";
 import {MatToolbar} from "@angular/material/toolbar";
 import {MatButtonToggle} from "@angular/material/button-toggle";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {error} from "@angular/compiler-cli/src/transformers/util";
+import {taskComment} from "../../models/taskComment";
 
 @Component({
   selector: 'app-task-overview',
   standalone: true,
   imports: [CommonModule,
-            RouterModule,
-            FormsModule,
-            NgxEditorModule,
-            NgToastModule,
-            NgToastModule,
-            MatButton,
-            MatMenu,
-            MatMenuItem,
-            MatAnchor,
-            MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle],
+    RouterModule,
+    FormsModule,
+    NgxEditorModule,
+    NgToastModule,
+    NgToastModule,
+    MatButton,
+    MatMenu,
+    MatMenuItem,
+    MatAnchor,
+    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
@@ -56,6 +59,10 @@ export class TaskOverviewComponent implements OnInit{
     selectedType: any;
     show: any;
     showEditorForDesc: boolean = false;
+    allTypes : any
+    taskActivityGroup! : FormGroup;
+    taskActivityComment! : FormGroup;
+    taskComments : taskComment[] = [];
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
               @Inject(MAT_DIALOG_DATA) public task: Task,
@@ -63,12 +70,29 @@ export class TaskOverviewComponent implements OnInit{
               private mService : MemberService,
               private _ngToastService: NgToastService,
               private sanitizer: DomSanitizer,
-              private pService: ProjectServiceGet) { }
+              private pService: ProjectServiceGet,
+              private fb: FormBuilder) { }
 
   ngOnInit()
   {
-    this.show = 'overview'
+    this.taskActivityGroup = this.fb.group({
+      description: ['', Validators.required],
+      taskActivityPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      taskActivityTypeId: ['', Validators.required],
+      taskId : [this.task.taskId]
+    });
 
+    this.taskActivityComment = this.fb.group({
+      taskId: [this.task.taskId],
+      text: ['', Validators.required],
+    })
+
+    this.show = 'overview'
+    this.tService.getTaskActivityType().subscribe(data =>{
+      this.allTypes = data;
+    });
+
+    this.fetchTaskActivities();
   }
 
   fetchTaskActivities() : void
@@ -118,6 +142,15 @@ export class TaskOverviewComponent implements OnInit{
         );
       })
     ).subscribe()
+
+    this.fetchTaskComments();
+  }
+
+  fetchTaskComments()
+  {
+    this.tService.getTaskCommentsByTaskId(this.task.taskId).subscribe((data : taskComment[]) =>{
+       this.taskComments = data;
+    })
   }
 
 
@@ -126,86 +159,24 @@ export class TaskOverviewComponent implements OnInit{
     this.dialogRef.close();
   }
 
-  saveActivity() {
-    const taskAct ={
-        taskId : this.task.taskId,
-        description : this.taskActivityDesc,
-        taskActivityTypeId : this.selectedType,
+  saveActivity()
+  {
+    console.log(this.taskActivityGroup.value)
+    if(this.taskActivityGroup.valid)
+    {
+      const taskActivity = this.taskActivityGroup.value;
+
+      this.tService.saveTaskActivity(taskActivity).subscribe(
+        {
+          next : next =>{console.log(next); this.fetchTaskActivities()},
+          error : error =>{console.log(error)}
+        }
+      );
     }
-      if(taskAct.description.trim() == "")
-        alert("Activity cannot be empty!")
-      else if(taskAct.taskActivityTypeId == -1)
-        alert("Please select activity type.")
-      else
-      {
-        this.tService.saveTaskActivity(taskAct).subscribe(
-          {
-          next : data => {
-            this.showMessage()
-            this.fetchTaskActivities()
-          },
-          error : error => {
-            this.showMessageError()
-
-
-          }
-        })
-
-      }
-
-      }
-
-
-      switchView(tab : string)
-      {
-        this.show = tab;
-      }
-
-        showEditor() {
-          this.showEditorForDesc = !this.showEditorForDesc;
-          }
-
-
-          editDescription() {
-            const editTask = {
-              taskName: this.task.taskName,
-              taskDescription: this.description,
-              deadline: this.task.deadline
-            }
-
-            if(editTask.taskDescription.trim() == "")
-              alert("Description cannot be empty!");
-            else
-            {
-              this.tService.changeTaskDescription(editTask, this.task.taskId).subscribe(
-                {
-                  next : data =>
-                    {
-                      this.task = data
-                    },
-                  error : error =>
-                    {
-                      console.log(error);
-                    }
-                }
-              );
-            }
-
-
-
-            }
-
-
-
-  showMessage()
-  {
-    this._ngToastService.success({detail: "Success Message", summary: "Task activity add/delete successfully!", duration: 3000});
+    else
+      this.taskActivityGroup.markAllAsTouched();
   }
 
-  showMessageError()
-  {
-    this._ngToastService.error({detail: "Error Message", summary: "Task activity add/delete failed!", duration: 3000});
-  }
 
 
   deleteTaskActivity(taskAct: taskActivity) {
@@ -214,11 +185,9 @@ export class TaskOverviewComponent implements OnInit{
         next : data =>
           {
             this.fetchTaskActivities()
-            this.showMessage();
           },
         error : error =>
           {
-            this.showMessageError();
           }
       }
     );
@@ -280,6 +249,20 @@ export class TaskOverviewComponent implements OnInit{
   changeTaskname() {
     this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, this.taskName ,this.task.taskDescription, this.task.deadline).subscribe();
     this.editing = false;
+  }
+
+  saveComment()
+  {
+    if(this.taskActivityComment.valid)
+    {
+      const taskComment = this.taskActivityComment.value
+      this.tService.saveTaskComment(taskComment).subscribe({
+        next : data =>{console.log(data)},
+        error : error => {console.log(error)}
+      })
+    }
+    else
+      this.taskActivityComment.markAllAsTouched();
   }
 }
 
