@@ -162,14 +162,19 @@ namespace Server.Controllers
 
 
             var member1 = await dbContext.Members.FindAsync(addProjectTaskRequest.TaskLeaderId);
-            if(member1 == null)
+            var member2 = await dbContext.Members.FindAsync(userId);
+
+            if (member1 == null)
+            { 
+                projectTask.TaskLeaderId = userId;
+                member2.TasksLead.Add(projectTask);
+            }
+            else
             {
-                return NotFound(new { message = $"Member with ID {addProjectTaskRequest.TaskLeaderId} not found" });
+                projectTask.TaskLeaderId = addProjectTaskRequest.TaskLeaderId;
+                member1.TasksLead.Add(projectTask);
             }
 
-            projectTask.TaskLeaderId = addProjectTaskRequest.TaskLeaderId;
-            member1.TasksLead.Add(projectTask);
-            
             await dbContext.SaveChangesAsync();
 
             var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
@@ -1428,6 +1433,8 @@ namespace Server.Controllers
 
             return Ok(tasksDTO);
         }
+
+
 
     }
 }
