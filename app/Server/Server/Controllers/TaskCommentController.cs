@@ -4,126 +4,56 @@ using Server.Models;
 using Server.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Server.Services.Permission;
 
 namespace Server.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TaskCommentsController : ControllerBase
+
+    public class TaskCommetController : ControllerBase
     {
-        private readonly LogicTenacityDbContext _context;
-
-        public TaskCommentsController(LogicTenacityDbContext context)
+        private readonly LogicTenacityDbContext dbContext;
+        private readonly IPermissionService _permissionService;
+        
+        public TaskCommentController(LogicTenacityDbContext dbContext, IPermissionService permissionService)
         {
-            _context = context;
+            this.dbContext = dbContext;
+            _permissionService = permissionService;
         }
-
+        
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskComment>>> GetTaskComments()
+        public async Task<IActionResult> GetAllTaskActivities()
         {
-            return await _context.TaskComments.ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TaskComment>> GetTaskComment(int id)
-        {
-            var taskComment = await _context.TaskComments.FindAsync(id);
-
-            if (taskComment == null)
-            {
-                return NotFound(new { message = "Task comment not found" });
-            }
-
-            return taskComment;
-        }
-
-        [HttpGet("task/{taskId}")]
-        public async Task<ActionResult<IEnumerable<TaskComment>>> GetTaskCommentsByTaskId(int taskId)
-        {
-            var taskComments = await _context.TaskComments
-                .Where(tc => tc.MemberTaskId == taskId)
+            var taskActivities = await dbContext.TaskActivities
+                .Include(ta => ta.ProjectTask)
+                .ThenInclude(pt => pt.Project)
+                .Include(ta => ta.TaskActivityType)
+                .Include(ta => ta.Member)
+                .ThenInclude(ta => ta.Role)
+                .OrderByDescending(ta => ta.ActivityDate)
                 .ToListAsync();
 
-            if (taskComments == null || taskComments.Count == 0)
+            var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
-                return NotFound(new { message = "Task comment not found" });
-            }
+                TaskActivityId = ta.TaskActivityId,
+                WorkerId = ta.MemberId,
+                Name = ta.Member.FirstName,
+                Lastname = ta.Member.FirstName,
+                Country = ta.Member.Country,
+                DateOfBirth = ta.Member.DateOfBirth,
+                Email = ta.Member.Email,
+                RoleName = ta.Member.Role.RoleName,
+                TaskId = ta.ProjectTaskId,
+                ProjectId = ta.ProjectTask.ProjectId,
+                DateModify = ta.ActivityDate,
+                Comment = ta.Description,
+                TaskActivityTypeId = ta.TaskActivityTypeId
+            }).ToList();
 
-            return taskComments;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<TaskComment>> PostTaskComment(TaskComment taskComment)
-        {
-
-            taskComment.CreatedAt = DateTime.Now;
-
-            var userClaims = HttpContext.User.Claims;
-            var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id");
-            var userIdInt = int.Parse(userId.Value);
-
-            var memberTaskExists = await _context.MemberTasks.AnyAsync(mt => mt.TaskId == taskComment.MemberTaskId && mt.MemberId == userIdInt);
-            if (!memberTaskExists)
-            {
-                return BadRequest(new { message = "Member is not assigned to the specified task." });
-            }
-
-            taskComment.MemberId = userIdInt;
-
-            _context.TaskComments.Add(taskComment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTaskComment", new { id = taskComment.Id }, taskComment);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTaskComment(int id, TaskComment taskComment)
-        {
-            if (id != taskComment.Id)
-            {
-                return BadRequest(new {message = "Bad task id"});
-            }
-
-            _context.Entry(taskComment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TaskCommentExists(id))
-                {
-                    return NotFound(new { message = "Task comment not found" });
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok(new { message = "Success." });
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTaskComment(int id)
-        {
-            var taskComment = await _context.TaskComments.FindAsync(id);
-            if (taskComment == null)
-            {
-                return NotFound(new { message = "Task comment not found" });
-            }
-
-            _context.TaskComments.Remove(taskComment);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Success." });
-        }
-
-        private bool TaskCommentExists(int id)
-        {
-            return _context.TaskComments.Any(e => e.Id == id);
+            return Ok(taskActivityDTOs);
         }
     }
 }

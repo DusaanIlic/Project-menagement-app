@@ -36,6 +36,7 @@ namespace Server.Controllers
                 .Include(ta => ta.TaskActivityType)
                 .Include(ta => ta.Member)
                     .ThenInclude(ta => ta.Role)
+                .OrderByDescending(ta => ta.ActivityDate)
                 .ToListAsync();
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
