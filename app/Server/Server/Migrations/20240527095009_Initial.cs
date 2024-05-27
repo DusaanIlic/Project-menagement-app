@@ -435,7 +435,8 @@ namespace Server.Migrations
                     TaskStatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskPriorityId = table.Column<int>(type: "INTEGER", nullable: false),
                     TaskCategoryId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TaskLeaderId = table.Column<int>(type: "INTEGER", nullable: true)
+                    TaskLeaderId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PercentageComplete = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -750,9 +751,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 5, 27, 11, 17, 36, 959, DateTimeKind.Local).AddTicks(8744), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$ELJTNsp5sJcyWuy9OpcIjunV39f2GlFheisLKYQbKxfUv.AK4bUPi", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 5, 27, 11, 17, 37, 79, DateTimeKind.Local).AddTicks(8807), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$YxVeVC03o17554ahnl/tYOKde.oPB09DH0yUzi4/iTTt9kS32iLxW", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 5, 27, 11, 17, 37, 185, DateTimeKind.Local).AddTicks(988), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$jR3d248ljvsWcUQAlm8rhOuYD964WkaIGZTuIcVbkdn4wtiqnBK1u", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 5, 27, 11, 50, 7, 417, DateTimeKind.Local).AddTicks(7978), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$PIEIT1vF2Qmz6VyBkOeAD.V3vJ2Kszy.Tw0m0c0T4HFUQ8ojpZwee", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 5, 27, 11, 50, 7, 544, DateTimeKind.Local).AddTicks(6064), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$bEwi1Ym/P/nvWDiK6cDfEOPj41ZVweS6eLkOGJEzewQ0RRuF3VE3.", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 5, 27, 11, 50, 7, 754, DateTimeKind.Local).AddTicks(4818), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$SiTqGpM5qpkvydz4Y87D4uyzruT6v.ykvtGgy6jIilT1omZUjS3SK", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(

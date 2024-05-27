@@ -49,5 +49,7 @@ namespace Server.Models
 
         public int? TaskLeaderId { get; set; }
         public Member TaskLeader { get; set; }
+
+        public int PercentageComplete { get; set; } = 0;
     }
 }
