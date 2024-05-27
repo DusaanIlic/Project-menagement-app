@@ -781,5 +781,33 @@ namespace Server.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("{memberId}/GetProjectTasks")]
+        public async Task<IActionResult> SendProjectTasks(int memberId)
+        {
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            var memberProjectTasks = await _dbContext.MemberTasks
+                .Where(mt => mt.MemberId == memberId)
+                .Select(mt => new
+                {
+                    mt.Task.ProjectId,
+                    mt.TaskId
+                })
+                .ToListAsync();
+
+
+            var response = memberProjectTasks
+                .GroupBy(mpt => mpt.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(mpt => mpt.TaskId).Distinct().ToList()
+                );
+
+            return Ok(response);
+        }
     }
 }
