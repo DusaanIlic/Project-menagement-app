@@ -91,7 +91,8 @@ namespace Server.Controllers
                     DateFinished = t.DateFinished,
                     DeadlineModified = t.DeadlineModified,
                     TaskCategoryName = t.TaskCategory.CategoryName,
-                    PercentageComplete = t.PercentageComplete
+                    PercentageComplete = t.PercentageComplete,
+                    TaskLeaderId = t.TaskLeaderId
                 });
 
             }
@@ -234,7 +235,8 @@ namespace Server.Controllers
                 AssignedMembers = assignedMemberDTOs,
                 TaskPriorityName = taskPriority.Name,
                 TaskCategoryName = taskCategory.CategoryName,
-                PercentageComplete = projectTask.PercentageComplete
+                PercentageComplete = projectTask.PercentageComplete,
+                TaskLeaderId = projectTask.TaskLeaderId
 
             };
 

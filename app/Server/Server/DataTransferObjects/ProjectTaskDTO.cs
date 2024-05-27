@@ -24,5 +24,6 @@
         public string TaskCategoryName { get; set; }
 
         public int PercentageComplete { get; set; }
+        public int TaskLeaderId { get; set; }
 }
 }
