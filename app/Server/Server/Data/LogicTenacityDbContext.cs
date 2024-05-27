@@ -360,7 +360,7 @@ namespace Server.Data
                 new ProjectPermission { Id = 14, Name = "Add task category" },
                 new ProjectPermission { Id = 16, Name = "Change task" },
                 new ProjectPermission { Id = 17, Name = "Add task activity" },
-                new ProjectPermission { Id = 18, Name = "Remove task acitivity" },
+                new ProjectPermission { Id = 18, Name = "Remove task activity" },
                 new ProjectPermission { Id = 19, Name = "Comment task" },
                 new ProjectPermission { Id = 20, Name = "Change project priority" },
                 new ProjectPermission { Id = 21, Name = "Change task category" },
