@@ -279,7 +279,7 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
-            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskId);
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
 
             if (!hasPermission && !isAssignedToTask)
             {
