@@ -1,20 +1,20 @@
 <div class="h-full flex flex-col select-none">
   <mat-toolbar>
-    <div class="flex w-full gap-2 items-center justify-between min-h-16">
-      <div class="flex flex-col items-start justify-between">
-        <h1 class="text-3xl text-gray-900">
-          {{task.taskName}}
-        </h1>
-        <h2 class="text-lg flex text-gray-900">
-          in <p (click)="closeDialog()" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
-        </h2>
-      </div>
-      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
-        <div class="flex items-center justify-center">
-          <mat-icon>close</mat-icon>
+      <div class="flex w-full gap-2 items-center justify-between min-h-16">
+        <div class="flex flex-col items-start justify-between">
+          <h1 class="text-3xl text-gray-900">
+            {{task.taskName}}
+          </h1>
+          <h2 class="text-lg flex text-gray-900">
+            in <p [routerLink]="['/projects', task.projectId]" (click)="closeDialog()" class="underline flex ml-2 cursor-pointer">{{task.projectName}}</p>
+          </h2>
         </div>
-      </button>
-    </div>
+        <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+          <div class="flex items-center justify-center">
+            <mat-icon>close</mat-icon>
+          </div>
+        </button>
+      </div>
   </mat-toolbar>
 
   <mat-tab-group>
@@ -75,7 +75,7 @@
 
 
                 <div class="">
-                  <div class="mt-2 flex flex-col gap-1 border-t-[1px] border-t-gray-400 h-[400px] overflow-y-scroll">
+                  <div class="mt-2 flex flex-col gap-1 border-t-[1px] border-t-gray-400 h-[200px] overflow-y-scroll">
                     <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="activitiesForThisTask.length === 0">
                       <p>No task activities yet.</p>
                     </div>
@@ -83,7 +83,7 @@
                       <div class="flex w-full rounded-md items-center px-1 border-b-[1px] border-b-gray-400">
                         <img src="{{environment.apiUrl}}/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
                         <div class="grow">
-                          <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>"</div>
+                          <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>", task is now {{taskAct.PercentageComplete}}% completed.</div>
                           <div class="flex flex-row gap-2">
                             <p *ngIf="taskAct.differenceM < 60 && taskAct.differenceH < 1" class="text-sm">{{taskAct.differenceM}} minutes ago.</p>
                             <p *ngIf="taskAct.differenceH < 24 && taskAct.differenceM >= 60" class="text-sm">{{taskAct.differenceH}} hours ago.</p>
@@ -108,36 +108,71 @@
                 </mat-card-title>
 
                 <mat-card-content>
-                  <div class="w-[100%]">
-                    <form class="w-[100%]" [formGroup]="taskActivityComment">
-                      <div class="w-[100%]">
-                      <mat-form-field>
-                          <mat-label>Enter new task comment</mat-label>
-                          <textarea matInput placeholder="Hello..." formControlName="text" required></textarea>
-                          <mat-error *ngIf="taskActivityComment.get('text')?.hasError('required')">
-                            Text is required
-                          </mat-error>
+                  <div class="">
+                    <div class="mt-2 flex flex-col border-t-[1px] border-t-gray-400 h-[400px] overflow-y-scroll" #scrollableDiv>
+                      <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="taskComments.length === 0">
+                        <p>No task comments yet.</p>
+                      </div>
+                      <div *ngFor="let taskComm of taskComments" class="w-[100%] h-min p-2">
+                        <div class="flex flex-row gap-1 justify-end items-end" *ngIf="taskComm.writerId == loggedUserId">
+                          <div class="max-w-[50%]">
+                            <mat-card>
+                              <div class="p-2">
+                                <div>
+                                  {{taskComm.text}}
+                                </div>
+                              </div>
 
-                      </mat-form-field>
+                              <mat-card-footer>
+                                <div class="pr-2 flex items-end text-sm justify-end">
+                                  {{taskComm.createdAt | date:'shortTime'}}
+                                </div>
+                              </mat-card-footer>
+                            </mat-card>
+                          </div>
+                        </div>
+
+                        <div class="flex flex-row gap-1 justify-start items-end" *ngIf="taskComm.writerId != loggedUserId">
+                          <img src="{{environment.apiUrl}}/Member/{{taskComm.writerId}}/Avatar" class="flex rounded-full size-8">
+                          <div class="max-w-[50%]">
+                            <mat-card>
+                                <div class="p-2">
+                                    <div class="underline">
+                                      {{taskComm.writerFirstName}} {{taskComm.writerLastName}}
+                                    </div>
+                                  <div>
+                                    {{taskComm.text}}
+                                  </div>
+                                </div>
+
+                              <mat-card-footer>
+                                <div class="pr-2 flex items-end text-sm justify-end">
+                                  {{taskComm.createdAt | date:'shortTime'}}
+                                </div>
+                              </mat-card-footer>
+                            </mat-card>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="w-full mt-2">
+                    <form [formGroup]="taskActivityComment" class="w-full">
+                      <div class="w-full">
+                        <mat-form-field class="w-full">
+                            <mat-label>Enter task comment</mat-label>
+                            <textarea matInput placeholder="Hello..." formControlName="text" class="w-full" required></textarea>
+                            <mat-error *ngIf="taskActivityComment.get('text')?.hasError('required')">
+                              Text is required
+                            </mat-error>
+                        </mat-form-field>
                       </div>
                     </form>
                     <button mat-raised-button color="primary" (click)="saveComment()">Save comment</button>
                   </div>
 
-
-                  <div class="">
-                    <div class="mt-2 flex flex-col gap-1 border-t-[1px] border-t-gray-400 h-[400px] overflow-y-scroll">
-                      <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="taskComments.length === 0">
-                        <p>No task comments yet.</p>
-                      </div>
-                      <mat-card *ngFor="let taskComm of taskComments">
-                        <div class="p-2 flex justify-end">
-                          {{taskComm.writerFirstName}}
-
-                        </div>
-                      </mat-card>
-                    </div>
-                  </div>
                 </mat-card-content>
               </mat-card>
             </div>
@@ -149,62 +184,30 @@
 
           <div class="flex flex-col gap-5 p-2 w-[35%]">
             <mat-card>
-              <div class="p-1">
-                <mat-card-title>
-                <div class="flex flex-row">
-                  Task name
-                  <button mat-button (click)="editMode('taskname')"><mat-icon>mode_edit</mat-icon></button>
-                </div>
-                </mat-card-title>
-                <mat-card-content>
-                  <p *ngIf="!editing">{{task.taskName}}</p>
-                  <div *ngIf="editing">
-                    <mat-form-field>
-                      <mat-label>Task name</mat-label>
-                      <input matInput placeholder="Task 1" value="" [(ngModel)]="taskName">
-                    </mat-form-field>
-                    <button mat-button (click)="changeTaskname()"><mat-icon>done</mat-icon></button>
-                  </div>
-                </mat-card-content>
-
-              </div>
-              <div class="p-1">
-                <div class="flex flex-row">
-                  <mat-card-title>Task description</mat-card-title>
-                  <button mat-button><mat-icon>mode_edit</mat-icon></button>
-                </div>
-                <p>{{task.taskDescription}}</p>
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Task name</h1></mat-card-title>
+                  <mat-card-content>
+                    <form [formGroup]="taskNameForm">
+                      <mat-form-field class="w-full">
+                        <input matInput placeholder="Task name 1" value="{{task.taskName}}">
+                      </mat-form-field>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
               </div>
 
-              <div class="p-1">
-                <div class="flex flex-row">
-                  <mat-card-title>Start date</mat-card-title>
-                </div>
-                <p>{{task.startDate | date}}</p>
-              </div>
-
-              <div class="p-1">
-                <div class="flex flex-row">
-                  <mat-card-title>End date</mat-card-title>
-                  <button mat-button><mat-icon>mode_edit</mat-icon></button>
-                </div>
-                <p>{{task.deadline | date}}</p>
-              </div>
-
-              <div class="p-1">
-                <div class="flex flex-row">
-                  <mat-card-title>Task status</mat-card-title>
-                  <button mat-button><mat-icon>mode_edit</mat-icon></button>
-                </div>
-                <p>{{task.taskStatus}}</p>
-              </div>
-
-              <div class="p-1">
-                <div class="flex flex-row">
-                  <mat-card-title>Task priority</mat-card-title>
-                  <button mat-button><mat-icon>mode_edit</mat-icon></button>
-                </div>
-                <p>{{task.taskPriorityName}}</p>
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Task description</h1></mat-card-title>
+                  <mat-card-content>
+                    <form [formGroup]="taskDescriptionForm">
+                      <mat-form-field class="w-full">
+                        <textarea matInput placeholder="Task description" value="{{task.taskDescription}}"></textarea>
+                      </mat-form-field>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
               </div>
             </mat-card>
           </div>

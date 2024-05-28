@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  DoCheck,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { taskActivity } from '../../models/taskActivity';
@@ -16,7 +25,7 @@ import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
 import {concatMap, forkJoin, Subscription, switchMap} from "rxjs";
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
@@ -43,11 +52,11 @@ import {taskComment} from "../../models/taskComment";
     MatMenu,
     MatMenuItem,
     MatAnchor,
-    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption],
+    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
-export class TaskOverviewComponent implements OnInit{
+export class TaskOverviewComponent implements OnInit, DoCheck{
 
     editing : boolean = false;
     project : any;
@@ -62,7 +71,11 @@ export class TaskOverviewComponent implements OnInit{
     allTypes : any
     taskActivityGroup! : FormGroup;
     taskActivityComment! : FormGroup;
+    taskNameForm!: FormGroup;
+    taskDescriptionForm!: FormGroup;
     taskComments : taskComment[] = [];
+    loggedUserId: any;
+    @ViewChild('scrollableDiv') private scrollableDiv!: ElementRef;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
               @Inject(MAT_DIALOG_DATA) public task: Task,
@@ -73,8 +86,14 @@ export class TaskOverviewComponent implements OnInit{
               private pService: ProjectServiceGet,
               private fb: FormBuilder) { }
 
+  ngDoCheck(): void {
+        this.scrollToBottom()
+    }
+
   ngOnInit()
   {
+    this.loggedUserId = localStorage.getItem('authenticated-member-id');
+    console.log(this.loggedUserId)
     this.taskActivityGroup = this.fb.group({
       description: ['', Validators.required],
       taskActivityPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
@@ -93,6 +112,15 @@ export class TaskOverviewComponent implements OnInit{
     });
 
     this.fetchTaskActivities();
+  }
+
+    scrollToBottom(): void {
+    try {
+      if(this.scrollableDiv != undefined)
+        this.scrollableDiv.nativeElement.scrollTop = this.scrollableDiv.nativeElement.scrollHeight;
+    } catch (err) {
+      console.error('Could not scroll to bottom:', err);
+    }
   }
 
   fetchTaskActivities() : void
@@ -257,12 +285,17 @@ export class TaskOverviewComponent implements OnInit{
     {
       const taskComment = this.taskActivityComment.value
       this.tService.saveTaskComment(taskComment).subscribe({
-        next : data =>{console.log(data)},
+        next : data =>{console.log(data); this.fetchTaskComments()},
         error : error => {console.log(error)}
       })
     }
     else
       this.taskActivityComment.markAllAsTouched();
   }
+
+  protected readonly close = close;
+
+
 }
+
 
