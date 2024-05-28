@@ -12,6 +12,8 @@ import {AddRoleForm} from "../forms/add-role.form";
 import {RoleMember} from "../models/role-member";
 import {ProjectStatus} from "../models/project-status";
 import {taskActivity} from "../models/taskActivity";
+import {ProjectPriority} from "../models/project-priority";
+import {ProjectFile} from "../models/project-file";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -24,6 +26,11 @@ export class ProjectServiceGet{
 
   getAllProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${PROJECT_API}`);
+  }
+
+  updateProject(projectId: number, projectInfo: Project): Observable<Project> {
+
+    return this.http.put<Project>(`${PROJECT_API}/${projectId}`, projectInfo);
   }
 
   getRecentActivity(projectId: number): Observable<any[]>{
@@ -96,8 +103,8 @@ export class ProjectServiceGet{
     return this.http.get<RoleMember[]>(`${PROJECT_API}/${projectId}/Roles/${roleId}/Members`);
   }
 
-  getProjectPriorities() {
-    return this.http.get(PROJECT_PRIORITY);
+  getProjectPriorities(): Observable<ProjectPriority[]> {
+    return this.http.get<ProjectPriority[]>(PROJECT_PRIORITY);
   }
 
   addProject(projectData: any) {
@@ -115,6 +122,34 @@ export class ProjectServiceGet{
   getAllActivitiesInLastTwoWeeks(projectId: number) : Observable<any[]>
   {
     return this.http.get<any[]>(`${PROJECT_API}/${projectId}/taskActivities/activitiesCountByDateLastTwoWeeks`);
+  }
+
+  getAssignedProjectIds(memberId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${PROJECT_API}/Member/${memberId}/AssignedProjectIds`);
+  }
+
+  hasAccessToProject(memberId: number, projectId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${PROJECT_API}/${projectId}/Member/${memberId}/HasAccess`);
+  }
+
+  getAllProjectRoles(projectId: number): Observable<Role[]> {
+    return this.http.get<Role[]>(`${PROJECT_API}/${projectId}/Roles`);
+  }
+
+  changeAssigneeRole(projectId: number, memberId: number, roleId: number) {
+    return this.http.put(`${PROJECT_API}/${projectId}/Members/${memberId}/Roles/${roleId}`, {});
+  }
+
+  getProjectFiles(projectId: number): Observable<ProjectFile[]> {
+    return this.http.get<ProjectFile[]>(`${PROJECT_API}/${projectId}/Files`);
+  }
+
+  deleteProjectFile(projectId: number, fileId: number) {
+    return this.http.delete(`${PROJECT_API}/${projectId}/files/${fileId}`);
+  }
+
+  uploadFiles(projectId: number, files: FormData) {
+    return this.http.post(`${PROJECT_API}/${projectId}/files`, files)
   }
 }
 

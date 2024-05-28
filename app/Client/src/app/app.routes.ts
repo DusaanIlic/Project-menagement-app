@@ -16,6 +16,9 @@ import {ProjectGanttComponent} from "./components/project-gantt/project-gantt.co
 import {MainComponent} from "./components/main/main.component";
 import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {ProjectAnalyticsComponent} from "./components/project-analytics/project-analytics.component";
+import {ProjectGuard} from "./guards/project.guard";
+import {MemberEditGuard} from "./guards/member-edit.guard";
+import {MemberGuard} from "./guards/member.guard";
 
 export const routerConfig: RouterConfigOptions = {
   paramsInheritanceStrategy: 'always'
@@ -30,21 +33,21 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'members/all', component: AllMembersComponent, canActivate: [AuthGuard] },
-      { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard]},
+      { path: 'members/:id/edit', component: EditMemberComponent, canActivate: [AuthGuard, MemberEditGuard] },
+      { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard, MemberGuard] },
       { path: 'projects/all', component: AllProjectsComponent, canActivate: [AuthGuard] },
-      { path: 'members/:id', component: MemberOverviewComponent, canActivate: [AuthGuard] },
       {
         path: 'projects/:id',
         component: ProjectComponent,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, ProjectGuard],
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
-          { path: 'overview', component: ProjectOverviewComponent, canActivate: [AuthGuard] },
-          { path: 'gantt', component: ProjectGanttComponent, canActivate: [AuthGuard] },
-          { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard] },
-          { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard] },
-          { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard] },
-          { path: 'analytics', component: ProjectAnalyticsComponent, canActivate: [AuthGuard] },
+          { path: 'overview', component: ProjectOverviewComponent, canActivate: [AuthGuard, ProjectGuard] },
+          { path: 'gantt', component: ProjectGanttComponent, canActivate: [AuthGuard, ProjectGuard] },
+          { path: 'kanban', component: ProjectKanbanComponent, canActivate: [AuthGuard, ProjectGuard] },
+          { path: 'assignees', component: AllAssigneesComponent, canActivate: [AuthGuard, ProjectGuard] },
+          { path: 'tasks', component: AllTasksComponent, canActivate: [AuthGuard, ProjectGuard] },
+          { path: 'analytics', component: ProjectAnalyticsComponent, canActivate: [AuthGuard, ProjectGuard] },
         ]
       }
     ]

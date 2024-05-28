@@ -27,7 +27,8 @@ import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {MatDivider} from "@angular/material/divider";
 import {taskPriority} from "../../models/taskPriority";
 import {TaskStatus} from "../../models/task-status";
-import {Project} from "../../models/project";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 
 @Component({
@@ -53,7 +54,8 @@ import {Project} from "../../models/project";
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDivider
+    MatDivider,
+    HasProjectPermissionPipe
   ],
   templateUrl: './all-tasks.component.html',
   styleUrl: './all-tasks.component.scss'
@@ -154,15 +156,11 @@ export class AllTasksComponent implements OnInit {
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  openDialogOverview(task : Task)
+  openDialogOverview(taskId : number)
   {
-    this.pService.getProjectById(task.projectId).subscribe((project : Project) =>{
-      task.projectName = project.projectName
-    })
-
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '1200px',
-      data: task
+      width: '250px',
+      data: taskId
     });
   }
 
@@ -218,4 +216,5 @@ export class AllTasksComponent implements OnInit {
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { MemberService } from "../../services/member.service";
@@ -15,15 +15,37 @@ import { Task } from '../../models/task';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatButtonModule } from '@angular/material/button';
 import { AddTaskComponent } from '../add-task/add-task.component';
+import {environment} from "../../../environments/environment";
+import { ConfirmationProjectComponent } from '../confirmation-project/confirmation-project.component';
+import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
+import { ProjectPriority } from '../../models/project-priority';
+import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { MatNativeDateModule, MatOption, MatOptionModule } from '@angular/material/core';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { ProjectStatus } from '../../models/project-status';
+import { Project } from '../../models/project';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {MatToolbar} from "@angular/material/toolbar";
+import {ProjectFilesComponent} from "../project-files/project-files.component";
 
 @Component({
   selector: 'app-project-overview',
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule],
+  imports: [CommonModule, MatExpansionModule, MatIconModule, MatCardModule, NgxChartsModule, MatButtonModule, MatInput, MatDatepickerModule,
+    MatDatepickerInput, MatDatepickerToggle, MatNativeDateModule, MatLabel, MatFormFieldModule, FormsModule, MatSelectModule, MatOptionModule, NgToastModule, HasProjectPermissionPipe, MatToolbar, ProjectFilesComponent],
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss']
 })
 export class ProjectOverviewComponent implements OnInit {
+  @Input() project!: Project;
+  @Output() projectUpdated = new EventEmitter<Project>()
 
   routeSub: any;
   projectId: number = 0;
@@ -35,18 +57,27 @@ export class ProjectOverviewComponent implements OnInit {
   numberOfTasks: number = 0;
   taskStatusData: any[] = [];
   recentActivities: any[] = [];
+  today = new Date();
+  projectPriorities: ProjectPriority[] = [];
+  selectedPriority: number | null = null;
+  projectStatuses: ProjectStatus[] = [];
+  selectedStatus: number | null = null;
 
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
     private mService: MemberService,
     private tService: TaskService,
-    private pService: ProjectServiceGet
+    private pService: ProjectServiceGet,
+    private _ngToastService: NgToastService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
     this.routeSub = this.route.params.subscribe(params => {
       this.projectId = params['id'];
+      this.loadProjectPriorities();
+      this.loadProjectStatuses();
       this.getProjectDetails();
     });
 
@@ -78,12 +109,51 @@ export class ProjectOverviewComponent implements OnInit {
     });
   }
 
+  loadProjectPriorities(): void {
+    this.pService.getProjectPriorities().subscribe(
+      (priorities: ProjectPriority[]) => {
+        this.projectPriorities = priorities;
+        console.log('Project Priorities:', this.projectPriorities);
+      },
+      (error) => {
+        console.error('Error fetching project priorities:', error);
+      }
+    );
+  }
+
+  loadProjectStatuses(): void {
+    this.pService.getAllProjectStatuses().subscribe(
+      (statuses: ProjectStatus[]) => {
+        this.projectStatuses = statuses;
+        console.log('Project Statuses:', this.projectStatuses);
+      },
+      (error) => {
+        console.error('Error fetching project statuses:', error);
+      }
+    );
+  }
+
+  setDefaultPriority() {
+    if (this.projectDetails && this.projectPriorities.length > 0) {
+      this.selectedPriority = this.projectDetails.priorityId;
+    }
+  }
+
   calculateDaysRemaining(projectEndDate: Date): number {
     const currentDate = new Date();
     const endDate = new Date(projectEndDate);
     const timeDifference = endDate.getTime() - currentDate.getTime();
     const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
     return daysDifference;
+  }
+
+  getDaysRemainingClass(daysRemaining: number): string {
+    if (daysRemaining <= 0) {
+      return 'overdue';
+    } else if (daysRemaining <= 3) {
+      return 'critical';
+    }
+    return '';
   }
 
   fetchMembersOnProject()
@@ -151,15 +221,20 @@ export class ProjectOverviewComponent implements OnInit {
   }
 
   getProjectDetails() {
-    this.pService.getProjectById(this.projectId).subscribe(
-      (data) => {
-        this.projectDetails = data;
-        console.log('Project Details:', this.projectDetails);
-      },
-      (error) => {
-        console.error('Error fetching project details:', error);
-      }
-    );
+    forkJoin({
+      projectDetails: this.pService.getProjectById(this.projectId),
+      projectPriorities: this.pService.getProjectPriorities()
+    }).subscribe(({ projectDetails, projectPriorities }) => {
+      this.projectDetails = projectDetails;
+      this.projectPriorities = projectPriorities;
+      this.selectedPriority = this.projectDetails.projectPriorityId;
+      this.selectedStatus = this.projectDetails.projectStatusId;
+      //console.log('Project Details:', this.projectDetails);
+      //console.log('Project Priorities:', this.projectPriorities);
+      console.log('Selected Priority:', this.selectedPriority);
+    }, error => {
+      console.error('Error loading project data:', error);
+    });
   }
 
   fetchTaskStatusData() {
@@ -184,6 +259,31 @@ export class ProjectOverviewComponent implements OnInit {
     return statusCounts;
   }
 
+  showMessage(){
+    this._ngToastService.success({detail: "Success Message", summary: "Project info updated successfully", duration: 3000});
+  }
+
+  saveProjectDetails() {
+    const updatedProject: Project = {
+      ...this.projectDetails,
+      projectPriorityId: this.selectedPriority,
+      projectStatusId: this.selectedStatus
+    };
+
+    this.pService.updateProject(this.projectDetails.projectId, updatedProject).subscribe(
+      response => {
+        this.projectDetails = response;
+        this.project = response;
+        this.projectUpdated.emit(response);
+        this.snackBar.open('Successfully changed project info!', 'Close', { duration: 3000 });
+      },
+      error => {
+        console.error('Error updating project:', error);
+      }
+    );
+  }
+
+
   openMemberInfoDialog(member: Member): void {
     const dialogRef = this.dialog.open(MemberInfoComponent, {
       data: { member }
@@ -193,4 +293,18 @@ export class ProjectOverviewComponent implements OnInit {
       console.log('Dialog zatvoren');
     });
   }
+
+
+  openProjectDeleteDialog(projectId: number): void {
+    const dialogRef = this.dialog.open(ConfirmationProjectComponent, {
+      data: { projectId: this.projectId}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog zatvoren');
+    });
+  }
+  protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
+  protected readonly GlobalPermission = GlobalPermission;
 }

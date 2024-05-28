@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.Design.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -191,6 +192,11 @@ public partial class ProjectController
         dbContext.ProjectRoles.Remove(role);
 
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member.Id);
+        }
 
         return Ok(new { message = "Successfully removed role" });
     }
@@ -306,9 +312,19 @@ public partial class ProjectController
             ProjectRoleId = roleId,
             ProjectPermissionId = permissionId
         };
+        
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Select(mp => mp.MemberId)
+            .ToListAsync();
 
         dbContext.ProjectRolePermissions.Add(newRolePermission);
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member);
+        }
 
         return Ok(new { message = "Success." });
     }
@@ -355,9 +371,19 @@ public partial class ProjectController
         {
             return Conflict(new { message = "Role doesn't have this permission." });
         }
+
+        var members = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.ProjectRoleId == roleId)
+            .Select(mp => mp.MemberId)
+            .ToListAsync();
         
         dbContext.ProjectRolePermissions.Remove(rolePermission);
         await dbContext.SaveChangesAsync();
+        
+        foreach (var member in members)
+        {
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, member);
+        }
 
         return Ok(new { message = "Success." });
     }
@@ -380,4 +406,42 @@ public partial class ProjectController
 
         return Ok(roleMemberDtos);
     }
+
+    [Authorize]
+    [HttpPut("{projectId}/Members/{memberId}/Roles/{roleId}")]
+    public async Task<IActionResult> ChangeMemberRole(int projectId, int memberId, int roleId)
+    {
+        var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
+
+        if (!hasPermission)
+        {
+            return Forbid();
+        }
+        
+        var projectRole = await dbContext.ProjectProjectRoles
+            .Where(ppr => ppr.ProjectId == projectId && ppr.ProjectRoleId == roleId)
+            .Include(ppr => ppr.ProjectRole)
+            .FirstOrDefaultAsync();
+
+        if (projectRole == null)
+        {
+            return BadRequest(new { message = "Either project with given id or role with given id does not exist "} );
+        }
+
+        var memberProject = await dbContext.MemberProjects
+            .Where(mp => mp.ProjectId == projectId && mp.MemberId == memberId)
+            .FirstOrDefaultAsync();
+
+        if (memberProject == null)
+        {
+            return BadRequest(new { message = "Either member not assigned to project or not found" });
+        }
+
+        memberProject.ProjectRoleId = roleId;
+        await dbContext.SaveChangesAsync();
+        await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
+
+        return Ok();
+    }
+    
 }

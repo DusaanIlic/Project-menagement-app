@@ -2,6 +2,7 @@
 {
     public class TaskActivityDTO
     {
+        public string ProjectName { get; set; }
         public int TaskActivityId { get; set; }
 
         public int WorkerId { get; set; }
@@ -26,5 +27,7 @@
         public string Comment { get; set; }
 
         public int TaskActivityTypeId { get; set; }
+
+        public int PercentageComplete { get; set; }
     }
 }

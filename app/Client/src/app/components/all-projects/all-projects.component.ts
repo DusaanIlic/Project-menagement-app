@@ -21,27 +21,36 @@ import {MatOption, MatSelect} from "@angular/material/select";
 import {NgToastModule} from "ng-angular-popup";
 import {ProjectStatus} from "../../models/project-status";
 import {MatDivider} from "@angular/material/divider";
+import {ProjectPriority} from "../../models/project-priority";
+import {PermissionService} from "../../services/permission.service";
+import {MatTooltip} from "@angular/material/tooltip";
+import {GlobalPermission} from "../../enums/global-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
 
 @Component({
   selector: 'app-all-projects',
   standalone: true,
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
-  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider]
+  imports: [CommonModule, RouterLink, MatButtonModule, MatMenuModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatRadioModule, MatLabel, MatFormField, MatInput, MatIcon, MatSelect, MatOption, NgToastModule, MatDivider, MatTooltip, HasGlobalPermissionPipe]
 })
 export class AllProjectsComponent implements OnInit{
   selectedStatus: number = 0;
   defaultStatus: number = 0;
+  defaultPriority: number = 0;
+  selectedPriority: number = 0;
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
-  displayedColumns: string[] = ['project',  'startDate', 'deadline', 'priority', 'status', 'manager', 'actions'];
-  projectStatuses !: ProjectStatus[];
+  displayedColumns: string[] = ['project',  'startDate', 'deadline', 'status', 'priority', 'manager', 'actions'];
+  projectStatuses : ProjectStatus[] = [];
+  projectPriorities: ProjectPriority[] = [];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
-  constructor(private projectService : ProjectServiceGet, private dialog: MatDialog, private _liveAnnouncer: LiveAnnouncer) {}
+  constructor(private projectService : ProjectServiceGet, private dialog: MatDialog,
+                private _liveAnnouncer: LiveAnnouncer, public permissionService: PermissionService) {}
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectComponent, {
@@ -83,9 +92,21 @@ export class AllProjectsComponent implements OnInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onStatusChange(event: any) {
+  onStatusFilterChange(event: any) {
     this.selectedStatus = event;
-    this.dataSource.data = this.allProjects.filter(project => this.selectedStatus == 0 || project.projectStatusId == this.selectedStatus);
+    this.applyFilters();
+  }
+
+  onPriorityFilterChange(event: any) {
+    this.selectedPriority = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.allProjects.filter(project =>
+      (this.selectedStatus == this.defaultStatus || this.selectedStatus == project.projectStatusId) &&
+      (this.selectedPriority == this.defaultPriority || this.selectedPriority == project.projectPriorityId)
+    );
   }
 
   ngOnInit(): void
@@ -100,6 +121,15 @@ export class AllProjectsComponent implements OnInit{
         console.log('failed fetching project statuses');
       }
     })
+
+    this.projectService.getProjectPriorities().subscribe({
+      next: (data: ProjectPriority[]) => {
+        this.projectPriorities = data;
+      },
+      error: err => {
+        console.log('failed fetching project priorities');
+      }
+    });
   }
 
 
@@ -122,4 +152,6 @@ export class AllProjectsComponent implements OnInit{
 
     }
   }
+
+  protected readonly GlobalPermission = GlobalPermission;
 }

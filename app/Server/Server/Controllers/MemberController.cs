@@ -19,6 +19,7 @@ using Server.DataTransferObjects.Request.Member;
 using Server.DataTransferObjects.Request.Notification;
 using Server.Services.Notification;
 using Server.Services.Permission;
+using Server.Services.PermissionNotifier;
 
 namespace Server.Controllers
 {
@@ -31,16 +32,22 @@ namespace Server.Controllers
         private readonly IFileService _fileService;
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
+        private readonly IPermissionNotifier _permissionNotifier;
 
-        public MemberController(LogicTenacityDbContext dbContext, IEmailService emailService,
-            IFileService fileService, IPermissionService permissionService,
-            INotificationService notificationService)
+        public MemberController(
+            LogicTenacityDbContext dbContext, 
+            IEmailService emailService,
+            IFileService fileService, 
+            IPermissionService permissionService,
+            INotificationService notificationService,
+            IPermissionNotifier permissionNotifier)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             _fileService = fileService;
             _permissionService = permissionService;
             _notificationService = notificationService;
+            _permissionNotifier = permissionNotifier;
         }
 
         [Authorize]
@@ -504,6 +511,11 @@ namespace Server.Controllers
                 return NotFound(new { message = "Member with given id doesn't exist" });
             }
 
+            if (member.Email == "admin@logictenacity.com")
+            {
+                return BadRequest(new { message = "Cannot change the role of the main administrator" });
+            }
+
             var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == request.RoleId);
 
             if (role == null)
@@ -536,6 +548,7 @@ namespace Server.Controllers
             };
 
             await _notificationService.SendNotification(sendNotificationRequest);
+            await _permissionNotifier.UpdatedGlobalPermissions(id);
 
             return Ok(roleDTO);
         }
@@ -598,6 +611,7 @@ namespace Server.Controllers
             return Ok(new { message = "Successfully reset password" });
         }
 
+        [Authorize]
         [HttpGet("{memberId}/Notifications")]
         public async Task<IActionResult> GetNotifications(int memberId)
         {
@@ -629,7 +643,8 @@ namespace Server.Controllers
 
             return Ok(notificationDtos);
         }
-
+    
+        [Authorize]
         [HttpPut("{memberId}/Notifications")]
         public async Task<IActionResult> ReadNotifications(int memberId, ReadNotificationsRequest request)
         {
@@ -661,6 +676,7 @@ namespace Server.Controllers
             return Ok();
         }
         
+        [Authorize]
         [HttpPost("{memberId}/Notifications")]
         public async Task<IActionResult> DeleteNotifications(int memberId, DeleteNotificationsRequest request)
         {
@@ -686,6 +702,112 @@ namespace Server.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("{memberId}/CheckIfExists")]
+        public async Task<ActionResult<bool>> CheckIfExists(int memberId)
+        {
+            return Ok(
+                await _dbContext.Members.AnyAsync(m => m.Id == memberId)
+            );
+        }
+        
+        [Authorize]
+        [HttpGet("{memberId}/HasEditAccess")]
+        public async Task<ActionResult<bool>> CheckIfCanEdit(int memberId)
+        {
+            return Ok(
+                await _dbContext.Members.AnyAsync(m => m.Id == memberId) &&
+                (
+                    await _permissionService.IsCurrentUserIdMatchAsync(memberId) ||
+                    await _permissionService.HasGlobalPermissionAsync("Edit member")
+                )
+            );
+        }
+        
+        
+        [Authorize]
+        [HttpGet("{memberId}/GetGlobalPermissions")]
+        public async Task<IActionResult> SendPermissions(int memberId)
+        {
+            var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found with given id" });
+            }
+
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            var permissions = await _dbContext.RolePermissions
+                .Where(rp => rp.RoleId == member.RoleId)
+                .ToListAsync();
+            
+            return Ok(permissions.Select(p => p.PermissionId));
+        }
+
+        [Authorize]
+        [HttpGet("{memberId}/GetProjectPermissions")]
+        public async Task<IActionResult> SendProjectPermissions(int memberId)
+        {
+            // Check if the current user has permission to view the projects
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            // Fetch project roles and their associated permissions in a single query
+            var memberProjectRoles = await _dbContext.MemberProjects
+                .Where(mp => mp.MemberId == memberId)
+                .Select(mp => new
+                {
+                    mp.ProjectId,
+                    Permissions = mp.ProjectRole.ProjectRolePermissions.Where(prp => prp.ProjectRoleId == mp.ProjectRoleId).Select(prp => prp.ProjectPermissionId).ToList()
+                })
+                .ToListAsync();
+            
+            // Group the permissions by project role ID and build the response
+            var response = memberProjectRoles
+                .GroupBy(mpr => mpr.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.SelectMany(mpr => mpr.Permissions).Distinct().ToList()
+                );
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet("{memberId}/GetProjectTasks")]
+        public async Task<IActionResult> SendProjectTasks(int memberId)
+        {
+            if (!await _permissionService.IsCurrentUserIdMatchAsync(memberId))
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+
+            var memberProjectTasks = await _dbContext.MemberTasks
+                .Where(mt => mt.MemberId == memberId)
+                .Select(mt => new
+                {
+                    mt.Task.ProjectId,
+                    mt.TaskId
+                })
+                .ToListAsync();
+            
+
+            var response = memberProjectTasks
+                .GroupBy(mpt => mpt.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(mpt => mpt.TaskId).Distinct().ToList()
+                );
+
+            return Ok(response);
         }
     }
 }

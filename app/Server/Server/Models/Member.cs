@@ -58,6 +58,7 @@ namespace Server.Models
         
         public ICollection<Project> ProjectsLead { get; set; } = new List<Project>();
 
+        public ICollection<ProjectTask> TasksLead { get; set; } = new List<ProjectTask>();
         public ICollection<MemberTask> Tasks { get; set; } = new List<MemberTask>();
 
         public ICollection<MemberProject> MemberProjects { get; set; } = new List<MemberProject>();

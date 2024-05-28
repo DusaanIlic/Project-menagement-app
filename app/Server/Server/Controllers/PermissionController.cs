@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DataTransferObjects;
+using Server.DataTransferObjects.Request;
 using Server.DataTransferObjects.Request.Permission;
 using Server.Models;
 using Server.Services.Permission;
@@ -111,6 +112,5 @@ namespace Server.Controllers
 
             return Ok(new { message = "Success." });
         }
-
     }
 }

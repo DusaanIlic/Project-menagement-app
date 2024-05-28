@@ -1,3 +1,5 @@
+http://softeng.pmf.kg.ac.rs:10141
+
 # O nama
 
 LogicTenacity je grupa programera sa različitim veštinama, koja zajednički radimo kako bismo prevazišli izazove koje projektni menadžeri susreću u efikasnom vođenju projekata i zadataka. Naša aplikacija je prvenstveno namenjena projektnim menadžerima, ali i svim ostalim učesnicima na timovima. Stoga, projektni menadžeri su naša glavna ciljna grupa korisnika.
@@ -6,20 +8,22 @@ Cilj projektnih menadžera je uspešno odrađivanje projekata koje su započeli.
 
 Učesnici na projektima, tj. osobe koje su dodate od strane projektnog menadžera, mogu pregledati i manipulisati svojim zadacima. Ukratko, naša aplikacija omogućava projektnim menadžerima i učesnicima na projektima da efikasnije obavljaju svoje svakodnevne zadatke.
 
-# Potrebni programi
+# Potrebni programi za buildovanje
 
-Da bi se aplikacija uspešno pokrenula, potrebno je imati sledeće:
+Da bi se aplikacija uspešno izbildovala, potrebno je imati sledeće:
 
 - Angular, verzija: 17.x.x
 - .NET, verzija: 8.x.x
 
 # Pokretanje aplikacije na serveru
 
-Ovo je automatizavno putem skripti `build-and-deploy.sh`, `start-server.sh`, `stop-server.sh`.
+Ovo je automatizavno putem skripti `build-and-deploy.sh`, `start-server.sh`, `stop-server.sh`.'
+Šifra je `tenacity_logic`.
+Server se deplojuje putem `build-and-deploy.sh`, potom se pokreće preko `start-server.sh`.
 
 ## build-and-deploy.sh
 
-Ova skripta updejtuje i builda angular na lokalnom računaru, potom ga ubacuje u dotnet server.
+Ova skripta updejtuje angular frontend na lokalnom računaru, builda, a potom ga ubacuje u dotnet server.
 Nakon toga se updejtuje dotnet, builda u produkcionu verziju, i uploaduje na server.
 
 ## start-server.sh
@@ -29,6 +33,17 @@ Pokreće dotnet server na beku.
 ## stop-server.sh
 
 Zaustavlja dotnet server na beku.
+
+# Nalozi
+
+- `admin@logictenacity.com` `admin`
+- `pera@gmail.com` `pera`
+- `toma@gmail.com` `toma`
+- `aleksabozinovic25e@gmail.com` `AleksaBozinovic`
+- `bozinovic.aleksa02@gmail.com` `AleksaBozinovic`
+- `ilicdusan2002@gmai.com` `DusanIlic`
+- `dusanilic2002@oshrs.edu.rs` `DusanIlic`
+
 
 # Lokalno pokretanje aplikacije
 

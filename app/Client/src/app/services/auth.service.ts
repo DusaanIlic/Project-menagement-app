@@ -1,6 +1,6 @@
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {BehaviorSubject, Observable, of, skipWhile, throwError} from "rxjs";
-import {Injectable} from "@angular/core";
+import {EventEmitter, Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {Member} from "../models/member";
 import {tap} from "rxjs/internal/operators/tap";
@@ -15,6 +15,8 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
+export const logoutSuccess = new EventEmitter<void>();
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,8 +24,7 @@ export class AuthService {
   private authenticatedMemberSubject: BehaviorSubject<any>;
   private authenticatedMemberAvatarSubject: BehaviorSubject<any>;
 
-  constructor(private http: HttpClient, private router: Router,
-                private signalRService: SignalRService) {
+  constructor(private http: HttpClient, private router: Router) {
     const authenticatedMember = localStorage.getItem('authenticated-member');
     const avatarUrl = localStorage.getItem('authenticated-member-avatar');
     this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
@@ -45,8 +46,6 @@ export class AuthService {
           localStorage.setItem('authenticated-member-id', member.id.toString());
           localStorage.setItem('authenticated-member', JSON.stringify(member));
           localStorage.setItem('authenticated-member-avatar', `${environment.apiUrl}/Member/${member.id}/Avatar`);
-
-          this.signalRService.startConnection();
 
           this.authenticatedMemberSubject.next(member);
           this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
@@ -70,7 +69,7 @@ export class AuthService {
     localStorage.removeItem('authenticated-member');
     localStorage.removeItem('authenticated-member-avatar');
 
-    this.signalRService.stopConnection();
+    logoutSuccess.emit();
 
     this.router.navigate(['/login']);
   }
@@ -138,7 +137,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.getJwtToken() !== null;
+    return this.getJwtToken() !== null && this.getAuthenticatedMembersId() !== null;
   }
 
   refreshJwtToken() {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,14 @@ using Server.DataTransferObjects;
 using Server.DataTransferObjects.Request;
 using Server.Models;
 using Server.Services.Permission;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
+using Server.Services.File;
+using Server.DataTransferObjects.Request.File;
+using Server.Services.PermissionNotifier;
 using TaskStatus = Server.Models.TaskStatus;
+using Server.Services.Notification;
+using Server.DataTransferObjects.Request.Notification;
 
 namespace Server.Controllers
 {
@@ -26,12 +34,21 @@ namespace Server.Controllers
         private readonly LogicTenacityDbContext dbContext;
         private readonly IPermissionService _permissionService;
         private readonly IEmailService _emailService;
+        private readonly IFileService _fileService;
+        private readonly IPermissionNotifier _permissionNotifier;
+        private readonly INotificationService _notificationService;
 
-        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService)
+        
+        public ProjectController(LogicTenacityDbContext dbContext, IPermissionService permissionService, 
+                                    IEmailService emailService, IFileService fileService,
+                                        IPermissionNotifier permissionNotifier, INotificationService notificationService)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
+            _fileService = fileService;
+            _permissionNotifier = permissionNotifier;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -44,6 +61,7 @@ namespace Server.Controllers
                 .ThenInclude(pts => pts.TaskStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskPriority)
+                .Include(p => p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -64,7 +82,9 @@ namespace Server.Controllers
                     TaskStatusId = t.TaskStatusId,
                     TaskPriorityId = t.TaskPriorityId,
                     TaskPriorityName = t.TaskPriority.Name,
-                    DeadlineModified = t.DeadlineModified
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryId = t.TaskCategoryId,
+                    TaskCategoryName = t.TaskCategory.CategoryName
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -86,22 +106,22 @@ namespace Server.Controllers
                 int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
                 int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == p.ProjectId);
                 projectDTOs.Add(new ProjectDTO
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectName = p.ProjectName,
-                        ProjectDescription = p.ProjectDescription,
-                        Deadline = p.Deadline,
-                        ProjectStatusId = p.ProjectStatusId,
-                        Status = p.ProjectStatus.Status,
-                        ProjectTasks = taskDTOs,
-                        TeamLider = teamLeaderDTO,
-                        StartDate = p.StartDate,
-                        NumberOfPeople = numberOfMembers,
-                        NumberOfTasks = numberOfTasks,
-                        ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId,
-                        DeadlineModifed = p.DeadlineModified,
-                        DateFinished = p.DateFinished
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectName = p.ProjectName,
+                    ProjectDescription = p.ProjectDescription,
+                    Deadline = p.Deadline,
+                    ProjectStatusId = p.ProjectStatusId,
+                    Status = p.ProjectStatus.Status,
+                    ProjectTasks = taskDTOs,
+                    TeamLider = teamLeaderDTO,
+                    StartDate = p.StartDate,
+                    NumberOfPeople = numberOfMembers,
+                    NumberOfTasks = numberOfTasks,
+                    ProjectPriority = p.Priority.Name,
+                    ProjectPriorityId = p.ProjectPriorityId,
+                    DeadlineModifed = p.DeadlineModified,
+                    DateFinished = p.DateFinished
                 });
             }
 
@@ -126,7 +146,7 @@ namespace Server.Controllers
             }
 
             var hasPermission = await _permissionService.HasGlobalPermissionAsync("Create project");
-            
+
             if (!hasPermission)
             {
                 return Forbid("Insufficient permissions");
@@ -137,10 +157,10 @@ namespace Server.Controllers
                                     .FirstOrDefaultAsync(m => m.Id == userId);
 
             var priority = await dbContext.ProjectPriorities.FindAsync(addProjectRequest.PriorityId);
-            
+
             if (teamLeader == null)
             {
-                return BadRequest(new {message = "Member not found"});
+                return BadRequest(new { message = "Member not found" });
             }
 
             var project = new Models.Project()
@@ -151,21 +171,21 @@ namespace Server.Controllers
                 StartDate = DateTime.Now,
                 ProjectStatus = projectStatus,
                 TeamLeaderId = teamLeader.Id,
-                ProjectPriorityId= priority.ProjectPriorityId
+                ProjectPriorityId = priority.ProjectPriorityId
             };
 
             var firstThreeTaskStatuses = await dbContext.TaskStatuses.Where(ts => ts.IsDefault).ToListAsync();
 
             project.ProjectTaskStatuses = firstThreeTaskStatuses
                 .Select(status => new ProjectTaskStatus { TaskStatus = status }).ToList();
-            
+
             var defaultProjectRoles = await dbContext.ProjectRoles.Where(pr => pr.IsDefault).ToListAsync();
 
             project.ProjectProjectRoles = defaultProjectRoles
-                .Select(projectRole => new ProjectProjectRole {ProjectRole = projectRole }).ToList();
+                .Select(projectRole => new ProjectProjectRole { ProjectRole = projectRole }).ToList();
 
             dbContext.Projects.Add(project);
-            
+
             await dbContext.SaveChangesAsync();
 
             var projectTaskCategories = new ProjectTaskCategories
@@ -178,8 +198,10 @@ namespace Server.Controllers
             await dbContext.SaveChangesAsync();
 
             dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId, ProjectRoleId = 1 });
-            
+
             await dbContext.SaveChangesAsync();
+
+            await _permissionNotifier.AssignedToProject(userId, project.ProjectId);
 
             var teamLeaderDTO = new MemberDTO
             {
@@ -219,6 +241,8 @@ namespace Server.Controllers
                 ProjectPriority = priority.Name
             };
 
+            await _permissionNotifier.UpdatedProjectPermissions(projectDTO.ProjectId, projectDTO.TeamLider.Id);
+            
             return Ok(projectDTO);
         }
 
@@ -230,6 +254,7 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p=>p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
@@ -250,8 +275,9 @@ namespace Server.Controllers
                     TaskStatus = t.TaskStatus.Name,
                     TaskStatusId = t.TaskStatusId,
                     DateFinished = t.DateFinished,
-                    DeadlineModified = t.DeadlineModified
-
+                    DeadlineModified = t.DeadlineModified,
+                    TaskCategoryName = t.TaskCategory.CategoryName,
+                    TaskCategoryId = t.TaskCategoryId
                 }).ToList();
 
                 MemberDTO teamLeaderDTO = null;
@@ -273,22 +299,22 @@ namespace Server.Controllers
                 int numberOfMembers = dbContext.MemberProjects.Count(mp => mp.ProjectId == p.ProjectId && !mp.Member.IsDisabled);
                 int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == p.ProjectId);
                 projectDTOs.Add(new ProjectDTO
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectName = p.ProjectName,
-                        ProjectDescription = p.ProjectDescription,
-                        Deadline = p.Deadline,
-                        ProjectStatusId = p.ProjectStatusId,
-                        Status = p.ProjectStatus.Status,
-                        ProjectTasks = taskDTOs,
-                        TeamLider = teamLeaderDTO,
-                        StartDate = p.StartDate,
-                        NumberOfPeople = numberOfMembers,
-                        NumberOfTasks = numberOfTasks,
-                        ProjectPriority = p.Priority.Name,
-                        ProjectPriorityId = p.ProjectPriorityId,
-                        DateFinished = p.DateFinished,
-                        DeadlineModifed = p.DeadlineModified
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectName = p.ProjectName,
+                    ProjectDescription = p.ProjectDescription,
+                    Deadline = p.Deadline,
+                    ProjectStatusId = p.ProjectStatusId,
+                    Status = p.ProjectStatus.Status,
+                    ProjectTasks = taskDTOs,
+                    TeamLider = teamLeaderDTO,
+                    StartDate = p.StartDate,
+                    NumberOfPeople = numberOfMembers,
+                    NumberOfTasks = numberOfTasks,
+                    ProjectPriority = p.Priority.Name,
+                    ProjectPriorityId = p.ProjectPriorityId,
+                    DateFinished = p.DateFinished,
+                    DeadlineModifed = p.DeadlineModified
                 });
             }
 
@@ -303,15 +329,16 @@ namespace Server.Controllers
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
                 .ThenInclude(pts => pts.TaskStatus)
+                .Include(p => p.ProjectTasks).ThenInclude(pts => pts.TaskCategory)
                 .Include(p => p.TeamLeader)
                 .ThenInclude(ptl => ptl.Role)
                 .Include(p => p.MemberProjects)
-                .Include (p => p.Priority)
+                .Include(p => p.Priority)
                 .SingleOrDefault(p => p.ProjectId == projectId);
 
             if (project == null)
             {
-                return NotFound(new {message = "Project not found"}); 
+                return NotFound(new { message = "Project not found" });
             }
 
             var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
@@ -324,7 +351,9 @@ namespace Server.Controllers
                 TaskStatus = t.TaskStatus.Name,
                 TaskStatusId = t.TaskStatusId,
                 DeadlineModified = t.DeadlineModified,
-                DateFinished = t.DateFinished
+                DateFinished = t.DateFinished,
+                TaskCategoryId = t.TaskCategoryId,
+                TaskCategoryName = t.TaskCategory.CategoryName
             }).ToList();
 
             int numberOfTasks = dbContext.ProjectTasks.Count(mt => mt.ProjectId == project.ProjectId);
@@ -378,7 +407,7 @@ namespace Server.Controllers
             {
                 return Forbid();
             }
-            
+
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
                 .Include(p => p.ProjectTasks)
@@ -390,13 +419,17 @@ namespace Server.Controllers
 
             if (project == null)
             {
-                return NotFound(new {message = "Project not found"});
+                return NotFound(new { message = "Project not found" });
             }
 
             project.ProjectName = updateProjectRequest.ProjectName;
             project.ProjectDescription = updateProjectRequest.ProjectDescription;
             project.Deadline = updateProjectRequest.Deadline;
-            
+            var projectPriority = dbContext.ProjectPriorities.First(pp => pp.ProjectPriorityId == updateProjectRequest.ProjectPriorityId);
+            project.Priority = projectPriority;
+            var projectStatus = dbContext.ProjectStatuses.First(pp => pp.Id == updateProjectRequest.ProjectStatusId);
+            project.ProjectStatus = projectStatus;
+
             await dbContext.SaveChangesAsync();
 
             var taskDTOs = project.ProjectTasks.Select(t => new ProjectTaskDTO
@@ -477,15 +510,15 @@ namespace Server.Controllers
 
             var project = await dbContext.Projects
                 .Include(p => p.ProjectStatus)
-                .Include(p => p.ProjectTasks )
+                .Include(p => p.ProjectTasks)
                    .ThenInclude(pts => pts.TaskStatus)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
             {
-                return NotFound(new {message = "Project not found."});
+                return NotFound(new { message = "Project not found." });
             }
-         
+
             dbContext.Projects.Remove(project);
 
             await dbContext.SaveChangesAsync();
@@ -532,18 +565,39 @@ namespace Server.Controllers
             if (status == null)
                 return NotFound(new { message = "Status not found" });
 
-            if(statusId == 2 && project.StartDate == DateTime.MinValue)
+            if (statusId == 2 && project.StartDate == DateTime.MinValue)
             {
                 project.StartDate = DateTime.Now;
             }
 
-            if(statusId == 3)
+            if (statusId == 3)
             {
                 project.DateFinished = DateTime.Now;
             }
 
             project.ProjectStatus = status;
             await dbContext.SaveChangesAsync();
+
+
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Status Updated!",
+                    Description = $"The status for project '{project.ProjectName}' has been updated to '{status.Status}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
+
 
             return Ok(new { message = "Project status updated successfully." });
 
@@ -563,6 +617,7 @@ namespace Server.Controllers
             var tasks = await dbContext.ProjectTasks
                                         .Where(t => t.ProjectId == projectId)
                                         .Include(pt => pt.TaskStatus)
+                                        .Include(pt => pt.TaskCategory)
                                         .ToListAsync();
 
             var tasksDTOs = tasks.Select(t => new ProjectTaskDTO
@@ -573,7 +628,9 @@ namespace Server.Controllers
                 TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 TaskStatus = t.TaskStatus.Name,
-                TaskStatusId = t.TaskStatusId
+                TaskStatusId = t.TaskStatusId,
+                TaskCategoryId = t.TaskCategoryId,
+                TaskCategoryName = t.TaskCategory.CategoryName
             }).ToList();
 
             return Ok(tasksDTOs);
@@ -589,7 +646,7 @@ namespace Server.Controllers
             {
                 return Forbid();
             }
-            
+
             var project = await dbContext.Projects.FindAsync(projectId);
             if (project == null)
             {
@@ -624,12 +681,10 @@ namespace Server.Controllers
             {
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
-            
+
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Add member to project");
-            
-            
-            Console.WriteLine("stigne dovde");
-            
+
+
             if (!hasPermission)
             {
                 return Forbid("Insufficient permissions");
@@ -640,16 +695,16 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Project not found" });
             }
-            
+
             var members = await dbContext.Members.Where(m => memberIds.Contains(m.Id) && !m.IsDisabled).ToListAsync();
-            
+
             if (members == null || members.Count != memberIds.Count)
             {
                 return NotFound(new { message = "One or more members not found" });
             }
 
             foreach (var memberId in memberIds)
-            {  
+            {
                 if (project.TeamLeaderId == memberId)
                 {
                     return BadRequest(new { message = "Member is already a team leader of the project" });
@@ -662,7 +717,7 @@ namespace Server.Controllers
                 }
 
                 var defaultRole = await dbContext.ProjectRoles.FirstOrDefaultAsync(pr => pr.IsFallback);
-                
+
                 dbContext.MemberProjects.Add(new MemberProject { MemberId = memberId, ProjectId = projectId, ProjectRoleId = defaultRole.Id });
 
                 var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
@@ -687,11 +742,24 @@ namespace Server.Controllers
                 };
 
                 var result = _emailService.SendEmail(request);
+
+                await _permissionNotifier.AssignedToProject(memberId, projectId);
+                await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
+
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "You are added to new project!",
+                    Description = "Your new project is " + project.ProjectName,
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
             }
 
             await dbContext.SaveChangesAsync();
 
-            return Ok(new {Message = "Members added to project successfully"});
+
+            return Ok(new { Message = "Members added to project successfully" });
         }
 
         [Authorize]
@@ -734,6 +802,9 @@ namespace Server.Controllers
 
             dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();
+            
+            await _permissionNotifier.RemovedFromProject(memberId, projectId);
+            await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
 
             return Ok(new { message = "Member removed from project successfully." });
 
@@ -745,16 +816,16 @@ namespace Server.Controllers
         {
             var project = dbContext.Projects.FindAsync(projectId);
 
-            if(project == null)
+            if (project == null)
             {
                 return BadRequest(new { message = "Project not found." });
             }
 
             var members = await dbContext.Members
-                              .Where(m => dbContext.MemberProjects
-                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
-                              .Include(m => m.Role)
-                              .ToListAsync();
+                .Where(m => dbContext.MemberProjects
+                    .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                .Include(m => m.Role)
+                .ToListAsync();
 
             var membersDTO = members.Select(member => new MemberDTO
             {
@@ -764,7 +835,15 @@ namespace Server.Controllers
                 RoleId = member.RoleId,
                 RoleName = member.Role.RoleName,
                 Email = member.Email,
-                Status = member.Status
+                Status = member.Status,
+                ProjectRoleName = dbContext.MemberProjects
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Name)
+                    .FirstOrDefault(),
+                ProjectRoleId = dbContext.MemberProjects
+                    .Where(mp => mp.ProjectId == projectId && mp.MemberId == member.Id)
+                    .Select(mp => mp.ProjectRole.Id)
+                    .FirstOrDefault(),
             });
 
             return Ok(membersDTO);
@@ -821,20 +900,39 @@ namespace Server.Controllers
 
 
             var project = await dbContext.Projects.FindAsync(projectId);
-            if(projectId == null)
+            if (projectId == null)
             {
                 return BadRequest(new { message = "Project with this id does not exists." });
             }
 
             var priority = await dbContext.ProjectPriorities.FindAsync(priorityId);
 
-            if(priority == null)
+            if (priority == null)
             {
                 return BadRequest(new { message = "Project priority with this id does not exists." });
             }
 
             project.Priority = priority;
             await dbContext.SaveChangesAsync();
+
+
+            var members = await dbContext.Members
+                              .Where(m => dbContext.MemberProjects
+                                                 .Any(mp => mp.ProjectId == projectId && mp.MemberId == m.Id) && !m.IsDisabled)
+                              .Include(m => m.Role)
+                              .ToListAsync();
+
+            foreach (var member in members)
+            {
+                SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
+                {
+                    Title = "Project Priority Updated!",
+                    Description = $"The priority for project '{project.ProjectName}' has been updated to '{priority.Name}'.",
+                    MemberId = member.Id
+                };
+
+                await _notificationService.SendNotification(sendNotificationRequest);
+            }
 
             return Ok(new { message = "Project priority changed successfully." });
         }
@@ -844,7 +942,7 @@ namespace Server.Controllers
         public async Task<IActionResult> GetAllProjectsByProjectPriority(int priorityId)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            
+
             if (userIdClaim == null)
             {
                 return NotFound(new { message = "User ID claim not found in token" });
@@ -861,7 +959,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Project priority not found" });
             }
 
-            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).Include(p=>p.ProjectStatus).ToListAsync();
+            var projects = await dbContext.Projects.Where(p => p.ProjectPriorityId == priorityId).Include(p => p.ProjectStatus).ToListAsync();
 
             var projectsDTOs = projects.Select(p => new ProjectDTO
             {
@@ -872,7 +970,7 @@ namespace Server.Controllers
                 ProjectStatusId = p.ProjectStatusId,
                 Status = p.ProjectStatus.Status,
                 StartDate = p.StartDate,
-                ProjectPriority = priority.Name, 
+                ProjectPriority = priority.Name,
                 ProjectPriorityId = p.ProjectPriorityId
             });
 
@@ -918,6 +1016,147 @@ namespace Server.Controllers
             return Ok(taskActivityDTOs);
         }
 
+        [Authorize]
+        [HttpGet("{id}/Files")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProjectFiles(int id)
+        {
+            var project = await dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found." });
+            }
+
+            var projectFiles = await dbContext.ProjectFile
+                .Where(pf => pf.ProjectId == id)
+                .Join(dbContext.Files.Include(f => f.Uploader), 
+                    pf => pf.FileId, 
+                    f => f.FileId, 
+                    (pf, f) => new 
+                    {
+                        f.FileId,
+                        f.OriginalName,
+                        Uploader = new 
+                        {
+                            f.Uploader.Id,
+                            FullName = f.Uploader.FirstName + ' ' + f.Uploader.LastName
+                        }
+                    })
+                .ToListAsync();
+
+
+            return Ok(projectFiles);
+        }
+
+        [Authorize]
+        [HttpPost("{id}/files")]
+        public async Task<IActionResult> PostFiles(int id, [FromForm] AddFilesRequest files)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Add file");
+
+            if (!hasPermission)
+            {
+                return BadRequest(new { message = "Insufficient permissions" });
+            }
+
+
+            var project = await dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found." });
+            }
+
+
+            var uploadedFiles = await _fileService.PostMultiFileAsync(userId, files);
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                var projectFile = new ProjectFile
+                {
+                    ProjectId = id,
+                    FileId = uploadedFile.FileId
+                };
+                project.ProjectFiles.Add(projectFile);
+
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Files posted successfully." });
+        }
+
+        [Authorize]
+        [HttpDelete("{id}/files/{fileId}")]
+        public async Task<IActionResult> DeleteFile(int id, int fileId)
+        {
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var file = dbContext.Files.FirstOrDefault(f => f.FileId == fileId);
+
+            if (file == null)
+            {
+                return BadRequest(new { message = "File doesn't exist" });
+            }
+            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(id, "Remove file");
+            if (!hasPermission && file.UploaderId != userId)
+            {
+                return BadRequest(new { message = "Insufficient permissions" });
+            }
+
+            var project = await dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound(new { message = "Project not found." });
+            }
+            
+            var projectFile = await dbContext.ProjectFile
+                .FirstOrDefaultAsync(pf => pf.ProjectId == id && pf.FileId == fileId);
+
+            if (projectFile == null)
+            {
+                return NotFound(new { message = "File not found in project." });
+            }
+
+            dbContext.ProjectFile.Remove(projectFile);
+
+            project.ProjectFiles.Remove(projectFile);
+
+            await _fileService.DeleteFile(fileId);
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "File deleted successfully." });
+
+        }
+
         [HttpGet("Status")]
         public async Task<IActionResult> GetProjectStatuses()
         {
@@ -948,7 +1187,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Invalid user ID in token" });
             }
 
-            var hasPermission = await _permissionService.HasGlobalPermissionAsync("Chaneg project deadline");
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectId, "Change deadline");
 
             if (!hasPermission)
             {
@@ -1001,7 +1240,7 @@ namespace Server.Controllers
                     Count = dailyTaskActivityCount.FirstOrDefault(d => d.Date == date)?.Count ?? 0
                 })
                 .ToList();
-           
+
             return Ok(dailyActivityCounts);
         }
 
@@ -1074,6 +1313,83 @@ namespace Server.Controllers
                 .ToList();
 
             return Ok(activityCountsByDate);
+        }
+
+        [Authorize]
+        [HttpGet("Member/{memberId}/AssignedProjectIds")]
+        public async Task<IActionResult> GetAssignedProjectsIds(int memberId)
+        {
+            var member = await dbContext.Members.FirstOrDefaultAsync(m => m.Id == memberId);
+
+            if (member == null)
+            {
+                return BadRequest(new { message = "No member detected" });
+            }
+
+            var projectIds = await dbContext.MemberProjects
+                .Where(mp => mp.MemberId == member.Id)
+                .ToListAsync();
+
+            var assignedIds = projectIds
+                .Select(mp => mp.ProjectId)
+                .ToList();
+
+            return Ok(assignedIds);
+        }
+        
+        [Authorize]
+        [HttpGet("{projectId}/Member/{memberId}/HasAccess")]
+        public async Task<ActionResult<bool>> IsValidProjectIdAsync(int memberId, int projectId)
+        {
+            bool isValid = await dbContext.MemberProjects
+                .AnyAsync(mp => mp.MemberId == memberId && mp.ProjectId == projectId);
+         
+            return Ok(isValid);
+        }
+
+        [Authorize] 
+        [HttpGet("{projectId}/File/{fileId}/Preview")] 
+        [AllowAnonymous]
+        public async Task<IActionResult> PreviewFile(int projectId, int fileId)
+        {
+            var file = await dbContext.ProjectFile
+                .Include(f => f.File)
+                .FirstOrDefaultAsync(pf => pf.ProjectId == projectId && pf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+
+            var contentDisposition = new ContentDispositionHeaderValue("inline")
+            {
+                FileName = file.File.OriginalName
+            };
+
+            Response.Headers.Append(HeaderNames.ContentDisposition, contentDisposition.ToString());
+            
+            return File(bytes, mime);
+        }
+        
+        [Authorize]
+        [HttpGet("{projectId}/File/{fileId}/Download")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadFile(int projectId, int fileId)
+        {
+            var file = await dbContext.ProjectFile
+                .Include(f => f.File)
+                .FirstOrDefaultAsync(pf => pf.ProjectId == projectId && pf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+            
+            return File(bytes, mime, file.File.OriginalName);
         }
     }
 }

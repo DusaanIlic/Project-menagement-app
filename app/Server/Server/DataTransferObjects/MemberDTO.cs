@@ -42,5 +42,9 @@ namespace Server.DataTransferObjects
 
         [Required]
         public string RoleName { get; set; } = String.Empty;
+
+        public String? ProjectRoleName { get; set; }
+
+        public int? ProjectRoleId { get; set; }
     }
 }

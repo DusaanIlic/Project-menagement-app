@@ -18,7 +18,6 @@ export class ProgressBarService {
 
   show() {
     if (this.progressBar && this.isHidden) {
-      console.log('SHOWED PROGRESS BAR');
       setTimeout(() => {
         this.isHidden = false;
       }, 0);
@@ -27,7 +26,6 @@ export class ProgressBarService {
 
   hide() {
     if (this.progressBar && !this.isHidden) {
-      console.log('HIDDEN PROGRESS BAR');
       setTimeout(() => {
         this.isHidden = true;
       }, 0);

@@ -1,5 +1,6 @@
 <div class="flex flex-col justify-center">
   <div class="flex flex-col gap-4 rounded-t-xl">
+    <p class="text-3xl font-semibold">Project Tasks</p>
     <div class="flex flex-col gap-4 select-none justify-center">
       <div class="flex gap-4">
         <mat-form-field class="w-96" subscriptSizing="dynamic">
@@ -38,7 +39,8 @@
         <span class="grow"></span>
 
         <div class="flex gap-1 justify-center items-center">
-          <button mat-raised-button color="primary" (click)="openDialog()">Add new task</button>
+          <button mat-raised-button color="primary" (click)="openDialog()"
+            [disabled]="!(projectId | hasProjectPermission:ProjectPermission.CREATE_TASK)">Add new task</button>
         </div>
       </div>
 
@@ -84,8 +86,9 @@
               </div>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openDialogOverview(task)">View</button>
-              <button mat-menu-item (click)="deleteTask(task.taskId)">Delete</button>
+              <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+              <button mat-menu-item (click)="deleteTask(task.taskId)"
+                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">Delete</button>
             </mat-menu>
           </td>
         </ng-container>

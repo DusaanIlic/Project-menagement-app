@@ -30,6 +30,7 @@
             id="email"
             required
             [(ngModel)]="email"
+            (keyup.enter)="onSubmit()"
             formControlName="email"
           />
           <mat-error *ngIf="emailFormControl.hasError('required')"
@@ -51,6 +52,7 @@
             required
             [(ngModel)]="password"
             formControlName="password"
+            (keyup.enter)="onSubmit()"
           />
 
           <mat-error

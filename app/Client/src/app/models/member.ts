@@ -18,4 +18,6 @@ export interface Member {
   dateAdded: Date;
   roleName: string;
   numberOfTasks?: number;
+  projectRoleName?: string;
+  projectRoleId?: number;
 }

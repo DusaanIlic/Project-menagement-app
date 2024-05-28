@@ -34,6 +34,8 @@ import {MatDivider} from "@angular/material/divider";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {TaskStatus} from "../../models/task-status";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-project-gantt',
@@ -57,6 +59,7 @@ import {TaskStatus} from "../../models/task-status";
     MatOption,
     MatSelect,
     NgStyle,
+    HasProjectPermissionPipe,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -280,9 +283,12 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       const utcStartDate = new Date(startTimestamp);
       const utcEndDate = new Date(endTimestamp);
 
-      // Set the timezone offset to 0 to get the UTC time
-      utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
-      utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
+      console.log(utcStartDate);
+      console.log(utcEndDate);
+
+      // // Set the timezone offset to 0 to get the UTC time
+      // utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
+      // utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
 
       console.log(`UTC Start Date: ${utcStartDate.toISOString()}, UTC End Date: ${utcEndDate.toISOString()}`);
 
@@ -373,4 +379,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       });
     }
   }
+
+  protected readonly ProjectPermission = ProjectPermission;
 }

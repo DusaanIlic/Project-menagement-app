@@ -31,6 +31,9 @@ import { AddMembersToProjectComponent } from '../add-members-to-project/add-memb
 import {MatDivider} from "@angular/material/divider";
 import {AvatarComponent} from "../avatar/avatar.component";
 import {SignalRService} from "../../services/signal-r.service";
+import {Role} from "../../models/role";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
 
 @Component({
   selector: 'app-all-assignees',
@@ -54,21 +57,25 @@ import {SignalRService} from "../../services/signal-r.service";
     MatSelect,
     MatRadioButton,
     MatTableModule,
-    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent, HasProjectPermissionPipe
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'
 })
 export class AllAssigneesComponent implements OnInit{
   private routeSub: any;
-  selectedStatus: string = '';
   assignees : Member[] = [];
   filteredAssignees : Member[] = [];
   onlineAssignees: Set<number> = new Set<number>();
   projectId : number = 0;
-  searchTerm: string = '';
-  displayedColumns: string[] = ['avatar',  'firstName', 'roleName', 'projectRoleName', 'email', 'date', 'action'];
+  selectedProjectRole: number = 0;
+  defaultProjectRole: number = 0;
+  selectedStatus: number = 0;
+  defaultStatus: number = 0;
+  roles: Role[] = [];
+  displayedColumns: string[] = ['avatar',  'firstName', 'projectRoleName', 'email', 'onlineStatus', 'date', 'action'];
   dataSource: any;
+  projectRoles: Role[] = [];
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;
 
@@ -84,7 +91,6 @@ export class AllAssigneesComponent implements OnInit{
     this.routeSub = this.route.params.subscribe((params : any) => {
       this.projectId = params['id'];
       this.fetchMembersOnProject();
-      this.selectedStatus = 'allAssignees';
     })
 
     this.signalRService.getConnectedMemberIds().subscribe({
@@ -94,7 +100,25 @@ export class AllAssigneesComponent implements OnInit{
       error: err => {
         console.log('failed fetching online members')
       }
-    })
+    });
+
+    this.mService.getRoles().subscribe(
+      (data: Role[]) => {
+        this.roles = data;
+      },
+      (error) => {
+        console.log('Error fetching roles:', error);
+      }
+    );
+
+    this.pService.getAllProjectRoles(this.projectId).subscribe({
+      next: data => {
+        this.projectRoles = data;
+      },
+      error: err => {
+        console.log('failed fetching project roles');
+      }
+    });
   }
 
   announceSortChange(sortState: Sort) {
@@ -122,8 +146,6 @@ export class AllAssigneesComponent implements OnInit{
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
-      width : '800px',
-      height : '400px',
       data: this.projectId
     });
 
@@ -173,15 +195,25 @@ export class AllAssigneesComponent implements OnInit{
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  openMemberInfoDialog(member: Member): void {
-    const dialogRef = this.dialog.open(MemberInfoComponent, {
-      data: { member }
-    });
+  onProjectRoleFilterChange(event: any) {
+    this.selectedProjectRole = event;
+    this.applyFilters();
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog zatvoren');
-    });
+  onStatusFilterChange(event: any) {
+    this.selectedStatus = event;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.dataSource.data = this.assignees.filter(member =>
+      (this.selectedProjectRole == this.defaultProjectRole || this.selectedProjectRole == member.projectRoleId) &&
+      (this.selectedStatus == this.defaultStatus ||
+        (this.selectedStatus == 1 && !this.onlineAssignees.has(member.id)) ||
+        (this.selectedStatus == 2 && this.onlineAssignees.has(member.id)))
+    );
   }
 
   protected readonly environment = environment;
+  protected readonly ProjectPermission = ProjectPermission;
 }

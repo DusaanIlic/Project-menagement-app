@@ -12,6 +12,7 @@
 
 
         public int ProjectId { get; set; }
+        public string ProjectName { get; set; } 
         public string TaskStatus { get; set; }
         public int TaskStatusId { get; set; }
         public int TaskPriorityId { get; set; }
@@ -21,5 +22,8 @@
         public string TaskPriorityName { get; set; }
 
         public string TaskCategoryName { get; set; }
-    }
+
+        public int PercentageComplete { get; set; }
+        public int TaskLeaderId { get; set; }
+}
 }

@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Server.Services.Permission;
 using Server.DataTransferObjects.Request.ProjectTask;
+using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
@@ -41,6 +42,7 @@ namespace Server.Controllers
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {
+                ProjectName = ta.ProjectTask.Project.ProjectName,
                 TaskActivityId = ta.TaskActivityId,
                 WorkerId = ta.MemberId,
                 Name = ta.Member.FirstName,
@@ -53,7 +55,8 @@ namespace Server.Controllers
                 ProjectId = ta.ProjectTask.ProjectId,
                 DateModify = ta.ActivityDate,
                 Comment = ta.Description,
-                TaskActivityTypeId = ta.TaskActivityTypeId
+                TaskActivityTypeId = ta.TaskActivityTypeId,
+                PercentageComplete = ta.PercentageComplete
             }).ToList();
 
             return Ok(taskActivityDTOs);
@@ -85,8 +88,9 @@ namespace Server.Controllers
             var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskActivityRequest.TaskId);
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Add task activity");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -97,8 +101,14 @@ namespace Server.Controllers
                 ProjectTaskId = addTaskActivityRequest.TaskId,
                 ActivityDate = DateTime.Now,
                 Description = addTaskActivityRequest.Description,
-                TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId
+                TaskActivityTypeId = addTaskActivityRequest.TaskActivityTypeId,
+                PercentageComplete = addTaskActivityRequest.PercentageComplete
             };
+
+            if(projectTask.PercentageComplete <= addTaskActivityRequest.PercentageComplete)
+            {
+                projectTask.PercentageComplete = addTaskActivityRequest.PercentageComplete;
+            }
 
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
@@ -117,8 +127,9 @@ namespace Server.Controllers
                   .FirstOrDefaultAsync(ta => ta.TaskActivityId == taskActivityId);
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(taskActivity.ProjectTask.ProjectId, "Remove task activity");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskActivity.ProjectTask.TaskId);
 
-            if (!hasPermission)
+            if (!hasPermission && !isAssignedToTask)
             {
                 return Forbid("Insufficient permissions");
             }
@@ -156,6 +167,7 @@ namespace Server.Controllers
 
             var taskActivityDTO = new TaskActivityDTO
             {
+                ProjectName = taskActivity.ProjectTask.Project.ProjectName,
                 TaskActivityId = taskActivity.TaskActivityId,
                 WorkerId = taskActivity.MemberId,
                 TaskId = taskActivity.ProjectTaskId,
@@ -193,7 +205,8 @@ namespace Server.Controllers
             }
 
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
-            {
+            {   
+                ProjectName = ta.ProjectTask.Project.ProjectName,
                 TaskActivityId = ta.TaskActivityId,
                 WorkerId = ta.MemberId,
                 TaskId = ta.ProjectTaskId,
@@ -206,7 +219,8 @@ namespace Server.Controllers
                 Email = ta.Member.Email,
                 Country = ta.Member.Country,
                 DateOfBirth = ta.Member.DateOfBirth,
-                RoleName = ta.Member.Role.RoleName
+                RoleName = ta.Member.Role.RoleName,
+                PercentageComplete = ta.PercentageComplete
             }).ToList();
 
             return Ok(taskActivityDTOs);

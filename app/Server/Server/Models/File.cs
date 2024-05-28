@@ -9,6 +9,7 @@ namespace Server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FileId { get; set; }
         public string FilePath { get; set; }
+        public string OriginalName { get; set; }
         public int UploaderId { get; set; }
         public Member Uploader { get; set; }
     }
