@@ -64,7 +64,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     this.taskService.getTaskPriorities().subscribe({
       next: data => {
         this.taskPriorities = data;
-        console.log(data);
       },
       error: error => {
         console.log('failed fetching task priorities');
@@ -104,8 +103,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 }
 
   saveTask(){
-    console.log(this.taskForm.value);
-
     if (this.taskForm.invalid) {
       this._ngToastService.error({
         detail: 'Please fill up inputs',
@@ -116,12 +113,8 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
     const taskData = this.taskForm.value;
 
-    console.log(taskData);
-
     //console.log(this.assignedMembersIds);
-    console.log(taskData);
     this.taskService.saveTask(taskData).subscribe(response => {
-      console.log('Task saved successfully:', response);
       this.taskAdded.emit();
       this.showMessage();
       this.closeDialog();

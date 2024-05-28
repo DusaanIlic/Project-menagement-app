@@ -114,7 +114,6 @@ export class PermissionService {
     return this.projectPermissions.get(projectId)!; // Using non-null assertion operator (!)
   }
 
-
   updateGlobalPermissions(globalPermissions: number[]): void {
     console.log(`updated global permissions to ${globalPermissions}`);
     this.globalPermissions = new Set<number>(globalPermissions);
@@ -123,5 +122,20 @@ export class PermissionService {
   updateProjectPermissions(projectId: number, permissions: number[]): void {
     console.log(`updated project ${projectId} permissions to ${permissions}`);
     this.projectPermissions.set(projectId, new Set<number>(permissions));
+  }
+
+  updateProjectTaskIds(projectId: number, taskIds: number[]): void {
+    console.log(`updated project ${projectId} assigned ids to ${taskIds}`);
+    this.projectTaskIds.set(projectId, new Set<number>(taskIds));
+  }
+
+  getProjectTaskIds(projectId: number): Set<number> {
+    projectId = Number(projectId);
+
+    if (!this.projectTaskIds.has(projectId)) {
+      return new Set<number>();
+    }
+
+    return this.projectTaskIds.get(projectId)!; // Using non-null assertion operator (!)
   }
 }
