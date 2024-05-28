@@ -52,7 +52,7 @@
 
         <ng-container matColumnDef="taskName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by taskName">TASK </th>
-          <td mat-cell *matCellDef="let task">
+          <td mat-cell *matCellDef="let task" style="width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: wrap;">
             <a class="hover:underline cursor-pointer" (click)="openDialogOverview(task.taskId)">{{task.taskName}}</a>
           </td>
         </ng-container>
