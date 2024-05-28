@@ -164,8 +164,13 @@ export class TaskService {
     return this.http.post<any[]>(`${TASKCOMMENTS_API}`, taskComment);
   }
 
-  changeTaskNameDescriptionDeadline(taskId : number, taskName : string, taskDescription : string, deadline : Date) : Observable<any[]>
+  changeTaskNameDescriptionDeadline(taskId : number, taskData : any) : Observable<any[]>
   {
-    return this.http.put<any[]>(`${TASK_API}/${taskId}`, { deadline, taskDescription, taskName});
+    return this.http.put<any[]>(`${TASK_API}/${taskId}`, taskData);
+  }
+
+  changeTaskPriority(taskId : number, priorityId : any)
+  {
+    return this.http.put<any[]>(`${TASK_API}/${taskId}/priority/${priorityId}`, null)
   }
 }

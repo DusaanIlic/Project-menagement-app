@@ -29,6 +29,7 @@ import {taskPriority} from "../../models/taskPriority";
 import {TaskStatus} from "../../models/task-status";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {Project} from "../../models/project";
 
 
 @Component({
@@ -156,11 +157,21 @@ export class AllTasksComponent implements OnInit {
     this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
   }
 
-  openDialogOverview(taskId : number)
+  openDialogOverview(task : Task)
   {
+    this.pService.getProjectById(task.projectId).subscribe((project : Project) =>
+    {
+      task.projectName = project.projectName;
+    })
+
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: taskId
+      width: '1200px',
+      height : '700px',
+      data: task
+    });
+
+    dialogRef.componentInstance.taskModified.subscribe(() => {
+      this.loadTasksByProject(this.projectId);
     });
   }
 

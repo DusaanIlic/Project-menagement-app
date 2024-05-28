@@ -4,9 +4,9 @@ import {
   AfterViewInit,
   Component,
   DoCheck,
-  ElementRef,
+  ElementRef, EventEmitter,
   Inject,
-  OnInit,
+  OnInit, Output,
   ViewChild
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -27,7 +27,7 @@ import {environment} from "../../../environments/environment";
 import {concatMap, forkJoin, Subscription, switchMap} from "rxjs";
 import {MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
 import {MatInput} from "@angular/material/input";
 import {MatListItem, MatNavList} from "@angular/material/list";
@@ -36,8 +36,18 @@ import {MatTab, MatTabGroup} from "@angular/material/tabs";
 import {MatToolbar} from "@angular/material/toolbar";
 import {MatButtonToggle} from "@angular/material/button-toggle";
 import {MatOption, MatSelect} from "@angular/material/select";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 import {taskComment} from "../../models/taskComment";
+import {Permission} from "../../models/permission";
+import {RoleService} from "../../services/role.service";
+import {PermissionService} from "../../services/permission.service";
+import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
+import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {ProjectStatus} from "../../models/project-status";
+import {TaskStatus} from "../../models/task-status";
+import {taskPriority} from "../../models/taskPriority";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-task-overview',
@@ -52,29 +62,43 @@ import {taskComment} from "../../models/taskComment";
     MatMenu,
     MatMenuItem,
     MatAnchor,
-    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter],
+    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter, HasProjectPermissionPipe, MatDatepicker, MatDatepickerInput, MatDatepickerToggle, MatHint, MatSuffix],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
 export class TaskOverviewComponent implements OnInit, DoCheck{
 
+    loggedUserId: any;
     editing : boolean = false;
     project : any;
-    activitiesForThisTask : taskActivity[] = [];
-    activities : taskActivity[] = [];
-    editor: Editor = new Editor;
-    taskActivityDesc: any;
     description: any;
-    selectedType: any;
     show: any;
-    showEditorForDesc: boolean = false;
     allTypes : any
+    selectedStatus : any;
+    selectedPriority : any;
+    today: Date = new Date();
+    protected readonly environment = environment;
+    @Output() taskModified: EventEmitter<any> = new EventEmitter<any>();
+
+
     taskActivityGroup! : FormGroup;
     taskActivityComment! : FormGroup;
     taskNameForm!: FormGroup;
     taskDescriptionForm!: FormGroup;
+    taskDeadlineForm!: FormGroup;
+    taskStatusForm!: FormGroup;
+    taskPriorityForm! : FormGroup;
+
+
     taskComments : taskComment[] = [];
-    loggedUserId: any;
+    permissions : Permission[] = [];
+    taskStatuses : TaskStatus[] = [];
+    activitiesForThisTask : taskActivity[] = [];
+    activities : taskActivity[] = [];
+    taskPriorities : taskPriority[] = [];
+
+
+    readonly ProjectPermission = ProjectPermission;
     @ViewChild('scrollableDiv') private scrollableDiv!: ElementRef;
 
   constructor(public dialogRef: MatDialogRef<TaskOverviewComponent>,
@@ -84,43 +108,86 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
               private _ngToastService: NgToastService,
               private sanitizer: DomSanitizer,
               private pService: ProjectServiceGet,
-              private fb: FormBuilder) { }
+              private fb: FormBuilder,
+              private rService : RoleService,
+              private permService : PermissionService,
+              private snackBar : MatSnackBar) { }
 
-  ngDoCheck(): void {
-        this.scrollToBottom()
-    }
+  ngDoCheck(): void
+  {
+      if(this.scrollableDiv != undefined)
+        this.scrollableDiv.nativeElement.scrollTop = this.scrollableDiv.nativeElement.scrollHeight;
+  }
 
   ngOnInit()
   {
     this.loggedUserId = localStorage.getItem('authenticated-member-id');
-    console.log(this.loggedUserId)
+
+    this.fetchTaskActivityStatuses();
+    this.fetchTaskActivities();
+    this.fetchTaskStatuses();
+    this.fetchTaskComments();
+    this.fetchTaskPriorityStatuses();
+
+
     this.taskActivityGroup = this.fb.group({
       description: ['', Validators.required],
-      taskActivityPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      percentageComplete: ['', [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^(100|[1-9]?[0-9])%?$')]],
       taskActivityTypeId: ['', Validators.required],
       taskId : [this.task.taskId]
     });
+
+    this.taskNameForm = this.fb.group({
+      deadline: [this.task.deadline],
+      taskDescription: [this.task.taskDescription],
+      taskName : [this.task.taskName, Validators.required],
+    })
+
+    this.taskDescriptionForm = this.fb.group({
+      deadline: [this.task.deadline],
+      taskDescription: [this.task.taskDescription, Validators.required],
+      taskName : [this.task.taskName],
+    })
+
+
+    this.taskDeadlineForm = this.fb.group({
+      deadline: [this.task.deadline, Validators.required],
+      taskDescription: [this.task.taskDescription],
+      taskName : [this.task.taskName],
+    })
 
     this.taskActivityComment = this.fb.group({
       taskId: [this.task.taskId],
       text: ['', Validators.required],
     })
 
-    this.show = 'overview'
+    this.taskStatusForm = this.fb.group({
+      statusId: [this.task.taskStatusId, Validators.required]
+    })
+
+    this.taskPriorityForm = this.fb.group({
+      priorityId: [this.task.taskPriorityId, Validators.required]
+    })
+
+    this.show = 'overview';
+
+
+  }//NGONINITEND
+
+
+
+  fetchTaskActivityStatuses()
+  {
     this.tService.getTaskActivityType().subscribe(data =>{
       this.allTypes = data;
     });
-
-    this.fetchTaskActivities();
   }
 
-    scrollToBottom(): void {
-    try {
-      if(this.scrollableDiv != undefined)
-        this.scrollableDiv.nativeElement.scrollTop = this.scrollableDiv.nativeElement.scrollHeight;
-    } catch (err) {
-      console.error('Could not scroll to bottom:', err);
-    }
+  fetchTaskStatuses()
+  {
+    this.pService.getAllTaskStatusesOnProject(this.task.projectId).subscribe((statuses : TaskStatus[]) =>{
+      this.taskStatuses = statuses;
+    })
   }
 
   fetchTaskActivities() : void
@@ -128,7 +195,6 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     this.tService.getTaskActivities().pipe(
       switchMap(taskActivities =>{
         this.activities = taskActivities
-        console.log(taskActivities)
         this.activitiesForThisTask = [];
 
         const observables = [];
@@ -158,20 +224,17 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
                 const taskActivityIndex = memberIndex + 1;
                 this.activities[i].taskActivityName = results[taskActivityIndex].taskActivityTypeName;
 
-                this.activities[i].comment = this.sanitizer.bypassSecurityTrustHtml(this.activities[i].comment) as string;
-
                 this.activitiesForThisTask.push(this.activities[i])
               }
 
             }
-            console.log(this.activities)
             return this.activities;
           })
         );
       })
     ).subscribe()
 
-    this.fetchTaskComments();
+
   }
 
   fetchTaskComments()
@@ -181,6 +244,24 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     })
   }
 
+  fetchTaskPriorityStatuses()
+  {
+    this.tService.getTaskPriorities().subscribe((priorities : taskPriority[]) =>{
+
+      this.taskPriorities = priorities;
+
+      console.log(this.taskPriorities);
+    })
+  }
+
+  updateTaskInfo()
+  {
+    this.tService.getTaskById(this.task.taskId).subscribe((task : Task) =>{
+      this.task = task;
+    })
+  }
+
+
 
 
   closeDialog(): void {
@@ -189,14 +270,13 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
 
   saveActivity()
   {
-    console.log(this.taskActivityGroup.value)
     if(this.taskActivityGroup.valid)
     {
       const taskActivity = this.taskActivityGroup.value;
 
       this.tService.saveTaskActivity(taskActivity).subscribe(
         {
-          next : next =>{console.log(next); this.fetchTaskActivities()},
+          next : next =>{ this.fetchTaskActivities()},
           error : error =>{console.log(error)}
         }
       );
@@ -221,71 +301,13 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     );
     }
 
-  assignRemove(event : any, memberId: number)
-  {
-    console.log(event.target.checked) // If true - assign if false - remove
-    const membersList = [memberId];
-    console.log(membersList)
-
-
-    if(event.target.checked) // assign
-    {
-      this.tService.assignMembersToTask(this.task.taskId, membersList).subscribe({
-        next : data =>{
-          console.log("Assigned to task!");
-        },
-        error : error =>{
-          console.log("Error assigning to task!");
-        }
-      })
-    }
-    else //remove
-    {
-      this.tService.removeMemberFromTask(this.task.taskId, memberId ).subscribe({
-        next : data =>{
-          console.log("Removed from task!");
-        },
-        error : error =>{
-          console.log("Error removing from task!");
-        }
-      })
-    }
-  }
-
-  checkIfAssignedToTask(memberId : number) : boolean
-  {
-    for(let i=0;i<this.task.assignedMembers.length;i++)
-    {
-      if(this.task.assignedMembers[i].id == memberId)
-        return true;
-    }
-    return false;
-  }
-
-    protected readonly environment = environment;
-    taskName: string = "";
-    taskDescription : string = "";
-    taskDeadline : Date = new Date();
-
-
-  editMode(forEdit: string)
-  {
-    if(forEdit == 'taskname')
-      this.editing = true;
-  }
-
-  changeTaskname() {
-    this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, this.taskName ,this.task.taskDescription, this.task.deadline).subscribe();
-    this.editing = false;
-  }
-
   saveComment()
   {
     if(this.taskActivityComment.valid)
     {
       const taskComment = this.taskActivityComment.value
       this.tService.saveTaskComment(taskComment).subscribe({
-        next : data =>{console.log(data); this.fetchTaskComments()},
+        next : data =>{ this.fetchTaskComments()},
         error : error => {console.log(error)}
       })
     }
@@ -293,9 +315,81 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
       this.taskActivityComment.markAllAsTouched();
   }
 
-  protected readonly close = close;
 
+  editTaskname()
+  {
+    if(this.taskNameForm.valid)
+    {
+      const taskData = this.taskNameForm.value
+      console.log(taskData)
+      this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, taskData).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task name!', 'Close', { duration: 3000 }); this.taskModified.emit();},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task name!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskNameForm.markAllAsTouched();
+  }
 
+  editTaskdescription()
+  {
+    if(this.taskDescriptionForm.valid)
+    {
+      const taskData = this.taskDescriptionForm.value
+      console.log(taskData)
+      this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, taskData).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task description!', 'Close', { duration: 3000 }); this.taskModified.emit();},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task description!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskDescriptionForm.markAllAsTouched();
+  }
+
+  editTaskdeadline()
+  {
+    if(this.taskDeadlineForm.valid)
+    {
+      const taskData = this.taskDeadlineForm.value
+      console.log(taskData)
+      this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, taskData).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task deadline!', 'Close', { duration: 3000 }); this.taskModified.emit();},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task deadline!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskDeadlineForm.markAllAsTouched();
+  }
+
+  editTaskstatus()
+  {
+    if(this.taskStatusForm.valid)
+    {
+      const taskData = this.taskStatusForm.value
+      console.log(taskData)
+      this.tService.updateTaskStatus(this.task.taskId, taskData.statusId).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task status!', 'Close', { duration: 3000 }); this.taskModified.emit();},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task status!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskStatusForm.markAllAsTouched();
+  }
+
+  editTaskpriority()
+  {
+    if(this.taskPriorityForm.valid)
+    {
+      const taskData = this.taskPriorityForm.value
+      console.log(taskData)
+      this.tService.changeTaskPriority(this.task.taskId, taskData.priorityId).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task priority!', 'Close', { duration: 3000 }); this.taskModified.emit();},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task priority!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskPriorityForm.markAllAsTouched();
+  }
 }
 
 

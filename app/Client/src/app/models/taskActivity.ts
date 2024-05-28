@@ -14,5 +14,5 @@ export interface taskActivity
     taskActivityName: string,
     differenceM : number,
     differenceH : number,
-    PercentageComplete : number
+    percentageComplete : number
 }

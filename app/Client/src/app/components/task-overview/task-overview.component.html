@@ -33,15 +33,18 @@
                     <form class="flex flex-col gap-2 w-[100%]" [formGroup]="taskActivityGroup">
                       <mat-form-field>
                         <mat-label>Task completion</mat-label>
-                        <input matInput placeholder="50%" value="" formControlName="taskActivityPercentage" required>
-                        <mat-error *ngIf="taskActivityGroup.get('taskActivityPercentage')?.hasError('required')">
+                        <input matInput placeholder="50%" value="" formControlName="percentageComplete" required>
+                        <mat-error *ngIf="taskActivityGroup.get('percentageComplete')?.hasError('required')">
                           Percentage is required
                         </mat-error>
-                        <mat-error *ngIf="taskActivityGroup.get('taskActivityPercentage')?.hasError('min')">
+                        <mat-error *ngIf="taskActivityGroup.get('percentageComplete')?.hasError('min')">
                           Minimum value is 0
                         </mat-error>
-                        <mat-error *ngIf="taskActivityGroup.get('taskActivityPercentage')?.hasError('max')">
+                        <mat-error *ngIf="taskActivityGroup.get('percentageComplete')?.hasError('max')">
                           Maximum value is 100
+                        </mat-error>
+                        <mat-error *ngIf="taskActivityGroup.get('percentageComplete')?.hasError('pattern')">
+                          Value must be number
                         </mat-error>
                       </mat-form-field>
 
@@ -69,35 +72,158 @@
                         </mat-error>
                       </mat-form-field>
                     </form>
-                    <button mat-raised-button color="primary" (click)="saveActivity()">Save activity</button>
+                    <button mat-raised-button color="primary" (click)="saveActivity()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.ADD_TASK_ACTIVITY)">Save activity</button>
                   </div>
                 </div>
 
 
-                <div class="">
-                  <div class="mt-2 flex flex-col gap-1 border-t-[1px] border-t-gray-400 h-[200px] overflow-y-scroll">
-                    <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="activitiesForThisTask.length === 0">
-                      <p>No task activities yet.</p>
-                    </div>
-                    <mat-card *ngFor="let taskAct of activitiesForThisTask">
-                      <div class="flex w-full rounded-md items-center px-1 border-b-[1px] border-b-gray-400">
-                        <img src="{{environment.apiUrl}}/Member/{{taskAct.workerId}}/Avatar" class="size-10 mr-2 border-[1px] border-gray-400 rounded-full" alt="">
-                        <div class="grow">
-                          <div class="text-lg">{{taskAct.memberName}} wrote "<div class="inline-block" [innerHTML]="taskAct.comment"></div>", task is now {{taskAct.PercentageComplete}}% completed.</div>
-                          <div class="flex flex-row gap-2">
-                            <p *ngIf="taskAct.differenceM < 60 && taskAct.differenceH < 1" class="text-sm">{{taskAct.differenceM}} minutes ago.</p>
-                            <p *ngIf="taskAct.differenceH < 24 && taskAct.differenceM >= 60" class="text-sm">{{taskAct.differenceH}} hours ago.</p>
-                            <p *ngIf="taskAct.differenceH >= 24" class="text-sm">{{taskAct.dateModify| date}}</p>
-                            <p class="font-semibold text-sm">{{taskAct.taskActivityName}}</p>
+
+                <div class="mt-2">
+                  <mat-card>
+                    <mat-card-title>
+                      <div class="p-2">
+                        Task activities
+                      </div>
+                    </mat-card-title>
+
+                    <mat-card-content>
+                      <div class="">
+                        <div class="mt-2 flex flex-col border-t-[1px] border-t-gray-400 h-[400px] overflow-y-scroll">
+                          <div class="flex w-full rounded-md items-center px-1 mt-2 " *ngIf="activities.length === 0">
+                            <p>No task comments yet.</p>
+                          </div>
+                          <div *ngFor="let taskAct of activities" class="w-[100%] h-min p-2">
+                            <div class="flex flex-row gap-1 justify-start items-end">
+                              <img src="{{environment.apiUrl}}/Member/{{taskAct.workerId}}/Avatar" class="flex rounded-full size-8">
+                              <div class="w-[90%]">
+                                <mat-card>
+                                  <div class="p-2">
+                                    <div class="underline">
+                                      {{taskAct.memberName}}
+                                    </div>
+                                    <div>
+                                      {{taskAct.comment}}
+                                    </div>
+                                  </div>
+
+                                  <mat-card-footer>
+                                      <div class="py-2 flex text-sm justify-between">
+                                        <div class="flex">
+                                          <p class="font-semibold text-sm">Type: {{taskAct.taskActivityName}}; Completed: {{taskAct.percentageComplete}}%</p>
+                                        </div>
+                                        <div class="flex">
+                                          <p *ngIf="taskAct.differenceM < 60 && taskAct.differenceH < 1" class="text-sm">{{taskAct.differenceM}} minutes ago.</p>
+                                          <p *ngIf="taskAct.differenceH < 24 && taskAct.differenceM >= 60" class="text-sm">{{taskAct.differenceH}} hours ago.</p>
+                                          <p *ngIf="taskAct.differenceH >= 24" class="text-sm">{{taskAct.dateModify| date}}</p>
+                                        </div>
+                                      </div>
+                                  </mat-card-footer>
+                                </mat-card>
+                              </div>
+                              <div class="w-[10%]">
+                                <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+                                  <div class="flex items-center justify-center">
+                                    <mat-icon>delete_forever</mat-icon>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div class="size-5 mr-2 hover:cursor-pointer" (click)="deleteTaskActivity(taskAct)"><mat-icon>delete_forever</mat-icon></div>
                       </div>
-                    </mat-card>
-                  </div>
+
+                    </mat-card-content>
+                  </mat-card>
                 </div>
+
+
+
               </mat-card-content>
             </mat-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <div class="mt-2">
               <mat-card>
@@ -170,7 +296,7 @@
                         </mat-form-field>
                       </div>
                     </form>
-                    <button mat-raised-button color="primary" (click)="saveComment()">Save comment</button>
+                    <button mat-raised-button color="primary" (click)="saveComment()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.COMMENT_TASK)">Save comment</button>
                   </div>
 
                 </mat-card-content>
@@ -188,11 +314,21 @@
                 <mat-card>
                   <mat-card-title class="pl-2"><h1>Task name</h1></mat-card-title>
                   <mat-card-content>
-                    <form [formGroup]="taskNameForm">
-                      <mat-form-field class="w-full">
-                        <input matInput placeholder="Task name 1" value="{{task.taskName}}">
-                      </mat-form-field>
-                    </form>
+                    <div class="flex flex-row w-full">
+                      <form class="flex w-full" [formGroup]="taskNameForm">
+                        <mat-form-field class="w-full">
+                          <input matInput placeholder="Task name 1" formControlName="taskName" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)">
+                        </mat-form-field>
+                      </form>
+
+                      <div>
+                        <button mat-button type="button" class="flex justify-center items-center" (click)="editTaskname()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)">
+                          <div class="flex items-center justify-center">
+                            <mat-icon>done</mat-icon>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
                   </mat-card-content>
                 </mat-card>
               </div>
@@ -201,17 +337,144 @@
                 <mat-card>
                   <mat-card-title class="pl-2"><h1>Task description</h1></mat-card-title>
                   <mat-card-content>
-                    <form [formGroup]="taskDescriptionForm">
-                      <mat-form-field class="w-full">
-                        <textarea matInput placeholder="Task description" value="{{task.taskDescription}}"></textarea>
-                      </mat-form-field>
-                    </form>
+                    <div class="flex flex-row w-full">
+                      <form class="flex w-full" [formGroup]="taskDescriptionForm">
+                        <mat-form-field class="w-full">
+                          <textarea matInput placeholder="Task description" formControlName="taskDescription" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)"></textarea>
+                        </mat-form-field>
+                      </form>
+
+                      <div>
+                        <button mat-button type="button" class="flex justify-center items-center" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)" (click)="editTaskdescription()">
+                          <div class="flex items-center justify-center">
+                            <mat-icon>done</mat-icon>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
                   </mat-card-content>
                 </mat-card>
               </div>
+
+
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Start date</h1></mat-card-title>
+                  <mat-card-content>
+                      <mat-form-field class="w-full">
+                        <input matInput [matDatepicker]="picker1" [min]="today" disabled value="{{task.startDate}}">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <mat-hint>MM/DD/YYYY</mat-hint>
+                      </mat-form-field>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Deadline</h1></mat-card-title>
+                  <mat-card-content>
+                    <div class="flex flex-row w-full">
+                      <form class="flex w-full" [formGroup]="taskDeadlineForm">
+                        <mat-form-field class="w-full">
+                          <input matInput [matDatepicker]="picker2" [min]="today" formControlName="deadline" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)">
+                          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                          <mat-datepicker #picker2></mat-datepicker>
+                          <mat-hint>MM/DD/YYYY</mat-hint>
+                        </mat-form-field>
+                      </form>
+
+                      <div>
+                        <button mat-button type="button" class="flex justify-center items-center" (click)="editTaskdeadline()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)">
+                          <div class="flex items-center justify-center">
+                            <mat-icon>done</mat-icon>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Task status</h1></mat-card-title>
+                  <mat-card-content>
+                    <div class="flex flex-row w-full">
+                      <form class="flex w-full" [formGroup]="taskStatusForm">
+                        <mat-form-field class="w-full">
+                          <mat-select formControlName="statusId" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)">
+                            <mat-option *ngFor="let tS of taskStatuses" [value]="tS.id" >{{tS.name}}</mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="taskStatusForm.controls['statusId'].hasError('required')">
+                            Field is required
+                          </mat-error>
+                        </mat-form-field>
+                      </form>
+
+                      <div>
+                        <button mat-button type="button" class="flex justify-center items-center" (click)="editTaskstatus()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)">
+                          <div class="flex items-center justify-center">
+                            <mat-icon>done</mat-icon>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div>
+                <mat-card>
+                  <mat-card-title class="pl-2"><h1>Task priority</h1></mat-card-title>
+                  <mat-card-content>
+                    <div class="flex flex-row w-full">
+                      <form class="flex w-full" [formGroup]="taskPriorityForm">
+                        <mat-form-field class="w-full">
+                          <mat-select formControlName="priorityId" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_PRIORITY)">
+                            <mat-option [value]="tP.taskPriorityId" *ngFor="let tP of taskPriorities"><span class="text-[{{tP.color}}]">{{tP.name}}</span></mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="taskPriorityForm.controls['priorityId'].hasError('required')">
+                            Field is required
+                          </mat-error>
+                        </mat-form-field>
+                      </form>
+
+                      <div>
+                        <button mat-button type="button" class="flex justify-center items-center" (click)="editTaskpriority()" [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_PRIORITY)">
+                          <div class="flex items-center justify-center">
+                            <mat-icon>done</mat-icon>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </mat-card>
           </div>
-
         </div>
     </mat-tab>
 
