@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {
   AfterContentInit,
   AfterViewInit,
@@ -48,6 +48,25 @@ import {ProjectStatus} from "../../models/project-status";
 import {TaskStatus} from "../../models/task-status";
 import {taskPriority} from "../../models/taskPriority";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow, MatRowDef, MatTable, MatTableDataSource
+} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort, MatSortHeader, Sort} from "@angular/material/sort";
+import {LiveAnnouncer} from "@angular/cdk/a11y";
+import {Member} from "../../models/member";
+import {Role} from "../../models/role";
+import {SignalRService} from "../../services/signal-r.service";
+import {AvatarComponent} from "../avatar/avatar.component";
+
+
+
 
 @Component({
   selector: 'app-task-overview',
@@ -62,14 +81,16 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     MatMenu,
     MatMenuItem,
     MatAnchor,
-    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter, HasProjectPermissionPipe, MatDatepicker, MatDatepickerInput, MatDatepickerToggle, MatHint, MatSuffix],
+    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter, HasProjectPermissionPipe, MatDatepicker, MatDatepickerInput, MatDatepickerToggle, MatHint, MatSuffix, MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderRow, MatHeaderRowDef, MatPaginator, MatRow, MatRowDef, MatSort, MatSortHeader, MatTable, MatHeaderCellDef, AvatarComponent, NgOptimizedImage],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
+
+
+
 export class TaskOverviewComponent implements OnInit, DoCheck{
 
     loggedUserId: any;
-    editing : boolean = false;
     project : any;
     description: any;
     show: any;
@@ -79,6 +100,12 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     today: Date = new Date();
     protected readonly environment = environment;
     @Output() taskModified: EventEmitter<any> = new EventEmitter<any>();
+    taskLeaderId : any;
+    waiting: boolean = false;
+    @ViewChild(MatSort)sort: any;
+    @ViewChild(MatPaginator) paginator: any;
+    onlineAssignees: Set<number> = new Set<number>();
+
 
 
     taskActivityGroup! : FormGroup;
@@ -88,6 +115,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     taskDeadlineForm!: FormGroup;
     taskStatusForm!: FormGroup;
     taskPriorityForm! : FormGroup;
+    taskLeaderFormGroup!: FormGroup;
 
 
     taskComments : taskComment[] = [];
@@ -96,6 +124,10 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     activitiesForThisTask : taskActivity[] = [];
     activities : taskActivity[] = [];
     taskPriorities : taskPriority[] = [];
+    membersOnThisTask : Member[] = []
+    allMembersOnProject : Member[] = [];
+    projectRoles: Role[] = [];
+
 
 
     readonly ProjectPermission = ProjectPermission;
@@ -105,13 +137,11 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
               @Inject(MAT_DIALOG_DATA) public task: Task,
               private tService : TaskService,
               private mService : MemberService,
-              private _ngToastService: NgToastService,
-              private sanitizer: DomSanitizer,
               private pService: ProjectServiceGet,
               private fb: FormBuilder,
-              private rService : RoleService,
-              private permService : PermissionService,
-              private snackBar : MatSnackBar) { }
+              private snackBar : MatSnackBar,
+              private _liveAnnouncer: LiveAnnouncer,
+              private signalRService: SignalRService) { }
 
   ngDoCheck(): void
   {
@@ -121,6 +151,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
 
   ngOnInit()
   {
+    this.fetchMembersOnTask();
     this.loggedUserId = localStorage.getItem('authenticated-member-id');
 
     this.fetchTaskActivityStatuses();
@@ -129,6 +160,31 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     this.fetchTaskComments();
     this.fetchTaskPriorityStatuses();
 
+
+
+    this.signalRService.getConnectedMemberIds().subscribe({
+      next: data => {
+        this.onlineAssignees = data;
+      },
+      error: err => {
+        console.log('failed fetching online members')
+      }
+    });
+
+    this.pService.getAllProjectRoles(this.task.projectId).subscribe({
+      next: data => {
+        this.projectRoles = data;
+      },
+      error: err => {
+        console.log('failed fetching project roles');
+      }
+    });
+
+
+    this.taskLeaderFormGroup = this.fb.group({
+      taskId: [this.task.taskId],
+      newTaskLeaderId: ['', Validators.required]
+    })
 
     this.taskActivityGroup = this.fb.group({
       description: ['', Validators.required],
@@ -392,6 +448,116 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     else
       this.taskPriorityForm.markAllAsTouched();
   }
+
+
+
+
+
+
+
+
+
+
+
+  search(event: any): void {
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
+
+  isMemberTeamLeader(mId : number) : boolean
+  {
+    if(mId === this.taskLeaderId)
+      return true;
+    return false
+  }
+
+  assignRemove(event : any, memberId: number)
+  {
+    console.log(event)
+    const membersList = [memberId];
+
+
+    if(event) // assign
+    {
+      this.waiting = true;
+      this.tService.assignMembersToTask(this.task.taskId, membersList).subscribe({
+        next : data =>{
+          this.snackBar.open('Successfully assigned member to task!', 'Close', { duration: 3000 });
+          this.waiting = false;
+          this.fetchMembersOnTask()
+        },
+        error : error =>{
+          this.snackBar.open('Failed assigning member to task!', 'Close', { duration: 3000 });
+          this.waiting = false;
+        }
+      })
+    }
+    else //remove
+    {
+      this.waiting = true;
+      this.tService.removeMembersFromTask(this.task.taskId, memberId).subscribe({
+        next : data =>{
+          this.snackBar.open('Successfully unassigned member from task!', 'Close', { duration: 3000 });
+          this.waiting = false;
+          this.fetchMembersOnTask()
+        },
+        error : error =>{
+          this.snackBar.open('Failed unassigning member from task!', 'Close', { duration: 3000 });
+          this.waiting = false;
+        }
+      })
+    }
+  }
+  dataSource : any
+  displayedColumns = ['assigned', 'avatar', 'name', 'projectRole', 'email'];
+
+  fetchMembersOnTask()
+  {
+      this.tService.getTaskById(this.task.taskId).subscribe((data : Task)=>{
+      this.taskLeaderId = data.taskLeaderId
+      this.membersOnThisTask = data.assignedMembers;
+      this.pService.getMembersByProjectId(this.task.projectId).subscribe((members2 : Member[]) =>{
+        this.allMembersOnProject = members2;
+        this.dataSource = new MatTableDataSource(this.allMembersOnProject);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
+    })
+
+  }
+
+  isMemberOnTask(memberId : number) : boolean
+  {
+    for(let i=0;i<this.membersOnThisTask.length;i++)
+    {
+      if(memberId === this.membersOnThisTask[i].id)
+        return true;
+    }
+    return false;
+  }
+
+  editTaskLeader()
+  {
+    if(this.taskLeaderFormGroup.valid)
+    {
+      const taskData = this.taskLeaderFormGroup.value
+      this.tService.assignNewTaskLeader(this.task.taskId, taskData.newTaskLeaderId ).subscribe({
+        next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task leader!', 'Close', { duration: 3000 }); this.taskModified.emit(); this.fetchMembersOnTask()},
+        error : error => {console.log(error); this.snackBar.open('Failed to change task leader!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.taskLeaderFormGroup.markAllAsTouched();
+  }
+
 }
 
 
