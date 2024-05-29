@@ -35,6 +35,8 @@ import {
 } from "@angular/material/datepicker";
 import {provideNativeDateAdapter} from "@angular/material/core";
 import {ProjectServiceGet} from "../../services/project.service";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-project',
@@ -63,7 +65,8 @@ import {ProjectServiceGet} from "../../services/project.service";
     MatDatepicker,
     MatOption,
     MatDatepickerModule,
-    MatSuffix
+    MatSuffix,
+    MatProgressSpinner
   ]
 })
 export class AddProjectComponent implements OnInit {
@@ -72,10 +75,11 @@ export class AddProjectComponent implements OnInit {
   projectForm!: FormGroup;
   projectPriorities: any;
 
+  isLoading: boolean = false;
   today: Date = new Date(); // Initialize today's date
 
   constructor(public dialogRef: MatDialogRef<AddProjectComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-                private projectService: ProjectServiceGet, private _ngToastService: NgToastService,
+                private projectService: ProjectServiceGet, private matSnackBar: MatSnackBar,
                   private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -101,23 +105,19 @@ export class AddProjectComponent implements OnInit {
   }
 
   showMessage() {
-    this._ngToastService.success({
-      detail: 'Success Message',
-      summary: 'Project added successfully!',
-      duration: 3000,
-    });
+    this.matSnackBar.open('Project added succesfully.', 'Close', { duration: 3000 });
+
   }
 
   showMessageError() {
-    this._ngToastService.error({
-      detail: 'Error Message',
-      summary: 'Project add failed!',
-      duration: 3000,
-    });
+    this.matSnackBar.open('Failed adding project.', 'Close', { duration: 3000 });
+
   }
 
   addProject() {
     if (this.projectForm.valid) {
+      this.isLoading = true;
+
       const projectData = this.projectForm.value;
 
       this.projectService.addProject(projectData).subscribe({
@@ -130,6 +130,7 @@ export class AddProjectComponent implements OnInit {
 
           // Show success message
           this.showMessage();
+          this.isLoading = false;
         },
         error: (error: any) => {
           // Show error message
@@ -137,6 +138,7 @@ export class AddProjectComponent implements OnInit {
 
           // Log the error
           console.log('Error adding project:', error);
+          this.isLoading = false;
         }
       });
     } else {

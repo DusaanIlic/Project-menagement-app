@@ -57,19 +57,21 @@
              [items]="ganttItems"
              [groups]="ganttGroups"
              [viewType]="viewType"
-             [draggable]="(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)"
+             [draggable]="true"
              [selectable]="true"
+             [virtualScrollEnabled]="true"
              [multiple]="true"
-             [linkable]="(projectId | hasProjectPermission:ProjectPermission.ADD_TASK_DEPENDENCY)"
+             [linkable]="true"
              [showTodayLine]="true"
              (barClick)="barClick($event)"
              (selectedChange)="selectedChange($event)"
+             (dragStarted)="dragStarted($event)"
              (dragEnded)="dragEnded($event)"
              (lineClick)="linkClick($event)"
              (linkDragEnded)="linkEnded($event)"
              class="mat-elevation-z8 select-none mat-pr overflow-y-auto overflow-x-auto">
 
-    <ngx-gantt-table>
+    <ngx-gantt-table class="overflow-x-auto overflow-y-auto">
       <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
         <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
       </ngx-gantt-column>
@@ -107,7 +109,7 @@
     </ngx-gantt-table>
 
     <ng-template #bar let-item="item">
-      <span class="text-white">&nbsp;&nbsp;{{ item.title }} </span>
+      <span class="text-white">&nbsp;&nbsp;{{ item.title }}</span>
     </ng-template>
   </ngx-gantt>
 </div>

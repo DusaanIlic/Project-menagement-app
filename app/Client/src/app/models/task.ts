@@ -13,6 +13,7 @@ export interface Task {
   taskPriorityId: number;
   isTaskDependentOn : boolean;
   taskCategoryId: number;
+  taskCategoryName: string;
   assignedMembers: Member[];
   taskPriorityName : string;
   dependentTasks?: any;

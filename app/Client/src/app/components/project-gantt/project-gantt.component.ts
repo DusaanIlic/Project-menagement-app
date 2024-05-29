@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   GANTT_GLOBAL_CONFIG,
   GanttBarClickEvent,
@@ -19,7 +19,7 @@ import {TaskService} from "../../services/task.service";
 import {switchMap} from "rxjs/operators";
 import {Task} from "../../models/task";
 import {combineLatest, forkJoin, map} from "rxjs";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatDialog} from "@angular/material/dialog";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
@@ -36,6 +36,8 @@ import {MatSelect} from "@angular/material/select";
 import {TaskStatus} from "../../models/task-status";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {Permission} from "../../models/permission";
+import {ganttUpdater, PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'app-project-gantt',
@@ -60,6 +62,7 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
     MatSelect,
     NgStyle,
     HasProjectPermissionPipe,
+    MatIconButton,
 
   ],
   templateUrl: './project-gantt.component.html',
@@ -71,7 +74,7 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
         dateFormat: {
           yearQuarter: `QQQ 'of' yyyy`,
           month: 'LLLL',
-          week: 'LLLL',
+          week: `LLLL`,
           yearWeek: 'LLLL',
           yearMonth: `LLLL yyyy`,
           year: 'yyyy',
@@ -98,6 +101,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   defaultPriority: number = 0;
   selectedPriority: number = 0;
   searchedTerm: string = '';
+  private currentBuffer: number = 0;
+  private bufferIncrement: number = 10000;
   private originalGanttItems: any = [];
   private routeSubscription: any;
 
@@ -121,8 +126,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   viewType: GanttViewType = GanttViewType.day;
   selectedViewType: GanttViewType = GanttViewType.day;
 
-  constructor(private route: ActivatedRoute, private taskService: TaskService,
-              private matDialog: MatDialog, private snackBar: MatSnackBar) { }
+  constructor(
+    private route: ActivatedRoute,
+    private taskService: TaskService,
+    private matDialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private permissionService: PermissionService,
+  ) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -155,7 +165,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       next: ({ tasks, taskCategories }) => {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
-        console.log(this.tasks);
         this.mapTasksToGanttItems(false);
       },
       error: error => {
@@ -179,7 +188,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       error: err => {
         console.log('failed fetching task statuses');
       }
-    })
+    });
+
+    ganttUpdater.subscribe(response => {
+      this.currentBuffer += this.bufferIncrement;
+      this.mapTasksToGanttItems(false);
+      console.log(`refreshing gantt page because of permission update! (buffer state: ${this.currentBuffer}`);
+    });
   }
 
   ngOnDestroy() {
@@ -200,25 +215,26 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       }
     });
 
+    const projectPermissions: Set<number> = this.permissionService.getProjectPermissions(this.projectId);
+
     this.originalGanttItems = this.tasks.map((task: Task) => {
-      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
+      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId + this.currentBuffer)) || [];
       const links = dependentTaskIds.length ? dependentTaskIds : undefined;
 
       return {
-        id: String(task.taskId),
+        id: String(task.taskId + this.currentBuffer),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
-        start: new Date(task.startDate).getTime(),
-        end: new Date(task.deadline).getTime(),
+        start: task.startDate,
+        end: task.deadline,
         color: '#3F51B5',
         barStyle: {
           border: '1px solid black'
         },
         links: links,
         progress: task.taskStatusId === 3 ? 0 : -1, // Call your progress calculation method,
-        itemDraggable: task.taskStatusId !== 3,
-        draggable:  task.taskStatusId !== 3,
-        linkable: task.taskStatusId !== 3,
+        draggable:  task.taskStatusId !== 3 && projectPermissions.has(ProjectPermission.CHANGE_TASK),
+        linkable: task.taskStatusId !== 3 && projectPermissions.has(ProjectPermission.ADD_TASK_DEPENDENCY),
         taskStatusId:  task.taskStatusId,
         taskPriorityId: task.taskPriorityId,
         taskStatusName: task.taskStatus,
@@ -229,6 +245,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
     this.ganttItems = this.originalGanttItems;
     this.applyFilters(changeView);
+
+    console.log('mapped all taks to gantt items');
   }
 
   scrollToToday() {
@@ -248,7 +266,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   barClick($event: GanttBarClickEvent) {
-    this.openTaskOverview(Number($event.item.id));
+    this.openTaskOverview(Number($event.item.id) - this.currentBuffer);
   }
 
   openTaskOverview(taskId: number): void {
@@ -273,36 +291,58 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     });
   }
 
+  oldStart: any;
+  oldEnd: any;
+
+  dragStarted(event: GanttDragEvent<unknown>) {
+    if (event.item.id && event.item.start && event.item.end) {
+      this.oldStart = event.item.start;
+      this.oldEnd =  event.item.end;
+    }
+  }
+
   dragEnded(event: GanttDragEvent) {
     if (event.item.id && event.item.start && event.item.end) {
-      const taskId = Number(event.item.id);
+      const taskId = Number(event.item.id) - this.currentBuffer;
+
       const startTimestamp = event.item.start * 1000;
       const endTimestamp = event.item.end * 1000;
 
       // Create UTC dates
-      const utcStartDate = new Date(startTimestamp);
-      const utcEndDate = new Date(endTimestamp);
+      const startDate = new Date(startTimestamp);
+      const endDate = new Date(endTimestamp);
+      endDate.setSeconds(0);
+      endDate.setMinutes(0);
+      endDate.setHours(0);
 
-      console.log(utcStartDate);
-      console.log(utcEndDate);
+      if (startDate > endDate) {
+        const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
+        task.startDate = this.oldStart;
+        task.deadline = this.oldEnd;
 
-      // // Set the timezone offset to 0 to get the UTC time
-      // utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
-      // utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
+        this.mapTasksToGanttItems(false);
 
-      console.log(`UTC Start Date: ${utcStartDate.toISOString()}, UTC End Date: ${utcEndDate.toISOString()}`);
+        this.snackBar.open('Failed changing task date!', 'Close', { duration: 1500 });
 
-      this.taskService.changeTaskDates(taskId, utcStartDate, utcEndDate).subscribe({
+        return;
+      }
+
+
+      this.taskService.changeTaskDates(taskId, startDate, endDate).subscribe({
         next: data => {
           const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
-          task.startDate = utcStartDate;
-          task.deadline = utcEndDate;
+          task.startDate = startDate;
+          task.deadline = endDate;
 
           this.mapTasksToGanttItems(false);
 
           this.snackBar.open('Successfully changed task date!', 'Close', { duration: 1500 });
         },
         error: error => {
+          const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
+          task.startDate = this.oldStart;
+          task.deadline = this.oldEnd;
+          this.mapTasksToGanttItems(false);
           this.snackBar.open('Failed changing task date!', 'Close', { duration: 1500 });
         }
       });
@@ -311,8 +351,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   linkEnded(event: GanttLinkDragEvent) {
     if (event.source && event.target) {
-      const taskId= Number(event.source.id);
-      const dTaskId= Number(event.target.id);
+      const taskId= Number(event.source.id) - this.currentBuffer;
+      const dTaskId= Number(event.target.id) - this.currentBuffer;
 
       this.taskService.addTaskDependency(taskId, dTaskId).subscribe({
         next: data => {
@@ -356,8 +396,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   linkClick(event: GanttLineClickEvent<unknown>) {
     if (event.source && event.target) {
-      const taskId= Number(event.source.id);
-      const dTaskId= Number(event.target.id);
+      const projectPermissions: Set<number> = this.permissionService.getProjectPermissions(this.projectId);
+
+      if (!projectPermissions.has(ProjectPermission.REMOVE_TASK_DEPENDENCY)) {
+        this.snackBar.open('You dont have permission to remove task dependency!', 'Close', { duration: 1500 });
+
+        return;
+      }
+
+      const taskId= Number(event.source.id) - this.currentBuffer;
+      const dTaskId= Number(event.target.id) - this.currentBuffer;
 
       this.taskService.removeTaskDependency(taskId, dTaskId).subscribe({
         next: data => {

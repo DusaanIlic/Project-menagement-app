@@ -121,4 +121,8 @@ export class MemberService {
   getProjectPermissions(memberId: number): Observable<Map<number, number[]>> {
     return this.http.get<Map<number, number[]>>(`${API}/${memberId}/GetProjectPermissions`);
   }
+
+  getProjectTasks(memberId: number): Observable<Map<number, number[]>> {
+    return this.http.get<Map<number, number[]>>(`${API}/${memberId}/GetProjectTasks`);
+  }
 }

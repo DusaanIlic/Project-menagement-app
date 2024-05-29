@@ -15,6 +15,7 @@ using Server.Services.Permission;
 using System.Threading.Tasks;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
+using Server.Services.PermissionNotifier;
 
 namespace Server.Controllers
 {
@@ -27,14 +28,18 @@ namespace Server.Controllers
         private readonly IEmailService _emailService;
         private readonly INotificationService _notificationService;
         private readonly IFileService _fileService;
+        private readonly IPermissionNotifier _permissionNotifier;
 
-        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, IEmailService emailService, INotificationService notificationService, IFileService fileService)
+        public TaskController(LogicTenacityDbContext dbContext, IPermissionService permissionService, 
+                                IEmailService emailService, INotificationService notificationService, 
+                                    IFileService fileService, IPermissionNotifier permissionNotifier)
         {
             this.dbContext = dbContext;
             _permissionService = permissionService;
             _emailService = emailService;
             _notificationService = notificationService;
             _fileService = fileService;
+            _permissionNotifier = permissionNotifier;
         }
 
         [Authorize]
@@ -279,7 +284,7 @@ namespace Server.Controllers
                 };
 
                 await _notificationService.SendNotification(sendNotificationRequest);
-
+                await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, assignedMember.Id);
             }
 
             return Ok(tasksDTO);

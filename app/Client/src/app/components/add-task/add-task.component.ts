@@ -15,6 +15,7 @@ import { MatCard, MatCardHeader, MatCardContent, MatCardActions } from '@angular
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-task',
@@ -45,17 +46,18 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   projectId: number | null = null;
   taskPriorities: any;
   projectMembers: Member[] = [];
-  selectedMembers: number[] = [];
+  selectedMembers: Member[] = [];
   assignedMembersIds: number[] = [];
   members = new FormControl('');
   taskForm!: FormGroup;
   today = new Date();
+  isLoading: boolean = false;
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private taskService: TaskService, private _ngToastService: NgToastService, private fb: FormBuilder) {}
+              private taskService: TaskService, private matSnackBar: MatSnackBar, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -64,7 +66,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     this.taskService.getTaskPriorities().subscribe({
       next: data => {
         this.taskPriorities = data;
-        console.log(data);
       },
       error: error => {
         console.log('failed fetching task priorities');
@@ -76,8 +77,18 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       deadline: ['', Validators.required],
       taskPriorityId: ['', Validators.required],
       assignedMemberIds: [[], [Validators.required]],
+      taskLeaderId: ['', Validators.required],
       taskDescription: ['', [Validators.required]],
       projectId: [this.projectId]
+    });
+
+    this.taskForm.get('assignedMemberIds')?.valueChanges.subscribe(selectedIds => {
+      console.log('Selected Member IDs:', selectedIds);  // Debugging statement
+      this.selectedMembers = this.projectMembers.filter(member => selectedIds.includes(member.id));
+      if (!selectedIds.includes(this.taskForm.get('taskLeaderId')?.value)) {
+        this.taskForm.get('taskLeaderId')?.reset();
+      }
+      console.log('Selected Members:', this.selectedMembers);  // Debugging statement
     });
   }
 
@@ -97,35 +108,32 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 }
 
   saveTask(){
-    console.log(this.taskForm.value);
-    console.log("kurasd");
-
     if (this.taskForm.invalid) {
-      this._ngToastService.error({
-        detail: 'Please fill up inputs',
-        summary: 'Adding failed: Inputs cannot be empty'
-      });
+      this.matSnackBar.open('Form inputs are invalid.', 'Close', { duration: 3000 });
+      this.taskForm.markAllAsTouched();
+
       return;
     }
 
+    this.isLoading = true;
+
     const taskData = this.taskForm.value;
 
-    console.log(taskData);
-
     //console.log(this.assignedMembersIds);
-    console.log(taskData);
     this.taskService.saveTask(taskData).subscribe(response => {
-      console.log('Task saved successfully:', response);
       this.taskAdded.emit();
       this.showMessage();
       this.closeDialog();
+
+      this.isLoading = false;
     }, error => {
       console.error('Error saving task', error);
+      this.isLoading = false;
     });
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this.matSnackBar.open('Successfully saved task.', 'Close', { duration: 3000 });
   }
 
   getProjectMembers() {
@@ -133,7 +141,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       this.taskService.getProjectMembers(this.projectId).subscribe({
         next: (data: Member[]) => {
           this.projectMembers = data;
-          console.log(this.projectMembers);
         },
         error: error => {
           console.log('Error fetching project members:', error);
@@ -141,10 +148,4 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       });
     }
   }
-
-  toggleMember(event: MatSelectChange) {
-    this.selectedMembers = event.value;
-    this.assignedMembersIds = this.selectedMembers;
-  }
-
 }
