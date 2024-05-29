@@ -132,6 +132,8 @@ export class TaskService {
   }
 
   changeTaskDates(taskId: number, startDate: Date, deadline: Date) {
+    startDate.setHours(startDate.getHours() + 2);
+    deadline.setHours(deadline.getHours() + 2);
     return this.http.put(`${TASK_API}/${taskId}/ChangeDates`, { startDate, deadline });
   }
 

@@ -71,7 +71,7 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
         dateFormat: {
           yearQuarter: `QQQ 'of' yyyy`,
           month: 'LLLL',
-          week: 'LLLL',
+          week: `LLLL`,
           yearWeek: 'LLLL',
           yearMonth: `LLLL yyyy`,
           year: 'yyyy',
@@ -208,15 +208,14 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         id: String(task.taskId),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
-        start: new Date(task.startDate).getTime(),
-        end: new Date(task.deadline).getTime(),
+        start: task.startDate,
+        end: task.deadline,
         color: '#3F51B5',
         barStyle: {
           border: '1px solid black'
         },
         links: links,
         progress: task.taskStatusId === 3 ? 0 : -1, // Call your progress calculation method,
-        itemDraggable: task.taskStatusId !== 3,
         draggable:  task.taskStatusId !== 3,
         linkable: task.taskStatusId !== 3,
         taskStatusId:  task.taskStatusId,
@@ -273,6 +272,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     });
   }
 
+  oldStart: any;
+  oldEnd: any;
+
+  dragStarted(event: GanttDragEvent<unknown>) {
+    if (event.item.id && event.item.start && event.item.end) {
+      this.oldStart = event.item.start;
+      this.oldEnd =  event.item.end;
+    }
+  }
+
   dragEnded(event: GanttDragEvent) {
     if (event.item.id && event.item.start && event.item.end) {
       const taskId = Number(event.item.id);
@@ -280,29 +289,40 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       const endTimestamp = event.item.end * 1000;
 
       // Create UTC dates
-      const utcStartDate = new Date(startTimestamp);
-      const utcEndDate = new Date(endTimestamp);
+      const startDate = new Date(startTimestamp);
+      const endDate = new Date(endTimestamp);
+      endDate.setSeconds(0);
+      endDate.setMinutes(0);
+      endDate.setHours(0);
 
-      console.log(utcStartDate);
-      console.log(utcEndDate);
+      if (startDate > endDate) {
+        const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
+        task.startDate = this.oldStart;
+        task.deadline = this.oldEnd;
 
-      // // Set the timezone offset to 0 to get the UTC time
-      // utcStartDate.setMinutes(utcStartDate.getMinutes() - utcStartDate.getTimezoneOffset());
-      // utcEndDate.setMinutes(utcEndDate.getMinutes() - utcEndDate.getTimezoneOffset());
+        this.mapTasksToGanttItems(false);
 
-      console.log(`UTC Start Date: ${utcStartDate.toISOString()}, UTC End Date: ${utcEndDate.toISOString()}`);
+        this.snackBar.open('Failed changing task date!', 'Close', { duration: 1500 });
 
-      this.taskService.changeTaskDates(taskId, utcStartDate, utcEndDate).subscribe({
+        return;
+      }
+
+
+      this.taskService.changeTaskDates(taskId, startDate, endDate).subscribe({
         next: data => {
           const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
-          task.startDate = utcStartDate;
-          task.deadline = utcEndDate;
+          task.startDate = startDate;
+          task.deadline = endDate;
 
           this.mapTasksToGanttItems(false);
 
           this.snackBar.open('Successfully changed task date!', 'Close', { duration: 1500 });
         },
         error: error => {
+          const task = this.tasks.find((tp: Task) => tp.taskId === taskId);
+          task.startDate = this.oldStart;
+          task.deadline = this.oldEnd;
+          this.mapTasksToGanttItems(false);
           this.snackBar.open('Failed changing task date!', 'Close', { duration: 1500 });
         }
       });
