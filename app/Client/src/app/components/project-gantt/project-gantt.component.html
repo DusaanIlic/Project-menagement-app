@@ -57,11 +57,11 @@
              [items]="ganttItems"
              [groups]="ganttGroups"
              [viewType]="viewType"
-             [draggable]="(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK)"
+             [draggable]="true"
              [selectable]="true"
              [virtualScrollEnabled]="true"
              [multiple]="true"
-             [linkable]="(projectId | hasProjectPermission:ProjectPermission.ADD_TASK_DEPENDENCY)"
+             [linkable]="true"
              [showTodayLine]="true"
              (barClick)="barClick($event)"
              (selectedChange)="selectedChange($event)"
@@ -99,7 +99,7 @@
       <ngx-gantt-column name="Deadline" width="120px">
         <ng-template #cell let-item="item">
           <ng-container *ngIf="item.taskStatusId != 3">
-            {{ item.end | date : 'dd-MM-yyyy HH-mm' }}
+            {{ item.end | date : 'dd-MM-yyyy' }}
           </ng-container>
           <ng-container *ngIf="item.taskStatusId === 3">
             /

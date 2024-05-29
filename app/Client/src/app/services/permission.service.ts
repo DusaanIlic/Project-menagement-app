@@ -1,8 +1,10 @@
-import {Injectable} from "@angular/core";
+import {EventEmitter, Injectable} from "@angular/core";
 import {ProjectServiceGet} from "./project.service";
 import {HttpClient} from "@angular/common/http";
 import {MemberService} from "./member.service";
 import {ActivatedRoute, Router} from "@angular/router";
+
+export const ganttUpdater: EventEmitter<void> = new EventEmitter();
 
 @Injectable({
   providedIn: 'root'
@@ -122,11 +124,13 @@ export class PermissionService {
   updateProjectPermissions(projectId: number, permissions: number[]): void {
     console.log(`updated project ${projectId} permissions to ${permissions}`);
     this.projectPermissions.set(projectId, new Set<number>(permissions));
+    ganttUpdater.emit();
   }
 
   updateProjectTaskIds(projectId: number, taskIds: number[]): void {
     console.log(`updated project ${projectId} assigned task ids to ${taskIds}`);
     this.projectTaskIds.set(projectId, new Set<number>(taskIds));
+    ganttUpdater.emit();
   }
 
   getProjectTaskIds(projectId: number): Set<number> {

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   GANTT_GLOBAL_CONFIG,
   GanttBarClickEvent,
@@ -36,6 +36,8 @@ import {MatSelect} from "@angular/material/select";
 import {TaskStatus} from "../../models/task-status";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
+import {Permission} from "../../models/permission";
+import {ganttUpdater, PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'app-project-gantt',
@@ -98,6 +100,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   defaultPriority: number = 0;
   selectedPriority: number = 0;
   searchedTerm: string = '';
+  private currentBuffer: number = 0;
+  private bufferIncrement: number = 10000;
   private originalGanttItems: any = [];
   private routeSubscription: any;
 
@@ -121,8 +125,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   viewType: GanttViewType = GanttViewType.day;
   selectedViewType: GanttViewType = GanttViewType.day;
 
-  constructor(private route: ActivatedRoute, private taskService: TaskService,
-              private matDialog: MatDialog, private snackBar: MatSnackBar) { }
+  constructor(
+    private route: ActivatedRoute,
+    private taskService: TaskService,
+    private matDialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private permissionService: PermissionService,
+  ) { }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.pipe(
@@ -155,7 +164,6 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       next: ({ tasks, taskCategories }) => {
         this.tasks = tasks;
         this.taskCategories = taskCategories;
-        console.log(this.tasks);
         this.mapTasksToGanttItems(false);
       },
       error: error => {
@@ -179,7 +187,13 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       error: err => {
         console.log('failed fetching task statuses');
       }
-    })
+    });
+
+    ganttUpdater.subscribe(response => {
+      this.currentBuffer += this.bufferIncrement;
+      this.mapTasksToGanttItems(false);
+      console.log(`refreshing gantt page because of permission update! (buffer state: ${this.currentBuffer}`);
+    });
   }
 
   ngOnDestroy() {
@@ -200,12 +214,14 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
       }
     });
 
+    const projectPermissions: Set<number> = this.permissionService.getProjectPermissions(this.projectId);
+
     this.originalGanttItems = this.tasks.map((task: Task) => {
-      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId)) || [];
+      const dependentTaskIds = task.dependentTasks?.map((depTask: { taskId: any; }) => String(depTask.taskId + this.currentBuffer)) || [];
       const links = dependentTaskIds.length ? dependentTaskIds : undefined;
 
       return {
-        id: String(task.taskId),
+        id: String(task.taskId + this.currentBuffer),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
         start: task.startDate,
@@ -216,8 +232,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         },
         links: links,
         progress: task.taskStatusId === 3 ? 0 : -1, // Call your progress calculation method,
-        draggable:  task.taskStatusId !== 3,
-        linkable: task.taskStatusId !== 3,
+        draggable:  task.taskStatusId !== 3 && projectPermissions.has(ProjectPermission.CHANGE_TASK),
+        linkable: task.taskStatusId !== 3 && projectPermissions.has(ProjectPermission.ADD_TASK_DEPENDENCY),
         taskStatusId:  task.taskStatusId,
         taskPriorityId: task.taskPriorityId,
         taskStatusName: task.taskStatus,
@@ -228,6 +244,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
     this.ganttItems = this.originalGanttItems;
     this.applyFilters(changeView);
+
+    console.log('mapped all taks to gantt items');
   }
 
   scrollToToday() {
@@ -247,7 +265,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   barClick($event: GanttBarClickEvent) {
-    this.openTaskOverview(Number($event.item.id));
+    this.openTaskOverview(Number($event.item.id) - this.currentBuffer);
   }
 
   openTaskOverview(taskId: number): void {
@@ -284,7 +302,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   dragEnded(event: GanttDragEvent) {
     if (event.item.id && event.item.start && event.item.end) {
-      const taskId = Number(event.item.id);
+      const taskId = Number(event.item.id) - this.currentBuffer;
+
       const startTimestamp = event.item.start * 1000;
       const endTimestamp = event.item.end * 1000;
 
@@ -331,8 +350,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   linkEnded(event: GanttLinkDragEvent) {
     if (event.source && event.target) {
-      const taskId= Number(event.source.id);
-      const dTaskId= Number(event.target.id);
+      const taskId= Number(event.source.id) - this.currentBuffer;
+      const dTaskId= Number(event.target.id) - this.currentBuffer;
 
       this.taskService.addTaskDependency(taskId, dTaskId).subscribe({
         next: data => {
@@ -376,8 +395,16 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
 
   linkClick(event: GanttLineClickEvent<unknown>) {
     if (event.source && event.target) {
-      const taskId= Number(event.source.id);
-      const dTaskId= Number(event.target.id);
+      const projectPermissions: Set<number> = this.permissionService.getProjectPermissions(this.projectId);
+
+      if (!projectPermissions.has(ProjectPermission.REMOVE_TASK_DEPENDENCY)) {
+        this.snackBar.open('You dont have permission to remove task dependency!', 'Close', { duration: 1500 });
+
+        return;
+      }
+
+      const taskId= Number(event.source.id) - this.currentBuffer;
+      const dTaskId= Number(event.target.id) - this.currentBuffer;
 
       this.taskService.removeTaskDependency(taskId, dTaskId).subscribe({
         next: data => {
