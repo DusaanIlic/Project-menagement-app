@@ -58,7 +58,7 @@
     <mat-card-actions>
       <div class="flex w-full p-2">
         <span class="grow"></span>
-        <button mat-raised-button color="primary" (click)="addProject()">Add Project</button>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="primary" (click)="addProject()">Add Project</button>
       </div>
     </mat-card-actions>
   </mat-card>

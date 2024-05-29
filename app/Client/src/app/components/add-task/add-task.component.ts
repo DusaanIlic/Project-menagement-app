@@ -15,6 +15,7 @@ import { MatCard, MatCardHeader, MatCardContent, MatCardActions } from '@angular
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-task',
@@ -50,12 +51,13 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   members = new FormControl('');
   taskForm!: FormGroup;
   today = new Date();
+  isLoading: boolean = false;
 
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private taskService: TaskService, private _ngToastService: NgToastService, private fb: FormBuilder) {}
+              private taskService: TaskService, private matSnackBar: MatSnackBar, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -107,12 +109,13 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
   saveTask(){
     if (this.taskForm.invalid) {
-      this._ngToastService.error({
-        detail: 'Please fill up inputs',
-        summary: 'Adding failed: Inputs cannot be empty'
-      });
+      this.matSnackBar.open('Form inputs are invalid.', 'Close', { duration: 3000 });
+      this.taskForm.markAllAsTouched();
+
       return;
     }
+
+    this.isLoading = true;
 
     const taskData = this.taskForm.value;
 
@@ -121,13 +124,16 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       this.taskAdded.emit();
       this.showMessage();
       this.closeDialog();
+
+      this.isLoading = false;
     }, error => {
       console.error('Error saving task', error);
+      this.isLoading = false;
     });
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
+    this.matSnackBar.open('Successfully saved task.', 'Close', { duration: 3000 });
   }
 
   getProjectMembers() {
