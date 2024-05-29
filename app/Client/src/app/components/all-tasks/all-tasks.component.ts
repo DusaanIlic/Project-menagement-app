@@ -70,7 +70,7 @@ export class AllTasksComponent implements OnInit {
   selectedStatus: number = 0;
   defaultPriority: number = 0;
   selectedPriority: number = 0;
-  displayedColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskStatus', 'taskPriorityName','action'];
+  displayedColumns: string[] = ['taskCategoryName', 'taskName', 'startDate', 'deadline', 'taskStatus', 'taskPriorityName','action'];
   dataSource: any;
   @ViewChild(MatSort)sort: any;
   @ViewChild(MatPaginator) paginator: any;

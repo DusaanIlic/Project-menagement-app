@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240529150849_Initial")]
+    [Migration("20240529190325_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -134,7 +134,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 17, 8, 48, 934, DateTimeKind.Local).AddTicks(3382),
+                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 33, DateTimeKind.Local).AddTicks(6633),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -142,7 +142,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$2RKs4MC4Cs79RQl1HcmSIuDO91fdG6voJB1eApEjrvKApPUDXyWFa",
+                            Password = "$2a$10$8iG1X5EaBNQw8WIREfC5m.ZQ0Q.PAVfY2p2RK5KSYrH3hx6oILH3e",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -152,7 +152,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 17, 8, 48, 996, DateTimeKind.Local).AddTicks(7342),
+                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 96, DateTimeKind.Local).AddTicks(5952),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -160,7 +160,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$4h09Rq9fOkEe8r5a3cFamu3CsY/q6ALAii9.MAsih/vurZLk3jODe",
+                            Password = "$2a$10$wDHaqlMlVCzVAzfMZZhrfOSvFIbp4.YuahVK.9ARSKUnHjD1.q4hW",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -170,7 +170,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 17, 8, 49, 59, DateTimeKind.Local).AddTicks(9806),
+                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 160, DateTimeKind.Local).AddTicks(2937),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -178,7 +178,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$B92x5/8BqrK8/6LyD0It..8BYIcYhPCLDR9K9ZQqsVlPwzwfo84di",
+                            Password = "$2a$10$/cXabjKdsl.Xt1WECUaJ5Ok25bogly4IyU9rqo6R8cykyvM9r3JO2",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -1092,7 +1092,7 @@ namespace Server.Migrations
                         new
                         {
                             TaskCategoryID = 1,
-                            CategoryName = "None",
+                            CategoryName = "Uncategorized",
                             IsDefault = true
                         });
                 });

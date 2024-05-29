@@ -19,7 +19,7 @@ import {TaskService} from "../../services/task.service";
 import {switchMap} from "rxjs/operators";
 import {Task} from "../../models/task";
 import {combineLatest, forkJoin, map} from "rxjs";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatDialog} from "@angular/material/dialog";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
@@ -62,6 +62,7 @@ import {ganttUpdater, PermissionService} from "../../services/permission.service
     MatSelect,
     NgStyle,
     HasProjectPermissionPipe,
+    MatIconButton,
 
   ],
   templateUrl: './project-gantt.component.html',

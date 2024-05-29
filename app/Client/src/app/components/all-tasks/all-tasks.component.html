@@ -49,6 +49,13 @@
 
     <div class="mat-elevation-z8 w-full self-center">
       <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+        <ng-container matColumnDef="taskCategoryName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by taskCategoryName">CATEGORY</th>
+          <td mat-cell *matCellDef="let task">
+            <a class="hover:underline cursor-pointer" (click)="openDialogOverview(task.taskId)">{{task.taskCategoryName}}</a>
+          </td>
+        </ng-container>
+
 
         <ng-container matColumnDef="taskName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by taskName">TASK </th>
