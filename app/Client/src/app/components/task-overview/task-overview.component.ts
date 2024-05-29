@@ -273,6 +273,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     if(this.taskActivityGroup.valid)
     {
       const taskActivity = this.taskActivityGroup.value;
+      console.log(taskActivity.percentageComplete)
 
       this.tService.saveTaskActivity(taskActivity).subscribe(
         {
@@ -351,7 +352,8 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     if(this.taskDeadlineForm.valid)
     {
       const taskData = this.taskDeadlineForm.value
-      console.log(taskData)
+      const utcDate = new Date(Date.UTC(this.taskDeadlineForm.value.deadline.getFullYear(), this.taskDeadlineForm.value.deadline.getMonth(), this.taskDeadlineForm.value.deadline.getDate()));
+      taskData.deadline = utcDate;
       this.tService.changeTaskNameDescriptionDeadline(this.task.taskId, taskData).subscribe({
         next : data =>{ this.updateTaskInfo(); this.snackBar.open('Successfully changed task deadline!', 'Close', { duration: 3000 }); this.taskModified.emit();},
         error : error => {console.log(error); this.snackBar.open('Failed to change task deadline!', 'Close', { duration: 3000 });}
