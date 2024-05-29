@@ -75,15 +75,18 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       deadline: ['', Validators.required],
       taskPriorityId: ['', Validators.required],
       assignedMemberIds: [[], [Validators.required]],
-      taskLeaderId: ['', Validators.required()],
+      taskLeaderId: ['', Validators.required],
       taskDescription: ['', [Validators.required]],
       projectId: [this.projectId]
     });
 
     this.taskForm.get('assignedMemberIds')?.valueChanges.subscribe(selectedIds => {
+      console.log('Selected Member IDs:', selectedIds);  // Debugging statement
       this.selectedMembers = this.projectMembers.filter(member => selectedIds.includes(member.id));
-      if (!selectedIds.includes(this.taskForm.get('taskLeaderId')?.value))
+      if (!selectedIds.includes(this.taskForm.get('taskLeaderId')?.value)) {
         this.taskForm.get('taskLeaderId')?.reset();
+      }
+      console.log('Selected Members:', this.selectedMembers);  // Debugging statement
     });
   }
 
@@ -132,7 +135,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       this.taskService.getProjectMembers(this.projectId).subscribe({
         next: (data: Member[]) => {
           this.projectMembers = data;
-          console.log(this.projectMembers);
         },
         error: error => {
           console.log('Error fetching project members:', error);

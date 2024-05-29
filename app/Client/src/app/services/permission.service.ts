@@ -125,7 +125,7 @@ export class PermissionService {
   }
 
   updateProjectTaskIds(projectId: number, taskIds: number[]): void {
-    console.log(`updated project ${projectId} assigned ids to ${taskIds}`);
+    console.log(`updated project ${projectId} assigned task ids to ${taskIds}`);
     this.projectTaskIds.set(projectId, new Set<number>(taskIds));
   }
 
