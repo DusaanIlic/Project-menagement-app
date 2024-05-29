@@ -44,7 +44,7 @@ export class ProjectKanbanComponent implements OnInit {
   todo: any[] = [];
   progress: any[] = [];
   done: any[] = [];
-  dropList: any[] = ['to do', 'progress', 'done'];
+  dropList: { name: string, id: number }[] = [];
 
   newStatuses: any[] = [];
 
@@ -62,18 +62,31 @@ export class ProjectKanbanComponent implements OnInit {
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
+    this.loadTaskStatuses(this.projectId);
     this.dropList.forEach(column => {
-      this.columnVisibility[column] = true;
-      if (this.columnVisibility[column]) {
-        this.selectedColumns.push(column);
+      this.columnVisibility[column.name] = true;
+      if (this.columnVisibility[column.name]) {
+        this.selectedColumns.push(column.name);
       }
+    });
+  }
+
+  loadTaskStatuses(projectId: number): void {
+    this.taskService.getTaskStatusesByProject(projectId).subscribe((statuses: any[]) => {
+      this.dropList = statuses.map(status => ({ name: status.name.toLowerCase(), id: status.id }));
+      this.dropList.forEach(column => {
+        this.columnVisibility[column.name] = true;
+        if (this.columnVisibility[column.name]) {
+          this.selectedColumns.push(column.name);
+        }
+      });
     });
   }
 
   toggleColumnVisibility(selectedColumns: string[]) {
     this.selectedColumns = selectedColumns;
     this.dropList.forEach(column => {
-      this.columnVisibility[column] = this.selectedColumns.includes(column);
+      this.columnVisibility[column.name] = this.selectedColumns.includes(column.name);
     });
   }
 
@@ -158,19 +171,8 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   getStatusIdFromColumnName(columnName: string): number {
-    const columnMap: { [key: string]: number } = {
-      'to do': 1,
-      'progress': 2,
-      'done': 3,
-    };
-
-    if (columnName in columnMap) {
-      return columnMap[columnName];
-    }
-
-    const newId = Object.keys(columnMap).length + 1;
-    columnMap[columnName] = newId;
-    return newId;
+    const status = this.dropList.find(status => status.name.toLowerCase() === columnName);
+    return status ? status.id : -1;
   }
 
 
@@ -179,7 +181,7 @@ export class ProjectKanbanComponent implements OnInit {
       case 1:
         return this.todo;
       case 2:
-        return this.progress
+        return this.progress;
       case 3:
         return this.done;
       default:

@@ -9,8 +9,8 @@
                       <mat-form-field appearance="fill">
                         <mat-label>Visible Columns</mat-label>
                         <mat-select [(ngModel)]="selectedColumns" multiple (selectionChange)="toggleColumnVisibility($event.value)">
-                          <mat-option *ngFor="let column of dropList" [value]="column">
-                            {{ column | titlecase }}
+                          <mat-option *ngFor="let column of dropList" [value]="column.name">
+                            {{ column.name | titlecase }}
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
@@ -28,24 +28,24 @@
 
 
     <div class="w-full flex flex-row gap-5 py-5 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
-        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column] ? 'block' : 'none'" style="width: 500px;" >
+        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column.name] ? 'block' : 'none'" style="width: 500px;">
              <div  >
 
              <mat-card-header>
                 <mat-card-title>
                     <div class="pb-2 pt-0">
-                        {{ column | titlecase }}
+                        {{ column.name | titlecase }}
                     </div>
                 </mat-card-title>
             </mat-card-header>
          <mat-card-content>
             <div
                 cdkDropList
-                [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column))"
-                class=" rounded-md overflow-hidden block" [id]="column.toLowerCase()"
+                [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column.name))"
+                class="min-h-full rounded-md overflow-hidden block" [id]="column.name.toLowerCase()"
                 (cdkDropListDropped)="drop($event)">
-                <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column)).length > 0; else emptyList">
-                    <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column)); let i = index">
+                <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column.name)).length > 0; else emptyList">
+                    <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column.name)); let i = index">
                         <div class="border border-solid border-black mb-1 rounded-md">
                             <mat-card class="cursor-move task-item" cdkDrag [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)" [cdkDragData]="item" [ngClass]="{
                                 'low-priority': item.taskPriorityId === 1,
@@ -62,7 +62,7 @@
                                     <i class="material-icons">article</i>
                                   </button>
 
-                                  <button mat-icon-button (click)="openConfirmationDialog(column, item.taskId)"
+                                  <button mat-icon-button (click)="openConfirmationDialog(column.name, item.taskId)"
                                     [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">
                                     <i class="material-icons">delete</i>
                                   </button>
