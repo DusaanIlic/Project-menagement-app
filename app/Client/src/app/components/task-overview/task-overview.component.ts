@@ -1,30 +1,19 @@
 import {CommonModule, NgOptimizedImage} from '@angular/common';
-import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  DoCheck,
-  ElementRef, EventEmitter,
-  Inject,
-  OnInit, Output,
-  ViewChild
-} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { taskActivity } from '../../models/taskActivity';
-import { RouterModule } from '@angular/router';
+import {Component, DoCheck, ElementRef, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {taskActivity} from '../../models/taskActivity';
+import {RouterModule} from '@angular/router';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Task } from '../../models/task';
-import { NgxEditorModule, Editor } from 'ngx-editor';
-import { TaskService } from '../../services/task.service';
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { MemberService } from '../../services/member.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import {Task} from '../../models/task';
+import {NgxEditorModule} from 'ngx-editor';
+import {TaskService} from '../../services/task.service';
+import {NgToastModule} from 'ng-angular-popup';
+import {MemberService} from '../../services/member.service';
 import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {ProjectServiceGet} from "../../services/project.service";
 import {environment} from "../../../environments/environment";
-import {concatMap, forkJoin, Subscription, switchMap} from "rxjs";
+import {forkJoin, switchMap} from "rxjs";
 import {MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatError, MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
@@ -38,13 +27,9 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {taskComment} from "../../models/taskComment";
 import {Permission} from "../../models/permission";
-import {RoleService} from "../../services/role.service";
-import {PermissionService} from "../../services/permission.service";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
-import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
-import {ProjectStatus} from "../../models/project-status";
 import {TaskStatus} from "../../models/task-status";
 import {taskPriority} from "../../models/taskPriority";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -52,10 +37,15 @@ import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
+  MatNoDataRow,
+  MatRow,
+  MatRowDef,
+  MatTable,
+  MatTableDataSource
 } from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort, MatSortHeader, Sort} from "@angular/material/sort";
@@ -64,8 +54,7 @@ import {Member} from "../../models/member";
 import {Role} from "../../models/role";
 import {SignalRService} from "../../services/signal-r.service";
 import {AvatarComponent} from "../avatar/avatar.component";
-
-
+import {PermissionService} from "../../services/permission.service";
 
 
 @Component({
@@ -81,7 +70,7 @@ import {AvatarComponent} from "../avatar/avatar.component";
     MatMenu,
     MatMenuItem,
     MatAnchor,
-    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter, HasProjectPermissionPipe, MatDatepicker, MatDatepickerInput, MatDatepickerToggle, MatHint, MatSuffix, MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderRow, MatHeaderRowDef, MatPaginator, MatRow, MatRowDef, MatSort, MatSortHeader, MatTable, MatHeaderCellDef, AvatarComponent, NgOptimizedImage],
+    MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCheckbox, MatError, MatFormField, MatIcon, MatInput, MatLabel, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatTab, MatTabGroup, MatToolbar, ReactiveFormsModule, MatButtonToggle, MatSelect, MatOption, MatCardFooter, HasProjectPermissionPipe, MatDatepicker, MatDatepickerInput, MatDatepickerToggle, MatHint, MatSuffix, MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderRow, MatHeaderRowDef, MatPaginator, MatRow, MatRowDef, MatSort, MatSortHeader, MatTable, MatHeaderCellDef, AvatarComponent, NgOptimizedImage, MatNoDataRow],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss'
 })
@@ -104,6 +93,10 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     waiting: boolean = false;
     @ViewChild(MatSort)sort: any;
     @ViewChild(MatPaginator) paginator: any;
+    @ViewChild(MatSort)sort1: any;
+    @ViewChild(MatPaginator) paginator1: any;
+    @ViewChild(MatSort)sort2: any;
+    @ViewChild(MatPaginator) paginator2: any;
     onlineAssignees: Set<number> = new Set<number>();
 
 
@@ -116,6 +109,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     taskStatusForm!: FormGroup;
     taskPriorityForm! : FormGroup;
     taskLeaderFormGroup!: FormGroup;
+    addChildTasksForm!: FormGroup;
 
 
     taskComments : taskComment[] = [];
@@ -127,6 +121,9 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     membersOnThisTask : Member[] = []
     allMembersOnProject : Member[] = [];
     projectRoles: Role[] = [];
+    tasksOnThisProject : Task[] = [];
+
+    hp!: HasProjectPermissionPipe;
 
 
 
@@ -141,7 +138,9 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
               private fb: FormBuilder,
               private snackBar : MatSnackBar,
               private _liveAnnouncer: LiveAnnouncer,
-              private signalRService: SignalRService) { }
+              private _liveAnnouncer1: LiveAnnouncer,
+              private signalRService: SignalRService,
+              private permService : PermissionService) { }
 
   ngDoCheck(): void
   {
@@ -151,7 +150,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
 
   ngOnInit()
   {
-    this.fetchMembersOnTask();
+    const permissions = this.permService.getProjectPermissions(this.task.projectId);
     this.loggedUserId = localStorage.getItem('authenticated-member-id');
 
     this.fetchTaskActivityStatuses();
@@ -159,6 +158,9 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     this.fetchTaskStatuses();
     this.fetchTaskComments();
     this.fetchTaskPriorityStatuses();
+    this.fetchTasksDependOnThisTask();
+    this.fetchMembersOnTask();
+    this.fetchTasksOnThisProject();
 
 
 
@@ -181,48 +183,54 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     });
 
 
+    this.addChildTasksForm = this.fb.group({
+      dependentTaskId: [{value: '', disabled: (!permissions.has(ProjectPermission.ADD_TASK_DEPENDENCY))}, Validators.required],
+      taskId: [this.task.taskId]
+    })
+
+
     this.taskLeaderFormGroup = this.fb.group({
       taskId: [this.task.taskId],
-      newTaskLeaderId: ['', Validators.required]
+      newTaskLeaderId: [{value: '', disabled: (!permissions.has(ProjectPermission.CHANGE_TASK))}, Validators.required]
     })
 
     this.taskActivityGroup = this.fb.group({
-      description: ['', Validators.required],
-      percentageComplete: ['', [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^(100|[1-9]?[0-9])%?$')]],
-      taskActivityTypeId: ['', Validators.required],
+      description: [{value: '', disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY))}, Validators.required],
+      percentageComplete: [{value: '', disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY))}, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^(100|[1-9]?[0-9])$')]],
+      taskActivityTypeId: [{value: '', disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY))}, Validators.required],
       taskId : [this.task.taskId]
     });
 
     this.taskNameForm = this.fb.group({
       deadline: [this.task.deadline],
       taskDescription: [this.task.taskDescription],
-      taskName : [this.task.taskName, Validators.required],
+      taskName : [{value: this.task.taskName, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK))}, Validators.required],
     })
 
     this.taskDescriptionForm = this.fb.group({
       deadline: [this.task.deadline],
-      taskDescription: [this.task.taskDescription, Validators.required],
+      taskDescription: [{value: this.task.taskDescription, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK))}, Validators.required],
       taskName : [this.task.taskName],
     })
 
 
     this.taskDeadlineForm = this.fb.group({
-      deadline: [this.task.deadline, Validators.required],
+      deadline: [{value: this.task.deadline, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK))}, Validators.required],
       taskDescription: [this.task.taskDescription],
       taskName : [this.task.taskName],
     })
 
     this.taskActivityComment = this.fb.group({
       taskId: [this.task.taskId],
-      text: ['', Validators.required],
+      text: [{value: '', disabled: (!permissions.has(ProjectPermission.COMMENT_TASK))}, Validators.required],
     })
 
     this.taskStatusForm = this.fb.group({
-      statusId: [this.task.taskStatusId, Validators.required]
+      statusId: [{value: this.task.taskStatusId, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK_STATUS))}, Validators.required]
     })
 
     this.taskPriorityForm = this.fb.group({
-      priorityId: [this.task.taskPriorityId, Validators.required]
+      priorityId: [{value: this.task.taskStatusId, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK_PRIORITY))}, Validators.required]
     })
 
     this.show = 'overview';
@@ -243,6 +251,13 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
   {
     this.pService.getAllTaskStatusesOnProject(this.task.projectId).subscribe((statuses : TaskStatus[]) =>{
       this.taskStatuses = statuses;
+    })
+  }
+
+  fetchTasksOnThisProject()
+  {
+    this.tService.getTasksByProject(this.task.projectId).subscribe((tasks : Task[]) =>{
+      this.tasksOnThisProject = tasks;
     })
   }
 
@@ -471,6 +486,18 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     }
   }
 
+  search1(event: any): void {
+    this.dataSourceTaskDependsOn.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  }
+
+  announceSortChange1(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer1.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer1.announce('Sorting cleared');
+    }
+  }
+
 
   isMemberTeamLeader(mId : number) : boolean
   {
@@ -544,6 +571,16 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     return false;
   }
 
+  isTaskInsideTable(taskId: number) : boolean
+  {
+    for(let i=0;i<this.tasksDependsOnThisTask.length;i++)
+    {
+      if(this.tasksDependsOnThisTask[i].taskId == taskId)
+        return true;
+    }
+    return false;
+  }
+
   editTaskLeader()
   {
     if(this.taskLeaderFormGroup.valid)
@@ -558,6 +595,42 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
       this.taskLeaderFormGroup.markAllAsTouched();
   }
 
+  tasksDependsOnThisTask : Task[] = [];
+  displayedColumnsTaskDependsOn : string[] = ['task name', 'start date', 'due date', 'status', 'priority', 'task leader', 'remove'];
+  dataSourceTaskDependsOn : any
+
+
+  fetchTasksDependOnThisTask()
+  {
+    this.tService.getTasksDependentOnTaskId(this.task.taskId).subscribe((tasks : Task[]) =>{
+      this.tasksDependsOnThisTask = tasks;
+      this.dataSourceTaskDependsOn = new MatTableDataSource(this.tasksDependsOnThisTask);
+      this.dataSourceTaskDependsOn.sort = this.sort1;
+      this.dataSourceTaskDependsOn.paginator = this.paginator1;
+    })
+  }
+
+  addChildTask()
+  {
+    if(this.addChildTasksForm.valid)
+    {
+      const taskData = this.addChildTasksForm.value
+      this.tService.addTaskDependency(this.task.taskId, taskData.dependentTaskId ).subscribe({
+        next : data =>{ this.snackBar.open('Successfully added task dependency!', 'Close', { duration: 3000 }); this.taskModified.emit(); this.fetchTasksDependOnThisTask(); this.addChildTasksForm.get('dependentTaskId')?.reset('')},
+        error : error => {console.log(error); this.snackBar.open('Failed to add task dependency!', 'Close', { duration: 3000 });}
+      })
+    }
+    else
+      this.addChildTasksForm.markAllAsTouched();
+  }
+
+  deleteChildTask(childTaskId : number)
+  {
+    this.tService.removeTaskDependency(this.task.taskId, childTaskId).subscribe({
+      next : data =>{ this.snackBar.open('Successfully removed task dependency!', 'Close', { duration: 3000 }); this.taskModified.emit(); this.fetchTasksDependOnThisTask()},
+      error : error => {console.log(error); this.snackBar.open('Failed to remove task dependency!', 'Close', { duration: 3000 });}
+    })
+  }
 }
 
 

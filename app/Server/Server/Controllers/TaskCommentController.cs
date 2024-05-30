@@ -55,10 +55,7 @@ namespace Server.Controllers
                 .Where(tc => tc.TaskId == taskId)
                 .ToListAsync();
 
-            if (taskcomments == null || !taskcomments.Any())
-            {
-                return NotFound(new { message = "Task comment not found" });
-            }
+            
 
             var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
             {
@@ -70,7 +67,6 @@ namespace Server.Controllers
                 TaskId = tc.TaskId,
                 TaskCommentId = tc.Id
             }).ToList();
-
 
             return Ok(taskcommentsdtos);
         }

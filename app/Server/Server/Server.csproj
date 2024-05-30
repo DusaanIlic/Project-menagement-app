@@ -39,9 +39,6 @@
 
   <ItemGroup>
     <None Remove="mydatabase.db" />
-    <Content Include="mydatabase.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

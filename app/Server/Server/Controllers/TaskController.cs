@@ -954,6 +954,7 @@ namespace Server.Controllers
                 .Include(pt => pt.TaskCategory)
                 .Include(pt => pt.TaskPriority)
                 .Include(pt => pt.Project)
+                .Include(pt => pt.TaskLeader)
                 .ToListAsync();
 
             var dependentTaskDTOs = dependentTasks.Select(dt => new ProjectTaskDTO
@@ -972,7 +973,10 @@ namespace Server.Controllers
                 TaskCategoryId = dt.TaskCategoryId,
                 TaskPriorityName = dt.TaskPriority.Name,
                 TaskCategoryName = dt.TaskCategory.CategoryName,
-                PercentageComplete = dt.PercentageComplete
+                PercentageComplete = dt.PercentageComplete,
+                TaskLeaderFirstName = dt.TaskLeader.FirstName,
+                TaskLeaderLastName = dt.TaskLeader.LastName,
+                TaskLeaderId = dt.TaskLeader.Id
 
             }).ToList();
 
