@@ -18,4 +18,7 @@ export interface Task {
   taskPriorityName : string;
   dependentTasks?: any;
   projectName?: string;
+  taskLeaderId: number;
+  taskLeaderFirstName : string;
+  taskLeaderLastName : string;
 }

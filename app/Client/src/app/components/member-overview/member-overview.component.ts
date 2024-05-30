@@ -143,11 +143,12 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   //////////////////////////////////////////////////////
-  openDialogOverview(taskId: number) {
+  openDialog(task: Task) {
+    console.log(task)
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '1200px',
       height : '700px',
-      data: this.tasks.map(task => {return task.taskId = taskId})
+      data: task
     });
 
     dialogRef.componentInstance.taskModified.subscribe(() => {
@@ -162,7 +163,7 @@ export class MemberOverviewComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  openDialog(task: Task): void {
+  openDialogOverview(task: Task): void {
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '250px',
       data: task.taskId,

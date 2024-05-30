@@ -105,7 +105,7 @@ namespace Server.Controllers
             return Ok(tasksDTOs);
         }
 
-        [Authorize]
+                [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
@@ -167,40 +167,31 @@ namespace Server.Controllers
                 projectTask.Members.Add(new MemberTask { MemberId = memberId, TaskId = projectTask.TaskId });
             }
 
-
-            var member1 = await dbContext.Members.FindAsync(addProjectTaskRequest.TaskLeaderId);
-            var member2 = await dbContext.Members.FindAsync(userId);
-
-            if (member1 == null)
-            { 
-                projectTask.TaskLeaderId = userId;
-                member2.TasksLead.Add(projectTask);
-
-                var existingMemberTask = dbContext.MemberTasks.FirstOrDefault(mt => mt.MemberId == userId && mt.TaskId == projectTask.TaskId);
-
-                if (existingMemberTask == null)
-                {
-                    projectTask.Members.Add(new MemberTask { MemberId = userId, TaskId = projectTask.TaskId });
-                    
-                    SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
-                    {
-                        Title = "You are added to new task!",
-                        Description = "Your new task is " + addProjectTaskRequest.TaskName,
-                        MemberId = userId
-                    };
-
-                    await _notificationService.SendNotification(sendNotificationRequest);
-                }
-            }
-            else
+            
+            //nadjem svakako korisnika koji kreira task
+            var member1 = await dbContext.Members.FindAsync(userId); ;
+            if(addProjectTaskRequest.TaskLeaderId != 0)
             {
-                projectTask.TaskLeaderId = addProjectTaskRequest.TaskLeaderId;
-                member1.TasksLead.Add(projectTask);
+               member1 = await dbContext.Members.FindAsync(addProjectTaskRequest.TaskLeaderId);
+            }
+
+            projectTask.TaskLeaderId = member1.Id;
+            member1.TasksLead.Add(projectTask);
+          
+            await dbContext.SaveChangesAsync();
+
+            var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
+
+
+            var exists = await dbContext.MemberTasks.Where(mt => mt.TaskId == newProjectTask.TaskId && mt.MemberId == member1.Id).AnyAsync();
+
+            if (!exists)
+            {
+                projectTask.Members.Add(new MemberTask { MemberId = member1.Id, TaskId = projectTask.TaskId });
             }
 
             await dbContext.SaveChangesAsync();
 
-            var newProjectTask = await dbContext.ProjectTasks.FindAsync(projectTask.TaskId);
 
             var assignedMembers = await dbContext.MemberTasks
                 .Include(mt => mt.Member).ThenInclude(mt => mt.Role)
@@ -968,6 +959,7 @@ namespace Server.Controllers
                 .Include(pt => pt.TaskCategory)
                 .Include(pt => pt.TaskPriority)
                 .Include(pt => pt.Project)
+                .Include(pt => pt.TaskLeader)
                 .ToListAsync();
 
             var dependentTaskDTOs = dependentTasks.Select(dt => new ProjectTaskDTO
@@ -986,7 +978,10 @@ namespace Server.Controllers
                 TaskCategoryId = dt.TaskCategoryId,
                 TaskPriorityName = dt.TaskPriority.Name,
                 TaskCategoryName = dt.TaskCategory.CategoryName,
-                PercentageComplete = dt.PercentageComplete
+                PercentageComplete = dt.PercentageComplete,
+                TaskLeaderFirstName = dt.TaskLeader.FirstName,
+                TaskLeaderLastName = dt.TaskLeader.LastName,
+                TaskLeaderId = dt.TaskLeader.Id
 
             }).ToList();
 

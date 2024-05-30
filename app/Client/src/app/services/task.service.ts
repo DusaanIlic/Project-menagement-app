@@ -110,7 +110,7 @@ export class TaskService {
     return this.http.put<any[]>(`${TASK_API}/${taskId}/assign`, membersId);
   }
 
-  removeMemberFromTask(taskId : number, membersId : number) : Observable<any[]>
+  removeMembersFromTask(taskId : number, membersId : number) : Observable<any[]>
   {
     return this.http.delete<any[]>(`${TASK_API}/${taskId}/remove/${membersId}`);
   }
@@ -174,5 +174,10 @@ export class TaskService {
   changeTaskPriority(taskId : number, priorityId : any)
   {
     return this.http.put<any[]>(`${TASK_API}/${taskId}/priority/${priorityId}`, null)
+  }
+
+  assignNewTaskLeader(taskId : number, memberId : number) : Observable<any[]>
+  {
+    return this.http.post<any[]>(`${TASK_API}/${taskId}/AssignTaskLeader/${memberId}`, null);
   }
 }
