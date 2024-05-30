@@ -1010,7 +1010,8 @@ namespace Server.Controllers
                 Email = ta.Member.Email,
                 Country = ta.Member.Country,
                 DateOfBirth = ta.Member.DateOfBirth,
-                RoleName = ta.Member.Role.RoleName
+                RoleName = ta.Member.Role.RoleName,
+                TaskName = ta.ProjectTask.TaskName
             }).ToList();
 
             return Ok(taskActivityDTOs);
@@ -1272,7 +1273,8 @@ namespace Server.Controllers
                 Email = ta.Member.Email,
                 Country = ta.Member.Country,
                 DateOfBirth = ta.Member.DateOfBirth,
-                RoleName = ta.Member.Role.RoleName
+                RoleName = ta.Member.Role.RoleName,
+                TaskName = ta.ProjectTask.TaskName
             }).ToList();
 
             return Ok(taskActivityDTOs);

@@ -7,12 +7,14 @@ import { taskActivity } from '../models/taskActivity';
 import { taskPriority } from '../models/taskPriority';
 import { environment} from "../../environments/environment";
 import {TaskStatus} from "../models/task-status";
+import {taskComment} from "../models/taskComment";
 
 const TASK_API = `${environment.apiUrl}/Task`;
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const TASKACTIVITY_API = `${environment.apiUrl}/TaskActivity`;
 const TASKPRIOROTY_API = `${environment.apiUrl}/TaskPriority`;
 const TASKCATEGORY_API = `${environment.apiUrl}/TaskCategory`;
+const TASKCOMMENTS_API = `${environment.apiUrl}/TaskComment`;
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -63,9 +65,9 @@ export class TaskService {
     return this.http.get<Task[]>(`${TASK_API}/members/${memberId}/tasks`);
   }
 
-  getTaskActivities(): Observable<taskActivity[]>
+  getTaskActivitiesById(taskId: number): Observable<taskActivity[]>
   {
-    return this.http.get<taskActivity[]>(`${TASKACTIVITY_API}`);
+    return this.http.get<taskActivity[]>(`${TASKACTIVITY_API}/Task/${taskId}`);
   }
 
   getTaskPriority(taskId : number) : Observable<taskPriority>
@@ -147,5 +149,30 @@ export class TaskService {
 
   getTaskPriorities() {
     return this.http.get<taskPriority[]>(TASKPRIOROTY_API);
+  }
+
+  getTaskComments() : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASKCOMMENTS_API}`);
+  }
+
+  getTaskCommentsByTaskId(taskId : number) : Observable<any[]>
+  {
+    return this.http.get<any[]>(`${TASKCOMMENTS_API}/${taskId}`);
+  }
+
+  saveTaskComment(taskComment : any) : Observable<any[]>
+  {
+    return this.http.post<any[]>(`${TASKCOMMENTS_API}`, taskComment);
+  }
+
+  changeTaskNameDescriptionDeadline(taskId : number, taskData : any) : Observable<any[]>
+  {
+    return this.http.put<any[]>(`${TASK_API}/${taskId}`, taskData);
+  }
+
+  changeTaskPriority(taskId : number, priorityId : any)
+  {
+    return this.http.put<any[]>(`${TASK_API}/${taskId}/priority/${priorityId}`, null)
   }
 }

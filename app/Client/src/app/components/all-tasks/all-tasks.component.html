@@ -60,7 +60,7 @@
         <ng-container matColumnDef="taskName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by taskName">TASK </th>
           <td mat-cell *matCellDef="let task">
-            <a class="hover:underline cursor-pointer" (click)="openDialogOverview(task.taskId)">{{task.taskName}}</a>
+            <a class="hover:underline cursor-pointer" (click)="openDialogOverview(task)">{{task.taskName}}</a>
           </td>
         </ng-container>
 
@@ -93,7 +93,7 @@
               </div>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openDialogOverview(task.taskId)">View</button>
+              <button mat-menu-item (click)="openDialogOverview(task)">View</button>
               <button mat-menu-item (click)="deleteTask(task.taskId)"
                 [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">Delete</button>
             </mat-menu>

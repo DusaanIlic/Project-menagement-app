@@ -38,6 +38,8 @@ import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe"
 import {ProjectPermission} from "../../enums/project-permissions.enum";
 import {Permission} from "../../models/permission";
 import {ganttUpdater, PermissionService} from "../../services/permission.service";
+import {Project} from "../../models/project";
+import {ProjectServiceGet} from "../../services/project.service";
 
 @Component({
   selector: 'app-project-gantt',
@@ -132,6 +134,7 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private snackBar: MatSnackBar,
     private permissionService: PermissionService,
+    private projectService: ProjectServiceGet
   ) { }
 
   ngOnInit() {
@@ -270,12 +273,20 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
   }
 
   openTaskOverview(taskId: number): void {
+    const task = this.tasks.find((task: Task) => task.taskId == taskId);
+
+    this.projectService.getProjectById(task.projectId).subscribe((project : Project) =>
+    {
+      task.projectName = project.projectName;
+    })
+
     const dialogRef = this.matDialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: taskId
+      width: '1200px',
+      height : '700px',
+      data: task
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.componentInstance.taskModified.subscribe(() => {
       this.ngOnInit();
     });
   }

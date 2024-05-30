@@ -88,6 +88,11 @@ namespace Server.Data
                 .HasOne(tc => tc.Task)
                 .WithMany(pt => pt.TaskComment)
                 .HasForeignKey(tc => tc.TaskId);
+            
+            modelBuilder.Entity<TaskComment>()
+                .HasOne(tc => tc.Member)
+                .WithMany(pt => pt.TaskComments)
+                .HasForeignKey(tc => tc.MemberId);
 
             modelBuilder.Entity<MemberTask>()
                 .HasKey(mt => new { mt.MemberId, mt.TaskId });

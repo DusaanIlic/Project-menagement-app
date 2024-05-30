@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240529190325_Initial")]
+    [Migration("20240530133550_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -134,7 +134,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 33, DateTimeKind.Local).AddTicks(6633),
+                            DateAdded = new DateTime(2024, 5, 30, 15, 35, 48, 963, DateTimeKind.Local).AddTicks(5246),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -142,7 +142,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$8iG1X5EaBNQw8WIREfC5m.ZQ0Q.PAVfY2p2RK5KSYrH3hx6oILH3e",
+                            Password = "$2a$10$fyRB.dJ36iPY7BpQpH5oweQPS2Zloyqz1152Qcqe9N92BWq83QbGm",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -152,7 +152,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 96, DateTimeKind.Local).AddTicks(5952),
+                            DateAdded = new DateTime(2024, 5, 30, 15, 35, 49, 28, DateTimeKind.Local).AddTicks(2793),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -160,7 +160,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$wDHaqlMlVCzVAzfMZZhrfOSvFIbp4.YuahVK.9ARSKUnHjD1.q4hW",
+                            Password = "$2a$10$1aKbFvJVypzR.4kzr.Rcqe9Vd9fPUWzEE1cYah0dMBH.vNGB3NmMO",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -170,7 +170,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 5, 29, 21, 3, 25, 160, DateTimeKind.Local).AddTicks(2937),
+                            DateAdded = new DateTime(2024, 5, 30, 15, 35, 49, 94, DateTimeKind.Local).AddTicks(1763),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -178,7 +178,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$/cXabjKdsl.Xt1WECUaJ5Ok25bogly4IyU9rqo6R8cykyvM9r3JO2",
+                            Password = "$2a$10$QYR7F8hEnH8NFx3OCWzz/.oR4QCcKouW9/VB2oESQZ.Vxzc.dy9lK",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -1121,6 +1121,8 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MemberId");
+
                     b.HasIndex("TaskId");
 
                     b.ToTable("TaskComments");
@@ -1529,11 +1531,19 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Models.TaskComment", b =>
                 {
+                    b.HasOne("Server.Models.Member", "Member")
+                        .WithMany("TaskComments")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Server.Models.ProjectTask", "Task")
                         .WithMany("TaskComment")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Member");
 
                     b.Navigation("Task");
                 });
@@ -1585,6 +1595,8 @@ namespace Server.Migrations
                     b.Navigation("ProjectsLead");
 
                     b.Navigation("TaskActivities");
+
+                    b.Navigation("TaskComments");
 
                     b.Navigation("Tasks");
 

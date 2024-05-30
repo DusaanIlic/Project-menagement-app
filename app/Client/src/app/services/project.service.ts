@@ -14,6 +14,7 @@ import {ProjectStatus} from "../models/project-status";
 import {taskActivity} from "../models/taskActivity";
 import {ProjectPriority} from "../models/project-priority";
 import {ProjectFile} from "../models/project-file";
+import {TaskStatus} from "../models/task-status";
 
 const PROJECT_API = `${environment.apiUrl}/Project`;
 const PROJECT_PRIORITY = `${environment.apiUrl}/ProjectPriority`
@@ -117,6 +118,10 @@ export class ProjectServiceGet{
 
   getAllProjectStatuses() {
     return this.http.get<ProjectStatus[]>(`${PROJECT_API}/Status`);
+  }
+
+  getAllTaskStatusesOnProject(projectId : number) : Observable<TaskStatus[]>  {
+    return this.http.get<TaskStatus[]>(`${PROJECT_API}/${projectId}/TaskStatus`);
   }
 
   getAllActivitiesInLastTwoWeeks(projectId: number) : Observable<any[]>

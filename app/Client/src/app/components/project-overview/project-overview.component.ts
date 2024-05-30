@@ -92,20 +92,8 @@ export class ProjectOverviewComponent implements OnInit {
   loadRecentActivity(projectId: number): void {
     this.pService.getRecentActivity(projectId).subscribe((data: any[]) => {
       this.recentActivities = data.slice(0, 5);
-      console.log("aktivnosti", this.recentActivities);
-      this.recentActivities.forEach(activity => {
-        this.getTaskName(activity.taskId);
-      });
-    });
-  }
 
-  getTaskName(taskId: number): void {
-    this.tService.getTaskById(taskId).subscribe((task: Task) => {
-      // Pronađite odgovarajuću aktivnost i ažurirajte naziv zadatka
-      const activityToUpdate = this.recentActivities.find(activity => activity.taskId === taskId);
-      if (activityToUpdate) {
-        activityToUpdate.taskName = task.taskName;
-      }
+      console.log("aktivnosti", this.recentActivities);
     });
   }
 

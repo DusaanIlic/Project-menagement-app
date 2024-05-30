@@ -72,5 +72,7 @@ namespace Server.Models
         public string? PasswordToken { get; set; }
 
         public DateTime? PasswordTokenExpiresAt { get; set; }
+
+        public ICollection<TaskComment> TaskComments { get; set; } = new List<TaskComment>();
     }
 }

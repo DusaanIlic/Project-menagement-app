@@ -29,5 +29,7 @@
         public int TaskActivityTypeId { get; set; }
 
         public int PercentageComplete { get; set; }
+        
+        public String TaskName { get; set; }
     }
 }
