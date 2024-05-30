@@ -1,28 +1,38 @@
 <div class="flex flex-col gap-2">
   <p class="text-3xl font-semibold pb-1">Project Analytics</p>
 
-
   <mat-accordion>
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
-        <mat-panel-title class="flex flex-row justify-between ">
+        <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Project completion rate</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-card class="m-2">
         <div class="flex flex-col justify-between m-2">
-          <ngx-charts-gauge class="flex"
-                            [results]="dataForChart"
-                            [angleSpan]="360" [startAngle]="270"
-                            [view]="[400,400]"
-                            [legend]="false"
-                            [showText]="true"
-                            [smallSegments]="2"
-                            [units]="'%'"
-                            [customColors]="customColors">
-
+          <ngx-charts-gauge
+            class="flex"
+            [results]="dataForChart"
+            [angleSpan]="360"
+            [startAngle]="270"
+            [view]="[400, 400]"
+            [legend]="false"
+            [showText]="false"
+            [smallSegments]="5"
+            [units]="'%'"
+            [customColors]="customColors"
+          >
           </ngx-charts-gauge>
-
+        </div>
+        <div
+          style="
+            position: absolute;
+            top: 50%;
+            left: 13%;
+            transform: translate(-50%, -50%);
+          "
+        >
+          <span class="text-7xl">{{ dataForChart[0]?.value }}%</span>
         </div>
       </mat-card>
     </mat-expansion-panel>
@@ -31,7 +41,7 @@
   <mat-accordion>
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
-        <mat-panel-title class="flex flex-row justify-between ">
+        <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Incomplete tasks by category</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -43,21 +53,18 @@
             [noBarWhenZero]="false"
             [xAxis]="namesForBarChart"
             [yAxis]="namesForBarChart"
-            [xAxisTickFormatting]="axisFormat">
-
-
+            [xAxisTickFormatting]="axisFormat"
+          >
           </ngx-charts-bar-horizontal>
-
         </div>
       </mat-card>
     </mat-expansion-panel>
   </mat-accordion>
 
-
   <mat-accordion>
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
-        <mat-panel-title class="flex flex-row justify-between ">
+        <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Tasks per member</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -71,37 +78,34 @@
             [xAxis]="tasksPerMember"
             [yAxis]="tasksPerMember"
             [xAxisTickFormatting]="axisFormat"
-            (select)="onSelect($event)">
-
-
+            (select)="onSelect($event)"
+          >
           </ngx-charts-bar-horizontal>
-
         </div>
       </mat-card>
     </mat-expansion-panel>
   </mat-accordion>
 
-
   <mat-accordion *ngIf="loaded">
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
-        <mat-panel-title class="flex flex-row justify-between ">
+        <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Tasks by status</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-card class="m-2">
         <div class="flex flex-col justify-between m-2">
-          <ngx-charts-bar-horizontal class="flex"
-                                     [results]="tasksByStatuses"
-                                     [showXAxisLabel]="true"
-                                     [showYAxisLabel]="true"
-                                     [noBarWhenZero]="false"
-                                     [xAxis]="tasksByStatuses"
-                                     [yAxis]="tasksByStatuses"
-                                     [xAxisTickFormatting]="axisFormat">
-
+          <ngx-charts-bar-horizontal
+            class="flex"
+            [results]="tasksByStatuses"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [noBarWhenZero]="false"
+            [xAxis]="tasksByStatuses"
+            [yAxis]="tasksByStatuses"
+            [xAxisTickFormatting]="axisFormat"
+          >
           </ngx-charts-bar-horizontal>
-
         </div>
       </mat-card>
     </mat-expansion-panel>
@@ -110,35 +114,24 @@
   <mat-accordion *ngIf="loaded2">
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
-        <mat-panel-title class="flex flex-row justify-between ">
+        <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Task activities created in last 2 weeks</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-card class="m-2">
         <div class="flex flex-col justify-between m-2">
-          <ngx-charts-line-chart class="flex"
-                                     [results]="taskActivitiesInLast2weeks"
-                                     [showXAxisLabel]="true"
-                                     [showYAxisLabel]="true"
-                                     [xAxis]="true"
-                                     [yAxis]="true"
-                                     [yAxisTickFormatting]="axisFormat">
-
+          <ngx-charts-line-chart
+            class="flex"
+            [results]="taskActivitiesInLast2weeks"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [yAxisTickFormatting]="axisFormat"
+          >
           </ngx-charts-line-chart>
-
         </div>
       </mat-card>
     </mat-expansion-panel>
   </mat-accordion>
-
-
-
-
-
-
-
-
-
-
-
 </div>
