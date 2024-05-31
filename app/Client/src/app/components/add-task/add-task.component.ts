@@ -98,8 +98,6 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 }
 
   saveTask(){
-    console.log(this.taskForm.value);
-
     const taskData = this.taskForm.value;
 
     console.log(taskData);
