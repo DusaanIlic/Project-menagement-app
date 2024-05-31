@@ -29,5 +29,7 @@
         public string TaskLeaderFirstName { get; set; }
         
         public string TaskLeaderLastName { get; set; }
+
+        public DateTime ProjectDeadline { get; set; }
 }
 }

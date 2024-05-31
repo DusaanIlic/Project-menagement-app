@@ -105,7 +105,7 @@ namespace Server.Controllers
             return Ok(tasksDTOs);
         }
 
-                [Authorize]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {

@@ -55,7 +55,6 @@ namespace Server.Controllers
                 .Where(tc => tc.TaskId == taskId)
                 .ToListAsync();
 
-            
 
             var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
             {
@@ -95,9 +94,18 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Member not found" });
             }
 
-            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskCommentRequest.TaskId);
+            var projectTask = await dbContext.ProjectTasks
+               .Include(ts => ts.Project)
+               .FirstOrDefaultAsync(t => t.TaskId == addTaskCommentRequest.TaskId);
 
-            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Comment task");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
 
             var taskComment = new TaskComment
             {
