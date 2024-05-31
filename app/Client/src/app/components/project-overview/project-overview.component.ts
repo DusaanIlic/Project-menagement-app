@@ -99,7 +99,6 @@ export class ProjectOverviewComponent implements OnInit {
 
   getTaskName(taskId: number): void {
     this.tService.getTaskById(taskId).subscribe((task: Task) => {
-      // Pronađite odgovarajuću aktivnost i ažurirajte naziv zadatka
       const activityToUpdate = this.recentActivities.find(activity => activity.taskId === taskId);
       if (activityToUpdate) {
         activityToUpdate.taskName = task.taskName;

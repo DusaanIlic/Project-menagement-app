@@ -14,6 +14,7 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatToolbar } from '@angular/material/toolbar';
 import { FormGroup } from 'smart-webcomponents-angular';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-task-status',
@@ -45,7 +46,7 @@ export class AddTaskStatusComponent implements OnInit{
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef<AddTaskStatusComponent>, @Inject(MAT_DIALOG_DATA) public data: any, 
-              private taskService: TaskService, private _ngToastService: NgToastService, private route: ActivatedRoute, private fb: FormBuilder){}
+              private taskService: TaskService, private route: ActivatedRoute, private fb: FormBuilder, private snackBar: MatSnackBar){}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -62,22 +63,19 @@ export class AddTaskStatusComponent implements OnInit{
     this.dialogRef.close();
   }
 
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task added successfully", duration: 3000});
-  }
-
   saveTaskStatus(): void {
   
 
     this.taskService.addTaskStatus(this.projectId, this.taskStatusName).subscribe(
       (response) => {
-        this.showMessage();
+        this.snackBar.open('Task status added successfully.', 'Close', {
+          duration: 3000,
+        });
         this.taskStatusAdded.emit();
         this.dialogRef.close(response); 
       },
       (error) => {
         console.error('Error adding task status:', error);
-        this._ngToastService.error({ detail: 'Error adding task status. Please try again.', duration: 3000 });
       }
     );
   }
