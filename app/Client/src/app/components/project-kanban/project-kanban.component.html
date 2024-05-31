@@ -28,68 +28,64 @@
 
 
     <div class="w-full flex flex-row gap-5 py-5 overflow-x-auto overflow-y-auto h-full" cdkDropListGroup>
-        <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column.name] ? 'block' : 'none'" style="width: 500px;">
-             <div >
-
-             <mat-card-header>
-                <mat-card-title>
-                    <div class="pb-2 pt-0">
-                        {{ column.name | titlecase }}
-                    </div>
-                </mat-card-title>
-            </mat-card-header>
-         <mat-card-content>
-            <div
-                cdkDropList
-                [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column.name))"
-                class="min-h-full rounded-md overflow-hidden block" [id]="column.name.toLowerCase()"
-                (cdkDropListDropped)="drop($event)">
-                <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column.name)).length > 0; else emptyList">
-                    <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column.name)); let i = index">
-                        <div class="border border-solid border-black mb-1 rounded-md">
-                            <mat-card class="cursor-move task-item" cdkDrag [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)" [cdkDragData]="item" [ngClass]="{
-                                'low-priority': item.taskPriorityId === 1,
-                                'medium-priority': item.taskPriorityId === 2,
-                                'high-priority': item.taskPriorityId === 3
-                            }">
-                            <div class="flex flex-row items-center justify-between ml-3 py-2">
-                                <div class=" flex flex-col">
-                                    <p class="text-lg font-medium">{{item.taskName}}</p>
-                                    <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
-                                </div>
-                                <div class="flex">
-                                  <button mat-icon-button (click)="openTaskOverview(item.taskId)">
-                                    <i class="material-icons">article</i>
-                                  </button>
-
-                                  <button mat-icon-button (click)="openConfirmationDialog(column.name, item.taskId)"
-                                    [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">
-                                    <i class="material-icons">delete</i>
-                                  </button>
-                                </div>
-                            </div>
-
-                            </mat-card>
-                        </div>
-
-                    </ng-container>
-                </ng-container>
-                <ng-template #emptyList>
-                    <div>
-                        <mat-card class="px-2.5 py-5 flex flex-row items-center justify-between">
-                            <p>No tasks. Add a new task</p>
-                        </mat-card>
-                    </div>
-
-                </ng-template>
+      <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column.name] ? 'block' : 'none'" style="width: 500px;">
+        <mat-card-header>
+          <mat-card-title>
+            <div class="pb-2 pt-0">
+              {{ column.name | titlecase }}
             </div>
-          </mat-card-content>
-
-
-        </div>
-
-
-        </mat-card>
-  </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div
+            cdkDropList
+            [cdkDropListData]="getTasksByStatus(getStatusIdFromColumnName(column.name))"
+            class="min-h-full rounded-md overflow-hidden block drop-list-container"
+            [id]="column.name.toLowerCase()"
+            (cdkDropListDropped)="drop($event)">
+            <ng-container *ngIf="getTasksByStatus(getStatusIdFromColumnName(column.name)).length > 0; else emptyList">
+              <ng-container *ngFor="let item of getTasksByStatus(getStatusIdFromColumnName(column.name)); let i = index">
+                <div class="border border-solid border-black mb-1 rounded-md task-item-container">
+                  <mat-card
+                    class="cursor-move task-item"
+                    cdkDrag
+                    [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)"
+                    [cdkDragData]="item"
+                    [ngClass]="{
+                      'low-priority': item.taskPriorityId === 1,
+                      'medium-priority': item.taskPriorityId === 2,
+                      'high-priority': item.taskPriorityId === 3
+                    }">
+                    <div class="flex flex-row items-center justify-between ml-3 py-2">
+                      <div class="flex flex-col">
+                        <p class="text-lg font-medium">{{item.taskName}}</p>
+                        <p class="text-xs">Due: {{item.deadline | date:'dd-MM-yyyy'}}</p>
+                      </div>
+                      <div class="flex">
+                        <button mat-icon-button (click)="openTaskOverview(item.taskId)">
+                          <i class="material-icons">article</i>
+                        </button>
+                        <button mat-icon-button (click)="openConfirmationDialog(column.name, item.taskId)"
+                          [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">
+                          <i class="material-icons">delete</i>
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-template #emptyList>
+              <div>
+                <mat-card class="px-2.5 py-5 flex flex-row items-center justify-between">
+                  <p>No tasks. Add a new task</p>
+                </mat-card>
+              </div>
+            </ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
 
 </div>
