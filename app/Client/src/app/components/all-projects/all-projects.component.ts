@@ -42,7 +42,7 @@ export class AllProjectsComponent implements OnInit{
   activeProjectsCount = 0;
   finishedProjectsCount = 0;
   allProjects : Project[] = [];
-  displayedColumns: string[] = ['project',  'startDate', 'deadline', 'status', 'priority', 'manager', 'actions'];
+  displayedColumns: string[] = ['projectName',  'startDate', 'deadline', 'status', 'priority', 'manager', 'actions'];
   projectStatuses : ProjectStatus[] = [];
   projectPriorities: ProjectPriority[] = [];
   dataSource: any;

@@ -79,9 +79,11 @@ export class ProjectOverviewComponent implements OnInit {
       this.loadProjectPriorities();
       this.loadProjectStatuses();
       this.getProjectDetails();
+      this.refreshProjectData();
     });
+  }
 
-    console.log(`My project id is: ${this.projectId}`);
+  refreshProjectData() {
     this.fetchMembersOnProject();
     this.loadTasksByProject(this.projectId);
     this.getTeamLeaderInfo(this.projectId);
@@ -89,11 +91,10 @@ export class ProjectOverviewComponent implements OnInit {
     this.loadRecentActivity(this.projectId);
   }
 
+
   loadRecentActivity(projectId: number): void {
     this.pService.getRecentActivity(projectId).subscribe((data: any[]) => {
       this.recentActivities = data.slice(0, 5);
-
-      console.log("aktivnosti", this.recentActivities);
     });
   }
 
@@ -187,24 +188,28 @@ export class ProjectOverviewComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
-      width : '800px',
-      height : '400px',
+      width: '800px',
+      height: '600px',
       data: this.projectId
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      if (result) {
+        this.refreshProjectData();
+      }
     });
   }
 
   openTaskDialog(): void {
     const dialogRef = this.dialog.open(AddTaskComponent, {
       width: '500px',
-      data: { projectId: this.projectId}
+      data: { projectId: this.projectId }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      if (result) {
+        this.refreshProjectData();
+      }
     });
   }
 

@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
   memberId!: any;
 
   projectSource: any;
-  projectColumns: string[] = ['projectName', 'startDate', 'deadline', 'projectPriority', 'status', 'actions'];
+  projectColumns: string[] = ['projectName', 'startDate', 'deadline', 'status', 'projectPriority',  'actions'];
 
   taskSource: any;
   taskColumns: string[] = ['taskName', 'startDate', 'deadline', 'taskPriorityName', 'taskStatus', 'actions'];

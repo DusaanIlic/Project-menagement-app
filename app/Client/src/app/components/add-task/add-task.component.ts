@@ -57,7 +57,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private taskService: TaskService, private matSnackBar: MatSnackBar, private fb: FormBuilder) {}
+              private taskService: TaskService,  private fb: FormBuilder, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -109,7 +109,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
 
   saveTask(){
     if (this.taskForm.invalid) {
-      this.matSnackBar.open('Form inputs are invalid.', 'Close', { duration: 3000 });
+      this.snackBar.open('Form inputs are invalid.', 'Close', { duration: 3000 });
       this.taskForm.markAllAsTouched();
 
       return;
@@ -122,7 +122,9 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     //console.log(this.assignedMembersIds);
     this.taskService.saveTask(taskData).subscribe(response => {
       this.taskAdded.emit();
-      this.showMessage();
+      this.snackBar.open('Task added successfully.', 'Close', {
+        duration: 3000,
+      });
       this.closeDialog();
 
       this.isLoading = false;
@@ -133,7 +135,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   }
 
   showMessage(){
-    this.matSnackBar.open('Successfully saved task.', 'Close', { duration: 3000 });
+    this.snackBar.open('Successfully saved task.', 'Close', { duration: 3000 });
   }
 
   getProjectMembers() {

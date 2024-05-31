@@ -146,6 +146,8 @@ export class AllAssigneesComponent implements OnInit{
 
   openDialog(): void {
     const dialogRef = this.dialog.open(AddMembersToProjectComponent, {
+      width: '800px',
+      height: '600px',
       data: this.projectId
     });
 

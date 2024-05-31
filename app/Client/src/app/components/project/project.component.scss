@@ -3,3 +3,8 @@
     word-wrap: break-word;
     word-break: break-all;
   }
+
+  .selected {
+    background-color: rgba(0, 0, 0, 0.2); 
+    font-weight: bold;
+  }

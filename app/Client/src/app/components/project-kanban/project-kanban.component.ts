@@ -29,6 +29,9 @@ import {environment} from "../../../environments/environment";
 import {TaskOverviewComponent} from "../task-overview/task-overview.component";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {Task} from "../../models/task";
+import {Project} from "../../models/project";
 
 @Component({
   selector: 'app-project-kanban',
@@ -41,15 +44,12 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
 })
 
 export class ProjectKanbanComponent implements OnInit {
-  todo: any[] = [];
-  progress: any[] = [];
-  done: any[] = [];
-  dropList: any[] = ['to do', 'progress', 'done'];
-
-  newStatuses: any[] = [];
+  tasks: any[] = [];
+  dropList: { name: string, id: number }[] = [];
 
   columnVisibility: { [key: string]: boolean } = {};
   selectedColumns: string[] = [];
+  newStatuses: any[] = [];
 
   projectId: number = 0;
   projectName: string = "";
@@ -58,22 +58,35 @@ export class ProjectKanbanComponent implements OnInit {
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;
 
-  constructor(private taskService: TaskService, private projectService: ProjectServiceGet, private cdr: ChangeDetectorRef,  private _ngToastService: NgToastService, public dialog: MatDialog, private route: ActivatedRoute) {}
+  constructor(private taskService: TaskService, private projectService: ProjectServiceGet, private cdr: ChangeDetectorRef,  public dialog: MatDialog, private route: ActivatedRoute, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void{
     this.getProjectIdFromRoute();
+    this.loadTaskStatuses(this.projectId);
     this.dropList.forEach(column => {
-      this.columnVisibility[column] = true;
-      if (this.columnVisibility[column]) {
-        this.selectedColumns.push(column);
+      this.columnVisibility[column.name] = true;
+      if (this.columnVisibility[column.name]) {
+        this.selectedColumns.push(column.name);
       }
+    });
+  }
+
+  loadTaskStatuses(projectId: number): void {
+    this.taskService.getTaskStatusesByProject(projectId).subscribe((statuses: any[]) => {
+      this.dropList = statuses.map(status => ({ name: status.name.toLowerCase(), id: status.id }));
+      this.dropList.forEach(column => {
+        this.columnVisibility[column.name] = true;
+        if (this.columnVisibility[column.name]) {
+          this.selectedColumns.push(column.name);
+        }
+      });
     });
   }
 
   toggleColumnVisibility(selectedColumns: string[]) {
     this.selectedColumns = selectedColumns;
     this.dropList.forEach(column => {
-      this.columnVisibility[column] = this.selectedColumns.includes(column);
+      this.columnVisibility[column.name] = this.selectedColumns.includes(column.name);
     });
   }
 
@@ -116,10 +129,8 @@ export class ProjectKanbanComponent implements OnInit {
     this.taskService.getTasksByProject(projectId)
       .pipe(
         map((data: any[]) => {
-          this.todo = data.filter(task => task.taskStatusId === 1).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.progress = data.filter(task => task.taskStatusId === 2).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-          this.done = data.filter(task => task.taskStatusId === 3).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
-        return data;
+          this.tasks = data;
+          return data;
         }),
         catchError(error => {
           console.error('Error fetching tasks:', error);
@@ -130,6 +141,8 @@ export class ProjectKanbanComponent implements OnInit {
         this.cdr.detectChanges();
       });
   }
+
+
 
   openMemberInfoDialog(member: Member): void {
     const dialogRef = this.dialog.open(MemberInfoComponent, {
@@ -158,81 +171,32 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   getStatusIdFromColumnName(columnName: string): number {
-    const columnMap: { [key: string]: number } = {
-      'to do': 1,
-      'progress': 2,
-      'done': 3,
-    };
-
-    if (columnName in columnMap) {
-      return columnMap[columnName];
-    }
-
-    const newId = Object.keys(columnMap).length + 1;
-    columnMap[columnName] = newId;
-    return newId;
+    const status = this.dropList.find(status => status.name.toLowerCase() === columnName);
+    return status ? status.id : -1;
   }
 
 
   getTasksByStatus(statusId: number): any[] {
-    switch (statusId) {
-      case 1:
-        return this.todo;
-      case 2:
-        return this.progress
-      case 3:
-        return this.done;
-      default:
-        return [];
-    }
+    return this.tasks.filter(task => task.taskStatusId === statusId).sort((a, b) => b.taskPriorityId - a.taskPriorityId);
   }
 
-  findTaskIndex(taskId: number, column: string): number {
-      let taskList: any[];
-
-      switch (column) {
-        case 'to do':
-          taskList = this.todo;
-          break;
-        case 'progress':
-          taskList = this.progress;
-          break;
-        case 'done':
-          taskList = this.done;
-          break;
-        default:
-          return -1;
-      }
-
-      const taskIndex = taskList.findIndex(task => task.taskId === taskId);
-      return taskIndex;
+  findTaskIndex(taskId: number, statusId: number): number {
+    const statusTasks = this.getTasksByStatus(statusId);
+    return statusTasks.findIndex(task => task.taskId === taskId);
   }
 
-  deleteTask(column: string, index: number) {
-    if (column === 'to do') {
-      this.todo.splice(this.findTaskIndex(index, column), 1);
-      this.showMessage();
-      this.taskService.deleteTask(index).subscribe(
-        (error) => console.log("error", error)
-      );
-    } else if (column === 'progress') {
-      this.progress.splice(this.findTaskIndex(index, column), 1);
-      this.showMessage();
-      this.taskService.deleteTask(index).subscribe(
-        (error) => console.log("error", error)
-      );
-    } else if (column === 'completed') {
-      this.done.splice(this.findTaskIndex(index, column), 1);
-      this.showMessage();
-      this.taskService.deleteTask(index).subscribe(
-        (error) => console.log("error", error)
+  deleteTask(statusId: number, taskId: number) {
+    const taskIndex = this.findTaskIndex(taskId, statusId);
+    if (taskIndex !== -1) {
+      const statusTasks = this.getTasksByStatus(statusId);
+      statusTasks.splice(taskIndex, 1);
+      this.taskService.deleteTask(taskId).subscribe(
+        () => {},
+        error => console.log("error", error)
       );
     }
   }
 
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Deleted successfully", duration: 3000});
-  }
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
@@ -267,50 +231,54 @@ export class ProjectKanbanComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
         if (result) {
             this.newStatuses.push(result.name);
-            // Ažuriranje dropList-a sa novim statusom
             this.dropList.push(result.name.toLowerCase());
-            console.log(this.dropList);
         }
     });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
-        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-        const taskId = event.item.data.taskId;
-        const newColumn = event.container.id;
-        const newStatusId = this.getStatusIdFromColumnName(newColumn);
+      const taskId = event.item.data.taskId;
+      const newStatusId = this.getStatusIdFromColumnName(event.container.id);
 
-        if (event.container.data.length === 0) {
-            event.container.data.push(event.previousContainer.data[event.previousIndex]);
-        } else {
-            transferArrayItem(
-                event.previousContainer.data,
-                event.container.data,
-                event.previousIndex,
-                event.currentIndex,
-            );
-        }
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
 
-        this.updateTaskStatus(taskId, newStatusId)
-            .subscribe(
-                () => {
-                  this.loadTasksByProject(this.projectId);
-                  //console.log('Task status updated successfully.')
-                },
-                error => console.error('Error updating task status:', error)
-            );
+      this.updateTaskStatus(taskId, newStatusId)
+        .subscribe(
+          () => {
+            this.loadTasksByProject(this.projectId);
+            this.snackBar.open('Task status updated successfully.', 'Close', {
+              duration: 3000,
+            });
+          },
+          error => console.error('Error updating task status:', error)
+        );
     }
   }
 
+
   openTaskOverview(taskId: number): void {
+    const task = this.tasks.find((task: Task) => task.taskId == taskId);
+
+    this.projectService.getProjectById(task.projectId).subscribe((project : Project) =>
+    {
+      task.projectName = project.projectName;
+    })
+
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: taskId
+      width: '1200px',
+      height : '700px',
+      data: task
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.componentInstance.taskModified.subscribe(() => {
       this.ngOnInit();
     });
   }

@@ -110,7 +110,7 @@
                   <mat-hint>Your phone number. Should be in format xxx-xxx-xxxx</mat-hint>
                   <input matInput type="text" formControlName="phoneNumber">
                   <mat-error *ngIf="memberForm.get('phoneNumber')?.hasError('pattern')">
-                    Bad number format
+                    Bad number format, must be xxx-xxx-xxxx
                   </mat-error>
                 </mat-form-field>
               </div>
