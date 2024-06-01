@@ -3,10 +3,10 @@ import {PermissionService} from "../services/permission.service";
 
 @Pipe({
   standalone: true,
-  name: 'hasProjectPermission',
+  name: 'isAssignedToTask',
   pure: false
 })
-export class HasProjectPermissionPipe implements PipeTransform {
+export class IsAssignedToTask implements PipeTransform {
   constructor(private permissionService: PermissionService) {
 
   }

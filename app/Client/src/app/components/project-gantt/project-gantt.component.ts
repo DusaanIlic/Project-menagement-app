@@ -228,8 +228,8 @@ export class ProjectGanttComponent  implements OnInit, OnDestroy {
         id: String(task.taskId + this.currentBuffer),
         group_id: String(task.taskCategoryId),
         title: task.taskName,
-        start: task.startDate,
-        end: task.deadline,
+        start: new Date(task.startDate).getTime(),
+        end: new Date(task.deadline).getTime(),
         color: '#3F51B5',
         barStyle: {
           border: '1px solid black'

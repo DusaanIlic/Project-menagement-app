@@ -13,6 +13,7 @@ using Server.Models;
 using Server.Services.Notification;
 using Server.Services.Permission;
 using System.Threading.Tasks;
+using Microsoft.Net.Http.Headers;
 using Server.Services.File;
 using Server.DataTransferObjects.Request.File;
 using Server.Services.PermissionNotifier;
@@ -358,6 +359,16 @@ namespace Server.Controllers
                 return NotFound(new { message = "Task not found" });
             }
 
+            var hasPermission =
+                await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
+            var assignedToTask =
+                await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !assignedToTask)
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+            
             if (changeTaskDatesRequest.startDate > changeTaskDatesRequest.deadline)
             {
                 return BadRequest(new { message = "Start date can't be greater than deadline" });
@@ -806,6 +817,7 @@ namespace Server.Controllers
                 };
 
                 await _notificationService.SendNotification(sendNotificationRequest);
+                await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, memberId);
 
             }
 
@@ -1167,6 +1179,7 @@ namespace Server.Controllers
             };
 
             await _notificationService.SendNotification(sendNotificationRequest);
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, memberId);
 
             return Ok(new { message = "Member is removed from task successfully." });
 
@@ -1262,7 +1275,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return BadRequest(new { message = "Insufficient permissions" });
             }
 
             if (projectTask == null)
@@ -1290,14 +1303,21 @@ namespace Server.Controllers
             }
 
             var taskFiles = await dbContext.TaskFile
-                .Where(pf => pf.TaskId == id)
-                .Select(pf => new
+                .Where(t => t.TaskId == id)
+                .Join(dbContext.Files.Include(f => f.Uploader), 
+                    tf => tf.FileId, 
+                    f => f.FileId, 
+                    (tf, f) => new 
                 {
-                    FileId = pf.FileId,
+                    tf.FileId,
+                    f.OriginalName,
+                    Uploader = new 
+                    {
+                        f.Uploader.Id,
+                        FullName = f.Uploader.FirstName + ' ' + f.Uploader.LastName
+                    }
                 })
                 .ToListAsync();
-
-
 
             return Ok(taskFiles);
         }
@@ -1332,10 +1352,10 @@ namespace Server.Controllers
 
             if (!hasPermission && !isAssignedToTask)
             {
-                return Forbid("Insufficient permissions");
+                return BadRequest(new { message = "Insufficient permissions" });
             }
 
-            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+            var uploadedFiles = await _fileService.PostMultiFileAsync(userId, files);
 
             foreach (var uploadedFile in uploadedFiles)
             {
@@ -1376,13 +1396,21 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Task not found." });
             }
+            
+            var file = dbContext.Files.FirstOrDefault(f => f.FileId == fileId);
+
+            if (file == null)
+            {
+                return BadRequest(new { message = "File doesn't exist" });
+            }
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(task.ProjectId, "Remove file");
             var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
-            if (!hasPermission && !isAssignedToTask)
+            if (!hasPermission && 
+                (!isAssignedToTask || (file.UploaderId != userId && task.TaskLeaderId != userId)))
             {
-                return Forbid("Insufficient permissions");
+                return NotFound(new { message = "Insufficient permissions"});
             }
 
             var taskFile = await dbContext.TaskFile
@@ -1403,6 +1431,51 @@ namespace Server.Controllers
 
             return Ok(new { message = "File deleted successfully." });
 
+        }
+        
+        [Authorize] 
+        [HttpGet("{taskId}/File/{fileId}/Preview")] 
+        [AllowAnonymous]
+        public async Task<IActionResult> PreviewFile(int taskId, int fileId)
+        {
+            var file = await dbContext.TaskFile
+                .Include(f => f.File)
+                .FirstOrDefaultAsync(tf => tf.TaskId == taskId && tf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+
+            var contentDisposition = new ContentDispositionHeaderValue("inline")
+            {
+                FileName = file.File.OriginalName
+            };
+
+            Response.Headers.Append(HeaderNames.ContentDisposition, contentDisposition.ToString());
+            
+            return File(bytes, mime);
+        }
+        
+        [Authorize]
+        [HttpGet("{taskId}/File/{fileId}/Download")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadFile(int taskId, int fileId)
+        {
+            var file = await dbContext.TaskFile
+                .Include(f => f.File)
+                .FirstOrDefaultAsync(tf => tf.TaskId == taskId && tf.FileId == fileId);
+
+            if (file == null)
+            {
+                return NotFound(new { message = "Something went wrong." });
+            }
+            
+            var (bytes, mime) = await _fileService.GetFileData(file.FileId);
+            
+            return File(bytes, mime, file.File.OriginalName);
         }
 
 
@@ -1512,6 +1585,7 @@ namespace Server.Controllers
                 if (currentTaskLeader != null)
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
+                    await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, currentTaskLeader.Id);
                 }
             }
 
@@ -1546,6 +1620,7 @@ namespace Server.Controllers
                 await _notificationService.SendNotification(sendNotificationRequest);
             }
 
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, newTaskLeaderId);
 
             return Ok(new { message = "Task leader successfully assigned." });
         }
@@ -1596,6 +1671,7 @@ namespace Server.Controllers
                 if (currentTaskLeader != null)
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
+                    await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, currentTaskLeader.Id);
                 }
 
             }
@@ -1628,9 +1704,10 @@ namespace Server.Controllers
 
                 await _notificationService.SendNotification(sendNotificationRequest);
             }
-
+            
             await dbContext.SaveChangesAsync();
-
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, userId);
+            
             return Ok(new { message = "Task leader successfully removed and new leader assigned." });
         }
     }

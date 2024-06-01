@@ -32,6 +32,7 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {Task} from "../../models/task";
 import {Project} from "../../models/project";
+import {IsAssignedToTask} from "../../pipes/assigned-to-task.pipe";
 
 @Component({
   selector: 'app-project-kanban',
@@ -40,7 +41,7 @@ import {Project} from "../../models/project";
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
   imports: [CdkDropList, MatSelectModule, MatSlideToggleModule, MatFormFieldModule, ReactiveFormsModule, MatExpansionModule, MatCheckboxModule, FormsModule, MatDividerModule, MatIconModule, MatButtonModule, CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe]
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe, IsAssignedToTask]
 })
 
 export class ProjectKanbanComponent implements OnInit {

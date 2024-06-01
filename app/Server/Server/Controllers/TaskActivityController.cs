@@ -199,11 +199,6 @@ namespace Server.Controllers
                 .Where(ta => ta.ProjectTaskId == taskId)
                 .ToListAsync();
 
-            if (taskActivities == null || !taskActivities.Any())
-            {
-                return NotFound(new { message = "Task activity not found" });
-            }
-
             var taskActivityDTOs = taskActivities.Select(ta => new TaskActivityDTO
             {   
                 ProjectName = ta.ProjectTask.Project.ProjectName,
