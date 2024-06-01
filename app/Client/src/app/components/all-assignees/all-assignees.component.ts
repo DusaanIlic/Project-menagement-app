@@ -173,6 +173,7 @@ export class AllAssigneesComponent implements OnInit{
     this.pService.removeMemberFromProject(assignee.id, this.projectId).subscribe({
       next : data =>{
         console.log("Removed successfully.");
+        this.fetchMembersOnProject()
       },
       error : error =>{
         console.log("Error removing");

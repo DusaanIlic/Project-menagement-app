@@ -607,7 +607,6 @@ namespace Server.Controllers
                     PercentageComplete = t.PercentageComplete,
                     TaskLeaderId = t.TaskLeaderId,
                     ProjectDeadline = t.Project.Deadline
-
                 });
             }
 
