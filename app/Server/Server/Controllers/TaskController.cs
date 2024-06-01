@@ -97,7 +97,8 @@ namespace Server.Controllers
                     DeadlineModified = t.DeadlineModified,
                     TaskCategoryName = t.TaskCategory.CategoryName,
                     PercentageComplete = t.PercentageComplete,
-                    TaskLeaderId = t.TaskLeaderId
+                    TaskLeaderId = t.TaskLeaderId,
+                    ProjectDeadline = t.Project.Deadline
                 });
 
             }
@@ -475,7 +476,8 @@ namespace Server.Controllers
                 DeadlineModified = projectTask.DeadlineModified,
                 TaskCategoryName = projectTask.TaskCategory.CategoryName,
                 PercentageComplete = projectTask.PercentageComplete,
-                TaskLeaderId = projectTask.TaskLeaderId
+                TaskLeaderId = projectTask.TaskLeaderId,
+                ProjectDeadline = projectTask.Project.Deadline
 
             };
 
@@ -603,7 +605,8 @@ namespace Server.Controllers
                     DateFinished = t.DateFinished,
                     TaskCategoryName = t.TaskCategory.CategoryName,
                     PercentageComplete = t.PercentageComplete,
-                    TaskLeaderId = t.TaskLeaderId
+                    TaskLeaderId = t.TaskLeaderId,
+                    ProjectDeadline = t.Project.Deadline
 
                 });
             }
