@@ -2,23 +2,18 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconAnchor, MatIconButton} from "@angular/material/button";
 import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from "@angular/material/card";
 import {ProjectFile} from "../../models/project-file";
-import {ProjectServiceGet} from "../../services/project.service";
 import {DatePipe, NgIf} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatHint, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatDivider} from "@angular/material/divider";
-import {MatDialog} from "@angular/material/dialog";
-import {Member} from "../../models/member";
-import {MemberInfoComponent} from "../member-info/member-info.component";
 import {RouterLink} from "@angular/router";
 import {environment} from "../../../environments/environment";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {AuthService} from "../../services/auth.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {Project} from "../../models/project";
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
 import {
   MatCell,
@@ -29,7 +24,6 @@ import {
   MatTable,
   MatTableDataSource
 } from "@angular/material/table";
-import {DataSource} from "@angular/cdk/collections";
 import {MatSort, MatSortHeader, Sort} from "@angular/material/sort";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {Task} from "../../models/task";
@@ -71,10 +65,10 @@ import {TaskService} from "../../services/task.service";
     MatRowDef,
     MatSort
   ],
-  templateUrl: './project-files.component.html',
-  styleUrl: './project-files.component.scss'
+  templateUrl: './task-files.component.html',
+  styleUrl: './task-files.component.scss'
 })
-export class ProjectFilesComponent implements OnInit {
+export class TaskFilesComponent implements OnInit {
   @Input({
     required: true
   }) task!: Task;
@@ -97,7 +91,7 @@ export class ProjectFilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.getTaskFiles(this.taskId).subscribe({
+    this.taskService.getTaskFiles(this.task.taskId).subscribe({
       next: (data: ProjectFile[]) => {
         this.files = data;
         this.dataSource = new MatTableDataSource(data);
@@ -115,7 +109,7 @@ export class ProjectFilesComponent implements OnInit {
   protected readonly ProjectPermission = ProjectPermission;
 
   deleteFile(fileId: number) {
-    this.projectService.deleteProjectFile(this.projectId, fileId).subscribe({
+    this.taskService.deleteTaskFile(this.task.taskId, fileId).subscribe({
       next: data => {
         const indexToRemove = this.files.findIndex((file: ProjectFile) => file.fileId == fileId);
         if (indexToRemove !== -1)
@@ -148,7 +142,7 @@ export class ProjectFilesComponent implements OnInit {
         formData.append('files', files[i], files[i].name);
       }
 
-      this.projectService.uploadFiles(this.projectId, formData).subscribe({
+      this.taskService.uploadFiles(this.task.taskId, formData).subscribe({
         next: data => {
           this.ngOnInit();
           this.snackBar.open('Successfully uploaded files!', 'Close', { duration: 3000 });

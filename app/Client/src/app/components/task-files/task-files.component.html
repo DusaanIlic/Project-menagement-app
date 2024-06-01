@@ -27,7 +27,7 @@
             <ng-container matColumnDef="originalName">
               <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by originalName">FILE NAME</th>
               <td mat-cell *matCellDef="let file">
-                <a class="hover:underline" target="_blank" href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Preview">
+                <a class="hover:underline" target="_blank" href="{{environment.apiUrl}}/Task/{{task.taskId}}/File/{{file.fileId}}/Preview">
                   {{file.originalName}}
                 </a>
               </td>
@@ -47,11 +47,11 @@
               <td mat-cell *matCellDef="let file">
                 <div class="flex gap-2">
                   <span class="grow"></span>
-                  <a mat-icon-button href="{{environment.apiUrl}}/Project/{{projectId}}/File/{{file.fileId}}/Download">
+                  <a mat-icon-button href="{{environment.apiUrl}}/Task/{{task.taskId}}/File/{{file.fileId}}/Download">
                     <mat-icon>file_download</mat-icon>
                   </a>
                   <button mat-icon-button color="warn"
-                          [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_FILE) && file.uploader.id !== authId"
+                          [disabled]="!(task.projectId | hasProjectPermission:ProjectPermission.REMOVE_FILE) && file.uploader.id !== authId && task.taskLeaderId !== authId"
                           (click)="deleteFile(file.fileId)">
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -76,7 +76,7 @@
       </div>
 
       <ng-template #noFiles>
-        <p class="flex justify-center items-center">No files added to project.</p>
+        <p class="flex justify-center items-center">No files added to task.</p>
       </ng-template>
     </mat-card-content>
   </mat-card>

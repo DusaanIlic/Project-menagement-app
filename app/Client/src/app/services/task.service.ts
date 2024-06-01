@@ -8,6 +8,7 @@ import { taskPriority } from '../models/taskPriority';
 import { environment} from "../../environments/environment";
 import {TaskStatus} from "../models/task-status";
 import {taskComment} from "../models/taskComment";
+import {ProjectFile} from "../models/project-file";
 
 const TASK_API = `${environment.apiUrl}/Task`;
 const PROJECT_API = `${environment.apiUrl}/Project`;
@@ -181,7 +182,15 @@ export class TaskService {
     return this.http.post<any[]>(`${TASK_API}/${taskId}/AssignTaskLeader/${memberId}`, null);
   }
 
-  getTaskFiles(taskId: any) {
-    
+  getTaskFiles(taskId: any): Observable<ProjectFile[]> {
+    return this.http.get<ProjectFile[]>(`${TASK_API}/${taskId}/Files`)
+  }
+
+  deleteTaskFile(taskId: number, fileId: number) {
+    return this.http.delete(`${TASK_API}/${taskId}/files/${fileId}`);
+  }
+
+  uploadFiles(taskId: number, files: FormData) {
+    return this.http.post(`${TASK_API}/${taskId}/files`, files);
   }
 }
