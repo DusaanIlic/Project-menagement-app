@@ -28,9 +28,10 @@ import {MatSort, MatSortHeader, Sort} from "@angular/material/sort";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {Task} from "../../models/task";
 import {TaskService} from "../../services/task.service";
+import {IsAssignedToTask} from "../../pipes/assigned-to-task.pipe";
 
 @Component({
-  selector: 'app-project-files',
+  selector: 'app-task-files',
   standalone: true,
   imports: [
     MatButton,
@@ -63,7 +64,8 @@ import {TaskService} from "../../services/task.service";
     MatHeaderRowDef,
     MatRow,
     MatRowDef,
-    MatSort
+    MatSort,
+    IsAssignedToTask
   ],
   templateUrl: './task-files.component.html',
   styleUrl: './task-files.component.scss'

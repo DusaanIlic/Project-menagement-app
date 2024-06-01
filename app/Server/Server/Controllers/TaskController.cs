@@ -1355,7 +1355,7 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Insufficient permissions" });
             }
 
-            var uploadedFiles = await _fileService.PostMultiFileAsync(id, files);
+            var uploadedFiles = await _fileService.PostMultiFileAsync(userId, files);
 
             foreach (var uploadedFile in uploadedFiles)
             {
