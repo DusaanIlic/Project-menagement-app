@@ -180,4 +180,8 @@ export class TaskService {
   {
     return this.http.post<any[]>(`${TASK_API}/${taskId}/AssignTaskLeader/${memberId}`, null);
   }
+
+  getTaskFiles(taskId: any) {
+    
+  }
 }

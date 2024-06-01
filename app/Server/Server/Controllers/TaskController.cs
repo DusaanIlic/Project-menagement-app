@@ -1303,14 +1303,21 @@ namespace Server.Controllers
             }
 
             var taskFiles = await dbContext.TaskFile
-                .Where(pf => pf.TaskId == id)
-                .Select(pf => new
+                .Where(t => t.TaskId == id)
+                .Join(dbContext.Files.Include(f => f.Uploader), 
+                    tf => tf.FileId, 
+                    f => f.FileId, 
+                    (tf, f) => new 
                 {
-                    FileId = pf.FileId,
+                    tf.FileId,
+                    f.OriginalName,
+                    Uploader = new 
+                    {
+                        f.Uploader.Id,
+                        FullName = f.Uploader.FirstName + ' ' + f.Uploader.LastName
+                    }
                 })
                 .ToListAsync();
-
-
 
             return Ok(taskFiles);
         }
