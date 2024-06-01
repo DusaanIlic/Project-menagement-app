@@ -745,7 +745,8 @@ namespace Server.Controllers
 
                 await _permissionNotifier.AssignedToProject(memberId, projectId);
                 await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
-
+                await _permissionNotifier.UpdatedProjectTasks(projectId, memberId);
+                
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
                 {
                     Title = "You are added to new project!",
@@ -805,6 +806,7 @@ namespace Server.Controllers
             
             await _permissionNotifier.RemovedFromProject(memberId, projectId);
             await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);
+            await _permissionNotifier.UpdatedProjectTasks(projectId, memberId);
 
             return Ok(new { message = "Member removed from project successfully." });
 
