@@ -49,7 +49,8 @@
                   <mat-card
                     class="cursor-move task-item"
                     cdkDrag
-                    [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS)"
+                    [cdkDragDisabled]="!(projectId | hasProjectPermission:ProjectPermission.CHANGE_TASK_STATUS) &&
+                                        !(projectId | isAssignedToTask:item.taskId)"
                     [cdkDragData]="item"
                     [ngClass]="{
                       'low-priority': item.taskPriorityId === 1,
@@ -86,6 +87,6 @@
         </mat-card-content>
       </mat-card>
     </div>
-    
+
 
 </div>
