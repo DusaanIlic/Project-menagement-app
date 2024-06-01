@@ -358,6 +358,16 @@ namespace Server.Controllers
                 return NotFound(new { message = "Task not found" });
             }
 
+            var hasPermission =
+                await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
+            var assignedToTask =
+                await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !assignedToTask)
+            {
+                return BadRequest(new { message = "No permission to do this" });
+            }
+            
             if (changeTaskDatesRequest.startDate > changeTaskDatesRequest.deadline)
             {
                 return BadRequest(new { message = "Start date can't be greater than deadline" });
@@ -806,6 +816,7 @@ namespace Server.Controllers
                 };
 
                 await _notificationService.SendNotification(sendNotificationRequest);
+                await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, memberId);
 
             }
 
@@ -1167,6 +1178,7 @@ namespace Server.Controllers
             };
 
             await _notificationService.SendNotification(sendNotificationRequest);
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, memberId);
 
             return Ok(new { message = "Member is removed from task successfully." });
 
@@ -1262,7 +1274,7 @@ namespace Server.Controllers
 
             if (!hasPermission)
             {
-                return Forbid("Insufficient permissions");
+                return BadRequest(new { message = "Insufficient permissions" });
             }
 
             if (projectTask == null)
@@ -1512,6 +1524,7 @@ namespace Server.Controllers
                 if (currentTaskLeader != null)
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
+                    await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, currentTaskLeader.Id);
                 }
             }
 
@@ -1546,6 +1559,7 @@ namespace Server.Controllers
                 await _notificationService.SendNotification(sendNotificationRequest);
             }
 
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, newTaskLeaderId);
 
             return Ok(new { message = "Task leader successfully assigned." });
         }
@@ -1596,6 +1610,7 @@ namespace Server.Controllers
                 if (currentTaskLeader != null)
                 {
                     currentTaskLeader.TasksLead.Remove(projectTask);
+                    await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, currentTaskLeader.Id);
                 }
 
             }
@@ -1628,9 +1643,10 @@ namespace Server.Controllers
 
                 await _notificationService.SendNotification(sendNotificationRequest);
             }
-
+            
             await dbContext.SaveChangesAsync();
-
+            await _permissionNotifier.UpdatedProjectTasks(projectTask.ProjectId, userId);
+            
             return Ok(new { message = "Task leader successfully removed and new leader assigned." });
         }
     }
