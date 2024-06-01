@@ -1408,8 +1408,7 @@ namespace Server.Controllers
             var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(task.TaskId);
 
             if (!hasPermission && 
-                ((isAssignedToTask && file.UploaderId != userId && task.TaskLeaderId != userId) || 
-                 !isAssignedToTask) )
+                (!isAssignedToTask || (file.UploaderId != userId && task.TaskLeaderId != userId)))
             {
                 return NotFound(new { message = "Insufficient permissions"});
             }

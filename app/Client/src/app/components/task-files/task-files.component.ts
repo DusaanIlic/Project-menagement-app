@@ -75,8 +75,8 @@ export class TaskFilesComponent implements OnInit {
     required: true
   }) task!: Task;
 
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort: any;
+  @ViewChild(MatPaginator) paginator: any;
 
   files: ProjectFile[] = [];
   authId: number = Number(this.authService.getAuthenticatedMembersId());
@@ -97,6 +97,8 @@ export class TaskFilesComponent implements OnInit {
       next: (data: ProjectFile[]) => {
         this.files = data;
         this.dataSource = new MatTableDataSource(data);
+
+        console.log(this.files.length == 0)
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
