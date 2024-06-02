@@ -3,10 +3,31 @@
     <button mat-raised-button [matMenuTriggerFor]="menu">
       <mat-icon>help_outline</mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
-      <div class="menu-content">
-        <p>Information about the button click action.</p>
-        <p>Additional details can go here.</p>
+    <mat-menu #menu="matMenu" class="min-w-full">
+      <div class="menu-content w-200">
+        <div class="w-full">
+          <div class="w-full p-4 text-xl">Legend</div>
+          <mat-divider class="w-full"></mat-divider>
+
+          <div class="legend flex p-4">
+            <div class="ml-10">
+              <div class="legend-item flex">
+                <p class="text-red-500">
+                  &#x27F6; If a task that depends on a previous task start
+                  BEFORE the task it depends on is finished
+                  <!-- ⟶ -->
+                </p>
+              </div>
+              <div class="legend-item flex">
+                <p class="text-gray-400 mt-4">
+                  &#x27F6; If a task that depends on a previous task starts
+                  AFTER the task it depends on is finished
+                  <!-- ⟶ -->
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </mat-menu>
 
@@ -89,29 +110,6 @@
   </div>
 
   <mat-divider class="w-full"></mat-divider>
-
-  <div class="w-full p-4 bg-gray-100">
-    <div class="w-full p-4 bg-gray-200 text-xl">Legend</div>
-
-    <div class="legend flex">
-      <div class="ml-10">
-        <div class="legend-item flex">
-          <p class="text-red-500">
-            &#x27F6; If a task that depends on a previous task starts BEFORE the
-            task it depends on is finished
-            <!-- ⟶ -->
-          </p>
-        </div>
-        <div class="legend-item flex">
-          <p class="text-gray-400">
-            &#x27F6; If a task that depends on a previous task starts AFTER the
-            task it depends on is finished
-            <!-- ⟶ -->
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <ngx-gantt
     #gantt
