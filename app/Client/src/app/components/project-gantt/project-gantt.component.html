@@ -1,5 +1,15 @@
 <div class="flex flex-col gap-4 justify-center h-[100%]">
   <div class="flex gap-4 items-center">
+    <button mat-raised-button [matMenuTriggerFor]="menu">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <div class="menu-content">
+        <p>Information about the button click action.</p>
+        <p>Additional details can go here.</p>
+      </div>
+    </mat-menu>
+
     <mat-form-field class="w-96" subscriptSizing="dynamic">
       <mat-label class="select-none">
         <div class="flex items-center justify-between gap-2">
