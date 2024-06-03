@@ -26,7 +26,7 @@
 
             <mat-form-field>
               <mat-label>Deadline</mat-label>
-              <input matInput [matDatepicker]="picker" [min]="today" formControlName="deadline">
+              <input matInput [matDatepicker]="picker" [min]="today" [max] = "projectDeadline" formControlName="deadline">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
               <mat-hint>MM/DD/YYYY</mat-hint>
