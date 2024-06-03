@@ -136,14 +136,11 @@
     (linkDragEnded)="linkEnded($event)"
     class="mat-elevation-z8 select-none mat-pr overflow-y-auto overflow-x-auto"
   >
-    <ngx-gantt-table class="overflow-x-auto overflow-y-auto">
-      <ngx-gantt-column
-        name="Task Name"
-        width="160px"
-        [showExpandIcon]="true"
-        class="select-none"
-      >
-        <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
+    <ngx-gantt-table>
+      <ngx-gantt-column name="Task Name" width="160px" [showExpandIcon]="true" class="select-none">
+        <ng-template #cell let-item="item">
+          {{ item.title }}
+        </ng-template>
       </ngx-gantt-column>
 
       <ngx-gantt-column name="Status" width="120px">
