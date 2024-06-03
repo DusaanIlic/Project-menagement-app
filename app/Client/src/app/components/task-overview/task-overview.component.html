@@ -339,13 +339,12 @@
             <div>
               <h1 class="pl-2 font-medium">Deadline</h1>
               <div class="flex flex-row w-full">
-                <form class="flex w-full" [formGroup]="taskDeadlineForm">
+                <form class="flex w-full" [formGroup]="taskInfoForm">
                   <mat-form-field class="w-full">
                     <input
                       matInput
                       [matDatepicker]="picker2"
                       [min]="today"
-                      [max]="today"
                       formControlName="deadline"
                     />
                     <mat-datepicker-toggle
@@ -358,14 +357,12 @@
                 </form>
               </div>
             </div>
-
-            <<<<<<< HEAD
             <div>
               <h1 class="pl-2 font-medium">Task status</h1>
               <div class="flex flex-row w-full">
-                <form class="flex w-full" [formGroup]="taskStatusForm">
+                <form class="flex w-full" [formGroup]="taskInfoForm">
                   <mat-form-field class="w-full">
-                    <mat-select formControlName="statusId">
+                    <mat-select formControlName="taskStatusId">
                       <mat-option
                         *ngFor="let tS of taskStatuses"
                         [value]="tS.id"
@@ -387,9 +384,9 @@
             <div>
               <h1 class="pl-2 font-medium">Task priority</h1>
               <div class="flex flex-row w-full">
-                <form class="flex w-full" [formGroup]="taskPriorityForm">
+                <form class="flex w-full" [formGroup]="taskInfoForm">
                   <mat-form-field class="w-full">
-                    <mat-select formControlName="priorityId">
+                    <mat-select formControlName="taskPriorityId">
                       <mat-option
                         [value]="tP.taskPriorityId"
                         *ngFor="let tP of taskPriorities"
@@ -417,7 +414,7 @@
                 <button
                   mat-raised-button
                   color="primary"
-                  (click)="saveActivity()"
+                  (click)="editTaskInfo()"
                   [disabled]="
                     !(
                       task.projectId

@@ -91,6 +91,7 @@ import { SignalRService } from '../../services/signal-r.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { PermissionService } from '../../services/permission.service';
 import { TaskFilesComponent } from '../task-files/task-files.component';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-task-overview',
@@ -186,6 +187,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   taskPriorityForm!: FormGroup;
   taskLeaderFormGroup!: FormGroup;
   addChildTasksForm!: FormGroup;
+  taskInfoForm!: FormGroup;
 
   taskComments: taskComment[] = [];
   permissions: Permission[] = [];
@@ -254,6 +256,44 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       error: (err) => {
         console.log('failed fetching project roles');
       },
+    });
+
+    this.taskInfoForm = this.fb.group({
+      deadline: [
+        {
+          value: this.task.deadline,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
+        },
+        Validators.required,
+      ],
+      taskDescription: [
+        {
+          value: this.task.taskDescription,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
+        },
+        Validators.required,
+      ],
+      taskName: [
+        {
+          value: this.task.taskName,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
+        },
+        Validators.required,
+      ],
+      taskStatusId: [
+        {
+          value: this.task.taskStatusId,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_STATUS),
+        },
+        Validators.required,
+      ],
+      taskPriorityId: [
+        {
+          value: this.task.projectId,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_PRIORITY),
+        },
+        Validators.required,
+      ],
     });
 
     this.addChildTasksForm = this.fb.group({
@@ -863,5 +903,28 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
           });
         },
       });
+  }
+
+  editTaskInfo() {
+    if (this.taskInfoForm.valid) {
+      console.log(this.taskInfoForm.value);
+      this.tService
+        .updateTaskInfo(this.task.taskId, this.taskInfoForm.value)
+        .subscribe({
+          next: (data) => {
+            this.snackBar.open('Successfully changed task info!', 'Close', {
+              duration: 3000,
+            });
+            this.taskModified.emit();
+            this.fetchTasksDependOnThisTask();
+          },
+          error: (error) => {
+            console.log(error);
+            this.snackBar.open('Failed to change task info!', 'Close', {
+              duration: 3000,
+            });
+          },
+        });
+    } else this.taskInfoForm.markAllAsTouched();
   }
 }
