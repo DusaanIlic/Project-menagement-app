@@ -90,8 +90,8 @@ export class PermissionService {
     });
   }
 
-  isAssignedToProject(id: number): boolean {
-    return this.projectIds.has(id);
+  getProjectIds(id: number): Set<number> {
+    return this.projectIds;
   }
 
   removeProjectId(id: number): void {
