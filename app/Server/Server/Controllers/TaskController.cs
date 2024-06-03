@@ -1661,6 +1661,13 @@ namespace Server.Controllers
             projectTask.TaskDescription = updateTaskRequest.TaskDescription;
             projectTask.TaskName = updateTaskRequest.TaskName;
 
+            var hasStatusPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
+            if (!hasStatusPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
+
             var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(updateTaskRequest.TaskStatusId);
             if (projectTaskStatus == null)
             {
@@ -1668,6 +1675,12 @@ namespace Server.Controllers
             }
 
             projectTask.TaskStatus = projectTaskStatus;
+
+            var hasPrPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task priority");
+            if (!hasPrPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
 
 
             var projectTaskPriority = await dbContext.TaskPriority.FindAsync(updateTaskRequest.TaskPriorityId);
