@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {ActivatedRoute, Event, RouterLink} from "@angular/router";
 import {Member} from "../../models/member";
@@ -57,7 +57,7 @@ import {ProjectPermission} from "../../enums/project-permissions.enum";
     MatSelect,
     MatRadioButton,
     MatTableModule,
-    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent, HasProjectPermissionPipe
+    MatRadioGroup, MatPaginatorModule, MatSortModule, MatDivider, AvatarComponent, HasProjectPermissionPipe, MatIconButton
   ],
   templateUrl: './all-assignees.component.html',
   styleUrl: './all-assignees.component.scss'

@@ -135,7 +135,7 @@ export class MemberOverviewComponent implements OnInit {
           this.tasks[index].projectName = result[0].projectName;
           this.tasks[index].taskPriorityName = result[1].name;
         });
-        this.dataSource.data = this.tasks;
+        this.dataSource = new MatTableDataSource(this.tasks);
         this.dataSource.paginator = this.paginator;
       });
 

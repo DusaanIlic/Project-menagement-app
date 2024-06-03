@@ -9,7 +9,7 @@ import {
   MatTable, MatTableDataSource
 } from "@angular/material/table";
 import {DatePipe} from "@angular/common";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatSort, MatSortHeader, Sort} from "@angular/material/sort";
 import {RouterLink} from "@angular/router";
@@ -64,7 +64,8 @@ import { MatCardModule } from '@angular/material/card';
     MatSelect,
     ReactiveFormsModule,
     MatPaginator,
-    MatCardModule
+    MatCardModule,
+    MatIconButton
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -83,11 +84,11 @@ export class DashboardComponent implements OnInit {
   defaultTaskPriority: number = 0;
   selectedTaskPriority: number = 0;
   taskPriorities !: taskPriority[];
-  
+
   searchProjects: string = '';
   searchTasks: string = '';
   projectStatuses !: ProjectStatus[];
-  
+
   memberId!: any;
 
   projectSource: any;
@@ -107,12 +108,12 @@ export class DashboardComponent implements OnInit {
 
   constructor(private authService: AuthService, private _liveAnnouncer: LiveAnnouncer,
                 private projectService: ProjectServiceGet, private taskService: TaskService) { }
-   
+
   onStatusChange(event: any) {
     this.selectedStatus = event;
     this.applyFilters();
   }
-              
+
   onPriorityFilterChange(event: any) {
     this.selectedPriority = event;
     this.applyFilters();
@@ -122,7 +123,7 @@ export class DashboardComponent implements OnInit {
     this.selectedTaskPriority = event;
     this.applyTaskFilters();
   }
-           
+
   applyTaskFilters() {
     this.taskSource.data = this.tasks.filter(task =>
     (this.selectedTaskPriority == this.defaultTaskPriority || this.selectedTaskPriority == task.taskPriorityId)
@@ -167,7 +168,7 @@ export class DashboardComponent implements OnInit {
       next: (data: ProjectStatus[]) => {
         this.projectStatuses = data;
         this.totalTasks = this.tasks.length;
-  
+
         this.newTasks = this.tasks.filter(task => task.taskStatus === "New").length;
         this.startedTasks = this.tasks.filter(task => task.taskStatus === "In Progress").length;
         this.completedTasks = this.tasks.filter(task => task.taskStatus === "Completed").length;
@@ -196,7 +197,7 @@ export class DashboardComponent implements OnInit {
     });
 
   }
-  
+
   searchProj(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.projectSource.filter = filterValue.trim().toLowerCase();
