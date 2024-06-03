@@ -200,9 +200,7 @@ namespace Server.Controllers
             dbContext.MemberProjects.Add(new MemberProject { MemberId = userId, ProjectId = project.ProjectId, ProjectRoleId = 1 });
 
             await dbContext.SaveChangesAsync();
-
-            await _permissionNotifier.AssignedToProject(userId, project.ProjectId);
-
+            
             var teamLeaderDTO = new MemberDTO
             {
                 Id = teamLeader.Id,
@@ -241,6 +239,7 @@ namespace Server.Controllers
                 ProjectPriority = priority.Name
             };
 
+            await _permissionNotifier.AssignedToProject(userId, project.ProjectId);
             await _permissionNotifier.UpdatedProjectPermissions(projectDTO.ProjectId, projectDTO.TeamLider.Id);
             
             return Ok(projectDTO);
