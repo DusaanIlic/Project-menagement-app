@@ -30,6 +30,5 @@
         
         public string TaskLeaderLastName { get; set; }
 
-        public DateTime ProjectDeadline { get; set; }
 }
 }
