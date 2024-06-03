@@ -55,7 +55,6 @@ namespace Server.Controllers
                 .Where(tc => tc.TaskId == taskId)
                 .ToListAsync();
 
-            
 
             var taskcommentsdtos = taskcomments.Select(tc => new TaskCommentDTO
             {
@@ -95,9 +94,18 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Member not found" });
             }
 
-            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == addTaskCommentRequest.TaskId);
+            var projectTask = await dbContext.ProjectTasks
+               .Include(ts => ts.Project)
+               .FirstOrDefaultAsync(t => t.TaskId == addTaskCommentRequest.TaskId);
 
-            
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Comment task");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
 
             var taskComment = new TaskComment
             {
@@ -119,7 +127,37 @@ namespace Server.Controllers
         [HttpDelete("{taskCommentId}")]
         public async Task<IActionResult> DeleteTaskComment(int taskCommentId)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return NotFound(new { message = "User ID claim not found in token" });
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid user ID in token" });
+            }
+
+            var member = await dbContext.Members.FindAsync(userId);
+            if (member == null)
+            {
+                return BadRequest(new { message = "Member not found" });
+            }
+
             var taskcomment = await dbContext.TaskComments.FindAsync(taskCommentId);
+
+            var projectTask = await dbContext.ProjectTasks
+               .Include(ts => ts.Project)
+               .FirstOrDefaultAsync(t => t.TaskId == taskcomment.TaskId);
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Delete task comment");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
 
 
             if (taskcomment == null)

@@ -16,6 +16,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import { ProjectServiceGet } from '../../services/project.service';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-add-task',
@@ -52,15 +54,17 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   taskForm!: FormGroup;
   today = new Date();
   isLoading: boolean = false;
-
+  projectDeadline : Date |null = null;
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private taskService: TaskService,  private fb: FormBuilder, private snackBar: MatSnackBar) {}
+              private taskService: TaskService, private snackBar: MatSnackBar, private fb: FormBuilder,
+            private projectService : ProjectServiceGet) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
+
     this.getProjectMembers();
 
     this.taskService.getTaskPriorities().subscribe({
@@ -69,6 +73,15 @@ export class AddTaskComponent implements OnInit, OnDestroy{
       },
       error: error => {
         console.log('failed fetching task priorities');
+      }
+    });
+
+    this.projectService.getProjectById(this.data.projectId).subscribe({
+      next: projectData => {
+        this.projectDeadline = projectData.deadline;
+      },
+      error: error => {
+        console.log('Failed fetching project data');
       }
     });
 

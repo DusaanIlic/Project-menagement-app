@@ -788,6 +788,8 @@ namespace Server.Controllers
 
             var project = await dbContext.Projects
                 .Include(p => p.MemberProjects)
+                .Include(p => p.ProjectTasks)
+                .ThenInclude(pt => pt.Members)
                 .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
             if (project == null)
@@ -800,6 +802,34 @@ namespace Server.Controllers
             {
                 return NotFound(new { message = "Member not found on project" });
             }
+
+
+            var tasksWhereMemberIsLeader = project.ProjectTasks.Where(t => t.TaskLeaderId == memberId).ToList();
+            if (tasksWhereMemberIsLeader.Any())
+            {
+              
+                foreach (var task in tasksWhereMemberIsLeader)
+                {
+                    task.TaskLeaderId = (int)project.TeamLeaderId;
+                    var exists = await dbContext.MemberTasks.Where(mt => mt.TaskId == task.TaskId && mt.MemberId == task.TaskLeaderId).AnyAsync();
+
+                    if (!exists)
+                    {
+                        task.Members.Add(new MemberTask { MemberId = task.TaskLeaderId, TaskId = task.TaskId });
+                    }
+
+                }
+            }
+
+            foreach (var task in project.ProjectTasks)
+            {
+                var assignedMember = task.Members.FirstOrDefault(am => am.MemberId == memberId);
+                if (assignedMember != null)
+                {
+                    task.Members.Remove(assignedMember);
+                }
+            }
+
 
             dbContext.MemberProjects.Remove(memberProject);
             await dbContext.SaveChangesAsync();

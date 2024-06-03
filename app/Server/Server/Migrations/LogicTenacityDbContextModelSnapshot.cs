@@ -131,7 +131,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 2, 1, 41, 17, 8, DateTimeKind.Local).AddTicks(4632),
+                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 584, DateTimeKind.Local).AddTicks(7798),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -139,7 +139,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$OugpYCeAyHrj6KS3.6TIzeWCWUNPEG3s.21/bDNwj6GNj0BlYxRYC",
+                            Password = "$2a$10$fhZ07jP0Jz3B/pZy/QRWPOr73P3T3EIWuEjC2.TUnFL2Y4jO04Lf.",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -149,7 +149,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 2, 1, 41, 17, 71, DateTimeKind.Local).AddTicks(2003),
+                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 648, DateTimeKind.Local).AddTicks(4229),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -157,7 +157,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$.q2sNn8Y.PPq5pqhTD6Yve0s2X1Yn8XFp4hmnGiZQcIU0SZ5sRRvi",
+                            Password = "$2a$10$3yGC6wF.lk5Qx.tyjMhvXOmFq5HwY1p6slcxswd1UqdPn3rl10BzO",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -167,7 +167,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 2, 1, 41, 17, 134, DateTimeKind.Local).AddTicks(7351),
+                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 713, DateTimeKind.Local).AddTicks(2967),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -175,7 +175,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$qwXlUfyRgDYVu61ry302De/EVQAWupBytpE3aQvcNsZ8HDy7gC2zO",
+                            Password = "$2a$10$/Zm9I5kEYloR4QNHYDxziO.OeMkvHvftsRF5mD1Sip/Rd91y9KPgK",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -507,6 +507,11 @@ namespace Server.Migrations
                         {
                             Id = 28,
                             Name = "Remove task leader"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Name = "Delete task comment"
                         });
                 });
 
@@ -787,6 +792,16 @@ namespace Server.Migrations
                         {
                             ProjectRoleId = 1,
                             ProjectPermissionId = 28
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            ProjectPermissionId = 29
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            ProjectPermissionId = 29
                         });
                 });
 
