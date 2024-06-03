@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
-import { AddMemberForm } from '../../forms/add-member.form';
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatToolbar} from "@angular/material/toolbar";
@@ -13,6 +12,7 @@ import {MatCard, MatCardActions, MatCardContent, MatCardHeader} from "@angular/m
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatError, MatOption, MatSelect} from "@angular/material/select";
+import {MatSnackBar} from "@angular/material/snack-bar";
 @Component({
   selector: 'app-add-member',
   standalone: true,
@@ -50,7 +50,7 @@ export class AddMemberComponent implements OnInit {
 disableSelect: any;
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private memberService: MemberService, private _ngToastService: NgToastService,
+              private memberService: MemberService, private snackBar: MatSnackBar,
                private fb: FormBuilder){
   }
 
@@ -78,15 +78,14 @@ disableSelect: any;
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Member added successfully", duration: 3000});
+    this.snackBar.open('Successfully added member.', 'Close', { duration: 3000 });
+
   }
 
   addMember(): void {
     if (this.memberForm.invalid) {
-      this._ngToastService.error({
-        detail: 'Please fill up inputs',
-        summary: 'Adding failed: Inputs cannot be empty'
-      });
+      this.snackBar.open('Please fill out all of the inputs.', 'Close', { duration: 3000 });
+
       return;
     }
 
@@ -100,18 +99,7 @@ disableSelect: any;
         this.closeDialog();
       },
       error: error => {
-        if (error.status === 400) {
-          this._ngToastService.error({
-            detail: 'Error: Bad Request',
-            summary: 'Adding failed: Bad data form'
-          });
-        } else {
-          this._ngToastService.error({
-            detail: 'Server error',
-            summary: 'Adding failed: Server error'
-          });
-        }
-        console.error('Error saving task', error);
+        this.snackBar.open('Error with adding member.', 'Close', { duration: 3000 });
       }
     });
   }

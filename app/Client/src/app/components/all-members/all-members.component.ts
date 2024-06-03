@@ -56,8 +56,8 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
   @ViewChild(MatPaginator) paginator: any;
 
   constructor(private memberService: MemberService,  public dialog: MatDialog,
-                private _ngToastService: NgToastService, private _liveAnnouncer: LiveAnnouncer,
-                  private signalRService: SignalRService, private authService: AuthService) {
+                 private _liveAnnouncer: LiveAnnouncer, private signalRService: SignalRService,
+                  private authService: AuthService) {
     this.filteredMembers = this.members;
   }
 
