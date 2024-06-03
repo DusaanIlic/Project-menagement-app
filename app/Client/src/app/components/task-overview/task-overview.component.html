@@ -278,7 +278,7 @@
                     <div class="flex flex-row w-full">
                       <form class="flex w-full" [formGroup]="taskDeadlineForm">
                         <mat-form-field class="w-full">
-                          <input matInput [matDatepicker]="picker2" [min]="today" formControlName="deadline">
+                          <input matInput [matDatepicker]="picker2" [min]="today" [max]="projectDeadline" formControlName="deadline">
                           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                           <mat-datepicker #picker2></mat-datepicker>
                           <mat-hint>MM/DD/YYYY</mat-hint>

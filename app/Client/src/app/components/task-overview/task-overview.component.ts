@@ -87,6 +87,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     selectedStatus : any;
     selectedPriority : any;
     today: Date = new Date();
+    projectDeadline : Date |null = null;
     protected readonly environment = environment;
     @Output() taskModified: EventEmitter<any> = new EventEmitter<any>();
     taskLeaderId : any;
@@ -110,7 +111,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     taskPriorityForm! : FormGroup;
     taskLeaderFormGroup!: FormGroup;
     addChildTasksForm!: FormGroup;
-
+  
 
     taskComments : taskComment[] = [];
     permissions : Permission[] = [];
@@ -126,7 +127,6 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
     hp!: HasProjectPermissionPipe;
 
 
-
     readonly ProjectPermission = ProjectPermission;
     @ViewChild('scrollableDiv') private scrollableDiv!: ElementRef;
 
@@ -140,7 +140,8 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
               private _liveAnnouncer: LiveAnnouncer,
               private _liveAnnouncer1: LiveAnnouncer,
               private signalRService: SignalRService,
-              private permService : PermissionService) { }
+              private permService : PermissionService,
+            private projectService : ProjectServiceGet) { }
 
   ngDoCheck(): void
   {
@@ -233,8 +234,18 @@ export class TaskOverviewComponent implements OnInit, DoCheck{
       priorityId: [{value: this.task.taskStatusId, disabled: (!permissions.has(ProjectPermission.CHANGE_TASK_PRIORITY))}, Validators.required]
     })
 
-    this.show = 'overview';
+    this.projectService.getProjectById(this.task.projectId).subscribe({
+      next: projectData => {
+        this.projectDeadline = projectData.deadline;
+      },
+      error: error => {
+        console.log('Failed fetching project data');
+      }
+    });
 
+
+    this.show = 'overview';
+    
 
   }//NGONINITEND
 
