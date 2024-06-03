@@ -1637,7 +1637,7 @@ namespace Server.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateTask(int id, UpdateTaskRequest updateTaskRequest)
         {
             var projectTask = await dbContext.ProjectTasks
@@ -1663,8 +1663,23 @@ namespace Server.Controllers
             projectTask.Deadline = updateTaskRequest.Deadline;
             projectTask.TaskDescription = updateTaskRequest.TaskDescription;
             projectTask.TaskName = updateTaskRequest.TaskName;
-            projectTask.TaskStatusId = updateTaskRequest.TaskStatusId;
-            projectTask.TaskPriorityId = updateTaskRequest.TaskPriorityId;
+
+            var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(updateTaskRequest.TaskStatusId);
+            if (projectTaskStatus == null)
+            {
+                return NotFound(new { message = "Specified task status does not exist." });
+            }
+
+            projectTask.TaskStatus = projectTaskStatus;
+
+
+            var projectTaskPriority = await dbContext.TaskPriority.FindAsync(updateTaskRequest.TaskPriorityId);
+            if (projectTaskPriority == null)
+            {
+                return NotFound(new { message = "Specified task priority does not exist." });
+            }
+
+            projectTask.TaskPriority = projectTaskPriority;
             
 
 
