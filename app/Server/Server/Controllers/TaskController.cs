@@ -106,7 +106,7 @@ namespace Server.Controllers
             return Ok(tasksDTOs);
         }
 
-                [Authorize]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddProjectTasks(AddProjectTaskRequest addProjectTaskRequest)
         {
@@ -615,7 +615,6 @@ namespace Server.Controllers
                     TaskCategoryName = t.TaskCategory.CategoryName,
                     PercentageComplete = t.PercentageComplete,
                     TaskLeaderId = t.TaskLeaderId
-
                 });
             }
 
@@ -1710,5 +1709,96 @@ namespace Server.Controllers
             
             return Ok(new { message = "Task leader successfully removed and new leader assigned." });
         }
+
+        [Authorize]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateTask(int id, UpdateTaskRequest updateTaskRequest)
+        {
+            var projectTask = await dbContext.ProjectTasks
+                .Include(ts => ts.Project)
+                .Include(ts => ts.TaskStatus)
+                .Include(tp => tp.TaskPriority)
+                .Include(tc => tc.TaskCategory)
+                .FirstOrDefaultAsync(t => t.TaskId == id);
+
+            if (projectTask == null)
+            {
+                return NotFound(new { message = "Task not found" });
+            }
+
+            var hasPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task");
+            var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(projectTask.TaskId);
+
+            if (!hasPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
+            projectTask.Deadline = updateTaskRequest.Deadline;
+            projectTask.TaskDescription = updateTaskRequest.TaskDescription;
+            projectTask.TaskName = updateTaskRequest.TaskName;
+
+            var hasStatusPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
+            if (!hasStatusPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
+
+            var projectTaskStatus = await dbContext.TaskStatuses.FindAsync(updateTaskRequest.TaskStatusId);
+            if (projectTaskStatus == null)
+            {
+                return NotFound(new { message = "Specified task status does not exist." });
+            }
+
+            projectTask.TaskStatus = projectTaskStatus;
+
+            var hasPrPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task priority");
+            if (!hasPrPermission && !isAssignedToTask)
+            {
+                return Forbid("Forbid action");
+            }
+
+
+            var projectTaskPriority = await dbContext.TaskPriority.FindAsync(updateTaskRequest.TaskPriorityId);
+            if (projectTaskPriority == null)
+            {
+                return NotFound(new { message = "Specified task priority does not exist." });
+            }
+
+            projectTask.TaskPriority = projectTaskPriority;
+            
+
+
+            dbContext.ProjectTasks.Update(projectTask);
+            await dbContext.SaveChangesAsync();
+
+            var isTaskDependentOn = await dbContext.TaskDependencies.AnyAsync(td => td.DependentTaskId == projectTask.TaskId);
+
+            var tasksDTO = new ProjectTaskDTO
+            {
+                ProjectName = projectTask.Project.ProjectName,
+                Deadline = projectTask.Deadline,
+                ProjectId = projectTask.ProjectId,
+                TaskDescription = projectTask.TaskDescription,
+                TaskId = projectTask.TaskId,
+                TaskName = projectTask.TaskName,
+                TaskStatusId = projectTask.TaskStatusId,
+                TaskStatus = projectTask.TaskStatus.Name,
+                StartDate = projectTask.StartDate,
+                TaskPriorityId = projectTask.TaskPriorityId,
+                IsTaskDependentOn = isTaskDependentOn,
+                TaskCategoryId = projectTask.TaskCategoryId,
+                TaskPriorityName = projectTask.TaskPriority.Name,
+                DateFinished = projectTask.DateFinished,
+                DeadlineModified = projectTask.DeadlineModified,
+                TaskCategoryName = projectTask.TaskCategory.CategoryName,
+                PercentageComplete = projectTask.PercentageComplete,
+                TaskLeaderId = projectTask.TaskLeaderId
+            };
+
+            return Ok(tasksDTO);
+        }
+
     }
 }

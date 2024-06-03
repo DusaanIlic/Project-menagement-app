@@ -17,7 +17,7 @@
 
           <div class="flex flex-col items-center justify-center gap-2 w-1/2">
             <button type="button" color="primary" class="w-full" mat-raised-button (click)="fileInput.click()">UPLOAD AVATAR</button>
-            <input hidden (change)="onFileSelected($event)" #fileInput type="file">
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*">
             <button color="warn" mat-stroked-button class="w-full" (click)="deleteAvatar()">DELETE AVATAR</button>
           </div>
         </div>
