@@ -85,8 +85,9 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <div class="flex w-full p-2">
+        <div class="flex w-full p-2 gap-2">
           <span class="grow"></span>
+          <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="accent" (click)="generateDescription()">Generate Description with our AI</button>
           <button mat-raised-button type="submit" color="primary" (click)="saveTask()"
             [disabled]="isLoading" [class.spinner]="isLoading">Add Task</button>
         </div>

@@ -46,7 +46,7 @@
 
           <mat-form-field>
             <mat-label>Description</mat-label>
-            <textarea matInput rows="4" placeholder="Ex. This project is about making something similar to Jira..." formControlName="projectDescription" required></textarea>
+            <textarea matInput rows="8" placeholder="Ex. This project is about making something similar to Jira..." formControlName="projectDescription" required></textarea>
             <mat-error *ngIf="projectForm.get('projectDescription')?.hasError('required')">
               Description is required
             </mat-error>
@@ -56,8 +56,9 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <div class="flex w-full p-2">
+      <div class="flex w-full p-2 gap-2">
         <span class="grow"></span>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="accent" (click)="generateDescription()">Generate Description with our AI</button>
         <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="primary" (click)="addProject()">Add Project</button>
       </div>
     </mat-card-actions>

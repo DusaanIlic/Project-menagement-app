@@ -37,6 +37,8 @@ import {provideNativeDateAdapter} from "@angular/material/core";
 import {ProjectServiceGet} from "../../services/project.service";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {LLMService} from "../../services/llm.service";
+import {LLMResponse} from "../../models/llm-response";
 
 @Component({
   selector: 'app-add-project',
@@ -80,7 +82,7 @@ export class AddProjectComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<AddProjectComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
                 private projectService: ProjectServiceGet, private matSnackBar: MatSnackBar,
-                  private fb: FormBuilder) { }
+                  private fb: FormBuilder, private llmService: LLMService) { }
 
   ngOnInit() {
     this.projectForm = this.fb.group({
@@ -144,6 +146,29 @@ export class AddProjectComponent implements OnInit {
     } else {
       // Mark all form controls as touched to display validation errors
       this.projectForm.markAllAsTouched();
+    }
+  }
+
+  generateDescription() {
+    if (this.projectForm.get('projectName')?.valid) {
+      const projectName: string = this.projectForm.get('projectName')?.value;
+      const question: string = `I want to create a project named ${projectName}. Can you help me make a short description.
+      I just want you to write me the project description, no comments, or anything else.`;
+
+      this.isLoading = true;
+      this.llmService.generateText(question).subscribe({
+        next: (data: LLMResponse) => {
+          this.projectForm.get('projectDescription')?.setValue(data.response);
+          this.matSnackBar.open('Successfully generated description', 'Close', { duration: 3000 });
+          this.isLoading = false;
+        },
+        error: error => {
+          this.matSnackBar.open('Failed to generate description using AI', 'Close', { duration: 3000 });
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.matSnackBar.open('You must enter a title!', 'Close', { duration: 3000 });
     }
   }
 }
