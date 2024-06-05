@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from "@angular/core";
+import {EventEmitter, Injectable, OnInit} from "@angular/core";
 import {ProjectServiceGet} from "./project.service";
 import {HttpClient} from "@angular/common/http";
 import {MemberService} from "./member.service";
@@ -18,10 +18,8 @@ export class PermissionService {
   constructor(
     private projectService: ProjectServiceGet,
     private memberService: MemberService,
-    private router: Router,
-    private route: ActivatedRoute
   ) {
-
+    this.refreshData();
   }
 
   refreshData() {
