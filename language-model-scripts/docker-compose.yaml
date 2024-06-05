@@ -14,6 +14,7 @@ services:
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_ORIGINS=*
     command: nvidia-smi
     deploy:
       resources:

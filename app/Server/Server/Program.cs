@@ -137,6 +137,15 @@ else
     app.MapFallbackToFile("index.html");
 }
 
+app.UseCors(options => 
+    options.WithOrigins("http://kraguj.pmf.kg.ac.rs:12325")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+);
+
+app.UseCors("AllowOrigin");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
