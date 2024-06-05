@@ -12,18 +12,14 @@ import { TaskService } from '../../services/task.service';
 })
 export class ConfirmationComponent {
 
-constructor(public dialogRef: MatDialogRef<ConfirmationComponent>, private _ngToastService: NgToastService, private taskService: TaskService,  @Inject(MAT_DIALOG_DATA) public data: any){}
+constructor(public dialogRef: MatDialogRef<ConfirmationComponent>, private taskService: TaskService,  @Inject(MAT_DIALOG_DATA) public data: any){}
 
   closeDialog(): void {
     this.dialogRef.close();
   }
 
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Task deleted successfully", duration: 3000});
-  }
-
   confirmDelete(): void{
     this.dialogRef.close(this.data);
   }
- 
+
 }

@@ -78,7 +78,6 @@ export class AllTasksComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               private taskService: TaskService,
-              private _ngToastService: NgToastService,
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
               private tService : TaskService,

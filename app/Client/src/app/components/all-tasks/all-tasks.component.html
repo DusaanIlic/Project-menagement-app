@@ -87,7 +87,7 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef> ACTIONS </th>
           <td mat-cell *matCellDef="let task">
-            <button class="font-extrabold text-3xl" mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+            <button class="font-extrabold text-3xl" mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
               <div class="flex items-center justify-center">
                 <mat-icon>view_headline</mat-icon>
               </div>
@@ -108,5 +108,4 @@
     </div>
 
   </div>
-  <ng-toast></ng-toast>
 </div>

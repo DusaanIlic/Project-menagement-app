@@ -11,19 +11,16 @@ import { TaskService } from '../../services/task.service';
   styleUrl: './confirmation-assignee.component.scss'
 })
 export class ConfirmationAssigneeComponent {
-  constructor(public dialogRef: MatDialogRef<ConfirmationAssigneeComponent>, private _ngToastService: NgToastService, private taskService: TaskService,  @Inject(MAT_DIALOG_DATA) public data: any){}
+  constructor(public dialogRef: MatDialogRef<ConfirmationAssigneeComponent>, private taskService: TaskService,  @Inject(MAT_DIALOG_DATA) public data: any){}
 
   closeDialog(): void {
     this.dialogRef.close();
   }
 
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Assignee deleted successfully", duration: 3000});
-  }
 
   confirmDelete(): void{
     this.dialogRef.close(this.data);
   }
- 
+
 
 }

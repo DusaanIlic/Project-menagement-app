@@ -16,6 +16,7 @@ import { ForgotPasswordForm } from '../../forms/forgot-password.form';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-login',
@@ -51,7 +52,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private memberService: MemberService,
     private router: Router,
-    private _ngToastService: NgToastService
+    private snackBar: MatSnackBar
   ) {
     this.emailFormControl = new FormControl('', [
       Validators.required,
@@ -97,26 +98,14 @@ export class LoginComponent implements OnInit {
 
       this.authService.forgotPasswordRequest(data).subscribe({
         next: (data) => {
-          this._ngToastService.success({
-            detail: 'Successfully sent request',
-            summary: data.message,
-            duration: 2000,
-          });
+          this.snackBar.open('Successfully sent request.', 'Close', { duration: 3000 });
         },
         error: (error) => {
-          this._ngToastService.error({
-            detail: 'Error sending request',
-            summary: 'Failed sending request',
-            duration: 2000,
-          });
+          this.snackBar.open('Error sending request.', 'Close', { duration: 3000 });
         },
       });
     } else {
-      this._ngToastService.error({
-        detail: 'Form is not valid',
-        summary: 'Please enter a correct email',
-        duration: 2000,
-      });
+      this.snackBar.open('Form is not valid.', 'Close', { duration: 3000 });
     }
   }
 }

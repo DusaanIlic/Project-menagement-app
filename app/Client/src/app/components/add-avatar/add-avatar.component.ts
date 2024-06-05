@@ -12,6 +12,7 @@ import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
 import {MemberService} from "../../services/member.service";
 import {NgToastService} from "ng-angular-popup";
 import {AuthService} from "../../services/auth.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -38,7 +39,7 @@ export class AddAvatarComponent {
 
   constructor(public dialogRef: MatDialogRef<EditMemberComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any, private sanitizer: DomSanitizer,
-              private memberService: MemberService, private ngToastService: NgToastService,
+              private memberService: MemberService, private snackBar: MatSnackBar,
               private authService: AuthService) {
     this.selectedFile = data.file;
     this.memberId = data.memberId;
@@ -66,20 +67,15 @@ export class AddAvatarComponent {
   uploadAvatar() {
     this.memberService.setAvatar(this.memberId, this.croppedImage).subscribe({
       next: data => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Successfully changed avatar.'
-        });
+        this.snackBar.open('Successfully changed avatar.', 'Close', { duration: 3000 });
+
 
         this.authService.updateAuthenticatedMembersAvatar();
 
         this.closeDialog();
       },
       error: err => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: err.statusText
-        });
+        this.snackBar.open('Failed uploading avatar.', 'Close', { duration: 3000 });
       }
     });
   }

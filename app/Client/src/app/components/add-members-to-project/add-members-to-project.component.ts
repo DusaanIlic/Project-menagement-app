@@ -103,11 +103,10 @@ export class AddMembersToProjectComponent implements OnInit{
               @Inject(MAT_DIALOG_DATA) public projectId: number,
               private tService : TaskService,
               private mService : MemberService,
-              private _ngToastService: NgToastService,
+              private snackBar: MatSnackBar,
               private pService: ProjectServiceGet,
               private signalRService: SignalRService,
-              private _liveAnnouncer: LiveAnnouncer,
-              private snackBar: MatSnackBar) { }
+              private _liveAnnouncer: LiveAnnouncer) { }
 
 
   ngOnInit(): void
@@ -213,16 +212,6 @@ export class AddMembersToProjectComponent implements OnInit{
         }
       })
     }
-  }
-
-  showMessage()
-  {
-    this._ngToastService.success({detail: "Success Message", summary: "Member add/delete successfully!", duration: 3000});
-  }
-
-  showMessageError()
-  {
-    this._ngToastService.error({detail: "Error Message", summary: "Member add/delete failed!", duration: 3000});
   }
 
   closeDialog(): void {

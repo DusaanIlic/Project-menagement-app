@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-confirmation-project',
@@ -16,27 +17,15 @@ import { RouterLink } from '@angular/router';
 })
 export class ConfirmationProjectComponent {
   projectId: number = 0;
-  constructor(public dialogRef: MatDialogRef<ConfirmationProjectComponent>, private _ngToastService: NgToastService, 
+  constructor(public dialogRef: MatDialogRef<ConfirmationProjectComponent>, private snackBar: MatSnackBar,
     private projectService: ProjectServiceGet, private route: ActivatedRoute, @Inject(MAT_DIALOG_DATA) public data: any){}
-
-  ngOnInit() {
-    this.projectId = this.data.projectId;
-    console.log(this.projectId);
-  }
 
   closeDialog(): void {
     this.dialogRef.close();
   }
 
   showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Assignee deleted successfully", duration: 3000});
-  }
-
-  getProjectIdFromRoute(): any{
-    this.route.params.subscribe(params => {
-      this.projectId = params['id'];
-    });
-    console.log(this.projectId);
+    this.snackBar.open('Assignee deleted successfully.', 'Close', { duration: 3000 });
   }
 
   confirmDelete(): void {

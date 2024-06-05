@@ -123,28 +123,28 @@
 
       <div class="flex justify-center">
         <div class="min-w-full">
-          <mat-table
+          <table mat-table
             class="min-w-full mat-elevation-z8 demo-table"
             [dataSource]="dataSource"
           >
             <!-- Header -->
             <ng-container matColumnDef="project">
-              <mat-header-cell *matHeaderCellDef class="text-left p-3 w-60">
+              <th  mat-header-cell *matHeaderCellDef class="text-left p-3 w-60">
                 PROJECT
-              </mat-header-cell>
-              <mat-cell
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300 p-2"
               >
                 {{ task.projectName }}
-              </mat-cell>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="task">
-              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+              <th mat-header-cell *matHeaderCellDef class="text-left w-60">
                 TASK
-              </mat-header-cell>
-              <mat-cell
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300"
               >
@@ -153,26 +153,26 @@
                   (click)="openDialogOverview(task)"
                 >{{ task.taskName }}</a
                 >
-              </mat-cell>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="dueDate">
-              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+              <th mat-header-cell *matHeaderCellDef class="text-left w-60">
                 DUE DATE
-              </mat-header-cell>
-              <mat-cell
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300"
               >
                 {{ task.deadline | date }}
-              </mat-cell>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
-              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+              <th mat-header-cell *matHeaderCellDef class="text-left w-60">
                 STATUS
-              </mat-header-cell>
-              <mat-cell
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300"
               >
@@ -197,58 +197,47 @@
                   <mat-icon>timelapse</mat-icon>
                   {{ task.taskStatus }}
                 </div>
-              </mat-cell>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="priority">
-              <mat-header-cell *matHeaderCellDef class="text-left w-60">
+              <th mat-header-cell *matHeaderCellDef class="text-left w-60">
                 PRIORITY
-              </mat-header-cell>
-              <mat-cell
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-60 border-t-[1px] border-t-gray-300"
               >
                 {{ task.taskPriorityName }}
-              </mat-cell>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
-              <mat-header-cell *matHeaderCellDef class="text-left w-20">
-              </mat-header-cell>
-              <mat-cell
+              <th mat-header-cell *matHeaderCellDef class="text-left w-20">
+              </th>
+              <td mat-cell
                 *matCellDef="let task"
                 class="w-10 border-t-[1px] border-t-gray-300"
               >
                 <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
+                  <mat-icon>view_headline</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="openDialog(task)">
                     <mat-icon>visibility</mat-icon>
                     <span>View</span>
                   </button>
-                  <button
-                    mat-menu-item
-                    class="p-2 bg rounded-md font-semibold text-black"
-                  >
-                    <mat-icon>delete</mat-icon>
-                    <span>Delete</span>
-                  </button>
                 </mat-menu>
-              </mat-cell>
+              </td>
             </ng-container>
 
-            <mat-header-row
-              *matHeaderRowDef="displayedColumns"
-            ></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-          </mat-table>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
 
           <mat-paginator
             [pageSizeOptions]="[5, 10, 20]"
             [pageSize]="5"
-            showFirstLastButtons
-            (page)="onPageChange($event)"
           ></mat-paginator>
         </div>
       </div>

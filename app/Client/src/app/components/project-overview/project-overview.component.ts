@@ -69,7 +69,7 @@ export class ProjectOverviewComponent implements OnInit {
     private mService: MemberService,
     private tService: TaskService,
     private pService: ProjectServiceGet,
-    private _ngToastService: NgToastService,
+    private matSnackBar: MatSnackBar,
     private snackBar: MatSnackBar
   ) { }
 
@@ -250,10 +250,6 @@ export class ProjectOverviewComponent implements OnInit {
       }
     });
     return statusCounts;
-  }
-
-  showMessage(){
-    this._ngToastService.success({detail: "Success Message", summary: "Project info updated successfully", duration: 3000});
   }
 
   saveProjectDetails() {

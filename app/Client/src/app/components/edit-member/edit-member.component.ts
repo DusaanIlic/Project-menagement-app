@@ -132,7 +132,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
   );
 
   constructor(private route: ActivatedRoute, private memberService: MemberService,
-                private ngToastService: NgToastService, private authService: AuthService,
+                private snackBar: MatSnackBar, private authService: AuthService,
                   private matDialog: MatDialog, private roleService: RoleService,
                     private matSnackBar: MatSnackBar) { }
 
@@ -201,10 +201,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     const maxSize: number = 1024 * 1024; // 1MB
 
     if ( this.selectedFile &&  this.selectedFile.size > maxSize) {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'File size exceeds 1MB.'
-      });
+      this.snackBar.open('File cant exceed 1MB.', 'Close', { duration: 3000 });
+
 
       event.target.value = '';
 
@@ -228,19 +226,14 @@ export class EditMemberComponent implements OnInit, OnDestroy {
     console.log('runs');
     this.memberService.deleteAvatar(this.memberId).subscribe({
       next: data => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Deleted successfully.'
-        });
+        this.snackBar.open('Successfully deleted avatar.', 'Close', { duration: 3000 });
+
 
         this.authService.updateAuthenticatedMembersAvatar();
         this.setAvatarLink(`${environment.apiUrl}/Member/${this.memberId}/Avatar`);
       },
       error: err => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: 'Failed deleting avatar.'
-        });
+        this.snackBar.open('Failed deleting avatar.', 'Close', { duration: 3000 });
       }
     });
   }
@@ -254,41 +247,27 @@ export class EditMemberComponent implements OnInit, OnDestroy {
           this.memberService.updateMemberSubject(data);
           this.authService.updateAuthenticatedMember(data);
 
-          this.ngToastService.success({
-            detail: 'Success',
-            summary: 'Successfully updated settings.'
-          });
+          this.snackBar.open('Successfully updated profile settings.', 'Close', { duration: 3000 });
         },
         error: error => {
-          this.ngToastService.error({
-            detail: 'Error',
-            summary: error.statusText
-          });
+          this.snackBar.open('Failed updating profile settings.', 'Close', { duration: 3000 });
+
         }
       });
     } else {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'Input validation failed.'
-      });
+      this.snackBar.open('Input validation failed.', 'Close', { duration: 3000 });
     }
   }
 
   submitEmail() {
     if (!this.emailForm.valid) {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'Input validation failed.'
-      });
+      this.snackBar.open('Input validation failed.', 'Close', { duration: 3000 });
 
       return;
     }
 
     if (this.emailForm.get('newEmail')?.value == this.emailForm.get('oldEmail')?.value) {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'New Email can not match old email!.'
-      });
+      this.snackBar.open('New email can not match old email.', 'Close', { duration: 3000 });
 
       return;
     }
@@ -299,10 +278,7 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
     this.memberService.changeEmail(this.memberId, formData).subscribe({
       next: (data: any) => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Email updated successfully.'
-        });
+        this.snackBar.open('Email updated successfully.', 'Close', { duration: 3000 });
 
         this.emailForm.patchValue({
           oldEmail: formData.newEmail,
@@ -321,20 +297,15 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         this.memberService.updateMemberSubject(updatedMember);
       },
       error: error => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: error.error.message
-        });
+        this.snackBar.open('Failed changing email.', 'Close', { duration: 3000 });
+
       }
     });
   }
 
   submitRole() {
     if (!this.roleForm.valid) {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'Input validation failed.'
-      });
+      this.snackBar.open('Input validation failed.', 'Close', { duration: 3000 });
 
       return;
     }
@@ -343,10 +314,8 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
     this.memberService.changeRole(this.memberId, formData).subscribe({
       next: (data: Role) => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Role changed successfully.'
-        });
+        this.snackBar.open('Role changed successfully.', 'Close', { duration: 3000 });
+
 
         this.roleForm.patchValue({
           oldRoleId: formData.roleId,
@@ -366,20 +335,14 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         this.memberService.updateMemberSubject(updatedMember);
       },
       error: error => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: error.error.message
-        });
+        this.snackBar.open('Failed changing role.', 'Close', { duration: 3000 });
       }
     });
   }
 
   submitPassword() {
     if (!this.passwordForm.valid) {
-      this.ngToastService.error({
-        detail: 'Error',
-        summary: 'Input validation failed.'
-      });
+      this.snackBar.open('Input validation failed.', 'Close', { duration: 3000 });
 
       return;
     }
@@ -388,19 +351,11 @@ export class EditMemberComponent implements OnInit, OnDestroy {
 
     this.memberService.changePassword(this.memberId, formData).subscribe({
       next: data => {
-        this.ngToastService.success({
-          detail: 'Success',
-          summary: 'Password changed successfully.'
-        });
-
-
+        this.snackBar.open('Password changed successfully.', 'Close', { duration: 3000 });
         this.passwordForm.reset();
       },
       error: error => {
-        this.ngToastService.error({
-          detail: 'Error',
-          summary: error.error.message
-        });
+        this.snackBar.open('Failed changing passwords.', 'Close', { duration: 3000 });
       }
     });
   }
@@ -445,16 +400,10 @@ export class EditMemberComponent implements OnInit, OnDestroy {
         if (result) {
           this.memberService.resetPassword(this.memberId).subscribe({
             next: data => {
-              this.ngToastService.success({
-                detail: 'Success',
-                summary: 'Password reset successfully.'
-              });
+              this.snackBar.open('Password reset successfully.', 'Close', { duration: 3000 });
             },
             error: error => {
-              this.ngToastService.error({
-                detail: 'Error',
-                summary: error.error.message
-              });
+              this.snackBar.open('Failed reseting password.', 'Close', { duration: 3000 });
             }
           });
         }

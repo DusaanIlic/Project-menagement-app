@@ -14,6 +14,7 @@ import { ForgotPasswordCompleteForm } from '../../forms/forgot-password-complete
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-forgot-password',
@@ -43,7 +44,7 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private ngToastService: NgToastService,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.newPasswordFormControl = new FormControl('', [
@@ -87,11 +88,8 @@ export class ForgotPasswordComponent implements OnInit {
       this.authService.completeForgotPasswordRequest(data).subscribe({
         next: (data) => {
           // Handle success response
-          this.ngToastService.success({
-            detail: 'Password reset successfully.',
-            summary: 'You are going to be redirected to login',
-            duration: 3000,
-          });
+          this.snackBar.open('Password reset successfully.', 'Close', { duration: 3000 });
+
 
           // Optionally, you can reset the form after successful submission
           this.form.reset();
@@ -102,18 +100,12 @@ export class ForgotPasswordComponent implements OnInit {
         },
         error: (error) => {
           // Handle error response
-          this.ngToastService.error({
-            detail: 'Failed to reset password. Please try again later.',
-            summary: 'Something went wrong with your request',
-          });
+          this.snackBar.open('Failed reseting password.', 'Close', { duration: 3000 });
+
         },
       });
     } else {
-      this.ngToastService.error({
-        detail:
-          'Failed submitting form. Please check your input and try again.',
-        summary: 'Input validation failed',
-      });
+      this.snackBar.open('Input validation failed.', 'Close', { duration: 3000 });
     }
   }
 }
