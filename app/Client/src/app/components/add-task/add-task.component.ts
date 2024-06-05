@@ -18,6 +18,9 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
 import {MatSnackBar} from "@angular/material/snack-bar";
 import { ProjectServiceGet } from '../../services/project.service';
 import { th } from 'date-fns/locale';
+import {LLMResponse} from "../../models/llm-response";
+import {Project} from "../../models/project";
+import {LLMService} from "../../services/llm.service";
 
 @Component({
   selector: 'app-add-task',
@@ -55,12 +58,13 @@ export class AddTaskComponent implements OnInit, OnDestroy{
   today = new Date();
   isLoading: boolean = false;
   projectDeadline : Date |null = null;
+  project!: Project;
   @Output() taskAdded: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(public dialogRef: MatDialogRef<AddTaskComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
               private taskService: TaskService, private snackBar: MatSnackBar, private fb: FormBuilder,
-            private projectService : ProjectServiceGet) {}
+            private projectService : ProjectServiceGet, private llmService: LLMService) {}
 
   ngOnInit() {
     this.projectId = this.data.projectId;
@@ -79,6 +83,7 @@ export class AddTaskComponent implements OnInit, OnDestroy{
     this.projectService.getProjectById(this.data.projectId).subscribe({
       next: projectData => {
         this.projectDeadline = projectData.deadline;
+        this.project = projectData;
       },
       error: error => {
         console.log('Failed fetching project data');
@@ -161,6 +166,29 @@ export class AddTaskComponent implements OnInit, OnDestroy{
           console.log('Error fetching project members:', error);
         }
       });
+    }
+  }
+
+  generateDescription() {
+    if (this.taskForm.get('taskName')?.valid) {
+      const taskName: string = this.taskForm.get('taskName')?.value;
+      const question: string = `My assigned project is ${this.project.projectName}. I want to create a task named ${taskName}. Can you help me make a short description.
+      I just want you to write me the task description, no comments, or anything else.`;
+
+      this.isLoading = true;
+      this.llmService.generateText(question).subscribe({
+        next: (data: LLMResponse) => {
+          this.taskForm.get('taskDescription')?.setValue(data.response);
+          this.snackBar.open('Successfully generated description', 'Close', { duration: 3000 });
+          this.isLoading = false;
+        },
+        error: error => {
+          this.snackBar.open('Failed to generate description using AI', 'Close', { duration: 3000 });
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.snackBar.open('You must enter a title!', 'Close', { duration: 3000 });
     }
   }
 }

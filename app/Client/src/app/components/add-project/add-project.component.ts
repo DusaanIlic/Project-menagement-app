@@ -152,7 +152,8 @@ export class AddProjectComponent implements OnInit {
   generateDescription() {
     if (this.projectForm.get('projectName')?.valid) {
       const projectName: string = this.projectForm.get('projectName')?.value;
-      const question: string = `Can you give me a short project description using my project name ${projectName}`;
+      const question: string = `I want to create a project named ${projectName}. Can you help me make a short description.
+      I just want you to write me the project description, no comments, or anything else.`;
 
       this.isLoading = true;
       this.llmService.generateText(question).subscribe({
