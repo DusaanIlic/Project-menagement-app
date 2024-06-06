@@ -15,6 +15,11 @@ import {LLMService} from "../../services/llm.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {CLIPBOARD_OPTIONS, ClipboardButtonComponent, MarkdownModule} from "ngx-markdown";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatButton} from "@angular/material/button";
+
+
 
 @Component({
   selector: 'app-llm-chat',
@@ -37,13 +42,17 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/mat
     MatCardContent,
     MatCard,
     MatCardHeader,
-    MatCardTitle
+    MatCardTitle,
+    MarkdownModule,
+    MatProgressSpinner,
+    MatButton
   ],
   templateUrl: './llm-chat.component.html',
-  styleUrl: './llm-chat.component.scss'
+  styleUrl: './llm-chat.component.scss',
 })
 export class LlmChatComponent implements AfterViewChecked {
   messages: LlmConversation[] = [];
+  generating: boolean = false;
   question: FormControl = new FormControl('', [
     Validators.required,
     Validators.minLength(2),
@@ -68,12 +77,14 @@ export class LlmChatComponent implements AfterViewChecked {
         content: this.question.value
       };
 
+      this.generating = true;
       this.question.reset();
       this.question.disable();
       this.messages.push(message);
 
       this.llmService.generateConversation(this.messages).subscribe({
         next: (data: any) => {
+          this.generating = false;
           const response: LlmConversation = data.message;
           this.messages.push(response);
           this.question.enable();
@@ -81,6 +92,7 @@ export class LlmChatComponent implements AfterViewChecked {
           this.question.markAsPristine();
         },
         error: err => {
+          this.generating = false;
           this.snackBar.open("Failed continuining the conversation, try again", "Close", { duration: 1500 });
           this.question.enable();
           this.focusInput();
@@ -102,5 +114,9 @@ export class LlmChatComponent implements AfterViewChecked {
     } catch (err) {
       console.error('Could not scroll to bottom:', err);
     }
+  }
+
+  clearConversation() {
+    this.messages = [];
   }
 }

@@ -6,6 +6,7 @@ import {HttpClientModule, provideHttpClient, withInterceptors} from '@angular/co
 import {httpInterceptor} from "./helpers/http.interceptor";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {MatNativeDateModule} from "@angular/material/core";
+import {MarkdownModule} from "ngx-markdown";
 
 
 export const appConfig: ApplicationConfig = {
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withRouterConfig(routerConfig)),
     importProvidersFrom([HttpClientModule, MatNativeDateModule]),
     provideHttpClient(withInterceptors([httpInterceptor])),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    importProvidersFrom(MarkdownModule.forRoot())
   ]
 };
