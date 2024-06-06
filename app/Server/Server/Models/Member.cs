@@ -74,5 +74,7 @@ namespace Server.Models
         public DateTime? PasswordTokenExpiresAt { get; set; }
 
         public ICollection<TaskComment> TaskComments { get; set; } = new List<TaskComment>();
+
+        public ICollection<LlmGroup> LlmGroups { get; set; } = new List<LlmGroup>();
     }
 }

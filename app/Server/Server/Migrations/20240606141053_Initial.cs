@@ -257,6 +257,26 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LlmGroups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LlmGroups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LlmGroups_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
@@ -313,6 +333,28 @@ namespace Server.Migrations
                         name: "FK_Projects_ProjectStatuses_ProjectStatusId",
                         column: x => x.ProjectStatusId,
                         principalTable: "ProjectStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LlmMesages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Prompt = table.Column<string>(type: "TEXT", nullable: false),
+                    Response = table.Column<string>(type: "TEXT", nullable: false),
+                    GeneratedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LlmGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LlmMesages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LlmMesages_LlmGroups_LlmGroupId",
+                        column: x => x.LlmGroupId,
+                        principalTable: "LlmGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -763,9 +805,9 @@ namespace Server.Migrations
                 columns: new[] { "Id", "AvatarId", "City", "Country", "DateAdded", "DateOfBirth", "Email", "FirstName", "Github", "IsDisabled", "LastName", "Linkedin", "Password", "PasswordToken", "PasswordTokenExpiresAt", "PhoneNumber", "RefreshToken", "RefreshTokenExpiresAt", "RoleId", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, "", "", new DateTime(2024, 6, 3, 14, 41, 12, 584, DateTimeKind.Local).AddTicks(7798), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$fhZ07jP0Jz3B/pZy/QRWPOr73P3T3EIWuEjC2.TUnFL2Y4jO04Lf.", null, null, "", null, null, 1, "" },
-                    { 2, null, "", "", new DateTime(2024, 6, 3, 14, 41, 12, 648, DateTimeKind.Local).AddTicks(4229), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$3yGC6wF.lk5Qx.tyjMhvXOmFq5HwY1p6slcxswd1UqdPn3rl10BzO", null, null, "", null, null, 2, "" },
-                    { 3, null, "", "", new DateTime(2024, 6, 3, 14, 41, 12, 713, DateTimeKind.Local).AddTicks(2967), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$/Zm9I5kEYloR4QNHYDxziO.OeMkvHvftsRF5mD1Sip/Rd91y9KPgK", null, null, "", null, null, 3, "" }
+                    { 1, null, "", "", new DateTime(2024, 6, 6, 16, 10, 52, 39, DateTimeKind.Local).AddTicks(4000), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@logictenacity.com", "Logic", "", false, "Tenacity", "", "$2a$10$DHnHIhhVXI3pOdz/.D9IE.e29c17sv6GMkf8jAG0xVoDkfNgSBtVe", null, null, "", null, null, 1, "" },
+                    { 2, null, "", "", new DateTime(2024, 6, 6, 16, 10, 52, 102, DateTimeKind.Local).AddTicks(5407), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pera@gmail.com", "Pera", "", false, "Peric", "", "$2a$10$UFJOcniCIj59zk4kVu6G7u4ib2Qttzvxh8upxzyMsA9U9d1iWCFTq", null, null, "", null, null, 2, "" },
+                    { 3, null, "", "", new DateTime(2024, 6, 6, 16, 10, 52, 166, DateTimeKind.Local).AddTicks(1443), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "toma@gmail.com", "Toma", "", false, "Tomic", "", "$2a$10$yXP8V5dIwIcQDVKjrjdwm.OqXr2EmPo2dWvrkgkeGkjavWpJgPMH6", null, null, "", null, null, 3, "" }
                 });
 
             migrationBuilder.InsertData(
@@ -826,6 +868,16 @@ namespace Server.Migrations
                 name: "IX_Files_UploaderId",
                 table: "Files",
                 column: "UploaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LlmGroups_MemberId",
+                table: "LlmGroups",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LlmMesages_LlmGroupId",
+                table: "LlmMesages",
+                column: "LlmGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MemberProjects_ProjectId",
@@ -997,6 +1049,9 @@ namespace Server.Migrations
                 table: "Files");
 
             migrationBuilder.DropTable(
+                name: "LlmMesages");
+
+            migrationBuilder.DropTable(
                 name: "MemberProjects");
 
             migrationBuilder.DropTable(
@@ -1034,6 +1089,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskFile");
+
+            migrationBuilder.DropTable(
+                name: "LlmGroups");
 
             migrationBuilder.DropTable(
                 name: "ProjectPermissions");

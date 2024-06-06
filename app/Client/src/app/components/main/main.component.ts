@@ -20,5 +20,6 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
       this.signalRService.startConnection();
+      this.permissionService.refreshData();
   }
 }

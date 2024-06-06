@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(LogicTenacityDbContext))]
-    [Migration("20240603124113_Initial")]
+    [Migration("20240606141053_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,6 +42,52 @@ namespace Server.Migrations
                     b.HasIndex("UploaderId");
 
                     b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Server.Models.LlmGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("LlmGroups");
+                });
+
+            modelBuilder.Entity("Server.Models.LlmMesage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LlmGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Prompt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Response")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LlmGroupId");
+
+                    b.ToTable("LlmMesages");
                 });
 
             modelBuilder.Entity("Server.Models.Member", b =>
@@ -134,7 +180,7 @@ namespace Server.Migrations
                             Id = 1,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 584, DateTimeKind.Local).AddTicks(7798),
+                            DateAdded = new DateTime(2024, 6, 6, 16, 10, 52, 39, DateTimeKind.Local).AddTicks(4000),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@logictenacity.com",
                             FirstName = "Logic",
@@ -142,7 +188,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tenacity",
                             Linkedin = "",
-                            Password = "$2a$10$fhZ07jP0Jz3B/pZy/QRWPOr73P3T3EIWuEjC2.TUnFL2Y4jO04Lf.",
+                            Password = "$2a$10$DHnHIhhVXI3pOdz/.D9IE.e29c17sv6GMkf8jAG0xVoDkfNgSBtVe",
                             PhoneNumber = "",
                             RoleId = 1,
                             Status = ""
@@ -152,7 +198,7 @@ namespace Server.Migrations
                             Id = 2,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 648, DateTimeKind.Local).AddTicks(4229),
+                            DateAdded = new DateTime(2024, 6, 6, 16, 10, 52, 102, DateTimeKind.Local).AddTicks(5407),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "pera@gmail.com",
                             FirstName = "Pera",
@@ -160,7 +206,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Peric",
                             Linkedin = "",
-                            Password = "$2a$10$3yGC6wF.lk5Qx.tyjMhvXOmFq5HwY1p6slcxswd1UqdPn3rl10BzO",
+                            Password = "$2a$10$UFJOcniCIj59zk4kVu6G7u4ib2Qttzvxh8upxzyMsA9U9d1iWCFTq",
                             PhoneNumber = "",
                             RoleId = 2,
                             Status = ""
@@ -170,7 +216,7 @@ namespace Server.Migrations
                             Id = 3,
                             City = "",
                             Country = "",
-                            DateAdded = new DateTime(2024, 6, 3, 14, 41, 12, 713, DateTimeKind.Local).AddTicks(2967),
+                            DateAdded = new DateTime(2024, 6, 6, 16, 10, 52, 166, DateTimeKind.Local).AddTicks(1443),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "toma@gmail.com",
                             FirstName = "Toma",
@@ -178,7 +224,7 @@ namespace Server.Migrations
                             IsDisabled = false,
                             LastName = "Tomic",
                             Linkedin = "",
-                            Password = "$2a$10$/Zm9I5kEYloR4QNHYDxziO.OeMkvHvftsRF5mD1Sip/Rd91y9KPgK",
+                            Password = "$2a$10$yXP8V5dIwIcQDVKjrjdwm.OqXr2EmPo2dWvrkgkeGkjavWpJgPMH6",
                             PhoneNumber = "",
                             RoleId = 3,
                             Status = ""
@@ -1261,6 +1307,28 @@ namespace Server.Migrations
                     b.Navigation("Uploader");
                 });
 
+            modelBuilder.Entity("Server.Models.LlmGroup", b =>
+                {
+                    b.HasOne("Server.Models.Member", "Member")
+                        .WithMany("LlmGroups")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("Server.Models.LlmMesage", b =>
+                {
+                    b.HasOne("Server.Models.LlmGroup", "LlmGroup")
+                        .WithMany("LlmMesages")
+                        .HasForeignKey("LlmGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LlmGroup");
+                });
+
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
                     b.HasOne("Server.Models.File", "Avatar")
@@ -1601,8 +1669,15 @@ namespace Server.Migrations
                     b.Navigation("ProjectTask");
                 });
 
+            modelBuilder.Entity("Server.Models.LlmGroup", b =>
+                {
+                    b.Navigation("LlmMesages");
+                });
+
             modelBuilder.Entity("Server.Models.Member", b =>
                 {
+                    b.Navigation("LlmGroups");
+
                     b.Navigation("MemberProjects");
 
                     b.Navigation("Notifications");
