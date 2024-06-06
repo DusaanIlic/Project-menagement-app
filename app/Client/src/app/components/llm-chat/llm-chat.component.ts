@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {
   MatExpansionPanel,
   MatExpansionPanelActionRow, MatExpansionPanelDescription,
@@ -14,6 +14,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {LLMService} from "../../services/llm.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 
 @Component({
   selector: 'app-llm-chat',
@@ -32,12 +33,16 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     MatError,
     NgIf,
     MatHint,
-    NgForOf
+    NgForOf,
+    MatCardContent,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle
   ],
   templateUrl: './llm-chat.component.html',
   styleUrl: './llm-chat.component.scss'
 })
-export class LlmChatComponent {
+export class LlmChatComponent implements AfterViewChecked {
   messages: LlmConversation[] = [];
   question: FormControl = new FormControl('', [
     Validators.required,
@@ -46,9 +51,14 @@ export class LlmChatComponent {
   ]);
 
   @ViewChild('input') questionInput!: ElementRef;
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   constructor(private llmService: LLMService, private snackBar: MatSnackBar) {
 
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
   submitQuestion() {
@@ -84,5 +94,13 @@ export class LlmChatComponent {
 
   private focusInput() {
     this.questionInput.nativeElement.focus();
+  }
+
+  private scrollToBottom() {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.error('Could not scroll to bottom:', err);
+    }
   }
 }
