@@ -259,6 +259,13 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
     });
 
     this.taskInfoForm = this.fb.group({
+      startDate: [
+        {
+          value: this.task.startDate,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
+        },
+        Validators.required,
+      ],
       deadline: [
         {
           value: this.task.deadline,
@@ -289,7 +296,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       ],
       taskPriorityId: [
         {
-          value: this.task.projectId,
+          value: this.task.taskPriorityId,
           disabled: !permissions.has(ProjectPermission.CHANGE_TASK_PRIORITY),
         },
         Validators.required,

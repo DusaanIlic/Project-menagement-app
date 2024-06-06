@@ -319,21 +319,24 @@
           <div class="flex flex-col gap-5 p-2">
             <div>
               <h1 class="pl-2 font-medium">Start date</h1>
-              <mat-form-field class="w-full">
-                <input
-                  matInput
-                  [matDatepicker]="picker1"
-                  [min]="today"
-                  disabled
-                  value="{{ task.startDate }}"
-                />
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="picker1"
-                ></mat-datepicker-toggle>
-                <mat-datepicker #picker1></mat-datepicker>
-                <mat-hint>MM/DD/YYYY</mat-hint>
-              </mat-form-field>
+              <form class="flex w-full" [formGroup]="taskInfoForm">
+                <mat-form-field class="w-full">
+                  <input
+                    matInput
+                    [matDatepicker]="picker1"
+                    [min]="today"
+                    [max]="task.deadline"
+                    value="{{ task.startDate }}"
+                    formControlName="startDate"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker1"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                </mat-form-field>
+              </form>
             </div>
 
             <div>
@@ -424,6 +427,34 @@
                 >
                   Save
                 </button>
+              </div>
+            </div>
+
+            <div>
+              <h1 class="pl-2 font-medium">Task category</h1>
+              <div class="flex flex-row w-full">
+                <form class="flex w-full" [formGroup]="taskInfoForm">
+                  <mat-form-field class="w-full">
+                    <mat-select formControlName="taskPriorityId">
+                      <mat-option
+                        [value]="tP.taskPriorityId"
+                        *ngFor="let tP of taskPriorities"
+                        ><span [ngStyle]="{ color: tP.color }">{{
+                          tP.name
+                        }}</span></mat-option
+                      >
+                    </mat-select>
+                    <mat-error
+                      *ngIf="
+                        taskPriorityForm.controls['priorityId'].hasError(
+                          'required'
+                        )
+                      "
+                    >
+                      Field is required
+                    </mat-error>
+                  </mat-form-field>
+                </form>
               </div>
             </div>
           </div>

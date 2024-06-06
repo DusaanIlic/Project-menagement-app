@@ -1737,6 +1737,7 @@ namespace Server.Controllers
             projectTask.Deadline = updateTaskRequest.Deadline;
             projectTask.TaskDescription = updateTaskRequest.TaskDescription;
             projectTask.TaskName = updateTaskRequest.TaskName;
+            projectTask.StartDate = updateTaskRequest.StartDate;
 
             var hasStatusPermission = await _permissionService.HasProjectPermissionAsync(projectTask.ProjectId, "Change task status");
             if (!hasStatusPermission && !isAssignedToTask)
