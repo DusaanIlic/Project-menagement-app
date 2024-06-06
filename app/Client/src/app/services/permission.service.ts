@@ -27,7 +27,7 @@ export class PermissionService {
 
     this.projectService.getAssignedProjectIds(memberId).subscribe({
       next: data=> {
-        console.log(`PERMISSION SERVICE: successfully fetched assigned projects ${data}`);
+        // console.log(`PERMISSION SERVICE: successfully fetched assigned projects ${data}`);
         this.projectIds = new Set<number>(data);
       },
       error: err => {
@@ -37,7 +37,7 @@ export class PermissionService {
 
     this.memberService.getGlobalPermissions(memberId).subscribe({
       next: data => {
-        console.log(`PERMISSION SERVICE: successfully fetched global permissions ${data}`);
+        // console.log(`PERMISSION SERVICE: successfully fetched global permissions ${data}`);
         this.globalPermissions = new Set<number>(data);
       },
       error: err => {
@@ -58,8 +58,8 @@ export class PermissionService {
         }
         this.projectPermissions = permissionsMap;
 
-        console.log(`PEMRISSION SERVICE: successfully fetched project permissions`);
-        console.log(this.projectPermissions);
+        // console.log(`PEMRISSION SERVICE: successfully fetched project permissions`);
+        // console.log(this.projectPermissions);
       },
       error: err => {
         console.log('PERMISSION SERVICE: failed fetching project permissions');
@@ -79,8 +79,8 @@ export class PermissionService {
         }
         this.projectTaskIds = projectTaskIds;
 
-        console.log(`PEMRISSION SERVICE: successfully fetched assigned tasks`);
-        console.log(this.projectTaskIds);
+        // console.log(`PEMRISSION SERVICE: successfully fetched assigned tasks`);
+        // console.log(this.projectTaskIds);
       },
       error: err => {
         console.log('PERMISSION SERVICE: failed fetching assigned tasks');
@@ -115,18 +115,18 @@ export class PermissionService {
   }
 
   updateGlobalPermissions(globalPermissions: number[]): void {
-    console.log(`updated global permissions to ${globalPermissions}`);
+    // console.log(`updated global permissions to ${globalPermissions}`);
     this.globalPermissions = new Set<number>(globalPermissions);
   }
 
   updateProjectPermissions(projectId: number, permissions: number[]): void {
-    console.log(`updated project ${projectId} permissions to ${permissions}`);
+    // console.log(`updated project ${projectId} permissions to ${permissions}`);
     this.projectPermissions.set(projectId, new Set<number>(permissions));
     ganttUpdater.emit();
   }
 
   updateProjectTaskIds(projectId: number, taskIds: number[]): void {
-    console.log(`updated project ${projectId} assigned task ids to ${taskIds}`);
+    // console.log(`updated project ${projectId} assigned task ids to ${taskIds}`);
     this.projectTaskIds.set(projectId, new Set<number>(taskIds));
     ganttUpdater.emit();
   }

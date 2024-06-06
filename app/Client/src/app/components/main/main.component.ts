@@ -15,11 +15,12 @@ import {SignalRService} from "../../services/signal-r.service";
   styleUrl: './main.component.scss'
 })
 export class MainComponent implements OnInit {
-  constructor(private permissionService: PermissionService, private signalRService: SignalRService) {
+  constructor(private signalRService: SignalRService, private permisionService: PermissionService) {
+    this.permisionService.refreshData();
   }
 
   ngOnInit(): void {
       this.signalRService.startConnection();
-      this.permissionService.refreshData();
+      this.permisionService.refreshData();
   }
 }

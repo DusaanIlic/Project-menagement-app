@@ -8,6 +8,7 @@ import {ForgotPasswordForm} from "../forms/forgot-password.form";
 import {ForgotPasswordCompleteForm} from "../forms/forgot-password-complete.form";
 import { environment } from "../../environments/environment";
 import {SignalRService} from "./signal-r.service";
+import {PermissionService} from "./permission.service";
 
 const AUTH_API = `${environment.apiUrl}/Auth`;
 
@@ -24,7 +25,7 @@ export class AuthService {
   private authenticatedMemberSubject: BehaviorSubject<any>;
   private authenticatedMemberAvatarSubject: BehaviorSubject<any>;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private permissionService: PermissionService) {
     const authenticatedMember = localStorage.getItem('authenticated-member');
     const avatarUrl = localStorage.getItem('authenticated-member-avatar');
     this.authenticatedMemberSubject = new BehaviorSubject<any>(authenticatedMember ? JSON.parse(authenticatedMember) : null);
@@ -49,6 +50,8 @@ export class AuthService {
 
           this.authenticatedMemberSubject.next(member);
           this.authenticatedMemberAvatarSubject.next(localStorage.getItem('authenticated-member-avatar'));
+
+          this.permissionService.refreshData();
 
           resolve();
         },

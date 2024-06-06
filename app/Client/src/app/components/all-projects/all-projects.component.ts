@@ -51,7 +51,9 @@ export class AllProjectsComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: any;
 
   constructor(private projectService : ProjectServiceGet, private dialog: MatDialog,
-                private _liveAnnouncer: LiveAnnouncer, public permissionService: PermissionService) {}
+                private _liveAnnouncer: LiveAnnouncer, public permissionService: PermissionService) {
+
+  }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectComponent, {
@@ -112,6 +114,7 @@ export class AllProjectsComponent implements OnInit{
 
   ngOnInit(): void
   {
+    this.permissionService.refreshData();
     this.fetchProjects();
 
     this.projectService.getAllProjectStatuses().subscribe({

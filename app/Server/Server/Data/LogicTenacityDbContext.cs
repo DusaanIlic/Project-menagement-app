@@ -39,8 +39,6 @@ namespace Server.Data
         public DbSet<ProjectFile> ProjectFile { get; set; }
         public DbSet<TaskFile> TaskFile { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        public DbSet<LlmGroup> LlmGroups { get; set; }
-        public DbSet<LlmMesage> LlmMesages { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -279,16 +277,6 @@ namespace Server.Data
                 .HasOne(pf => pf.File)
                 .WithMany()
                 .HasForeignKey(pf => pf.FileId);
-
-            modelBuilder.Entity<LlmGroup>()
-                .HasOne(llmg => llmg.Member)
-                .WithMany(m => m.LlmGroups)
-                .HasForeignKey(llmg => llmg.MemberId);
-
-            modelBuilder.Entity<LlmMesage>()
-                .HasOne(llmm => llmm.LlmGroup)
-                .WithMany(llmg => llmg.LlmMesages)
-                .HasForeignKey(llmm => llmm.LlmGroupId);
 
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, PermissionName = "Change global role" },

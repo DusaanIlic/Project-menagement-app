@@ -24,7 +24,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(clonedRequest).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !req.url.includes('refresh-token')) {
+      if (err.status === 401 && !req.url.includes('Refresh')) {
         if (!isRefreshing) {
           isRefreshing = true;
           refreshTokenSubject.next(null);
