@@ -3,14 +3,27 @@
     <mat-panel-title>Chat with our AI Assistant</mat-panel-title>
   </mat-expansion-panel-header>
 
-  <div class="flex flex-col p-2 gap-2">
+  <div class="flex flex-col gap-2 min-h-96 max-h-96 overflow-y-auto">
+    <p>Messages are not recorded.</p>
 
+    <p *ngFor="let message of messages">{{message.role}}: {{message.content}}</p>
   </div>
 
   <mat-action-row class="!p-2">
     <mat-form-field class="w-full" subscriptSizing="dynamic">
       <mat-label>Enter your message here</mat-label>
-      <input matInput>
+      <input matInput [formControl]="question" #input maxlength="200" minlength="2" (keyup.enter)="submitQuestion()"
+        placeholder="Ask question here...">
+      <mat-error *ngIf="question.hasError('required')">
+        Question must not be empty
+      </mat-error>
+      <mat-error *ngIf="question.hasError('minlength')">
+        Question must have at least 2 characters
+      </mat-error>
+      <mat-error *ngIf="question.hasError('maxlength')">
+        Question can't have above 200 characters
+      </mat-error>
+      <mat-hint align="end">{{input.value?.length || 0}}/200</mat-hint>
     </mat-form-field>
   </mat-action-row>
 </mat-expansion-panel>

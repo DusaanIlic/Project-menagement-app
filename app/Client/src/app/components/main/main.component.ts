@@ -11,7 +11,7 @@ import {LlmChatComponent} from "../llm-chat/llm-chat.component";
   imports: [
     NavbarComponent,
     RouterOutlet,
-    LlmChatComponent
+    LlmChatComponent,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
