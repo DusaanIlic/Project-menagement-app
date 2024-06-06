@@ -1,24 +1,25 @@
-import {Member} from "./member";
+import { Member } from './member';
 
 export interface Task {
-  taskId : number;
-  taskName : string;
-  taskDescription : string;
-  startDate : Date;
-  deadline : Date;
+  taskId: number;
+  taskName: string;
+  taskDescription: string;
+  startDate: Date;
+  deadline: Date;
   dateFinished: Date;
-  projectId : number;
+  projectId: number;
   taskStatus: string;
   taskStatusId: number;
   taskPriorityId: number;
-  isTaskDependentOn : boolean;
+  isTaskDependentOn: boolean;
   taskCategoryId: number;
   taskCategoryName: string;
   assignedMembers: Member[];
-  taskPriorityName : string;
+  taskPriorityName: string;
   dependentTasks?: any;
   projectName?: string;
   taskLeaderId: number;
-  taskLeaderFirstName : string;
-  taskLeaderLastName : string;
+  taskLeaderFirstName: string;
+  taskLeaderLastName: string;
+  percentageComplete: number;
 }

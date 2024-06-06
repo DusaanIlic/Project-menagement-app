@@ -199,4 +199,18 @@ export class TaskService {
   updateTaskInfo(taskId: number, taskInfo: any) {
     return this.http.put<any[]>(`${TASK_API}/update/${taskId}`, taskInfo);
   }
+
+  addTaskCategory(projectId: number, taskCategoryName: any) {
+    return this.http.post<any[]>(
+      `${TASKCATEGORY_API}/${projectId}/TaskCategory`,
+      taskCategoryName
+    );
+  }
+
+  changeTaskCategoy(taskId: number, categoryId: number) {
+    return this.http.post<any[]>(
+      `${TASK_API}/${taskId}/category/${categoryId}`,
+      null
+    );
+  }
 }

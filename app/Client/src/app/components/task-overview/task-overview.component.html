@@ -317,6 +317,12 @@
 
         <mat-sidenav mode="side" opened="true" position="end">
           <div class="flex flex-col gap-5 p-2">
+            <div class="w-full">
+              <h1 class="pl-2 font-medium text-xl">
+                Completed: {{ task.percentageComplete }} %
+              </h1>
+            </div>
+
             <div>
               <h1 class="pl-2 font-medium">Start date</h1>
               <form class="flex w-full" [formGroup]="taskInfoForm">
@@ -328,6 +334,7 @@
                     [max]="task.deadline"
                     value="{{ task.startDate }}"
                     formControlName="startDate"
+                    (dateChange)="editTaskInfo()"
                   />
                   <mat-datepicker-toggle
                     matSuffix
@@ -336,6 +343,13 @@
                   <mat-datepicker #picker1></mat-datepicker>
                   <mat-hint>MM/DD/YYYY</mat-hint>
                 </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    taskInfoForm.controls['startDate'].hasError('required')
+                  "
+                >
+                  Field is required
+                </mat-error>
               </form>
             </div>
 
@@ -347,8 +361,9 @@
                     <input
                       matInput
                       [matDatepicker]="picker2"
-                      [min]="today"
+                      [min]="task.startDate"
                       formControlName="deadline"
+                      (dateChange)="editTaskInfo()"
                     />
                     <mat-datepicker-toggle
                       matSuffix
@@ -356,6 +371,13 @@
                     ></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                     <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-error
+                      *ngIf="
+                        taskInfoForm.controls['deadline'].hasError('required')
+                      "
+                    >
+                      Field is required
+                    </mat-error>
                   </mat-form-field>
                 </form>
               </div>
@@ -365,7 +387,10 @@
               <div class="flex flex-row w-full">
                 <form class="flex w-full" [formGroup]="taskInfoForm">
                   <mat-form-field class="w-full">
-                    <mat-select formControlName="taskStatusId">
+                    <mat-select
+                      formControlName="taskStatusId"
+                      (selectionChange)="editTaskInfo()"
+                    >
                       <mat-option
                         *ngFor="let tS of taskStatuses"
                         [value]="tS.id"
@@ -374,7 +399,9 @@
                     </mat-select>
                     <mat-error
                       *ngIf="
-                        taskStatusForm.controls['statusId'].hasError('required')
+                        taskInfoForm.controls['taskStatusId'].hasError(
+                          'required'
+                        )
                       "
                     >
                       Field is required
@@ -389,7 +416,10 @@
               <div class="flex flex-row w-full">
                 <form class="flex w-full" [formGroup]="taskInfoForm">
                   <mat-form-field class="w-full">
-                    <mat-select formControlName="taskPriorityId">
+                    <mat-select
+                      formControlName="taskPriorityId"
+                      (selectionChange)="editTaskInfo()"
+                    >
                       <mat-option
                         [value]="tP.taskPriorityId"
                         *ngFor="let tP of taskPriorities"
@@ -400,7 +430,7 @@
                     </mat-select>
                     <mat-error
                       *ngIf="
-                        taskPriorityForm.controls['priorityId'].hasError(
+                        taskInfoForm.controls['taskPriorityId'].hasError(
                           'required'
                         )
                       "
@@ -409,44 +439,31 @@
                     </mat-error>
                   </mat-form-field>
                 </form>
-              </div>
-            </div>
-            <div>
-              <div class="flex justify-end items-end">
-                <span class="grow"></span>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="editTaskInfo()"
-                  [disabled]="
-                    !(
-                      task.projectId
-                      | hasProjectPermission : ProjectPermission.CHANGE_TASK
-                    )
-                  "
-                >
-                  Save
-                </button>
               </div>
             </div>
 
             <div>
               <h1 class="pl-2 font-medium">Task category</h1>
               <div class="flex flex-row w-full">
-                <form class="flex w-full" [formGroup]="taskInfoForm">
+                <form class="flex w-full" [formGroup]="taskCategoryForm">
                   <mat-form-field class="w-full">
-                    <mat-select formControlName="taskPriorityId">
-                      <mat-option
-                        [value]="tP.taskPriorityId"
-                        *ngFor="let tP of taskPriorities"
-                        ><span [ngStyle]="{ color: tP.color }">{{
-                          tP.name
-                        }}</span></mat-option
+                    <mat-select
+                      formControlName="taskCategoryId"
+                      (selectionChange)="changeTaskCategory($event)"
+                    >
+                      <mat-option [value]="-1" (click)="makeNewCategory(-1)"
+                        >Create new category</mat-option
                       >
+                      <mat-option
+                        [value]="tC.taskCategoryID"
+                        *ngFor="let tC of taskCategories"
+                        (click)="makeNewCategory(1)"
+                        >{{ tC.categoryName }}
+                      </mat-option>
                     </mat-select>
                     <mat-error
                       *ngIf="
-                        taskPriorityForm.controls['priorityId'].hasError(
+                        taskCategoryForm.controls['taskCategoryId'].hasError(
                           'required'
                         )
                       "
@@ -455,6 +472,48 @@
                     </mat-error>
                   </mat-form-field>
                 </form>
+              </div>
+            </div>
+
+            <div *ngIf="makeCategory">
+              <div class="flex flex-row w-full">
+                <form class="flex w-full" [formGroup]="taskNewCategoryForm">
+                  <mat-form-field class="w-full">
+                    <input
+                      matInput
+                      placeholder="Category 1"
+                      value=""
+                      formControlName="taskCategoryName"
+                      required
+                    />
+                    <mat-error
+                      *ngIf="
+                        taskNewCategoryForm.controls[
+                          'taskCategoryName'
+                        ].hasError('required')
+                      "
+                    >
+                      Field is required
+                    </mat-error>
+                  </mat-form-field>
+                </form>
+              </div>
+              <div class="flex justify-end items-end">
+                <span class="grow"></span>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addNewCategory()"
+                  [disabled]="
+                    !(
+                      task.projectId
+                      | hasProjectPermission
+                        : ProjectPermission.ADD_TASK_CATEGORY
+                    )
+                  "
+                >
+                  Add category
+                </button>
               </div>
             </div>
           </div>
@@ -463,420 +522,444 @@
     </mat-tab>
 
     <mat-tab label="Assignees" class="size-full">
-      <div class="flex flex-col gap-2 size-full">
-        <div class="h-full flex flex-col select-none w-full gap-2 p-2">
-          <div class="flex gap-4">
-            <mat-form-field class="w-full" subscriptSizing="dynamic">
-              <mat-label>
-                <div class="flex items-center justify-between gap-2">
-                  <p>Search All Members</p>
-                  <mat-icon class="scale-125">search</mat-icon>
+      <div class="p-4">
+        <mat-card class="mat-elevation-z8">
+          <mat-card-title class="p-4"> Edit task assignees </mat-card-title>
+          <mat-card-content>
+            <div class="flex flex-col gap-2 size-full">
+              <div class="flex flex-row gap-2 w-full">
+                <div class="h-full flex flex-col select-none w-[30%] gap-2">
+                  <div class="flex gap-4">
+                    <mat-form-field class="w-full" subscriptSizing="dynamic">
+                      <mat-label>
+                        <div class="flex items-center justify-between gap-2">
+                          <p>Search All Members</p>
+                          <mat-icon class="scale-125">search</mat-icon>
+                        </div>
+                      </mat-label>
+
+                      <input matInput (keyup)="search($event)" />
+                    </mat-form-field>
+                  </div>
                 </div>
-              </mat-label>
-
-              <input matInput (keyup)="search($event)" />
-            </mat-form-field>
-          </div>
-        </div>
-
-        <div class="flex w-full">
-          <mat-card class="w-full">
-            <mat-card-title class="pl-2"> Change task leader </mat-card-title>
-            <mat-card-content>
-              <div class="flex flex-row">
-                <form class="flex" [formGroup]="taskLeaderFormGroup">
-                  <mat-form-field>
-                    <mat-select
-                      placeholder="New task leader..."
-                      formControlName="newTaskLeaderId"
-                    >
-                      <mat-option
-                        *ngFor="let member of membersOnThisTask"
-                        value="{{ member.id }}"
-                        >{{ member.firstName }}
-                        {{ member.lastName }}</mat-option
+                <div class="flex flex-row">
+                  <form class="flex" [formGroup]="taskLeaderFormGroup">
+                    <mat-form-field>
+                      <mat-select
+                        placeholder="New task leader..."
+                        formControlName="newTaskLeaderId"
                       >
-                    </mat-select>
-                    <mat-error
-                      *ngIf="
-                        taskLeaderFormGroup.controls[
-                          'newTaskLeaderId'
-                        ].hasError('required')
+                        <mat-option
+                          *ngFor="let member of membersOnThisTask"
+                          value="{{ member.id }}"
+                          >{{ member.firstName }}
+                          {{ member.lastName }}</mat-option
+                        >
+                      </mat-select>
+                      <mat-error
+                        *ngIf="
+                          taskLeaderFormGroup.controls[
+                            'newTaskLeaderId'
+                          ].hasError('required')
+                        "
+                      >
+                        Field is required
+                      </mat-error>
+                    </mat-form-field>
+                  </form>
+
+                  <div class="flex">
+                    <button
+                      mat-button
+                      type="button"
+                      class="flex justify-center items-center"
+                      (click)="editTaskLeader()"
+                      [disabled]="
+                        !(
+                          task.projectId
+                          | hasProjectPermission : ProjectPermission.CHANGE_TASK
+                        )
                       "
                     >
-                      Field is required
-                    </mat-error>
-                  </mat-form-field>
-                </form>
-
-                <div class="flex">
-                  <button
-                    mat-button
-                    type="button"
-                    class="flex justify-center items-center"
-                    (click)="editTaskLeader()"
-                    [disabled]="
-                      !(
-                        task.projectId
-                        | hasProjectPermission : ProjectPermission.CHANGE_TASK
-                      )
-                    "
-                  >
-                    <div class="flex items-center justify-center">
-                      <mat-icon>done</mat-icon>
-                    </div>
-                  </button>
+                      <div class="flex items-center justify-center">
+                        <mat-icon>done</mat-icon>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
 
-        <div class="flex w-full">
-          <div class="w-full">
-            <table
-              mat-table
-              [dataSource]="dataSource"
-              matSort
-              (matSortChange)="announceSortChange($event)"
-            >
-              <ng-container matColumnDef="assigned">
-                <th mat-header-cell *matHeaderCellDef>ASSIGNED</th>
-                <td mat-cell *matCellDef="let member">
-                  <div
-                    *ngIf="
-                      isMemberOnTask(member.id) &&
-                      !isMemberTeamLeader(member.id)
-                    "
-                    class="flex items-center justify-center"
+              <div class="flex w-full">
+                <div class="w-full">
+                  <table
+                    mat-table
+                    [dataSource]="dataSource"
+                    matSort
+                    (matSortChange)="announceSortChange($event)"
                   >
-                    <mat-checkbox
-                      checked
-                      [disabled]="
-                        waiting ||
-                        !(
-                          task.projectId
-                          | hasProjectPermission
-                            : ProjectPermission.REMOVE_MEMBER_FROM_TASK
-                        )
-                      "
-                      (change)="assignRemove($event.checked, member.id)"
-                      class="example-margin"
-                    ></mat-checkbox>
-                  </div>
-                  <div
-                    *ngIf="
-                      !isMemberOnTask(member.id) &&
-                      !isMemberTeamLeader(member.id)
-                    "
-                    class="flex items-center justify-center"
-                  >
-                    <mat-checkbox
-                      [disabled]="
-                        waiting ||
-                        !(
-                          task.projectId
-                          | hasProjectPermission
-                            : ProjectPermission.ADD_MEMBER_TO_TASK
-                        )
-                      "
-                      (change)="assignRemove($event.checked, member.id)"
-                      class="example-margin"
-                    ></mat-checkbox>
-                  </div>
-                  <div
-                    *ngIf="isMemberTeamLeader(member.id)"
-                    class="flex items-center justify-center"
-                  >
-                    <mat-icon>badge</mat-icon>
-                  </div>
-                </td>
-              </ng-container>
+                    <ng-container matColumnDef="assigned">
+                      <th mat-header-cell *matHeaderCellDef>ASSIGNED</th>
+                      <td mat-cell *matCellDef="let member">
+                        <div
+                          *ngIf="
+                            isMemberOnTask(member.id) &&
+                            !isMemberTeamLeader(member.id)
+                          "
+                          class="flex items-center justify-center"
+                        >
+                          <mat-checkbox
+                            checked
+                            [disabled]="
+                              waiting ||
+                              !(
+                                task.projectId
+                                | hasProjectPermission
+                                  : ProjectPermission.REMOVE_MEMBER_FROM_TASK
+                              )
+                            "
+                            (change)="assignRemove($event.checked, member.id)"
+                            class="example-margin"
+                          ></mat-checkbox>
+                        </div>
+                        <div
+                          *ngIf="
+                            !isMemberOnTask(member.id) &&
+                            !isMemberTeamLeader(member.id)
+                          "
+                          class="flex items-center justify-center"
+                        >
+                          <mat-checkbox
+                            [disabled]="
+                              waiting ||
+                              !(
+                                task.projectId
+                                | hasProjectPermission
+                                  : ProjectPermission.ADD_MEMBER_TO_TASK
+                              )
+                            "
+                            (change)="assignRemove($event.checked, member.id)"
+                            class="example-margin"
+                          ></mat-checkbox>
+                        </div>
+                        <div
+                          *ngIf="isMemberTeamLeader(member.id)"
+                          class="flex items-center justify-center"
+                        >
+                          <mat-icon>badge</mat-icon>
+                        </div>
+                      </td>
+                    </ng-container>
 
-              <ng-container matColumnDef="avatar">
-                <th mat-header-cell *matHeaderCellDef>AVATAR</th>
-                <td mat-cell *matCellDef="let member">
-                  <img
-                    src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar"
-                    [width]="30"
-                    [height]="30"
-                    alt="Avatar"
-                    class="rounded-full"
-                  />
-                </td>
-              </ng-container>
+                    <ng-container matColumnDef="avatar">
+                      <th mat-header-cell *matHeaderCellDef>AVATAR</th>
+                      <td mat-cell *matCellDef="let member">
+                        <img
+                          src="{{ environment.apiUrl }}/Member/{{
+                            member.id
+                          }}/Avatar"
+                          [width]="30"
+                          [height]="30"
+                          alt="Avatar"
+                          class="rounded-full"
+                        />
+                      </td>
+                    </ng-container>
 
-              <ng-container matColumnDef="name">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by name"
-                >
-                  NAME
-                </th>
-                <td mat-cell *matCellDef="let member">
-                  {{ member.firstName }} {{ member.lastName }}
-                </td>
-              </ng-container>
+                    <ng-container matColumnDef="name">
+                      <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        sortActionDescription="Sort by name"
+                      >
+                        NAME
+                      </th>
+                      <td mat-cell *matCellDef="let member">
+                        {{ member.firstName }} {{ member.lastName }}
+                      </td>
+                    </ng-container>
 
-              <ng-container matColumnDef="projectRole">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by projectRole"
-                >
-                  TASK ROLE
-                </th>
-                <td mat-cell *matCellDef="let member" class="w-64">
-                  <div *ngIf="!isMemberOnTask(member.id); else roleSelector">
-                    Member not on task
-                  </div>
+                    <ng-container matColumnDef="projectRole">
+                      <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        sortActionDescription="Sort by projectRole"
+                      >
+                        TASK ROLE
+                      </th>
+                      <td mat-cell *matCellDef="let member" class="w-64">
+                        <div
+                          *ngIf="!isMemberOnTask(member.id); else roleSelector"
+                        >
+                          Member not on task
+                        </div>
 
-                  <ng-template #roleSelector>
-                    <div *ngIf="isMemberTeamLeader(member.id)">
-                      <span class="font-medium">Task leader</span>
-                    </div>
-                    <div *ngIf="!isMemberTeamLeader(member.id)">
-                      Task worker
-                    </div>
-                  </ng-template>
-                </td>
-              </ng-container>
+                        <ng-template #roleSelector>
+                          <div *ngIf="isMemberTeamLeader(member.id)">
+                            <span class="font-medium">Task leader</span>
+                          </div>
+                          <div *ngIf="!isMemberTeamLeader(member.id)">
+                            Task worker
+                          </div>
+                        </ng-template>
+                      </td>
+                    </ng-container>
 
-              <ng-container matColumnDef="email">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by email"
-                >
-                  EMAIL
-                </th>
-                <td mat-cell *matCellDef="let member">{{ member.email }}</td>
-              </ng-container>
+                    <ng-container matColumnDef="email">
+                      <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        sortActionDescription="Sort by email"
+                      >
+                        EMAIL
+                      </th>
+                      <td mat-cell *matCellDef="let member">
+                        {{ member.email }}
+                      </td>
+                    </ng-container>
 
-              <tr
-                class="select-none"
-                mat-header-row
-                *matHeaderRowDef="displayedColumns"
-              ></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
+                    <tr
+                      class="select-none"
+                      mat-header-row
+                      *matHeaderRowDef="displayedColumns"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: displayedColumns"
+                    ></tr>
+                  </table>
 
-            <mat-paginator
-              class="select-none"
-              [pageSizeOptions]="[5, 10, 25]"
-              aria-label="Select page of users"
-            ></mat-paginator>
-          </div>
-        </div>
+                  <mat-paginator
+                    class="select-none"
+                    [pageSizeOptions]="[5, 10, 25]"
+                    aria-label="Select page of users"
+                  ></mat-paginator>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </mat-tab>
 
     <div class="w-full">
       <mat-tab label="Dependencies">
-        <div class="w-full">
-          <div class="h-full flex flex-col select-none w-full gap-2 p-2">
-            <div class="flex gap-4">
-              <mat-form-field class="w-full" subscriptSizing="dynamic">
-                <mat-label>
-                  <div class="flex items-center justify-between gap-2">
-                    <p>Search All Tasks</p>
-                    <mat-icon class="scale-125">search</mat-icon>
-                  </div>
-                </mat-label>
-
-                <input matInput (keyup)="search1($event)" />
-              </mat-form-field>
-            </div>
-          </div>
-
+        <div class="p-2">
           <mat-card>
-            <mat-card-title class="p-2"> Child tasks </mat-card-title>
+            <mat-card-title class="p-4">
+              Edit task dependencies
+            </mat-card-title>
             <mat-card-content>
-              <div class="flex flex-row">
-                <form class="flex" [formGroup]="addChildTasksForm">
-                  <mat-form-field>
-                    <mat-select
-                      placeholder="Child task..."
-                      formControlName="dependentTaskId"
-                      required
-                    >
-                      <mat-option
-                        *ngFor="let task of tasksOnThisProject"
-                        [value]="task.taskId"
-                        [disabled]="isTaskInsideTable(task.taskId)"
-                        >{{ task.taskName }}</mat-option
-                      >
-                    </mat-select>
-                    <mat-error
-                      *ngIf="
-                        addChildTasksForm.controls['dependentTaskId'].hasError(
-                          'required'
-                        )
-                      "
-                    >
-                      Field is required
-                    </mat-error>
-                  </mat-form-field>
-                </form>
+              <div class="w-full">
+                <div class="flex w-full flex-row gap-2">
+                  <div class="h-full flex flex-col select-none w-[30%] gap-2">
+                    <div class="flex gap-4">
+                      <mat-form-field class="w-full" subscriptSizing="dynamic">
+                        <mat-label>
+                          <div class="flex items-center justify-between gap-2">
+                            <p>Search All Tasks</p>
+                            <mat-icon class="scale-125">search</mat-icon>
+                          </div>
+                        </mat-label>
 
-                <div class="flex">
-                  <button
-                    mat-button
-                    type="button"
-                    class="flex justify-center items-center"
-                    (click)="addChildTask()"
-                    [disabled]="
-                      !(
-                        task.projectId
-                        | hasProjectPermission
-                          : ProjectPermission.ADD_TASK_DEPENDENCY
-                      )
-                    "
-                  >
-                    <div class="flex items-center justify-center">
-                      <mat-icon>done</mat-icon>
+                        <input matInput (keyup)="search1($event)" />
+                      </mat-form-field>
                     </div>
-                  </button>
+                  </div>
+
+                  <div class="flex flex-row">
+                    <form class="flex" [formGroup]="addChildTasksForm">
+                      <mat-form-field>
+                        <mat-select
+                          placeholder="Child task..."
+                          formControlName="dependentTaskId"
+                          required
+                        >
+                          <mat-option
+                            *ngFor="let task of tasksOnThisProject"
+                            [value]="task.taskId"
+                            [disabled]="isTaskInsideTable(task.taskId)"
+                            >{{ task.taskName }}</mat-option
+                          >
+                        </mat-select>
+                        <mat-error
+                          *ngIf="
+                            addChildTasksForm.controls[
+                              'dependentTaskId'
+                            ].hasError('required')
+                          "
+                        >
+                          Field is required
+                        </mat-error>
+                      </mat-form-field>
+                    </form>
+
+                    <div class="flex">
+                      <button
+                        mat-button
+                        type="button"
+                        class="flex justify-center items-center"
+                        (click)="addChildTask()"
+                        [disabled]="
+                          !(
+                            task.projectId
+                            | hasProjectPermission
+                              : ProjectPermission.ADD_TASK_DEPENDENCY
+                          )
+                        "
+                      >
+                        <div class="flex items-center justify-center">
+                          <mat-icon>done</mat-icon>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex w-full flex-col">
+                  <div class="w-full">
+                    <table
+                      mat-table
+                      [dataSource]="dataSourceTaskDependsOn"
+                      matSort
+                      (matSortChange)="announceSortChange1($event)"
+                    >
+                      <ng-container matColumnDef="task name">
+                        <th
+                          mat-header-cell
+                          *matHeaderCellDef
+                          mat-sort-header
+                          sortActionDescription="Sort by task name"
+                        >
+                          TASK NAME
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          {{ task.taskName }}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="start date">
+                        <th
+                          mat-header-cell
+                          *matHeaderCellDef
+                          mat-sort-header
+                          sortActionDescription="Sort by email"
+                        >
+                          START DATE
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          {{ task.startDate | date }}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="due date">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                          DUE DATE
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          {{ task.deadline | date }}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="status">
+                        <th
+                          mat-header-cell
+                          *matHeaderCellDef
+                          mat-sort-header
+                          sortActionDescription="Sort by status"
+                        >
+                          STATUS
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          {{ task.taskStatus }}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="priority">
+                        <th
+                          mat-header-cell
+                          *matHeaderCellDef
+                          mat-sort-header
+                          sortActionDescription="Sort by priority"
+                        >
+                          PRIORITY
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          {{ task.taskPriorityName }}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="task leader">
+                        <th
+                          mat-header-cell
+                          *matHeaderCellDef
+                          mat-sort-header
+                          sortActionDescription="Sort by task leader"
+                        >
+                          TASK LEADER
+                        </th>
+                        <td mat-cell *matCellDef="let task">
+                          <div *ngIf="task.taskLeaderId !== 0" else #test>
+                            {{ task.taskLeaderFirstName }}
+                            {{ task.taskLeaderLastName }}
+                          </div>
+
+                          <ng-template #test> No task leader </ng-template>
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="remove">
+                        <th mat-header-cell *matHeaderCellDef>REMOVE</th>
+                        <td mat-cell *matCellDef="let task">
+                          <button
+                            mat-button
+                            type="button"
+                            class="flex justify-center items-center"
+                            (click)="deleteChildTask(task.taskId)"
+                            [disabled]="
+                              !(
+                                task.projectId
+                                | hasProjectPermission
+                                  : ProjectPermission.REMOVE_TASK_DEPENDENCY
+                              )
+                            "
+                          >
+                            <div class="flex items-center justify-center">
+                              <mat-icon>delete_forever</mat-icon>
+                            </div>
+                          </button>
+                        </td>
+                      </ng-container>
+                      <tr *matNoDataRow colspan="7">
+                        <td class="font-medium pl-2 text-xl">No child tasks</td>
+                      </tr>
+
+                      <tr
+                        class="select-none"
+                        mat-header-row
+                        *matHeaderRowDef="displayedColumnsTaskDependsOn"
+                      ></tr>
+                      <tr
+                        mat-row
+                        *matRowDef="
+                          let row;
+                          columns: displayedColumnsTaskDependsOn
+                        "
+                      ></tr>
+                    </table>
+
+                    <mat-paginator
+                      class="select-none"
+                      [pageSizeOptions]="[5, 10, 25]"
+                      aria-label="Select page of tasks"
+                    ></mat-paginator>
+                  </div>
                 </div>
               </div>
             </mat-card-content>
           </mat-card>
-          <div class="flex w-full flex-col">
-            <div class="w-full">
-              <table
-                mat-table
-                [dataSource]="dataSourceTaskDependsOn"
-                matSort
-                (matSortChange)="announceSortChange1($event)"
-              >
-                <ng-container matColumnDef="task name">
-                  <th
-                    mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header
-                    sortActionDescription="Sort by task name"
-                  >
-                    TASK NAME
-                  </th>
-                  <td mat-cell *matCellDef="let task">{{ task.taskName }}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="start date">
-                  <th
-                    mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header
-                    sortActionDescription="Sort by email"
-                  >
-                    START DATE
-                  </th>
-                  <td mat-cell *matCellDef="let task">
-                    {{ task.startDate | date }}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="due date">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                    DUE DATE
-                  </th>
-                  <td mat-cell *matCellDef="let task">
-                    {{ task.deadline | date }}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="status">
-                  <th
-                    mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header
-                    sortActionDescription="Sort by status"
-                  >
-                    STATUS
-                  </th>
-                  <td mat-cell *matCellDef="let task">{{ task.taskStatus }}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="priority">
-                  <th
-                    mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header
-                    sortActionDescription="Sort by priority"
-                  >
-                    PRIORITY
-                  </th>
-                  <td mat-cell *matCellDef="let task">
-                    {{ task.taskPriorityName }}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="task leader">
-                  <th
-                    mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header
-                    sortActionDescription="Sort by task leader"
-                  >
-                    TASK LEADER
-                  </th>
-                  <td mat-cell *matCellDef="let task">
-                    <div *ngIf="task.taskLeaderId !== 0" else #test>
-                      {{ task.taskLeaderFirstName }}
-                      {{ task.taskLeaderLastName }}
-                    </div>
-
-                    <ng-template #test> No task leader </ng-template>
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="remove">
-                  <th mat-header-cell *matHeaderCellDef>REMOVE</th>
-                  <td mat-cell *matCellDef="let task">
-                    <button
-                      mat-button
-                      type="button"
-                      class="flex justify-center items-center"
-                      (click)="deleteChildTask(task.taskId)"
-                      [disabled]="
-                        !(
-                          task.projectId
-                          | hasProjectPermission
-                            : ProjectPermission.REMOVE_TASK_DEPENDENCY
-                        )
-                      "
-                    >
-                      <div class="flex items-center justify-center">
-                        <mat-icon>delete_forever</mat-icon>
-                      </div>
-                    </button>
-                  </td>
-                </ng-container>
-                <tr *matNoDataRow colspan="7">
-                  <td class="font-medium pl-2">No child tasks</td>
-                </tr>
-
-                <tr
-                  class="select-none"
-                  mat-header-row
-                  *matHeaderRowDef="displayedColumnsTaskDependsOn"
-                ></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: displayedColumnsTaskDependsOn"
-                ></tr>
-              </table>
-
-              <mat-paginator
-                class="select-none"
-                [pageSizeOptions]="[5, 10, 25]"
-                aria-label="Select page of tasks"
-              ></mat-paginator>
-            </div>
-          </div>
         </div>
       </mat-tab>
       <mat-tab label="Files">

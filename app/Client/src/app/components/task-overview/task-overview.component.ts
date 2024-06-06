@@ -91,7 +91,8 @@ import { SignalRService } from '../../services/signal-r.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { PermissionService } from '../../services/permission.service';
 import { TaskFilesComponent } from '../task-files/task-files.component';
-import { th } from 'date-fns/locale';
+import { taskCategory } from '../../models/taskCategory';
+import { IsAssignedToTask } from '../../pipes/assigned-to-task.pipe';
 
 @Component({
   selector: 'app-task-overview',
@@ -182,12 +183,11 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   taskActivityComment!: FormGroup;
   taskNameForm!: FormGroup;
   taskDescriptionForm!: FormGroup;
-  taskDeadlineForm!: FormGroup;
-  taskStatusForm!: FormGroup;
-  taskPriorityForm!: FormGroup;
   taskLeaderFormGroup!: FormGroup;
   addChildTasksForm!: FormGroup;
   taskInfoForm!: FormGroup;
+  taskCategoryForm!: FormGroup;
+  taskNewCategoryForm!: FormGroup;
 
   taskComments: taskComment[] = [];
   permissions: Permission[] = [];
@@ -199,8 +199,8 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   allMembersOnProject: Member[] = [];
   projectRoles: Role[] = [];
   tasksOnThisProject: Task[] = [];
-
-  hp!: HasProjectPermissionPipe;
+  taskCategories: taskCategory[] = [];
+  makeCategory: boolean = false;
 
   readonly ProjectPermission = ProjectPermission;
   @ViewChild('scrollableDiv') private scrollableDiv!: ElementRef;
@@ -230,7 +230,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       this.task.projectId
     );
     this.loggedUserId = localStorage.getItem('authenticated-member-id');
-
+    this.fetchTaskCategories();
     this.fetchTaskActivityStatuses();
     this.fetchTaskActivities();
     this.fetchTaskStatuses();
@@ -261,14 +261,16 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
     this.taskInfoForm = this.fb.group({
       startDate: [
         {
-          value: this.task.startDate,
+          value: new Date(this.task.startDate),
+
           disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
         },
         Validators.required,
       ],
       deadline: [
         {
-          value: this.task.deadline,
+          value: new Date(this.task.deadline),
+
           disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
         },
         Validators.required,
@@ -379,18 +381,6 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       taskName: [this.task.taskName],
     });
 
-    this.taskDeadlineForm = this.fb.group({
-      deadline: [
-        {
-          value: this.task.deadline,
-          disabled: !permissions.has(ProjectPermission.CHANGE_TASK),
-        },
-        Validators.required,
-      ],
-      taskDescription: [this.task.taskDescription],
-      taskName: [this.task.taskName],
-    });
-
     this.taskActivityComment = this.fb.group({
       taskId: [this.task.taskId],
       text: [
@@ -402,21 +392,28 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       ],
     });
 
-    this.taskStatusForm = this.fb.group({
-      statusId: [
+    this.taskCategoryForm = this.fb.group({
+      taskCategoryId: [
         {
-          value: this.task.taskStatusId,
-          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_STATUS),
+          value: this.task.taskCategoryId,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_CATEGORY),
+        },
+        Validators.required,
+      ],
+      taskCategoryName: [
+        {
+          value: this.task.taskCategoryName,
+          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_CATEGORY),
         },
         Validators.required,
       ],
     });
 
-    this.taskPriorityForm = this.fb.group({
-      priorityId: [
+    this.taskNewCategoryForm = this.fb.group({
+      taskCategoryName: [
         {
-          value: this.task.taskStatusId,
-          disabled: !permissions.has(ProjectPermission.CHANGE_TASK_PRIORITY),
+          value: '',
+          disabled: !permissions.has(ProjectPermission.ADD_TASK_CATEGORY),
         },
         Validators.required,
       ],
@@ -542,9 +539,20 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       this.tService.saveTaskActivity(taskActivity).subscribe({
         next: (next) => {
           this.fetchTaskActivities();
+          this.tService
+            .getTaskById(this.task.taskId)
+            .subscribe((task: Task) => {
+              this.task = task;
+              this.snackBar.open('Successfully added task activity!', 'Close', {
+                duration: 3000,
+              });
+            });
         },
         error: (error) => {
           console.log(error);
+          this.snackBar.open('Failed to add task activity!', 'Close', {
+            duration: 3000,
+          });
         },
       });
     } else this.taskActivityGroup.markAllAsTouched();
@@ -619,85 +627,6 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
           },
         });
     } else this.taskDescriptionForm.markAllAsTouched();
-  }
-
-  editTaskdeadline() {
-    if (this.taskDeadlineForm.valid) {
-      const taskData = this.taskDeadlineForm.value;
-      const utcDate = new Date(
-        Date.UTC(
-          this.taskDeadlineForm.value.deadline.getFullYear(),
-          this.taskDeadlineForm.value.deadline.getMonth(),
-          this.taskDeadlineForm.value.deadline.getDate()
-        )
-      );
-      taskData.deadline = utcDate;
-      this.tService
-        .changeTaskNameDescriptionDeadline(this.task.taskId, taskData)
-        .subscribe({
-          next: (data) => {
-            this.updateTaskInfo();
-            this.snackBar.open('Successfully changed task deadline!', 'Close', {
-              duration: 3000,
-            });
-            this.taskModified.emit();
-          },
-          error: (error) => {
-            console.log(error);
-            this.snackBar.open('Failed to change task deadline!', 'Close', {
-              duration: 3000,
-            });
-          },
-        });
-    } else this.taskDeadlineForm.markAllAsTouched();
-  }
-
-  editTaskstatus() {
-    if (this.taskStatusForm.valid) {
-      const taskData = this.taskStatusForm.value;
-      console.log(taskData);
-      this.tService
-        .updateTaskStatus(this.task.taskId, taskData.statusId)
-        .subscribe({
-          next: (data) => {
-            this.updateTaskInfo();
-            this.snackBar.open('Successfully changed task status!', 'Close', {
-              duration: 3000,
-            });
-            this.taskModified.emit();
-          },
-          error: (error) => {
-            console.log(error);
-            this.snackBar.open('Failed to change task status!', 'Close', {
-              duration: 3000,
-            });
-          },
-        });
-    } else this.taskStatusForm.markAllAsTouched();
-  }
-
-  editTaskpriority() {
-    if (this.taskPriorityForm.valid) {
-      const taskData = this.taskPriorityForm.value;
-      console.log(taskData);
-      this.tService
-        .changeTaskPriority(this.task.taskId, taskData.priorityId)
-        .subscribe({
-          next: (data) => {
-            this.updateTaskInfo();
-            this.snackBar.open('Successfully changed task priority!', 'Close', {
-              duration: 3000,
-            });
-            this.taskModified.emit();
-          },
-          error: (error) => {
-            console.log(error);
-            this.snackBar.open('Failed to change task priority!', 'Close', {
-              duration: 3000,
-            });
-          },
-        });
-    } else this.taskPriorityForm.markAllAsTouched();
   }
 
   search(event: any): void {
@@ -914,7 +843,25 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
 
   editTaskInfo() {
     if (this.taskInfoForm.valid) {
+      const taskData = this.taskInfoForm.value;
       console.log(this.taskInfoForm.value);
+      const utcDate1 = new Date(
+        Date.UTC(
+          this.taskInfoForm.value.deadline.getFullYear(),
+          this.taskInfoForm.value.deadline.getMonth(),
+          this.taskInfoForm.value.deadline.getDate()
+        )
+      );
+      this.taskInfoForm.value.deadline = utcDate1;
+
+      const utcDate2 = new Date(
+        Date.UTC(
+          this.taskInfoForm.value.startDate.getFullYear(),
+          this.taskInfoForm.value.startDate.getMonth(),
+          this.taskInfoForm.value.startDate.getDate()
+        )
+      );
+      this.taskInfoForm.value.startDate = utcDate2;
       this.tService
         .updateTaskInfo(this.task.taskId, this.taskInfoForm.value)
         .subscribe({
@@ -923,7 +870,11 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
               duration: 3000,
             });
             this.taskModified.emit();
-            this.fetchTasksDependOnThisTask();
+            this.tService
+              .getTaskById(this.task.taskId)
+              .subscribe((task: Task) => {
+                this.task = task;
+              });
           },
           error: (error) => {
             console.log(error);
@@ -933,5 +884,63 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
           },
         });
     } else this.taskInfoForm.markAllAsTouched();
+  }
+
+  fetchTaskCategories() {
+    this.tService
+      .getTaskCategoriesOnProject(this.task.projectId)
+      .subscribe((data: taskCategory[]) => {
+        this.taskCategories = data;
+        console.log(this.taskCategories);
+      });
+  }
+
+  makeNewCategory(id: number) {
+    if (id == -1) this.makeCategory = true;
+    else this.makeCategory = false;
+  }
+
+  addNewCategory() {
+    if (this.taskNewCategoryForm.valid) {
+      this.tService
+        .addTaskCategory(this.task.projectId, this.taskNewCategoryForm.value)
+        .subscribe({
+          next: (data) => {
+            this.snackBar.open('Successfully added new category!', 'Close', {
+              duration: 3000,
+            });
+            this.taskModified.emit();
+            this.fetchTaskCategories();
+            this.makeCategory = false;
+          },
+          error: (error) => {
+            console.log(error);
+            this.snackBar.open('Failed to add new category!', 'Close', {
+              duration: 3000,
+            });
+          },
+        });
+    } else this.taskNewCategoryForm.markAllAsTouched();
+  }
+
+  changeTaskCategory(event: any) {
+    if (event.value != -1) {
+      this.tService.changeTaskCategoy(this.task.taskId, event.value).subscribe({
+        next: (data) => {
+          this.snackBar.open('Successfully changed task category!', 'Close', {
+            duration: 3000,
+          });
+          this.taskModified.emit();
+          this.fetchTaskCategories();
+          this.makeCategory = false;
+        },
+        error: (error) => {
+          console.log(error);
+          this.snackBar.open('Failed to change task category!', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
+    }
   }
 }
