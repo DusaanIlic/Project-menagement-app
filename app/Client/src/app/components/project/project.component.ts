@@ -9,6 +9,7 @@ import {switchMap} from "rxjs/operators";
 import {ProjectServiceGet} from "../../services/project.service";
 import {Project} from "../../models/project";
 import { ProjectOverviewComponent } from '../project-overview/project-overview.component';
+import {PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'app-project',
@@ -43,9 +44,12 @@ export class ProjectComponent implements OnInit {
     { link: 'analytics', text: 'Analytics', icon: 'analytics' },
   ];
 
-  constructor(private router: ActivatedRoute, private projectService: ProjectServiceGet) { }
+  constructor(private router: ActivatedRoute, private projectService: ProjectServiceGet,
+                private permissionService: PermissionService,) { }
 
   ngOnInit(): void {
+    this.permissionService.refreshData();
+
     this.router.params.pipe(
       switchMap(params => {
         const projectId = params['id'];

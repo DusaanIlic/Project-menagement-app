@@ -38,9 +38,8 @@ namespace Server.Data
         public DbSet<ProjectTaskCategories> ProjectTaskCategories { get; set; }
         public DbSet<ProjectFile> ProjectFile { get; set; }
         public DbSet<TaskFile> TaskFile { get; set; }
-
         public DbSet<Notification> Notifications { get; set; }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Member>()
@@ -377,8 +376,6 @@ namespace Server.Data
                 new ProjectPermission { Id = 27, Name = "Assign task leader" },
                 new ProjectPermission { Id = 28, Name = "Remove task leader" },
                 new ProjectPermission { Id = 29, Name = "Delete task comment" }
-
-
             );
 
             modelBuilder.Entity<ProjectRolePermission>().HasData(
