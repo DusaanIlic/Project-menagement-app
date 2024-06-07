@@ -1,34 +1,26 @@
 import { Injectable } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProgressBarService {
-  private progressBar: any;
-  private isHidden = true;
+  private visibilitySubject = new BehaviorSubject<boolean>(true);
 
-  getVisibility(): boolean {
-    return this.isHidden;
-  }
-
-  setProgressBar(progressBar: MatProgressBar) {
-    this.progressBar = progressBar;
+  visibilityChanges(): Observable<boolean> {
+    return this.visibilitySubject.asObservable();
   }
 
   show() {
-    if (this.progressBar && this.isHidden) {
-      setTimeout(() => {
-        this.isHidden = false;
-      }, 0);
-    }
+    this.updateVisibility(false);
   }
 
   hide() {
-    if (this.progressBar && !this.isHidden) {
-      setTimeout(() => {
-        this.isHidden = true;
-      }, 0);
-    }
+    this.updateVisibility(true);
+  }
+
+  private updateVisibility(isHidden: boolean) {
+    this.visibilitySubject.next(isHidden);
   }
 }
