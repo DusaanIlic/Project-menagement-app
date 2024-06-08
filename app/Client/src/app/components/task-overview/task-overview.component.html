@@ -105,9 +105,9 @@
                           required
                         >
                           @for (type of allTypes; track type) {
-                          <mat-option [value]="type.taskActivityTypeId">{{
-                            type.taskActivityTypeName
-                          }}</mat-option>
+                          <mat-option [value]="type.taskActivityTypeId"
+                            >{{ type.taskActivityTypeName }}
+                          </mat-option>
                           }
                         </mat-select>
                         <mat-error
@@ -146,7 +146,7 @@
                               ?.hasError('min')
                           "
                         >
-                          Minimum value is 0
+                          Minimum value is 1
                         </mat-error>
                         <mat-error
                           *ngIf="
@@ -155,7 +155,7 @@
                               ?.hasError('max')
                           "
                         >
-                          Maximum value is 100
+                          Maximum value is {{ 100 - task.percentageComplete }}
                         </mat-error>
                         <mat-error
                           *ngIf="
@@ -254,7 +254,7 @@
                                 <div class="flex">
                                   <p class="font-medium text-sm pl-2">
                                     Type: {{ taskAct.taskActivityName }};
-                                    Completed: {{ taskAct.percentageComplete }}%
+                                    Progress: {{ taskAct.percentageComplete }}%
                                   </p>
                                 </div>
                                 <div class="flex pr-2">
@@ -330,7 +330,6 @@
                   <input
                     matInput
                     [matDatepicker]="picker1"
-                    [min]="today"
                     [max]="task.deadline"
                     value="{{ task.startDate }}"
                     formControlName="startDate"
@@ -458,7 +457,26 @@
                         [value]="tC.taskCategoryID"
                         *ngFor="let tC of taskCategories"
                         (click)="makeNewCategory(1)"
-                        >{{ tC.categoryName }}
+                        ><div
+                          class="flex flex-row justify-between items-center w-full"
+                        >
+                          {{ tC.categoryName }}
+                          <div class="flex">
+                            <button
+                              (click)="
+                                deleteCategory(tC.taskCategoryID, $event)
+                              "
+                              class="ml-auto"
+                              *ngIf="
+                                tC.taskCategoryID !=
+                                  taskCategoryForm.value.taskCategoryId &&
+                                tC.isDefault == false
+                              "
+                            >
+                              <mat-icon>delete_forever</mat-icon>
+                            </button>
+                          </div>
+                        </div>
                       </mat-option>
                     </mat-select>
                     <mat-error
@@ -480,6 +498,7 @@
                 <form class="flex w-full" [formGroup]="taskNewCategoryForm">
                   <mat-form-field class="w-full">
                     <input
+                      maxlength="10"
                       matInput
                       placeholder="Category 1"
                       value=""
@@ -1002,7 +1021,7 @@
 
                           <mat-card-footer>
                             <div
-                              class="pr-2 flex items-end text-sm justify-end"
+                              class="px-2 flex items-end text-sm justify-end"
                             >
                               {{ taskComm.createdAt | date : "shortTime" }}
                             </div>

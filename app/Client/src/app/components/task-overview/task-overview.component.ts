@@ -342,8 +342,8 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
         },
         [
           Validators.required,
-          Validators.min(0),
-          Validators.max(100),
+          Validators.min(1),
+          Validators.max(100 - this.task.percentageComplete),
           Validators.pattern('^(100|[1-9]?[0-9])$'),
         ],
       ],
@@ -534,7 +534,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   saveActivity() {
     if (this.taskActivityGroup.valid) {
       const taskActivity = this.taskActivityGroup.value;
-      console.log(taskActivity.percentageComplete);
+      console.log(taskActivity);
 
       this.tService.saveTaskActivity(taskActivity).subscribe({
         next: (next) => {
@@ -546,6 +546,15 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
               this.snackBar.open('Successfully added task activity!', 'Close', {
                 duration: 3000,
               });
+              const percentageCompleteControl =
+                this.taskActivityGroup.get('percentageComplete');
+              percentageCompleteControl?.reset();
+              percentageCompleteControl?.setValidators([
+                Validators.required,
+                Validators.min(1),
+                Validators.max(100 - this.task.percentageComplete),
+                Validators.pattern('^(100|[1-9]?[0-9])$'),
+              ]);
             });
         },
         error: (error) => {
@@ -561,9 +570,27 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   deleteTaskActivity(taskAct: taskActivity) {
     this.tService.deleteTaskActivity(taskAct.taskActivityId).subscribe({
       next: (data) => {
+        this.snackBar.open('Sucessfully deleted task activity!', 'Close', {
+          duration: 3000,
+        });
+        this.tService.getTaskById(this.task.taskId).subscribe((data: Task) => {
+          this.task = data;
+          const percentageCompleteControl =
+            this.taskActivityGroup.get('percentageComplete');
+          percentageCompleteControl?.setValidators([
+            Validators.required,
+            Validators.min(1),
+            Validators.max(100 - this.task.percentageComplete),
+            Validators.pattern('^(100|[1-9]?[0-9])$'),
+          ]);
+        });
         this.fetchTaskActivities();
       },
-      error: (error) => {},
+      error: (error) => {
+        this.snackBar.open('Failed to delete task activity!', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
@@ -575,6 +602,9 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
           this.fetchTaskComments();
         },
         error: (error) => {
+          this.snackBar.open('Failed to add task comment!', 'Close', {
+            duration: 3000,
+          });
           console.log(error);
         },
       });
@@ -942,5 +972,29 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
         },
       });
     }
+  }
+
+  deleteCategory(tackCategoryID: string, event: any) {
+    event.stopPropagation();
+    console.log(tackCategoryID);
+    this.tService
+      .deleteTaskCategory(this.task.projectId, Number(tackCategoryID))
+      .subscribe({
+        next: (data) => {
+          this.fetchTaskCategories();
+          this.snackBar.open('Sucessfully deleted task category!', 'Close', {
+            duration: 3000,
+          });
+        },
+        error: (error) => {
+          this.snackBar.open(
+            'Failed to delete task category! Another task is in this category!',
+            'Close',
+            {
+              duration: 3000,
+            }
+          );
+        },
+      });
   }
 }

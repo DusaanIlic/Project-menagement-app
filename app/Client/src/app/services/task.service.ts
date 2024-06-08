@@ -213,4 +213,10 @@ export class TaskService {
       null
     );
   }
+
+  deleteTaskCategory(projectId: number, taskCategoryId: number) {
+    return this.http.delete<any[]>(
+      `${TASKCATEGORY_API}/${projectId}/TaskCategory/${taskCategoryId}`
+    );
+  }
 }

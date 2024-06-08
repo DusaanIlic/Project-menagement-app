@@ -105,10 +105,10 @@ namespace Server.Controllers
                 PercentageComplete = addTaskActivityRequest.PercentageComplete
             };
 
-            if(projectTask.PercentageComplete <= addTaskActivityRequest.PercentageComplete)
-            {
-                projectTask.PercentageComplete = addTaskActivityRequest.PercentageComplete;
-            }
+            
+            
+            projectTask.PercentageComplete += addTaskActivityRequest.PercentageComplete;
+            
 
             dbContext.TaskActivities.Add(taskActivity);
             await dbContext.SaveChangesAsync();
@@ -128,6 +128,7 @@ namespace Server.Controllers
 
             var hasPermission = await _permissionService.HasProjectPermissionAsync(taskActivity.ProjectTask.ProjectId, "Remove task activity");
             var isAssignedToTask = await _permissionService.IsMemberAssignedToTaskAsync(taskActivity.ProjectTask.TaskId);
+            var projectTask = await dbContext.ProjectTasks.FirstOrDefaultAsync(pt => pt.TaskId == taskActivity.ProjectTaskId);
 
             if (!hasPermission && !isAssignedToTask)
             {
@@ -140,6 +141,7 @@ namespace Server.Controllers
                 return NotFound(new { message = "Task activity not found" });
             }
 
+            projectTask.PercentageComplete -= taskActivity.PercentageComplete;
 
             dbContext.TaskActivities.Remove(taskActivity);
             await dbContext.SaveChangesAsync();

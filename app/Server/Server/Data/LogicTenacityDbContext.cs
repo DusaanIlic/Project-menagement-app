@@ -376,7 +376,8 @@ namespace Server.Data
                 new ProjectPermission { Id = 26, Name = "Remove file" },
                 new ProjectPermission { Id = 27, Name = "Assign task leader" },
                 new ProjectPermission { Id = 28, Name = "Remove task leader" },
-                new ProjectPermission { Id = 29, Name = "Delete task comment" }
+                new ProjectPermission { Id = 29, Name = "Delete task comment" },
+                new ProjectPermission { Id = 30, Name = "Remove task category" }
 
 
             );
@@ -416,7 +417,8 @@ namespace Server.Data
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 27 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 28 },
                 new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 29 },
-                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 29 }
+                new ProjectRolePermission { ProjectRoleId = 2, ProjectPermissionId = 29 },
+                new ProjectRolePermission { ProjectRoleId = 1, ProjectPermissionId = 30 }
 
             );
         }

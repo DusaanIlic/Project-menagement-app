@@ -3,4 +3,5 @@ export interface taskCategory {
   taskCategoryName: string;
   taskCategoryID: string;
   categoryName: string;
+  isDefault: boolean;
 }
