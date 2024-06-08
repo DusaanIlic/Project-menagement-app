@@ -43,6 +43,10 @@ export class ProjectServiceGet{
     return this.http.delete<any>(`${PROJECT_API}/${id}`);
   }
 
+  deleteTaskStatus(projectId? : number, statusId? : number): Observable<any[]>{
+    return this.http.delete<any>(`${PROJECT_API}/${projectId}/TaskStatus/${statusId}`);
+  }
+
   getProjectById(id : number): Observable<Project>
   {
     return this.http.get<Project>(`${PROJECT_API}/${id}`);

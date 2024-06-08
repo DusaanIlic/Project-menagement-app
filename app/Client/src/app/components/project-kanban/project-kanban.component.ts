@@ -71,6 +71,37 @@ export class ProjectKanbanComponent implements OnInit {
     });
   }
 
+  isDefaultColumn(columnName: string): boolean {
+    const defaultColumns = ['new', 'in progress', 'completed'];
+    return defaultColumns.includes(columnName.toLowerCase());
+  }
+  
+  confirmDeleteColumn(column: { name: string, id: number }): void {
+    const dialogRef = this.dialog.open(ConfirmationComponent, {
+      width: '500px',
+      data: { message: `Are you sure you want to delete the column "${column.name}"?` }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteColumn(column);
+      }
+    });
+  }
+
+  deleteColumn(column: { name: string, id: number }): void {
+    this.projectService.deleteTaskStatus(this.projectId, column.id).subscribe(
+      () => {
+        this.snackBar.open(`Column "${column.name}" deleted successfully.`, 'Close', { duration: 3000 });
+        this.loadTaskStatuses(this.projectId);
+      },
+      error => {
+        this.snackBar.open(`Failed to delete column "${column.name}".`, 'Close', { duration: 3000 });
+        console.error('Error deleting column:', error);
+      }
+    );
+  }
+
   loadTaskStatuses(projectId: number): void {
     this.taskService.getTaskStatusesByProject(projectId).subscribe((statuses: any[]) => {
       this.dropList = statuses.map(status => ({ name: status.name.toLowerCase(), id: status.id }));

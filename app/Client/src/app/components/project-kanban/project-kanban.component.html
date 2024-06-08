@@ -31,8 +31,13 @@
       <mat-card *ngFor="let column of dropList" class="flex flex-col bg-background rounded-lg min-w-[500px] overflow-y-auto" [style.display]="columnVisibility[column.name] ? 'block' : 'none'" style="width: 500px;">
         <mat-card-header>
           <mat-card-title>
-            <div class="pb-2 pt-0">
-              {{ column.name | titlecase }}
+            <div class="flex justify-between items-center pb-2 pt-0">
+              <div>
+                {{ column.name | titlecase }}
+              </div>
+              <button *ngIf="!isDefaultColumn(column.name)" mat-icon-button (click)="confirmDeleteColumn(column)">
+                <i class="material-icons">delete</i>
+              </button>
             </div>
           </mat-card-title>
         </mat-card-header>
