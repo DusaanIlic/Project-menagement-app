@@ -72,8 +72,10 @@ export class ProjectKanbanComponent implements OnInit {
   }
 
   isDefaultColumn(columnName: string): boolean {
-    const defaultColumns = ['new', 'in progress', 'completed'];
-    return defaultColumns.includes(columnName.toLowerCase());
+    if (!columnName) {
+      return false;
+    }
+    return ['new', 'in progress', 'completed'].includes(columnName.toLowerCase());
   }
   
   confirmDeleteColumn(column: { name: string, id: number }): void {
@@ -258,11 +260,15 @@ export class ProjectKanbanComponent implements OnInit {
         width: '500px',
         data: { projectId: this.projectId }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
         if (result) {
-            this.newStatuses.push(result.name);
-            this.dropList.push(result.name.toLowerCase());
+            const columnName = result.name.toLowerCase();
+            if (columnName) {
+                this.newStatuses.push(result.name);
+                this.dropList.push({ name: columnName, id: result.id });
+                this.columnVisibility[columnName] = true;
+            }
         }
     });
   }
