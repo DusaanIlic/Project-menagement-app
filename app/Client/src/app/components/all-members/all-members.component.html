@@ -102,7 +102,7 @@
                 <button mat-menu-item [routerLink]="['/members', member.id, 'edit']"
                   [disabled]="member.id !== authMemberId &&  !(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">Edit</button>
                 <button mat-menu-item (click)="deactivateMember(member.id)"
-                  [disabled]="!(GlobalPermission.DEACTIVATE_MEMBER | hasGlobalPermission)">Deactivate</button>
+                  [disabled]="member.roleId === 1 || !(GlobalPermission.DEACTIVATE_MEMBER | hasGlobalPermission)">Deactivate</button>
               </mat-menu>
             </td>
           </ng-container>
