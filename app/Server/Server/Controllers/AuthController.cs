@@ -218,7 +218,7 @@ namespace Server.Controllers
             };
 
 
-            var result = _emailService.SendEmail(request);
+            var result = await _emailService.SendEmail(request);
 
             if (result) return Ok(new { message = "Check your email on instructions." });
             
@@ -267,7 +267,7 @@ namespace Server.Controllers
                 "
             };
             
-            var result = _emailService.SendEmail(request);
+            var result = await _emailService.SendEmail(request);
 
             return Ok(result ? new { message = "Successfully completed password reset." } : new { message = "Failed sending email, but successfully changed password." });
         }

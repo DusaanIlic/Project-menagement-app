@@ -740,7 +740,7 @@ namespace Server.Controllers
                         </ul>"
                 };
 
-                var result = _emailService.SendEmail(request);
+                var result = await _emailService.SendEmail(request);
 
                 await _permissionNotifier.AssignedToProject(memberId, projectId);
                 await _permissionNotifier.UpdatedProjectPermissions(projectId, memberId);

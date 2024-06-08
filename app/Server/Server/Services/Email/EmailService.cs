@@ -13,7 +13,7 @@ namespace Server.Services.EmailService
         {
             this._configuration = configuration;
         }
-        public bool SendEmail(EmailDTO request)
+        public async Task<bool> SendEmail(EmailDTO request)
         {
             try
             {
@@ -25,9 +25,10 @@ namespace Server.Services.EmailService
 
                 using var smtp = new SmtpClient();
                 
-                smtp.Connect(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
-                smtp.Send(email);
+                await smtp.ConnectAsync(_configuration["EmailService:EmailHost"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_configuration["EmailService:EmailUsername"], _configuration["EmailService:EmailPassword"]);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
                 
                 Console.WriteLine($"SENT MAIL TO {request.To}");
                 

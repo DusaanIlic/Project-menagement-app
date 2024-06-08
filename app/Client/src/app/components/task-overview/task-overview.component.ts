@@ -229,6 +229,11 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
     const permissions = this.permService.getProjectPermissions(
       this.task.projectId
     );
+
+    const assignedTasks = this.permService.getProjectTaskIds(
+      this.task.projectId
+    );
+
     this.loggedUserId = localStorage.getItem('authenticated-member-id');
     this.fetchTaskCategories();
     this.fetchTaskActivityStatuses();
@@ -331,14 +336,14 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       description: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY),
+          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
         },
         Validators.required,
       ],
       percentageComplete: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY),
+          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
         },
         [
           Validators.required,
@@ -350,7 +355,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       taskActivityTypeId: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY),
+          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
         },
         Validators.required,
       ],
@@ -386,7 +391,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       text: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.COMMENT_TASK),
+          disabled: !permissions.has(ProjectPermission.COMMENT_TASK) && !assignedTasks.has(this.task.taskId),
         },
         Validators.required,
       ],

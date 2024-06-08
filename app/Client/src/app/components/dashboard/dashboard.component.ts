@@ -158,6 +158,7 @@ export class DashboardComponent implements OnInit {
         this.taskSource = new MatTableDataSource(this.tasks);
         this.taskSource.sort = this.sort.toArray()[1];
         this.taskSource.paginator = this.paginator.toArray()[1];
+        this.totalTasks = this.tasks.length;
       },
       error: error => {
         console.log('failed fetching task data');
@@ -167,7 +168,6 @@ export class DashboardComponent implements OnInit {
     this.projectService.getAllProjectStatuses().subscribe({
       next: (data: ProjectStatus[]) => {
         this.projectStatuses = data;
-        this.totalTasks = this.tasks.length;
 
         this.newTasks = this.tasks.filter(task => task.taskStatus === "New").length;
         this.startedTasks = this.tasks.filter(task => task.taskStatus === "In Progress").length;

@@ -163,7 +163,7 @@ namespace Server.Controllers
             };
 
 
-            var result = _emailService.SendEmail(request);
+            var result = await _emailService.SendEmail(request);
 
             return !result ? StatusCode(500, "Failed to send welcome email.") : Ok(memberResponse);
         }
@@ -611,7 +611,7 @@ namespace Server.Controllers
                 <p>Once again, welcome to the LogicTenacity family! We look forward to working with you.</p>"
             };
 
-            var result = _emailService.SendEmail(request);
+            var result = await _emailService.SendEmail(request);
             
             await _permissionNotifier.UpdatedMemberDetails(member.Id, true);
 

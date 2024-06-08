@@ -265,7 +265,7 @@ namespace Server.Controllers
                         </ul>"
                 };
 
-                var result = _emailService.SendEmail(request);
+                var result = await _emailService.SendEmail(request);
 
 
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
@@ -805,7 +805,7 @@ namespace Server.Controllers
                         </ul>"
                 };
 
-                var result = _emailService.SendEmail(request);
+                var result = await _emailService.SendEmail(request);
 
 
                 SendNotificationRequest sendNotificationRequest = new SendNotificationRequest
