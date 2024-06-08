@@ -17,33 +17,21 @@ Da bi se aplikacija uspešno izbildovala, potrebno je imati sledeće:
 
 # Pokretanje aplikacije na serveru
 
-Ovo je automatizavno putem skripti `build-and-deploy.sh`, `start-server.sh`, `stop-server.sh`.'
+Ovo je automatizavno putem skripte `build-and-deploy.sh` i systemd user servisa.'
 Šifra je `tenacity_logic`.
-Server se deplojuje putem `build-and-deploy.sh`, potom se pokreće preko `start-server.sh`.
+Server se deplojuje putem `build-and-deploy.sh`, gde na kraju systemd preuzima menedzovanje celog procesa.
 
 ## build-and-deploy.sh
 
 Ova skripta updejtuje angular frontend na lokalnom računaru, builda, a potom ga ubacuje u dotnet server.
-Nakon toga se updejtuje dotnet, builda u produkcionu verziju, i uploaduje na server.
+Nakon toga se updejtuje dotnet, builda u produkcionu verziju, i uploaduje na server, systemd potom pokrece servis.
 
-## start-server.sh
-
-Pokreće dotnet server na beku.
-
-## stop-server.sh
-
-Zaustavlja dotnet server na beku.
 
 # Nalozi
 
 - `admin@logictenacity.com` `admin`
 - `pera@gmail.com` `pera`
 - `toma@gmail.com` `toma`
-- `aleksabozinovic25e@gmail.com` `AleksaBozinovic`
-- `bozinovic.aleksa02@gmail.com` `AleksaBozinovic`
-- `ilicdusan2002@gmai.com` `DusanIlic`
-- `dusanilic2002@oshrs.edu.rs` `DusanIlic`
-
 
 # Lokalno pokretanje aplikacije
 
