@@ -1,6 +1,5 @@
 <div class="flex flex-col justify-center">
   <div class="flex flex-col gap-4 rounded-t-xl">
-    <p class="text-3xl font-semibold">Project Tasks</p>
     <div class="flex flex-col gap-4 select-none justify-center">
       <div class="flex gap-4">
         <mat-form-field class="w-96" subscriptSizing="dynamic">
@@ -94,7 +93,7 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="openDialogOverview(task)">View</button>
-              <button mat-menu-item (click)="deleteTask(task.taskId)"
+              <button mat-menu-item (click)="openConfirmationDialog(task.taskId)"
                 [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">Delete</button>
             </mat-menu>
           </td>

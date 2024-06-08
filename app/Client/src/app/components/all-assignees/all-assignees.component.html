@@ -1,6 +1,5 @@
 <div class="flex flex-col justify-center">
   <div class="flex flex-col gap-4 rounded-t-xl">
-    <p class="text-3xl font-semibold">Project Assigness</p>
     <div class="flex flex-col gap-4 select-none justify-center">
       <div class="flex gap-4">
         <mat-form-field class="w-96" subscriptSizing="dynamic">
@@ -103,8 +102,8 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item [routerLink]="['/members', member.id]">View</button>
-              <button mat-menu-item (click)="openConfirmationDialog(member)"
-                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_MEMBER_FROM_PROJECT)">Remove</button>
+             <!-- <button mat-menu-item (click)="openConfirmationDialog(member)"
+                [disabled]="!(projectId | hasProjectPermission:ProjectPermission.REMOVE_MEMBER_FROM_PROJECT)">Remove</button>-->
             </mat-menu>
           </td>
         </ng-container>

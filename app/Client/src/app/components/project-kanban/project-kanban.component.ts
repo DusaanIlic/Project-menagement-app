@@ -20,7 +20,7 @@ import { DatePipe } from '@angular/common';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { Member } from '../../models/member';
 import { MemberInfoComponent } from '../member-info/member-info.component';
@@ -34,6 +34,9 @@ import {Task} from "../../models/task";
 import {Project} from "../../models/project";
 import {IsAssignedToTask} from "../../pipes/assigned-to-task.pipe";
 
+import { MatInputModule } from '@angular/material/input';
+
+
 @Component({
   selector: 'app-project-kanban',
   standalone: true,
@@ -41,7 +44,7 @@ import {IsAssignedToTask} from "../../pipes/assigned-to-task.pipe";
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
   imports: [CdkDropList, MatSelectModule, MatSlideToggleModule, MatFormFieldModule, ReactiveFormsModule, MatExpansionModule, MatCheckboxModule, FormsModule, MatDividerModule, MatIconModule, MatButtonModule, CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe, IsAssignedToTask]
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe, MatInputModule]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -55,6 +58,7 @@ export class ProjectKanbanComponent implements OnInit {
   projectId: number = 0;
   projectName: string = "";
   projectDate: Date | undefined;
+  searchedTerm: string = '';
 
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;
@@ -70,6 +74,39 @@ export class ProjectKanbanComponent implements OnInit {
         this.selectedColumns.push(column.name);
       }
     });
+  }
+
+  isDefaultColumn(columnName: string): boolean {
+    if (!columnName) {
+      return false;
+    }
+    return ['new', 'in progress', 'completed'].includes(columnName.toLowerCase());
+  }
+
+  confirmDeleteColumn(column: { name: string, id: number }): void {
+    const dialogRef = this.dialog.open(ConfirmationComponent, {
+      width: '500px',
+      data: { message: `Are you sure you want to delete the column "${column.name}"?` }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteColumn(column);
+      }
+    });
+  }
+
+  deleteColumn(column: { name: string, id: number }): void {
+    this.projectService.deleteTaskStatus(this.projectId, column.id).subscribe(
+      () => {
+        this.snackBar.open(`Column "${column.name}" deleted successfully.`, 'Close', { duration: 3000 });
+        this.loadTaskStatuses(this.projectId);
+      },
+      error => {
+        this.snackBar.open(`Failed to delete column "${column.name}".`, 'Close', { duration: 3000 });
+        console.error('Error deleting column:', error);
+      }
+    );
   }
 
   loadTaskStatuses(projectId: number): void {
@@ -189,15 +226,32 @@ export class ProjectKanbanComponent implements OnInit {
   deleteTask(statusId: number, taskId: number) {
     const taskIndex = this.findTaskIndex(taskId, statusId);
     if (taskIndex !== -1) {
-      const statusTasks = this.getTasksByStatus(statusId);
-      statusTasks.splice(taskIndex, 1);
-      this.taskService.deleteTask(taskId).subscribe(
-        () => {},
-        error => console.log("error", error)
-      );
-    }
-  }
+        const statusTasks = this.getTasksByStatus(statusId);
+        statusTasks.splice(taskIndex, 1);
+        this.taskService.deleteTask(taskId).subscribe(
+            () => {
+                // Prikazivanje poruke o uspešnom brisanju
+                this.snackBar.open('Task deleted successfully.', 'Close', { duration: 3000 });
 
+                // Ažuriranje liste taskova lokalno
+                this.tasks = this.tasks.filter(task => task.taskId !== taskId);
+            },
+            error => {
+                console.log("Error", error);
+                this.snackBar.open('Failed to delete task.', 'Close', { duration: 3000 });
+            }
+        );
+    }
+}
+
+  search(event: Event): void {
+    this.searchedTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
+
+    // Filtriranje taskova na osnovu pretraženog termina
+    this.tasks.forEach(task => {
+      task.isVisible = task.taskName.toLowerCase().includes(this.searchedTerm);
+    });
+  }
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
@@ -210,10 +264,14 @@ export class ProjectKanbanComponent implements OnInit {
     });
   }
 
-  openConfirmationDialog(column: string, index: number): void{
+  openConfirmationDialog(column: string, index: number): void {
     const dialogRef = this.dialog.open(ConfirmationComponent, {
       width: '500px',
       data: { column, index }
+    });
+
+    dialogRef.componentInstance.taskDeleted.subscribe(() => {
+      this.loadTasksByProject(this.projectId);
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -231,8 +289,12 @@ export class ProjectKanbanComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
         if (result) {
-            this.newStatuses.push(result.name);
-            this.dropList.push(result.name.toLowerCase());
+            const columnName = result.name.toLowerCase();
+            if (columnName) {
+                this.newStatuses.push(result.name);
+                this.dropList.push({ name: columnName, id: result.id });
+                this.columnVisibility[columnName] = true;
+            }
         }
     });
   }

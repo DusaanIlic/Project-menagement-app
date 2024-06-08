@@ -30,6 +30,7 @@ import {TaskStatus} from "../../models/task-status";
 import {HasProjectPermissionPipe} from "../../pipes/has-project-permission.pipe";
 import {ProjectPermission} from "../../enums/project-permissions.enum";
 import {Project} from "../../models/project";
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 
 @Component({
@@ -206,6 +207,23 @@ export class AllTasksComponent implements OnInit {
      }
 
     })
+  }
+
+  openConfirmationDialog(index: number): void {
+    const dialogRef = this.dialog.open(ConfirmationComponent, {
+      width: '500px',
+      data: { index }
+    });
+
+    dialogRef.componentInstance.taskDeleted.subscribe(() => {
+      this.loadTasksByProject(this.projectId); 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.deleteTask(result.index);
+      }
+    });
   }
 
   onStatusFilterChange(event: any) {

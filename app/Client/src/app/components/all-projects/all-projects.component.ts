@@ -79,7 +79,9 @@ export class AllProjectsComponent implements OnInit{
       this.dataSource = new MatTableDataSource(this.allProjects);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      console.log(this.allProjects);
     });
+   
   }
 
   deleteProject(id?: number)

@@ -25,8 +25,6 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MemberInfoComponent } from '../member-info/member-info.component';
-import { ConfirmationAssigneeComponent } from '../confirmation-assignee/confirmation-assignee.component';
 import { AddMembersToProjectComponent } from '../add-members-to-project/add-members-to-project.component';
 import {MatDivider} from "@angular/material/divider";
 import {AvatarComponent} from "../avatar/avatar.component";
@@ -154,19 +152,6 @@ export class AllAssigneesComponent implements OnInit{
     dialogRef.afterClosed().subscribe((result : any) => {
       console.log('The dialog was closed');
       this.fetchMembersOnProject()
-    });
-  }
-
-  openConfirmationDialog(assignee: Member): void{
-    const dialogRef = this.dialog.open(ConfirmationAssigneeComponent, {
-      width: '500px',
-      data: { assignee }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.removeAssignee(assignee);
-      }
     });
   }
 
