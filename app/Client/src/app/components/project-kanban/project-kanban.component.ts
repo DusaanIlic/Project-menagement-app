@@ -225,14 +225,23 @@ export class ProjectKanbanComponent implements OnInit {
   deleteTask(statusId: number, taskId: number) {
     const taskIndex = this.findTaskIndex(taskId, statusId);
     if (taskIndex !== -1) {
-      const statusTasks = this.getTasksByStatus(statusId);
-      statusTasks.splice(taskIndex, 1);
-      this.taskService.deleteTask(taskId).subscribe(
-        () => {},
-        error => console.log("error", error)
-      );
+        const statusTasks = this.getTasksByStatus(statusId);
+        statusTasks.splice(taskIndex, 1);
+        this.taskService.deleteTask(taskId).subscribe(
+            () => {
+                // Prikazivanje poruke o uspešnom brisanju
+                this.snackBar.open('Task deleted successfully.', 'Close', { duration: 3000 });
+
+                // Ažuriranje liste taskova lokalno
+                this.tasks = this.tasks.filter(task => task.taskId !== taskId);
+            },
+            error => {
+                console.log("Error", error);
+                this.snackBar.open('Failed to delete task.', 'Close', { duration: 3000 });
+            }
+        );
     }
-  }
+}
 
   search(event: Event): void {
     this.searchedTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
@@ -254,10 +263,14 @@ export class ProjectKanbanComponent implements OnInit {
     });
   }
 
-  openConfirmationDialog(column: string, index: number): void{
+  openConfirmationDialog(column: string, index: number): void {
     const dialogRef = this.dialog.open(ConfirmationComponent, {
       width: '500px',
       data: { column, index }
+    });
+
+    dialogRef.componentInstance.taskDeleted.subscribe(() => {
+      this.loadTasksByProject(this.projectId); 
     });
 
     dialogRef.afterClosed().subscribe(result => {

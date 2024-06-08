@@ -224,7 +224,7 @@ export class ProjectOverviewComponent implements OnInit {
       this.selectedStatus = this.projectDetails.projectStatusId;
       //console.log('Project Details:', this.projectDetails);
       //console.log('Project Priorities:', this.projectPriorities);
-      console.log('Selected Priority:', this.selectedPriority);
+      //console.log('Selected Priority:', this.selectedPriority);
     }, error => {
       console.error('Error loading project data:', error);
     });
