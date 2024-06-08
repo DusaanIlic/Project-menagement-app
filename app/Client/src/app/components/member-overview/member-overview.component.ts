@@ -176,4 +176,5 @@ export class MemberOverviewComponent implements OnInit {
 
   protected readonly environment = environment;
   protected readonly GlobalPermission = GlobalPermission;
+  protected readonly Date = Date;
 }

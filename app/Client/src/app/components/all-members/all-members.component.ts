@@ -30,6 +30,9 @@ import {SignalRService} from "../../services/signal-r.service";
 import {GlobalPermission} from "../../enums/global-permissions.enum";
 import {HasGlobalPermissionPipe} from "../../pipes/has-global-permission.pipe";
 import {AuthService} from "../../services/auth.service";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {take} from "rxjs";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -57,7 +60,7 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
 
   constructor(private memberService: MemberService,  public dialog: MatDialog,
                  private _liveAnnouncer: LiveAnnouncer, private signalRService: SignalRService,
-                  private authService: AuthService) {
+                  private authService: AuthService, private snackBar: MatSnackBar) {
     this.filteredMembers = this.members;
   }
 
@@ -159,4 +162,34 @@ export class AllMembersComponent implements OnInit, AfterViewInit{
 
     protected readonly environment = environment;
   protected readonly GlobalPermission = GlobalPermission;
+
+  deactivateMember(id: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm Deactivation',
+        message1: `Are you sure you want to deactive this member?`,
+        message2: `They won't be able to login again and you won't be able to activate them.`
+      }
+    });
+
+    const dialogSub = dialogRef.afterClosed().pipe(take(1)).subscribe(result => {
+      if (result) {
+        this.memberService.deleteMember(id).subscribe({
+          next: data => {
+            const index = this.members.findIndex(member => member.id === id);
+
+            if (index !== -1) {
+              this.members.slice(index);
+            }
+
+            this.snackBar.open("Deactivated member successfully", "Close", { duration: 3000 });
+          },
+          error: err => {
+            this.snackBar.open("Failed deactivating member", "Close", { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
 }

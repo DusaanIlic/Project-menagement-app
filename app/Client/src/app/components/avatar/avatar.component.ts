@@ -41,4 +41,5 @@ export class AvatarComponent {
   }
 
   protected readonly environment = environment;
+    protected readonly Date = Date;
 }

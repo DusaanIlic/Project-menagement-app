@@ -104,4 +104,17 @@ public class PermissionNotifier : IPermissionNotifier
         }
     }
 
+    public async Task UpdatedMemberDetails(int memberId, bool logout)
+    {
+        if (SignalRHub.Connections.ContainsKey(memberId))
+        {
+            var connectionIds = SignalRHub.Connections[memberId];
+
+            foreach (var connectionId in connectionIds)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("UpdatedMemberDetails", logout);
+            }
+        }
+    }
+
 }

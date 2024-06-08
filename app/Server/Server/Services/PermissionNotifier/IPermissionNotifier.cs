@@ -10,4 +10,6 @@ public interface IPermissionNotifier
     Task UpdatedProjectPermissions(int projectId, int memberId);
 
     Task UpdatedProjectTasks(int projectId, int memberId);
+
+    Task UpdatedMemberDetails(int memberId, bool logout);
 }

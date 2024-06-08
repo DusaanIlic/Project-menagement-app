@@ -321,4 +321,5 @@ export class ProjectRoleOverviewComponent implements OnInit, OnDestroy {
   }
 
   protected readonly environment = environment;
+    protected readonly Date = Date;
 }

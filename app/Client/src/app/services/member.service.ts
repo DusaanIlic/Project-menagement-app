@@ -28,6 +28,10 @@ export class MemberService {
     return this.http.post<any>(`${API}`, memberData);
   }
 
+  deleteMember(memberId: number) {
+    return this.http.delete(`${API}/${memberId}`);
+  }
+
   getMember(memberId: number): Observable<any>{
     return this.http.get<any>(`${API}/${memberId}`);
   }

@@ -45,6 +45,7 @@ export class AddMemberComponent implements OnInit {
   email: string = '';
   roleId: number | null = null;
   availableRoles: any[] = [];
+  isLoading: boolean = false;
 
   @Output() memberAdded: EventEmitter<any> = new EventEmitter<any>();
 disableSelect: any;
@@ -89,6 +90,8 @@ disableSelect: any;
       return;
     }
 
+    this.isLoading = true;
+
     const memberData = this.memberForm.value;
 
     this.memberService.addMember(memberData).subscribe({
@@ -96,9 +99,11 @@ disableSelect: any;
         console.log('Member saved successfully:', response);
         this.memberAdded.emit();
         this.showMessage();
+        this.isLoading = false;
         this.closeDialog();
       },
       error: error => {
+        this.isLoading = false;
         this.snackBar.open('Error with adding member.', 'Close', { duration: 3000 });
       }
     });

@@ -333,4 +333,5 @@ export class RoleOverviewComponent implements OnInit {
 
   protected readonly close = close;
     protected readonly environment = environment;
+    protected readonly Date = Date;
 }

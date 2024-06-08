@@ -5,7 +5,9 @@ import {environment} from "../../environments/environment";
 import {Notification} from "../models/notification";
 import {PermissionService} from "./permission.service";
 import {jwtRefreshSuccess} from "../helpers/http.interceptor";
-import {logoutSuccess} from "./auth.service";
+import {AuthService, logoutSuccess} from "./auth.service";
+import {Member} from "../models/member";
+import {MemberService} from "./member.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class SignalRService {
   private connectedMembersSubject: BehaviorSubject<Set<number>>;
   private notificationSubject: BehaviorSubject<Notification | null> = new BehaviorSubject<Notification | null>(null);
 
-  constructor(private permissionService: PermissionService) {
+  constructor(private permissionService: PermissionService, private authService: AuthService, private memberService: MemberService) {
     this.connectedMembersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
 
     jwtRefreshSuccess.subscribe(() => {
@@ -74,6 +76,19 @@ export class SignalRService {
 
     this.hubConnection.on('UpdatedProjectTasks', (projectId: number, taskIds: number[]) => {
       this.permissionService.updateProjectTaskIds(projectId, taskIds);
+    });
+
+    this.hubConnection.on('UpdatedMemberDetails', (logout: boolean) => {
+      if (logout) {
+        this.authService.logout();
+        return;
+      }
+
+      this.authService.updateAuthenticatedMembersAvatar();
+      const id = Number(this.authService.getAuthenticatedMembersId());
+      this.memberService.getMemberById(id).subscribe(member => {
+        this.authService.updateAuthenticatedMember(member);
+      })
     });
   }
 

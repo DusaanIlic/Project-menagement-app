@@ -59,7 +59,7 @@
     <mat-card-actions>
       <div class="flex w-full p-2">
         <span class="grow"></span>
-        <button mat-raised-button type="submit" color="primary" (click)="addMember()">Add Member</button>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button type="submit" color="primary" (click)="addMember()">Add Member</button>
       </div>
     </mat-card-actions>
   </mat-card>

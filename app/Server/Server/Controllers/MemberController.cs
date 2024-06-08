@@ -257,6 +257,8 @@ namespace Server.Controllers
                 IsDisabled = member.IsDisabled
             };
 
+            await _permissionNotifier.UpdatedMemberDetails(updatedMemberDTO.Id, false);
+
             return Ok(updatedMemberDTO);
         }
 
@@ -282,7 +284,8 @@ namespace Server.Controllers
 
             //_dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync();
-
+            await _permissionNotifier.UpdatedMemberDetails(member.Id, true);
+            
             return Ok(new { message = "Success." });
 
         }
@@ -460,6 +463,7 @@ namespace Server.Controllers
             member.Email = changeEmailRequest.NewEmail;
 
             await _dbContext.SaveChangesAsync();
+            await _permissionNotifier.UpdatedMemberDetails(member.Id, false);
 
             return Ok(new { message = "Email changed successfully." });
         }
@@ -549,6 +553,7 @@ namespace Server.Controllers
 
             await _notificationService.SendNotification(sendNotificationRequest);
             await _permissionNotifier.UpdatedGlobalPermissions(id);
+            await _permissionNotifier.UpdatedMemberDetails(member.Id, false);
 
             return Ok(roleDTO);
         }
@@ -607,6 +612,8 @@ namespace Server.Controllers
             };
 
             var result = _emailService.SendEmail(request);
+            
+            await _permissionNotifier.UpdatedMemberDetails(member.Id, true);
 
             return Ok(new { message = "Successfully reset password" });
         }
