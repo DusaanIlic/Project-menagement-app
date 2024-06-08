@@ -20,7 +20,7 @@ import { DatePipe } from '@angular/common';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { Member } from '../../models/member';
 import { MemberInfoComponent } from '../member-info/member-info.component';
@@ -33,6 +33,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {Task} from "../../models/task";
 import {Project} from "../../models/project";
 
+import { MatInputModule } from '@angular/material/input';
+
+
 @Component({
   selector: 'app-project-kanban',
   standalone: true,
@@ -40,7 +43,7 @@ import {Project} from "../../models/project";
   styleUrl: './project-kanban.component.scss',
   providers: [DatePipe],
   imports: [CdkDropList, MatSelectModule, MatSlideToggleModule, MatFormFieldModule, ReactiveFormsModule, MatExpansionModule, MatCheckboxModule, FormsModule, MatDividerModule, MatIconModule, MatButtonModule, CdkDrag,
-    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe]
+    CdkDropListGroup, NgFor, FormsModule, CommonModule, NgToastModule, MatDialogModule, AddTaskComponent, AddTaskStatusComponent, MatCardModule, HasProjectPermissionPipe, MatInputModule]
 })
 
 export class ProjectKanbanComponent implements OnInit {
@@ -54,6 +57,7 @@ export class ProjectKanbanComponent implements OnInit {
   projectId: number = 0;
   projectName: string = "";
   projectDate: Date | undefined;
+  searchedTerm: string = '';
 
   @Output() taskStatusAdded: EventEmitter<any> = new EventEmitter<any>();
   teamLeaderInfo: any;
@@ -230,6 +234,14 @@ export class ProjectKanbanComponent implements OnInit {
     }
   }
 
+  search(event: Event): void {
+    this.searchedTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    // Filtriranje taskova na osnovu pretraženog termina
+    this.tasks.forEach(task => {
+      task.isVisible = task.taskName.toLowerCase().includes(this.searchedTerm);
+    });
+  }
 
   openDialog(): void{
     const dialogRef = this.dialog.open(AddTaskComponent, {
