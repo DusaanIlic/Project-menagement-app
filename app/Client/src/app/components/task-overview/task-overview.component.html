@@ -199,6 +199,11 @@
                               task.projectId
                               | hasProjectPermission
                                 : ProjectPermission.ADD_TASK_ACTIVITY
+                            ) &&
+                            !(
+                              task.projectId
+                              | isAssignedToTask
+                                : task.taskId
                             )
                           "
                         >
@@ -469,8 +474,8 @@
                               class="ml-auto"
                               *ngIf="
                                 tC.taskCategoryID !=
-                                  taskCategoryForm.value.taskCategoryId &&
-                                tC.isDefault == false
+                                  taskCategoryForm.get('taskCategoryId')?.value &&
+                                !tC.isDefault
                               "
                             >
                               <mat-icon>delete_forever</mat-icon>
@@ -1096,6 +1101,11 @@
                     !(
                       task.projectId
                       | hasProjectPermission : ProjectPermission.COMMENT_TASK
+                    ) &&
+                    !(
+                      task.projectId
+                      | isAssignedToTask
+                        : task.taskId
                     )
                   "
                 >

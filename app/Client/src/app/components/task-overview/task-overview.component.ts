@@ -154,6 +154,7 @@ import { IsAssignedToTask } from '../../pipes/assigned-to-task.pipe';
     NgOptimizedImage,
     MatNoDataRow,
     TaskFilesComponent,
+    IsAssignedToTask,
   ],
   templateUrl: './task-overview.component.html',
   styleUrl: './task-overview.component.scss',
