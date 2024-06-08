@@ -93,7 +93,7 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="openDialogOverview(task)">View</button>
-              <button mat-menu-item (click)="deleteTask(task.taskId)"
+              <button mat-menu-item (click)="openConfirmationDialog(task.taskId)"
                 [disabled]="!(projectId | hasProjectPermission:ProjectPermission.DELETE_TASK)">Delete</button>
             </mat-menu>
           </td>
