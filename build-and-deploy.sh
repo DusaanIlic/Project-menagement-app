@@ -4,6 +4,15 @@ SERVER_USER="logic_tenacity"
 SERVER_IP="softeng.pmf.kg.ac.rs"
 SERVER_DIR="app/"
 DOTNET_PORT=10141
+SERVICE_NAME="logic_tenacity.service"
+
+# Stop the systemd user service on the server
+echo "Stopping systemd user service ${SERVICE_NAME} on the server..."
+ssh ${SERVER_USER}@${SERVER_IP} "systemctl --user stop ${SERVICE_NAME}"
+if [ $? -ne 0 ]; then
+    echo "Failed to stop systemd user service ${SERVICE_NAME} on the server."
+    exit 1
+fi
 
 # Kill the process using the specified port on the server
 echo "Killing process using port ${DOTNET_PORT} on the server..."
@@ -80,4 +89,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+
+echo "Starting systemd user service ${SERVICE_NAME} on the server..."
+ssh ${SERVER_USER}@${SERVER_IP} "systemctl --user start ${SERVICE_NAME}"
+if [ $? -ne 0 ]; then
+    echo "Failed to start systemd user service ${SERVICE_NAME} on the server."
+    exit 1
+fi
+
 echo "Build, publish, and deploy completed successfully."
+
