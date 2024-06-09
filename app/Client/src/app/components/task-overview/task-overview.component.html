@@ -98,75 +98,78 @@
                       class="flex flex-col gap-2 w-[100%]"
                       [formGroup]="taskActivityGroup"
                     >
-                      <mat-form-field>
-                        <mat-label>Activity type</mat-label>
-                        <mat-select
-                          formControlName="taskActivityTypeId"
-                          required
-                        >
-                          @for (type of allTypes; track type) {
-                          <mat-option [value]="type.taskActivityTypeId"
-                            >{{ type.taskActivityTypeName }}
-                          </mat-option>
-                          }
-                        </mat-select>
-                        <mat-error
-                          *ngIf="
+                      <div class="w-full flex flex-row gap-5">
+                        <mat-form-field class="flex">
+                          <mat-label>Activity type</mat-label>
+                          <mat-select
+                            formControlName="taskActivityTypeId"
+                            required
+                          >
+                            @for (type of allTypes; track type) {
+                              <mat-option [value]="type.taskActivityTypeId"
+                              >{{ type.taskActivityTypeName }}
+                              </mat-option>
+                            }
+                          </mat-select>
+                          <mat-error
+                            *ngIf="
                             taskActivityGroup
                               .get('taskActivityTypeId')
                               ?.hasError('required')
                           "
-                        >
-                          Status is required
-                        </mat-error>
-                      </mat-form-field>
+                          >
+                            Status is required
+                          </mat-error>
+                        </mat-form-field>
 
-                      <mat-form-field>
-                        <mat-label>Task completion</mat-label>
-                        <input
-                          matInput
-                          placeholder="50%"
-                          value=""
-                          formControlName="percentageComplete"
-                          required
-                        />
-                        <mat-error
-                          *ngIf="
+                        <mat-form-field class="flex">
+                          <mat-label>Task completion</mat-label>
+                          <input
+                            matInput
+                            placeholder="50%"
+                            value=""
+                            formControlName="percentageComplete"
+                            required
+                          />
+                          <mat-error
+                            *ngIf="
                             taskActivityGroup
                               .get('percentageComplete')
                               ?.hasError('required')
                           "
-                        >
-                          Percentage is required
-                        </mat-error>
-                        <mat-error
-                          *ngIf="
+                          >
+                            Percentage is required
+                          </mat-error>
+                          <mat-error
+                            *ngIf="
                             taskActivityGroup
                               .get('percentageComplete')
                               ?.hasError('min')
                           "
-                        >
-                          Minimum value is 1
-                        </mat-error>
-                        <mat-error
-                          *ngIf="
+                          >
+                            Minimum value is 1
+                          </mat-error>
+                          <mat-error
+                            *ngIf="
                             taskActivityGroup
                               .get('percentageComplete')
                               ?.hasError('max')
                           "
-                        >
-                          Maximum value is {{ 100 - task.percentageComplete }}
-                        </mat-error>
-                        <mat-error
-                          *ngIf="
+                          >
+                            Maximum value is {{ 100 - task.percentageComplete }}
+                          </mat-error>
+                          <mat-error
+                            *ngIf="
                             taskActivityGroup
                               .get('percentageComplete')
                               ?.hasError('pattern')
                           "
-                        >
-                          Value must be number
-                        </mat-error>
-                      </mat-form-field>
+                          >
+                            Value must be number
+                          </mat-error>
+                        </mat-form-field>
+
+                      </div>
 
                       <mat-form-field>
                         <mat-label>Task activity description</mat-label>
@@ -195,7 +198,7 @@
                           color="primary"
                           (click)="saveActivity()"
                           [disabled]="
-                            !(
+                            (!(
                               task.projectId
                               | hasProjectPermission
                                 : ProjectPermission.ADD_TASK_ACTIVITY
@@ -204,10 +207,10 @@
                               task.projectId
                               | isAssignedToTask
                                 : task.taskId
-                            )
+                            )) || task.percentageComplete == 100
                           "
                         >
-                          Save activity
+                          Add new activity
                         </button>
                       </div>
                     </form>
@@ -246,7 +249,7 @@
                         <div class="w-[90%]">
                           <mat-card>
                             <div class="p-2">
-                              <div class="underline">
+                              <div class="underline cursor-pointer" [routerLink]="['/members', taskAct.workerId]" (click)="closeDialog()" >
                                 {{ taskAct.memberName }}
                               </div>
                               <div>
@@ -1043,12 +1046,13 @@
                         src="{{ environment.apiUrl }}/Member/{{
                           taskComm.writerId
                         }}/Avatar"
-                        class="flex rounded-full size-8"
+                        class="flex rounded-full size-8 cursor-pointer"
+                        [routerLink]="['/members', taskComm.writerId]" (click)="closeDialog()"
                       />
                       <div class="max-w-[50%]">
                         <mat-card>
                           <div class="p-2">
-                            <div class="underline">
+                            <div class="underline cursor-pointer" [routerLink]="['/members', taskComm.writerId]" (click)="closeDialog()">
                               {{ taskComm.writerFirstName }}
                               {{ taskComm.writerLastName }}
                             </div>

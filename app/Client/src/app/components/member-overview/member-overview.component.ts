@@ -82,6 +82,7 @@ export class MemberOverviewComponent implements OnInit {
     private authService: AuthService
   ) {}
 
+
   member: Member = {
     checked: undefined,
     isDisabled: false,
@@ -144,7 +145,7 @@ export class MemberOverviewComponent implements OnInit {
 
   //////////////////////////////////////////////////////
   openDialog(task: Task) {
-    console.log(task)
+
     const dialogRef = this.dialog.open(TaskOverviewComponent, {
       width: '1200px',
       height : '700px',
@@ -152,27 +153,10 @@ export class MemberOverviewComponent implements OnInit {
     });
 
     dialogRef.componentInstance.taskModified.subscribe(() => {
-      this.tService.getTasksByMember(this.member.id)
+      this.ngOnInit()
     });
   }
 
-  onPageChange(event: PageEvent) {
-    const startIndex = event.pageIndex * event.pageSize;
-    const endIndex = startIndex + event.pageSize;
-    //this.dataSource.data = this.tasks.slice(startIndex, endIndex);
-    this.dataSource.paginator = this.paginator;
-  }
-
-  openDialogOverview(task: Task): void {
-    const dialogRef = this.dialog.open(TaskOverviewComponent, {
-      width: '250px',
-      data: task.taskId,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
-    });
-  }
 
   protected readonly environment = environment;
   protected readonly GlobalPermission = GlobalPermission;

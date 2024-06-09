@@ -31,7 +31,7 @@ export class ConfirmationProjectComponent  implements OnInit {
   }
 
   showMessage(){
-    this.snackBar.open('Assignee deleted successfully.', 'Close', { duration: 3000 });
+    this.snackBar.open('Project deleted successfully.', 'Close', { duration: 3000 });
   }
 
   confirmDelete(): void {
