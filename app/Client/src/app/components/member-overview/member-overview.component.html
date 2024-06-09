@@ -134,9 +134,10 @@
               </th>
               <td mat-cell
                 *matCellDef="let task"
-                class="w-60 border-t-[1px] border-t-gray-300 p-2"
+                class="w-60 border-t-[1px] border-t-gray-300 p-2" 
               >
-                {{ task.projectName }}
+
+                <a [routerLink]="['/projects', task.projectId]" class="hover:underline"> {{ task.projectName }}</a> 
               </td>
             </ng-container>
 
