@@ -202,6 +202,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   tasksOnThisProject: Task[] = [];
   taskCategories: taskCategory[] = [];
   makeCategory: boolean = false;
+  permission : any
 
   readonly ProjectPermission = ProjectPermission;
   @ViewChild('scrollableDiv') private scrollableDiv!: ElementRef;
@@ -337,14 +338,14 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       description: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
+          disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId)) || this.task.percentageComplete == 100,
         },
         Validators.required,
       ],
       percentageComplete: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
+          disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId)) || this.task.percentageComplete == 100,
         },
         [
           Validators.required,
@@ -356,7 +357,7 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       taskActivityTypeId: [
         {
           value: '',
-          disabled: !permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId),
+          disabled: (!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(this.task.taskId)) || this.task.percentageComplete == 100,
         },
         Validators.required,
       ],
@@ -539,6 +540,12 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
 
   saveActivity() {
     if (this.taskActivityGroup.valid) {
+      const permissions = this.permService.getProjectPermissions(
+        this.task.projectId
+      );
+      const assignedTasks = this.permService.getProjectTaskIds(
+        this.task.projectId
+      );
       const taskActivity = this.taskActivityGroup.value;
       console.log(taskActivity);
 
@@ -552,15 +559,39 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
               this.snackBar.open('Successfully added task activity!', 'Close', {
                 duration: 3000,
               });
-              const percentageCompleteControl =
-                this.taskActivityGroup.get('percentageComplete');
-              percentageCompleteControl?.reset();
-              percentageCompleteControl?.setValidators([
+
+              const toDisable = ((!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(task.taskId)) || task.percentageComplete == 100)
+
+              if(toDisable)
+              {
+                this.taskActivityGroup.get("percentageComplete")?.disable()
+                this.taskActivityGroup.get("taskActivityTypeId")?.disable()
+                this.taskActivityGroup.get("description")?.disable()
+              }
+              else
+              {
+                this.taskActivityGroup.get("percentageComplete")?.enable()
+                this.taskActivityGroup.get("taskActivityTypeId")?.enable()
+                this.taskActivityGroup.get("description")?.enable()
+              }
+
+              this.taskActivityGroup.get("taskActivityTypeId")?.setValue("")
+              this.taskActivityGroup.get("taskActivityTypeId")?.setErrors(null)
+
+              this.taskActivityGroup.get("description")?.setValue("")
+              this.taskActivityGroup.get("description")?.setErrors(null)
+
+              this.taskActivityGroup.get("percentageComplete")?.setValue("")
+              this.taskActivityGroup.get("percentageComplete")?.setErrors(null)
+              this.taskActivityGroup.get("percentageComplete")?.setValidators([
                 Validators.required,
                 Validators.min(1),
                 Validators.max(100 - this.task.percentageComplete),
                 Validators.pattern('^(100|[1-9]?[0-9])$'),
               ]);
+
+              this.taskModified.emit();
+
             });
         },
         error: (error) => {
@@ -574,21 +605,52 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
   }
 
   deleteTaskActivity(taskAct: taskActivity) {
+    const permissions = this.permService.getProjectPermissions(
+      this.task.projectId
+    );
+    const assignedTasks = this.permService.getProjectTaskIds(
+      this.task.projectId
+    );
     this.tService.deleteTaskActivity(taskAct.taskActivityId).subscribe({
       next: (data) => {
         this.snackBar.open('Sucessfully deleted task activity!', 'Close', {
           duration: 3000,
         });
-        this.tService.getTaskById(this.task.taskId).subscribe((data: Task) => {
-          this.task = data;
-          const percentageCompleteControl =
-            this.taskActivityGroup.get('percentageComplete');
-          percentageCompleteControl?.setValidators([
+        this.tService.getTaskById(this.task.taskId).subscribe((task: Task) => {
+          this.task = task;
+          const toDisable = ((!permissions.has(ProjectPermission.ADD_TASK_ACTIVITY) && !assignedTasks.has(task.taskId)) || task.percentageComplete == 100)
+
+
+
+          if(toDisable)
+          {
+            this.taskActivityGroup.get("percentageComplete")?.disable()
+            this.taskActivityGroup.get("taskActivityTypeId")?.disable()
+            this.taskActivityGroup.get("description")?.disable()
+          }
+          else
+          {
+            this.taskActivityGroup.get("percentageComplete")?.enable()
+            this.taskActivityGroup.get("taskActivityTypeId")?.enable()
+            this.taskActivityGroup.get("description")?.enable()
+          }
+
+          this.taskActivityGroup.get("taskActivityTypeId")?.setValue("")
+          this.taskActivityGroup.get("taskActivityTypeId")?.setErrors(null)
+
+          this.taskActivityGroup.get("description")?.setValue("")
+          this.taskActivityGroup.get("description")?.setErrors(null)
+
+          this.taskActivityGroup.get("percentageComplete")?.setValue("")
+          this.taskActivityGroup.get("percentageComplete")?.setErrors(null)
+          this.taskActivityGroup.get("percentageComplete")?.setValidators([
             Validators.required,
             Validators.min(1),
             Validators.max(100 - this.task.percentageComplete),
             Validators.pattern('^(100|[1-9]?[0-9])$'),
           ]);
+
+          this.taskModified.emit();
         });
         this.fetchTaskActivities();
       },
@@ -605,6 +667,8 @@ export class TaskOverviewComponent implements OnInit, DoCheck {
       const taskComment = this.taskActivityComment.value;
       this.tService.saveTaskComment(taskComment).subscribe({
         next: (data) => {
+          this.taskActivityComment.get("text")?.setValue("")
+          this.taskActivityComment.get("text")?.setErrors(null)
           this.fetchTaskComments();
         },
         error: (error) => {
