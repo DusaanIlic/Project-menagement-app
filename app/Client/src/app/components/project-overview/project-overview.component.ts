@@ -194,9 +194,9 @@ export class ProjectOverviewComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+
         this.refreshProjectData();
-      }
+
     });
   }
 
@@ -207,9 +207,9 @@ export class ProjectOverviewComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+
         this.refreshProjectData();
-      }
+
     });
   }
 
