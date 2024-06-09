@@ -105,12 +105,26 @@ export class ProjectAnalyticsComponent implements OnInit {
           //console.log(this.tasksByStatuses)
           this.loaded = true;
 
-          this.dataForChart = [
-            {
-              name: 'Finished',
-              value: (this.finishedTasksCount / this.allTasksCount) * 100,
-            },
-          ];
+          if(this.finishedTasksCount != 0)
+          {
+            this.dataForChart = [
+              {
+                name: 'Finished',
+                value: ((this.finishedTasksCount / this.allTasksCount) * 100),
+              },
+            ];
+          }
+          else
+          {
+            this.dataForChart = [
+              {
+                name: 'Finished',
+                value: 0.0,
+              },
+            ];
+          }
+
+          console.log(this.dataForChart)
           this.customColors = [{ name: 'Finished', value: '#3F51B5' }];
 
           return this.tService.getTaskCategoriesOnProject(this.projectId);

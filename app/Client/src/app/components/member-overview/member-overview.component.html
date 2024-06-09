@@ -9,7 +9,7 @@
             <img
               mat-card-image
               class="rounded-full size-1/2"
-              src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar?{{Date.now()}}"
+              src="{{ environment.apiUrl }}/Member/{{ member.id }}/Avatar"
               alt="Avatar"
             />
 
@@ -150,7 +150,7 @@
               >
                 <a
                   class="hover:underline cursor-pointer"
-                  (click)="openDialogOverview(task)"
+                  (click)="openDialog(task)"
                 >{{ task.taskName }}</a
                 >
               </td>
@@ -178,23 +178,31 @@
               >
                 <div
                   *ngIf="task.taskStatusId == 1"
-                  class="text-yellow-600 font-bold flex items-center justify-center gap-2"
+                  class="text-yellow-600 font-bold flex gap-2"
                 >
                   <mat-icon>panorama_fisheye</mat-icon>
                   {{ task.taskStatus }}
                 </div>
                 <div
                   *ngIf="task.taskStatusId == 3"
-                  class="text-green-600 font-bold flex items-center justify-center gap-2"
+                  class="text-green-600 font-bold flex gap-2"
                 >
                   <mat-icon>checkbox</mat-icon>
                   {{ task.taskStatus }}
                 </div>
                 <div
                   *ngIf="task.taskStatusId == 2"
-                  class="text-orange-600 font-bold flex items-center justify-center gap-2"
+                  class="text-orange-600 font-bold flex gap-2"
                 >
                   <mat-icon>timelapse</mat-icon>
+                  {{ task.taskStatus }}
+                </div>
+
+                <div
+                  *ngIf="task.taskStatusId > 3"
+                  class=" font-bold flex gap-2"
+                >
+
                   {{ task.taskStatus }}
                 </div>
               </td>

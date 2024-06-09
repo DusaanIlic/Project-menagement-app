@@ -32,6 +32,8 @@ import { ProjectStatus } from '../../models/project-status';
 import { ProjectPriority } from '../../models/project-priority';
 import { taskPriority } from '../../models/taskPriority';
 import { MatCardModule } from '@angular/material/card';
+import {TaskOverviewComponent} from "../task-overview/task-overview.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-dashboard',
@@ -107,7 +109,9 @@ export class DashboardComponent implements OnInit {
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();
 
   constructor(private authService: AuthService, private _liveAnnouncer: LiveAnnouncer,
-                private projectService: ProjectServiceGet, private taskService: TaskService) { }
+                private projectService: ProjectServiceGet, private taskService: TaskService,
+                public dialog: MatDialog,
+                ) { }
 
   onStatusChange(event: any) {
     this.selectedStatus = event;
@@ -216,5 +220,18 @@ export class DashboardComponent implements OnInit {
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  openDialog(task: Task) {
+    console.log(task)
+    const dialogRef = this.dialog.open(TaskOverviewComponent, {
+      width: '1200px',
+      height : '700px',
+      data: task
+    });
+
+    dialogRef.componentInstance.taskModified.subscribe(() => {
+      this.ngOnInit()
+    });
   }
 }

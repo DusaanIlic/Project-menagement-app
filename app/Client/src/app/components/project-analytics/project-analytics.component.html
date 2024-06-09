@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-2">
 
   <mat-accordion>
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Project completion rate</h1>
@@ -12,33 +12,24 @@
           <ngx-charts-gauge
             class="flex"
             [results]="dataForChart"
-            [angleSpan]="360"
+            [angleSpan]="180"
             [startAngle]="270"
             [view]="[400, 400]"
             [legend]="false"
-            [showText]="false"
+            [showText]="true"
             [smallSegments]="5"
             [units]="'%'"
             [customColors]="customColors"
           >
           </ngx-charts-gauge>
         </div>
-        <div
-          style="
-            position: absolute;
-            top: 50%;
-            left: 13%;
-            transform: translate(-50%, -50%);
-          "
-        >
-          <span class="text-7xl">{{ dataForChart[0]?.value }}%</span>
-        </div>
+
       </mat-card>
     </mat-expansion-panel>
   </mat-accordion>
 
   <mat-accordion>
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Incomplete tasks by category</h1>
@@ -61,7 +52,7 @@
   </mat-accordion>
 
   <mat-accordion>
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Tasks per member</h1>
@@ -86,7 +77,7 @@
   </mat-accordion>
 
   <mat-accordion *ngIf="loaded">
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Tasks by status</h1>
@@ -111,7 +102,7 @@
   </mat-accordion>
 
   <mat-accordion *ngIf="loaded2">
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="flex flex-row justify-between">
           <h1 class="text-xl flex">Task activities created in last 2 weeks</h1>
